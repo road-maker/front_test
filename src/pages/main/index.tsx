@@ -1,4 +1,5 @@
 import { axiosInstance } from 'axiosInstance';
+import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 function MainPage() {
@@ -8,7 +9,11 @@ function MainPage() {
     const { data } = await axiosInstance.get('/hello');
     return data;
   }
-
+  useEffect(() => {
+    const test = sayHello();
+    // eslint-disable-next-line no-console, no-alert
+    alert(`hello?${test}`);
+  }, []);
   return (
     <>
       <h1>MainPage</h1>
@@ -16,7 +21,6 @@ function MainPage() {
       <button type="button" onClick={() => navigate('/roadmap/editor')}>
         editor page
       </button>
-      <div>{sayHello()}</div>
     </>
   );
 }

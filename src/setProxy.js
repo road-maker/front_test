@@ -2,9 +2,9 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 
 export default function (app) {
   app.use(
-    '/hello',
+    '/',
     createProxyMiddleware({
-      target: 'http://localhost:8080',
+      target: 'http://3.35.206.244:8080',
       changeOrigin: true,
     }),
   );
