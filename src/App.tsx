@@ -1,3 +1,4 @@
+import EditorPage from 'pages/editor';
 import { ReactElement } from 'react';
 import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
@@ -23,6 +24,7 @@ function App(): ReactElement {
         },
         { path: 'login/signup', element: <SignupPage /> },
         { path: 'login/reset', element: <ResetInfoPage /> },
+        { path: 'roadmap/editor', element: <EditorPage /> },
       ],
     },
   ]);
