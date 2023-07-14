@@ -28,6 +28,7 @@
     "jest-dom",
     "jsx-a11y",
     "@typescript-eslint",
+    "simple-import-sort",
     "prettier"
   ],
   "env": {
