@@ -2,7 +2,7 @@ name: React S3 Build
 on:
   push:
     branches:   # main branch에서 push event가 일어난 경우에만
-      - main
+      - master
 
 jobs:
   build:
