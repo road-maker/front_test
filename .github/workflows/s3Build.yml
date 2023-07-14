@@ -34,4 +34,4 @@ jobs:
           aws s3 cp \
             --recursive \
             --region ap-northeast-2 \
-            build s3:http//roadmakertest.s3-website.ap-northeast-2.amazonaws.com
+            build s3://roadmakertest
