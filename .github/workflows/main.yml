@@ -31,6 +31,6 @@ jobs:
     - name: Release
       if: github.ref == 'refs/heads/master'
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.MY_AWS_TOKEN }}
         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       run: npx semantic-release
