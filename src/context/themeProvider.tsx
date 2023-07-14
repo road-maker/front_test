@@ -89,7 +89,7 @@ const ThemeContext = createContext({});
 const ThemeProvider = ({ children }) => {
   const LocalTheme = window.localStorage.getItem('theme') || 'light';
   const [ThemeMode, setThemeMode] = useState(LocalTheme);
-  let addThemeObject = Object.assign(
+  const addThemeObject = Object.assign(
     {},
     fontSizes,
     colors,
@@ -101,8 +101,6 @@ const ThemeProvider = ({ children }) => {
     verticalInterval,
     { theme: ThemeMode },
   );
-  // var addThemeObject = Object.assign({}, fontSizes, colors, deviceSizes, device, paddings, margins, interval, verticalInterval, {theme: ThemeMode})
-
   return (
     <ThemeContext.Provider value={{ ThemeMode, setThemeMode }}>
       <StyledProvider theme={addThemeObject}> {children}</StyledProvider>
