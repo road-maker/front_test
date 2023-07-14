@@ -2,7 +2,7 @@ name: React S3 Build
 on:
   push:
     branches:   # main branch에서 push event가 일어난 경우에만
-      - main
+      - master
 
 jobs:
   build:
@@ -34,4 +34,4 @@ jobs:
           aws s3 cp \
             --recursive \
             --region ap-northeast-2 \
-            build s3://roadmakertest.s3-website.ap-northeast-2.amazonaws.com
+            build s3://roadmakertest
