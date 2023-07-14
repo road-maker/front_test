@@ -11,9 +11,10 @@ function MainPage() {
   }
   useEffect(() => {
     const test = sayHello();
-    // eslint-disable-next-line no-console, no-alert
-    alert(`hello?${test}`);
+    // eslint-disable-next-line no-console
+    console.log(test);
   }, []);
+
   return (
     <>
       <h1>MainPage</h1>
