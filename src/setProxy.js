@@ -4,7 +4,7 @@ export default function (app) {
   app.use(
     '/',
     createProxyMiddleware({
-      target: 'http://3.35.206.244:8080',
+      target: 'http://3.35.206.244',
       changeOrigin: true,
     }),
   );
