@@ -17,7 +17,7 @@
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
-  "repository": "https://github.com/reime005/react-native-camera-hooks.git",
+  "repository": "https://github.com/road-maker/front_test.git",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -39,6 +39,5 @@
     ]
   },
   "main": "index.js",
-  "author": "Pyotato <pyolovely01@gmail.com>",
-  "license": "MIT"
+  "author": "Pyotato <pyolovely01@gmail.com>"
 }
