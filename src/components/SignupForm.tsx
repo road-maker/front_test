@@ -14,10 +14,10 @@ function SignupForm(): ReactElement {
         <input type="email" />
         <p>비밀번호</p>
         <input type="password" />
-        <button>회원가입</button>
+        <button type="button">회원가입</button>
       </form>
       <p>OR</p>
-      <button>구글 계정으로 회원가입하기</button>
+      <button type="button">구글 계정으로 회원가입하기</button>
       <p>
         <Link to=".." relative="path">
           이미 계정이 있으신가요?

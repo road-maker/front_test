@@ -1,6 +1,7 @@
+import { ReactElement } from 'react';
 import { Link } from 'react-router-dom';
 
-function LoginForm() {
+function LoginForm(): ReactElement {
   return (
     <>
       <form>
@@ -11,14 +12,14 @@ function LoginForm() {
         <input type="password" />
 
         <Link to="/">
-          <button>로그인</button>
+          <button type="button">로그인</button>
         </Link>
         <p>
           <Link to="/login/reset">아이디/비밀번호찾기</Link>
         </p>
       </form>
       <p>OR</p>
-      <button>구글 계정으로 로그인하기</button>
+      <button type="button">구글 계정으로 로그인하기</button>
       <Link to="/login/signup">회원가입</Link>
     </>
   );

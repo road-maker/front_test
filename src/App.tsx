@@ -1,7 +1,8 @@
 import { ReactElement } from 'react';
 import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+
 import ErrorPage from './pages/error';
 import LoginPage from './pages/login';
 import MainPage from './pages/main';
