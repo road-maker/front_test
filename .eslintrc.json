@@ -26,6 +26,7 @@
   "plugins": [
     "testing-library",
     "jest-dom",
+    "sonarjs",
     "jsx-a11y",
     "@typescript-eslint",
     "simple-import-sort",
