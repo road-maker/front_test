@@ -29,7 +29,8 @@
     "jsx-a11y",
     "@typescript-eslint",
     "simple-import-sort",
-    "prettier"
+    "prettier",
+    "styled-components"
   ],
   "env": {
     "browser": true,
