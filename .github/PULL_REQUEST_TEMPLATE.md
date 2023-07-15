@@ -12,4 +12,4 @@
 
 ## 기타
 
-[버그수정인가요?](?template=hotfi)
+[버그수정인가요?](?template=hotfix.md)
