@@ -19,11 +19,11 @@ function App(): ReactElement {
       children: [
         { index: true, element: <MainPage /> },
         {
-          path: '/login',
+          path: '/users/signin',
           element: <LoginPage />,
         },
-        { path: 'login/signup', element: <SignupPage /> },
-        { path: 'login/reset', element: <ResetInfoPage /> },
+        { path: 'users/signup', element: <SignupPage /> },
+        { path: 'users/reset', element: <ResetInfoPage /> },
         { path: 'roadmap/editor', element: <EditorPage /> },
       ],
     },

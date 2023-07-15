@@ -19,7 +19,7 @@ function SignupForm(): ReactElement {
       <p>OR</p>
       <button type="button">구글 계정으로 회원가입하기</button>
       <p>
-        <Link to=".." relative="path">
+        <Link to="/users/signin" relative="path">
           이미 계정이 있으신가요?
         </Link>
       </p>

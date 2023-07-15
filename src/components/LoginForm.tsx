@@ -1,27 +1,56 @@
+import { Box, Button, Center, Space, Text, TextInput } from '@mantine/core';
+import { useForm } from '@mantine/form';
 import { ReactElement } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function LoginForm(): ReactElement {
-  return (
-    <>
-      <form>
-        <h1>로그인</h1>
-        <p>이메일</p>
-        <input type="email" />
-        <p>비밀번호</p>
-        <input type="password" />
+  const navigate = useNavigate();
+  const form = useForm({
+    initialValues: {
+      terms: false,
+      user: {
+        email: '',
+        password: '',
+      },
+    },
+  });
 
-        <Link to="/">
-          <button type="button">로그인</button>
-        </Link>
-        <p>
-          <Link to="/login/reset">아이디/비밀번호찾기</Link>
-        </p>
-      </form>
-      <p>OR</p>
-      <button type="button">구글 계정으로 로그인하기</button>
-      <Link to="/login/signup">회원가입</Link>
-    </>
+  return (
+    <Box maw={320} mx="auto">
+      <TextInput
+        label="Email"
+        placeholder="이메일을 입력해주세요."
+        {...form.getInputProps('user.email')}
+      />
+      <TextInput
+        label="Password"
+        type="password"
+        placeholder="비밀번호를 입력해주세요."
+        mt="md"
+        {...form.getInputProps('user.password')}
+      />
+      <Space h="md" />
+      <Text ta="center">OR</Text>
+      <Space h="md" />
+      <Center>
+        <Button>구글 계정으로 로그인하기</Button>
+      </Center>
+      <Space h="md" />
+      <Text
+        c="blue"
+        td="underline"
+        ta="center"
+        onClick={() => navigate('/login/signup')}
+      >
+        회원가입
+      </Text>
+      {/* <Text size="sm" weight={500} mt="xl">
+        Form values:
+      </Text>
+      <Code block mt={5}>
+        {JSON.stringify(form.values, null, 2)}
+      </Code> */}
+    </Box>
   );
 }
 
