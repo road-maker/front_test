@@ -38,12 +38,6 @@
     "jest": true
   },
   "rules": {
-    "import/no-extraneous-dependencies": [
-      "error",
-      {
-        "projectDependencies": false
-      }
-    ],
     "testing-library/await-async-query": "error",
     "testing-library/no-await-sync-query": "error",
     "testing-library/no-debugging-utils": "warn",
