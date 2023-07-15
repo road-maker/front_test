@@ -15,12 +15,12 @@ function LoginForm(): ReactElement {
           <button type="button">로그인</button>
         </Link>
         <p>
-          <Link to="/login/reset">아이디/비밀번호찾기</Link>
+          <Link to="/users/reset">아이디/비밀번호찾기</Link>
         </p>
       </form>
       <p>OR</p>
       <button type="button">구글 계정으로 로그인하기</button>
-      <Link to="/login/signup">회원가입</Link>
+      <Link to="/users/signup">회원가입</Link>
     </>
   );
 }
