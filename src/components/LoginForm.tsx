@@ -16,7 +16,7 @@ function LoginForm(): ReactElement {
   });
 
   return (
-    <Box maw={320} mx="auto">
+    <Box maw={320} mx="auto" mt="xl">
       <TextInput
         label="Email"
         placeholder="이메일을 입력해주세요."
@@ -30,7 +30,9 @@ function LoginForm(): ReactElement {
         {...form.getInputProps('user.password')}
       />
       <Space h="md" />
+
       <Text ta="center">OR</Text>
+
       <Space h="md" />
       <Center>
         <Button>구글 계정으로 로그인하기</Button>
@@ -40,7 +42,12 @@ function LoginForm(): ReactElement {
         c="blue"
         td="underline"
         ta="center"
-        onClick={() => navigate('/login/signup')}
+        sx={() => ({
+          '&:hover': {
+            cursor: 'pointer',
+          },
+        })}
+        onClick={() => navigate('/users/signup')}
       >
         회원가입
       </Text>
