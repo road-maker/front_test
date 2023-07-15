@@ -27,7 +27,6 @@
     "typescript": "*",
     "web-vitals": "^2.1.4"
   },
-  "repository": "https://github.com/road-maker/front_test.git",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
