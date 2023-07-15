@@ -36,6 +36,7 @@
     "http-proxy-middleware": "^2.0.6",
     "prettier": "^3.0.0",
     "react": "^18.2.0",
+    "react-design-editor": "^0.0.52",
     "react-dom": "^18.2.0",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.14.1",
@@ -47,8 +48,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "build": "env-cmd -f .env react-scripts build",
+    "build:prod": "env-cmd -f .env.production react-scripts build && move build ./build_prod",
+    "test": "env-cmd -f .env.production react-scripts test",
     "eject": "react-scripts eject",
     "lint": "yarn lint:ci --fix",
     "lint:ci": "eslint src"

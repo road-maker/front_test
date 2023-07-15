@@ -1,14 +1,16 @@
-import { ReactElement, useRef } from 'react';
+import Editor from 'components/editor/Editor';
+import { ReactElement } from 'react';
 
 function EditorPage(): ReactElement {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const canvas = canvasRef.current;
+  // const canvasRef = useRef<HTMLCanvasElement>(null);
+  // const canvas = canvasRef.current;
 
-  if (!canvas) return <div>null canvas!</div>;
+  // if (!canvas) return <div>null canvas!</div>;
 
   return (
     <div>
-      <canvas ref={canvasRef} />
+      {/* <canvas ref={canvasRef} /> */}
+      <Editor />
     </div>
   );
 }
