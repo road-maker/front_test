@@ -24,7 +24,8 @@ jobs:
         run: npm install
       - if: ${{!success()}}
         run: npm install --legacy-peer-deps
-          
+             npm audit fix --force
+        
       - name: Build   # React Build
         run: npm run build
 
