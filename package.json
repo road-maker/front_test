@@ -48,8 +48,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "build": "env-cmd -f .env react-scripts build",
+    "build:prod": "env-cmd -f .env.production react-scripts build && move build ./build_prod",
+    "test": "env-cmd -f .env.production react-scripts test",
     "eject": "react-scripts eject",
     "lint": "yarn lint:ci --fix",
     "lint:ci": "eslint src"
