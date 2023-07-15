@@ -70,6 +70,7 @@
       }
     ],
     "react/jsx-one-expression-per-line": "off",
-    "react/jsx-curly-newline": "off"
+    "react/jsx-curly-newline": "off",
+    "react/jsx-props-no-spreading": "off"
   }
 }
