@@ -22,7 +22,10 @@ jobs:
     
       - name: Install Dependencies    # 의존 파일 설치
         run: npm install
-
+      - if: ${{!success()}}
+        run: npm install --legacy-peer-deps
+             npm audit fix --force
+        
       - name: Build   # React Build
         run: npm run build
 
