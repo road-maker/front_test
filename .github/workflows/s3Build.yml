@@ -23,9 +23,6 @@ jobs:
       - name: Install Dependencies    # 의존 파일 설치
         run: npm install --legacy-peer-deps
         
-      - name: Fix Dependencies    # 의존 파일 설치
-        run: npm audit fix --force
-        
       - name: Build   # React Build
         run: npm run build
 
