@@ -31,7 +31,12 @@ function LoginForm(): ReactElement {
       />
       <Space h="md" />
 
-      <Text ta="center">OR</Text>
+      <Center>
+        <Button mt="xl">로그인하기</Button>
+      </Center>
+      <Text ta="center" mt="xl">
+        OR
+      </Text>
 
       <Space h="md" />
       <Center>

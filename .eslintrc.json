@@ -25,7 +25,7 @@
   },
   "plugins": [
     "testing-library",
-    "jest-dom",
+    "eslint-plugin-jest-dom",
     "jsx-a11y",
     "@typescript-eslint",
     "simple-import-sort",
