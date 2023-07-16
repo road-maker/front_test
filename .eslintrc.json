@@ -38,6 +38,7 @@
     "jest": true
   },
   "rules": {
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": false, "optionalDependencies": false, "peerDependencies": false}]
     "testing-library/await-async-query": "error",
     "testing-library/no-await-sync-query": "error",
     "testing-library/no-debugging-utils": "warn",
