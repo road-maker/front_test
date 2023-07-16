@@ -6,8 +6,7 @@
     "react-app",
     "react-app/jest",
     "plugin:jsx-a11y/recommended",
-    "plugin:prettier/recommended",
-    "plugin:jest/recommended"
+    "plugin:prettier/recommended"
   ],
   "settings": {
     "import/resolver": {
@@ -30,7 +29,7 @@
     "jsx-a11y",
     "@typescript-eslint",
     "simple-import-sort",
-    "prettier",
+    "prettier"
   ],
   "env": {
     "browser": true,
@@ -71,7 +70,6 @@
       }
     ],
     "react/jsx-one-expression-per-line": "off",
-    "react/jsx-curly-newline": "off",
-    "react/jsx-props-no-spreading": "off"
+    "react/jsx-curly-newline": "off"
   }
 }
