@@ -9,7 +9,6 @@ import ReactFlow, {
   Controls,
   MiniMap,
   Panel,
-  Position,
   addEdge,
   useEdgesState,
   useNodesState,
