@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable react/jsx-props-no-spreading */
 import {
   Box,
@@ -17,8 +16,8 @@ function Demo() {
     initialValues: {
       name: '',
       email: '',
-      password: 'secret',
-      confirmPassword: 'sevret',
+      password: '',
+      confirmPassword: '',
     },
 
     // functions will be used to validate values at corresponding key
@@ -32,14 +31,20 @@ function Demo() {
           ? '비밀번호가 일치하지 않습니다'
           : null,
       password: (value) =>
-        value.length < 8 ? '비밀번호는 8자 이상 입력해주세요' : null,
+        value.length < 8 || /^[A-Za-z0-9]{8,20}$/.test(value)
+          ? '비밀번호는 영문, 숫자, 특수문자를 조합해서 8자 이상 입력해주세요'
+          : null,
     },
   });
 
   return (
     <Box maw={400} mx="auto" m={200}>
       <Title order={1}>회원가입</Title>
-      <form onSubmit={form.onSubmit(console.log)}>
+      <form
+        onSubmit={form.onSubmit(async () => {
+          await fetch('https://road-test-27b00-default-rtdb.firebaseio.com/');
+        })}
+      >
         <TextInput
           mt="xl"
           label="닉네임"
@@ -74,9 +79,11 @@ function Demo() {
         <Text ta="center" mt={100}>
           OR
         </Text>
-        <Button type="submit" mt="xl" ml={110}>
-          구글계정으로 회원가입
-        </Button>{' '}
+        <Center>
+          <Button type="submit" mt="xl">
+            구글 계정으로 회원가입
+          </Button>
+        </Center>
         <Text ta="center" mt="xl">
           <Link to="..">이미 계정이 있으신가요?</Link>
         </Text>
