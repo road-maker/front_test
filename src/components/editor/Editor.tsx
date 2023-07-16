@@ -55,10 +55,6 @@ const getLayoutedElements = (nodes, edges, direction = 'TB') => {
 
   return { nodes, edges };
 };
-const nodeDefaults = {
-  sourcePosition: Position.Right,
-  targetPosition: Position.Left,
-};
 
 const position = { x: 0, y: 0 };
 const edgeType = 'smoothstep';
@@ -146,6 +142,7 @@ function Editor(): ReactElement {
       setNodes([...layoutedNodes]);
       setEdges([...layoutedEdges]);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [nodes, edges],
   );
   const reactFlowStyle = {
