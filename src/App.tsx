@@ -1,6 +1,4 @@
 import { Container } from '@mantine/core';
-import EditorPage from 'pages/editor';
-
 import { ReactElement } from 'react';
 import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
@@ -22,16 +20,12 @@ function App(): ReactElement {
       children: [
         { index: true, element: <MainPage /> },
         {
-          path: 'users/signin',
-          element: <LoginPage />,
-
           path: '/users/signin',
           element: (
             <Container size="lg">
               <LoginPage />
             </Container>
           ),
-
         },
         { path: 'users/signup', element: <SignupPage /> },
         { path: 'users/reset', element: <ResetInfoPage /> },

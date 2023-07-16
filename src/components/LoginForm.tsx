@@ -33,7 +33,6 @@ function LoginForm(): ReactElement {
 
       <Text ta="center">OR</Text>
 
-
       <Space h="md" />
       <Center>
         <Button>구글 계정으로 로그인하기</Button>
