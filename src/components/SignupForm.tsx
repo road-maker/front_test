@@ -40,11 +40,7 @@ function Demo() {
   return (
     <Box maw={400} mx="auto" m={200}>
       <Title order={1}>회원가입</Title>
-      <form
-        onSubmit={form.onSubmit(async () => {
-          await fetch('https://road-test-27b00-default-rtdb.firebaseio.com/');
-        })}
-      >
+      <form>
         <TextInput
           mt="xl"
           label="닉네임"

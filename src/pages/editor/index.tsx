@@ -1,3 +1,4 @@
+import DropdownMenu from 'components/editor/DropdownMenu';
 import Editor from 'components/editor/Editor';
 import TextEditor from 'components/textEditor';
 import { ReactElement } from 'react';
