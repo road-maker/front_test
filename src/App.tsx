@@ -6,7 +6,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import EditorPage from './pages/editor';
 import ErrorPage from './pages/error';
-import LoginPage from './pages/login';
+import LoginPage, { action as loginAction } from './pages/login';
 import MainPage from './pages/main';
 import ResetInfoPage from './pages/resetInfo';
 import SignupPage from './pages/signup';
@@ -21,11 +21,8 @@ function App(): ReactElement {
         { index: true, element: <MainPage /> },
         {
           path: '/users/signin',
-          element: (
-            <Container size="lg">
-              <LoginPage />
-            </Container>
-          ),
+          element: <LoginPage />,
+          action: loginAction,
         },
         { path: 'users/signup', element: <SignupPage /> },
         { path: 'users/reset', element: <ResetInfoPage /> },

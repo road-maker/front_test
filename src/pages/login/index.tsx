@@ -15,7 +15,7 @@ export async function action({ request }) {
     password: data.get('password'),
   };
 
-  const response = await fetch('http://52.79.185.147/users/signin', {
+  const response = await fetch('http://52.79.185.147/api/users/signin', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
