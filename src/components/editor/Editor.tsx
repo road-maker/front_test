@@ -55,6 +55,18 @@ const getLayoutedElements = (nodes, edges, direction = 'TB') => {
   return { nodes, edges };
 };
 
+// interface InitialNode {
+//   id: string;
+//   type?: string;
+//   data?: {
+//     label: string;
+//   };
+//   position: {
+//     x: number;
+//     y: number;
+//   };
+// }
+
 const position = { x: 0, y: 0 };
 const edgeType = 'smoothstep';
 const initialNodes = [
