@@ -1,8 +1,10 @@
+/* eslint-disable class-methods-use-this */
 // eslint-disable-next-line simple-import-sort/imports
 import 'reactflow/dist/style.css';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import dagre from '@dagrejs/dagre';
+import TextEditor from 'components/textEditor';
 import { ReactElement, useCallback } from 'react';
 import ReactFlow, {
   Background,
@@ -48,42 +50,30 @@ const getLayoutedElements = (nodes, edges, direction = 'TB') => {
       x: nodeWithPosition.x - nodeWidth / 2,
       y: nodeWithPosition.y - nodeHeight / 2,
     };
-
     return node;
   });
 
   return { nodes, edges };
 };
 
-// interface InitialNode {
-//   id: string;
-//   type?: string;
-//   data?: {
-//     label: string;
-//   };
-//   position: {
-//     x: number;
-//     y: number;
-//   };
-// }
-
 const position = { x: 0, y: 0 };
 const edgeType = 'smoothstep';
 const initialNodes = [
+  // const initialNodes: MyNode = [
   {
     id: '1',
     type: 'input',
-    data: { label: 'input' },
     position,
+    data: { label: <TextEditor /> },
   },
   {
     id: '2',
-    data: { label: 'node 2' },
+    data: { label: <TextEditor /> },
     position,
   },
   {
     id: '2a',
-    data: { label: 'node 2a' },
+    data: { label: <TextEditor /> },
     position,
   },
   {
@@ -164,6 +154,7 @@ function Editor(): ReactElement {
 
   return (
     <EditorWrap style={{ width: '100vw', height: '100vh' }}>
+      {/* <TextEditor /> */}
       <ReactFlow
         nodes={nodes}
         edges={edges}
