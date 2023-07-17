@@ -35,6 +35,7 @@ export function useAuth(): UseAuth {
       if (status === 201) {
         // eslint-disable-next-line no-alert
         alert(`status code : ${status}! 회원가입 성공`);
+        return;
       }
 
       if ('user' in data && 'token' in data.user) {
