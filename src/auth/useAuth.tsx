@@ -32,12 +32,9 @@ export function useAuth(): UseAuth {
           data: { email, password, nickname },
           headers: { 'Content-Type': 'application/json' },
         });
-
-      if (status === 400) {
-        const title = data && 'message' in data ? data.message : 'Unauthorized';
+      if (status === 201) {
         // eslint-disable-next-line no-alert
-        alert(`${title},400!`);
-        return;
+        alert(`status code : ${status}! 회원가입 성공`);
       }
 
       if ('user' in data && 'token' in data.user) {
@@ -45,15 +42,15 @@ export function useAuth(): UseAuth {
         updateUser(data.user);
       }
     } catch (errorResponse) {
-      // eslint-disable-next-line no-console
-      console.log(errorResponse);
-      const title =
-        axios.isAxiosError(errorResponse) &&
-        errorResponse?.response?.data?.message
-          ? errorResponse?.response?.data?.message
+      const status =
+        axios.isAxiosError(errorResponse) && errorResponse?.response?.status
+          ? errorResponse?.response?.status
           : SERVER_ERROR;
-      // eslint-disable-next-line no-alert
-      alert(`${title},SERVER_ERROR!`);
+      status === 409
+        ? // eslint-disable-next-line no-alert
+          alert(`status code : ${status}! already a member!`)
+        : // eslint-disable-next-line no-alert
+          alert(`status code : ${status}!`);
     }
   }
 
