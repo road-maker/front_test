@@ -1,7 +1,8 @@
+/* eslint-disable no-console */
 /* eslint-disable class-methods-use-this */
 // eslint-disable-next-line simple-import-sort/imports
 import 'reactflow/dist/style.css';
-
+import ResizableNodeSelected from './ResizableNodeSelected';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import dagre from '@dagrejs/dagre';
 import TextEditor from 'components/textEditor';
@@ -15,6 +16,7 @@ import ReactFlow, {
   useEdgesState,
   useNodesState,
 } from 'reactflow';
+
 import { styled } from 'styled-components';
 
 const dagreGraph = new dagre.graphlib.Graph();
@@ -58,61 +60,95 @@ const getLayoutedElements = (nodes, edges, direction = 'TB') => {
 
 const position = { x: 0, y: 0 };
 const edgeType = 'smoothstep';
+const nodeTypes = {
+  ResizableNodeSelected,
+};
+
 const initialNodes = [
-  // const initialNodes: MyNode = [
   {
     id: '1',
-    type: 'input',
+    type: 'ResizableNodeSelected',
     position,
-    data: { label: <TextEditor /> },
+    data: { label: 'test' },
+    style: {
+      background: '#fff',
+      border: '1px solid black',
+      borderRadius: 15,
+      fontSize: 12,
+    },
   },
   {
     id: '2',
-    data: { label: <TextEditor /> },
+    type: 'ResizableNodeSelected',
+    data: { label: 'test 2' },
     position,
+    style: {
+      background: '#fff',
+      border: '1px solid black',
+      borderRadius: 15,
+      fontSize: 12,
+    },
   },
   {
     id: '2a',
-    data: { label: <TextEditor /> },
+    type: 'ResizableNodeSelected',
+    data: { label: 'test 2' },
+    // data: { label: <TextEditor /> },
     position,
+    style: {
+      background: '#fff',
+      border: '1px solid black',
+      borderRadius: 15,
+      fontSize: 12,
+    },
   },
   {
     id: '2b',
+    type: 'ResizableNodeSelected',
     data: { label: 'node 2b' },
     position,
+    style: {
+      background: '#fff',
+      border: '1px solid black',
+      borderRadius: 15,
+      fontSize: 12,
+    },
   },
   {
     id: '2c',
     data: { label: 'node 2c' },
     position,
+    style: {
+      background: '#fff',
+      border: '1px solid black',
+      borderRadius: 15,
+      fontSize: 12,
+    },
   },
   {
     id: '2d',
+    type: 'ResizableNodeSelected',
     data: { label: 'node 2d' },
     position,
+    style: {
+      background: '#fff',
+      border: '1px solid black',
+      borderRadius: 15,
+      fontSize: 12,
+    },
   },
   {
     id: '3',
+    type: 'ResizableNodeSelected',
     data: { label: 'node 3' },
     position,
+    style: {
+      background: '#fff',
+      border: '1px solid black',
+      borderRadius: 15,
+      fontSize: 12,
+    },
   },
-  {
-    id: '4',
-    data: { label: 'node 4' },
-    position,
-  },
-  {
-    id: '5',
-    data: { label: 'node 5' },
-    position,
-  },
-  {
-    id: '6',
-    type: 'output',
-    data: { label: 'output' },
-    position,
-  },
-  { id: '7', type: 'output', data: { label: 'output' }, position },
 ];
 
 const initialEdges = [
@@ -127,12 +163,15 @@ const initialEdges = [
   { id: 'e57', source: '5', target: '7', type: edgeType, animated: true },
 ];
 
-function Editor(): ReactElement {
+function RoadMapEditor(): ReactElement {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   const onConnect = useCallback(
-    (params) => setEdges((els) => addEdge(params, els)),
+    (params) => {
+      setEdges((els) => addEdge(params, els));
+      console.log(params);
+    },
     [setEdges],
   );
   const onLayout = useCallback(
@@ -143,9 +182,23 @@ function Editor(): ReactElement {
       setNodes([...layoutedNodes]);
       setEdges([...layoutedEdges]);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [nodes, edges],
+    [nodes, edges, setEdges, setNodes],
   );
+
+  const onAddNode = useCallback(() => {
+    const nodeCount: number = [...nodes].length;
+    setNodes([
+      ...nodes,
+      {
+        id: (nodeCount + 1).toString(),
+        data: { label: `new node!` },
+        position,
+      },
+    ]);
+
+    console.log(nodes);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nodes]);
   const reactFlowStyle = {
     background: 'light-pink',
     width: '100%',
@@ -154,15 +207,21 @@ function Editor(): ReactElement {
 
   return (
     <EditorWrap style={{ width: '100vw', height: '100vh' }}>
-      {/* <TextEditor /> */}
+      <TextEditor />
       <ReactFlow
         nodes={nodes}
         edges={edges}
+        contentEditable
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         fitView
+        elevateNodesOnSelect
+        nodeTypes={nodeTypes}
         style={reactFlowStyle}
+        className="react-flow-node-resizer-example"
+        minZoom={0.2}
+        maxZoom={4}
       >
         <Panel position="top-right">
           <button type="button" onClick={() => onLayout('TB')}>
@@ -171,15 +230,18 @@ function Editor(): ReactElement {
           <button type="button" onClick={() => onLayout('LR')}>
             horizontal layout
           </button>
+          <button type="button" onClick={() => onAddNode()}>
+            노드 추가
+          </button>
         </Panel>
-        <Background />
+        <Background gap={16} />
         <Controls />
-        <MiniMap />
+        <MiniMap zoomable pannable />
       </ReactFlow>
     </EditorWrap>
   );
 }
-export default Editor;
+export default RoadMapEditor;
 const EditorWrap = styled.div`
   & .react-flow__node {
     color: 'pink';
