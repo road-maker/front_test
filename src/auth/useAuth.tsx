@@ -54,13 +54,14 @@ export function useAuth(): UseAuth {
           alert(`status code : ${status}!`);
     }
   }
+  type accessToken = string;
   async function authLoginServerCall(
     urlEndpoint: string,
     email: string,
     password: string,
   ): Promise<void> {
     try {
-      const { data, status }: AxiosResponse<AuthResponseType> =
+      const { data, status }: AxiosResponse<AuthResponseType, accessToken> =
         await axiosInstance({
           url: urlEndpoint,
           method: 'POST',
@@ -76,6 +77,10 @@ export function useAuth(): UseAuth {
         }
         // eslint-disable-next-line no-console
         console.log('data', data);
+        // API 요청하는 콜마다 헤더에 accessToken 담아 보내도록 설정
+        // axios.defaults.headers.common[
+        //   'Authorization'
+        // ] = `Bearer ${accessToken}`;
 
         // const user: User = { accessToken: token };
         // setStoredUser({ data });
