@@ -64,15 +64,19 @@ function LoginForm(props: PaperProps): ReactElement {
         </Text>
 
         <Form
-          method="post"
-          // onSubmit={form.onSubmit(async () => {
-          //   await fetch('http://52.79.185.147/api/users/signin');
-          // })}
+        // onSubmit={form.onSubmit(() => {
+        //   // eslint-disable-next-line no-alert
+        //   alert('로그인 처리해주기');
+        // })}
+        // onSubmit={form.onSubmit(async () => {
+        //   await fetch('http://52.79.185.147/api/users/signin');
+        // })}
         >
           <Stack>
             <TextInput
               required
               label="이메일"
+              placeholder="user@roadmaker.com"
               value={form.values.email}
               onChange={(event) =>
                 form.setFieldValue('email', event.currentTarget.value)
@@ -83,7 +87,8 @@ function LoginForm(props: PaperProps): ReactElement {
 
             <PasswordInput
               required
-              label="비밀번호"
+              label="Password"
+              placeholder="Your password"
               value={form.values.password}
               onChange={(event) =>
                 form.setFieldValue('password', event.currentTarget.value)
@@ -95,7 +100,6 @@ function LoginForm(props: PaperProps): ReactElement {
               radius="md"
             />
           </Stack>
-
           <Group position="center" mt="xl">
             <Button type="submit" fullWidth mb={30} variant="light">
               로그인
