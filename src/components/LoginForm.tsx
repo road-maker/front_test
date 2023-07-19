@@ -98,7 +98,9 @@ function LoginForm(props: PaperProps): ReactElement {
           </Stack>
 
           <Group position="center" mt="xl">
-            <Button type="submit">로그인</Button>
+            <Button type="submit" fullWidth mb={30} variant="light">
+              로그인
+            </Button>
           </Group>
         </Form>
         <Divider label="Or" labelPosition="center" my="lg" />

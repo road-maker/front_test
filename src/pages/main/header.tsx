@@ -5,6 +5,7 @@ import {
   createStyles,
   Group,
   Header,
+  Image,
   rem,
   TextInput,
   TextInputProps,
@@ -87,7 +88,7 @@ export function HeaderMegaMenu() {
   const navigate = useNavigate();
 
   return (
-    <Box pb={120}>
+    <Box pb={30}>
       <Header height={60} px="md">
         <Group position="apart" sx={{ height: '100%' }}>
           <Group
@@ -95,16 +96,29 @@ export function HeaderMegaMenu() {
             spacing={0}
             className={classes.hiddenMobile}
           >
-            {' '}
-            ROAD_MAKER LOGO IMAGE
+            <Image
+              src="img/logo.png"
+              width={200}
+              height={50}
+              onClick={() => navigate('..')}
+            />
             <InputWithButton ml="5rem" />
           </Group>
 
           <Group className={classes.hiddenMobile}>
+            <Button
+              onClick={() => navigate('roadmap/editor')}
+              variant="light"
+              color="indigo"
+            >
+              Editor Page
+            </Button>
             <Button variant="default" onClick={() => navigate('users/signin')}>
               로그인
             </Button>
-            <Button onClick={() => navigate('users/signup')}>회원가입</Button>
+            <Button onClick={() => navigate('users/signup')} color="indigo">
+              회원가입
+            </Button>
           </Group>
         </Group>
       </Header>

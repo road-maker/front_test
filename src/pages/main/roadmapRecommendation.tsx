@@ -6,6 +6,8 @@ import {
   createStyles,
   Group,
   Image,
+  Paper,
+  PaperProps,
   rem,
   SimpleGrid,
   Text,
@@ -69,23 +71,17 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function RoadmapRecommendation() {
+export function RoadmapRecommendation(props: PaperProps) {
   const { classes, theme } = useStyles();
 
   const cards = mockdata.map((article) => (
-    <Card
-      key={article.id}
-      p="xs"
-      radius="md"
-      component="a"
-      className={classes.card}
-    >
-      <Card.Section mb="sm">
+    <Card key={article.id} radius="md" component="a" className={classes.card}>
+      <Card.Section>
         <Image
           src={article.image}
           alt={article.title}
-          height={200}
-          width={280}
+          height={160}
+          width={240}
         />
       </Card.Section>
       <Text color="dimmed" size="xs" transform="uppercase" weight={700} mt="md">
@@ -96,6 +92,9 @@ export function RoadmapRecommendation() {
       </Text>
       <Text fz="sm" color="dimmed" lineClamp={4} mt={5}>
         {article.author.description}
+      </Text>
+      <Text color="dimmed" size="xs" transform="uppercase" weight={700} mt="md">
+        {`#${article.category}`}
       </Text>
       <Group spacing={5}>
         <Avatar src={article.author.profile} alt="it's me" />
@@ -120,17 +119,19 @@ export function RoadmapRecommendation() {
   ));
 
   return (
-    <Container py="sm">
+    <Container>
       <h1>추천 로드맵</h1>
-      <SimpleGrid
-        cols={3}
-        breakpoints={[
-          { maxWidth: 'sm', cols: 2 },
-          { maxWidth: 'sm', cols: 1 },
-        ]}
-      >
-        {cards}
-      </SimpleGrid>
+      <Paper radius="md" p="xl" ml={50} mr={50} withBorder {...props}>
+        <SimpleGrid
+          cols={3}
+          breakpoints={[
+            { maxWidth: 'sm', cols: 2 },
+            { maxWidth: 'sm', cols: 1 },
+          ]}
+        >
+          {cards}
+        </SimpleGrid>
+      </Paper>
     </Container>
   );
 }

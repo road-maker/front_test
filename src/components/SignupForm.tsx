@@ -134,8 +134,11 @@ function SignUpForm(props: PaperProps): ReactElement {
           />
           <Center>
             <Button
+              fullWidth
               type="submit"
               mt="xl"
+              mb={30}
+              variant="light"
               onClick={() => auth.signup(email, password, nickname)}
             >
               회원가입
