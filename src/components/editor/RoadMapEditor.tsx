@@ -6,7 +6,7 @@ import ResizableNodeSelected from './ResizableNodeSelected';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import dagre from '@dagrejs/dagre';
 import TextEditor from 'components/textEditor';
-import { ReactElement, useCallback } from 'react';
+import { ReactElement, useCallback, useEffect } from 'react';
 import ReactFlow, {
   Background,
   Controls,
@@ -135,8 +135,7 @@ const initialNodes = [
       background: 'purple',
       border: '1px solid black',
       borderRadius: '100%',
-      width: '3em',
-      height: '3em',
+      padding: '2rem',
       fontSize: 12,
     },
   },
@@ -207,6 +206,12 @@ function RoadMapEditor(): ReactElement {
     width: '100%',
     height: 300,
   };
+
+  // 첫로딩 시의 포멧
+  useEffect(() => {
+    onLayout('TB');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <EditorWrap style={{ width: '100vw', height: '100vh' }}>
