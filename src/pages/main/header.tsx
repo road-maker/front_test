@@ -102,9 +102,9 @@ export function HeaderMegaMenu() {
 
           <Group className={classes.hiddenMobile}>
             <Button variant="default" onClick={() => navigate('users/signin')}>
-              Log in
+              로그인
             </Button>
-            <Button onClick={() => navigate('users/signup')}>Sign up</Button>
+            <Button onClick={() => navigate('users/signup')}>회원가입</Button>
           </Group>
         </Group>
       </Header>
