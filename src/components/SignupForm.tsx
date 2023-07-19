@@ -75,11 +75,13 @@ function SignUpForm() {
           withAsterisk
           value={nickname}
           onChange={onChangeNickname}
+          autoComplete="username"
         />
         <TextInput
           mt="xl"
           label="이메일"
           placeholder="이메일을 입력해주세요"
+          autoComplete="new-email"
           withAsterisk
           value={email}
           onChange={onChangeEmail}
@@ -90,6 +92,7 @@ function SignUpForm() {
           placeholder="비밀번호를 입력해주세요"
           withAsterisk
           value={password}
+          autoComplete="new-password"
           onChange={onChangePassword}
         />
         <PasswordInput
@@ -97,6 +100,7 @@ function SignUpForm() {
           label="비밀번호 확인"
           placeholder="비밀번호를 입력해주세요"
           withAsterisk
+          autoComplete="current-password"
           value={confirmPassword}
           onChange={onChangeConfirmPassword}
         />
@@ -110,11 +114,9 @@ function SignUpForm() {
         <Text ta="center" mt={100}>
           OR
         </Text>
-        <Center>
-          <Button type="submit" mt="xl">
-            구글 계정으로 회원가입
-          </Button>
-        </Center>
+        <Button type="submit" mt="xl">
+          구글 계정으로 회원가입
+        </Button>
         <Text ta="center" mt="xl">
           <Link to="..">이미 계정이 있으신가요?</Link>
         </Text>
