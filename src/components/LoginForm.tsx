@@ -77,6 +77,7 @@ function LoginForm(props: PaperProps): ReactElement {
               required
               label="이메일"
               placeholder="user@roadmaker.com"
+              autoComplete="current-email"
               value={form.values.email}
               onChange={(event) =>
                 form.setFieldValue('email', event.currentTarget.value)
@@ -89,6 +90,7 @@ function LoginForm(props: PaperProps): ReactElement {
               required
               label="Password"
               placeholder="Your password"
+              autoComplete="current-password"
               value={form.values.password}
               onChange={(event) =>
                 form.setFieldValue('password', event.currentTarget.value)
