@@ -3,7 +3,6 @@
 import {
   Anchor,
   Button,
-  Checkbox,
   Divider,
   Group,
   Paper,
@@ -30,12 +29,14 @@ function LoginForm(props: PaperProps): ReactElement {
   const auth = useAuth();
   const { user } = useUser();
 
+  if (user) {
+    // eslint-disable-next-line no-alert
+    alert(`${user}, 로그인 성공~`);
+  }
   const form = useForm({
     initialValues: {
       email: '',
-      name: '',
       password: '',
-      terms: true,
     },
 
     validate: {
@@ -45,6 +46,10 @@ function LoginForm(props: PaperProps): ReactElement {
           ? '비밀번호는 영문, 숫자, 특수문자를 조합해서 8자 이상 입력해주세요'
           : null,
     },
+    transformValues: (values) => ({
+      email: `${values.email}`,
+      password: `${values.password}`,
+    }),
   });
 
   return (
@@ -57,50 +62,27 @@ function LoginForm(props: PaperProps): ReactElement {
         onSubmit={form.onSubmit((values) => {
           setEmail(values.email);
           setPassword(values.password);
-          console.log(form);
+          console.log(values);
         })}
       >
         <Stack>
           <TextInput
             required
             label="Email"
-            placeholder="hello@mantine.dev"
-            // value={form.values.email}
-            // onChange={(event) =>
-            //   form.setFieldValue('email', event.currentTarget.value)
-            // }
+            placeholder="이메일 입력"
             value={email}
             onChange={onChangeEmail}
-            error={form.errors.email && 'Invalid email'}
             radius="md"
           />
 
           <PasswordInput
             required
             label="Password"
-            placeholder="Your password"
+            placeholder="비밀번호 입력"
             value={password}
             onChange={onChangePassword}
-            // value={form.values.password}
-            // onChange={(event) =>
-            //   form.setFieldValue('password', event.currentTarget.value)
-            // }
-            error={
-              form.errors.password &&
-              'Password should include at least 6 characters'
-            }
             radius="md"
           />
-
-          {type === 'register' && (
-            <Checkbox
-              label="I accept terms and conditions"
-              checked={form.values.terms}
-              onChange={(event) =>
-                form.setFieldValue('terms', event.currentTarget.checked)
-              }
-            />
-          )}
         </Stack>
 
         <Group position="apart" mt="xl">
@@ -108,7 +90,6 @@ function LoginForm(props: PaperProps): ReactElement {
             component="button"
             type="button"
             color="dimmed"
-            // onClick={() => toggle()}
             onClick={() => {
               toggle();
               navigate('/users/signup');
@@ -116,20 +97,19 @@ function LoginForm(props: PaperProps): ReactElement {
             size="xs"
           >
             회원 가입
-            {/* {type === 'register'
-              ? 'Already have an account? Login'
-              : "Don't have an account? Register"} */}
           </Anchor>
-          <Button type="submit" radius="xl">
+          <Button
+            type="submit"
+            radius="xl"
+            onClick={() => auth.signin(email, password)}
+          >
             {upperFirst(type)}
           </Button>
         </Group>
       </form>
       <Divider label="Or" labelPosition="center" my="lg" />
       <Group grow mb="md" mt="md">
-        <button type="button" onClick={() => auth.signin(email, password)}>
-          구글 계정으로 로그인하기
-        </button>
+        <button type="button">구글 계정으로 로그인하기</button>
       </Group>
     </Paper>
   );

@@ -10,11 +10,11 @@ import {
   setStoredUser,
 } from '../../../user-storage';
 
-
 async function getUser(user: User | null): Promise<User | null> {
   if (!user) return null;
   const { data }: AxiosResponse<{ user: User }> = await axiosInstance.get(
-    `/user/${user.id}`, // 로그인한 유저가 서버로 유저데이터 요청
+    // `/members/${user.nickname}`, // 로그인한 유저가 서버로 유저데이터 요청
+    `/members/signin`, // 로그인한 유저가 서버로 유저데이터 요청
     {
       headers: getJWTHeader(user),
     },
@@ -48,7 +48,7 @@ export function useUser(): UseUser {
   // useAuth에서 호출
   function clearUser() {
     queryClient.setQueryData(queryKeys.user, null);
-    queryClient.removeQueries('user-mydetails'); // 유저가 로그아웃하면 유저페이지 접근X하도록
+    // queryClient.removeQueries('user-mydetails'); // 유저가 로그아웃하면 유저페이지 접근X하도록
     // 쿼리 여러개 없애고 싶으면 위의 코드에 인자로 넣어서 보내주기
   }
 
