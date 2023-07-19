@@ -3,6 +3,7 @@ import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
 import Placeholder from '@tiptap/extension-placeholder';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { useInput } from 'components/common/hooks/useInput';
 
 import { store, webrtcProvider } from './store';
 
@@ -23,6 +24,7 @@ const getRandomColor = () => getRandomElement(colors);
 const getRandomName = () => getRandomElement(names);
 
 export default function CodeBoxEditor() {
+  const [content, onChangeContent, setContent] = useInput([]);
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -42,7 +44,11 @@ export default function CodeBoxEditor() {
   return (
     <div className="editor">
       <MenuBar editor={editor} />
-      <EditorContent editor={editor} />
+      <EditorContent
+        editor={editor}
+        // onChange={onChangeContent}
+        // content={content}
+      />
     </div>
   );
 }
