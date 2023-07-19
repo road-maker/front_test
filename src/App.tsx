@@ -1,4 +1,3 @@
-import { Container } from '@mantine/core';
 import { ReactElement } from 'react';
 import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
