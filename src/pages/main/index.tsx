@@ -10,6 +10,12 @@ function MainPage() {
       <button type="button" onClick={() => navigate('/roadmap/editor')}>
         editor page
       </button>
+      <button type="button" onClick={() => navigate('/roadmap/tiptapeditor')}>
+        tiptapeditor page
+      </button>
+      <button type="button" onClick={() => navigate('/roadmap/codeboxeditor')}>
+        codebox editor page
+      </button>
     </>
   );
 }

@@ -1,4 +1,5 @@
-// import MonacoEditor from 'components/pretest/monaco/Editor';
+import CodeBoxEditor from 'components/pretest/codeBox';
+import MonacoEditor from 'components/pretest/monaco/Editor';
 import TipTapEditor from 'components/pretest/tiptap/Editor';
 import EditorPage from 'pages/editor';
 import { ReactElement } from 'react';
@@ -27,8 +28,9 @@ function App(): ReactElement {
         { path: 'users/signup', element: <SignupPage /> },
         { path: 'users/reset', element: <ResetInfoPage /> },
         { path: 'roadmap/editor', element: <EditorPage /> },
-        // { path: 'roadmap/monacoeditor', element: <MonacoEditor /> },
+        { path: 'roadmap/monacoeditor', element: <MonacoEditor /> },
         { path: 'roadmap/tiptapeditor', element: <TipTapEditor /> },
+        { path: 'roadmap/codeboxeditor', element: <CodeBoxEditor /> },
       ],
     },
   ]);
