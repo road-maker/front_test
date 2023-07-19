@@ -122,6 +122,7 @@ function LoginForm(props: PaperProps): ReactElement {
           <TextInput
             required
             label="Email"
+            autoComplete="user-email"
             placeholder="hello@mantine.dev"
             value={form.values.email}
             onChange={(event) =>
@@ -134,6 +135,7 @@ function LoginForm(props: PaperProps): ReactElement {
           <PasswordInput
             required
             label="Password"
+            autoComplete="user-password"
             placeholder="Your password"
             value={form.values.password}
             onChange={(event) =>
