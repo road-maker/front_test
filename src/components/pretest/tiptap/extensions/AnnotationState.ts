@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { EditorState, Transaction } from 'prosemirror-state';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 import {
@@ -6,6 +8,7 @@ import {
   ySyncPluginKey,
 } from 'y-prosemirror';
 import * as Y from 'yjs';
+
 import { AnnotationItem } from './AnnotationItem';
 import { AnnotationPluginKey } from './AnnotationPlugin';
 import {
@@ -31,11 +34,13 @@ export class AnnotationState {
     this.options = options;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   randomId() {
     // TODO: That seems … to simple.
     return Math.floor(Math.random() * 0xffffffff).toString();
   }
 
+  // eslint-disable-next-line consistent-return
   findAnnotation(id: string) {
     const current = this.decorations.find();
 

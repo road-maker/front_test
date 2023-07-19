@@ -189,9 +189,9 @@ export default function TextEditor() {
         },
       }),
     ],
-    onUpdate(v) {
-      console.log(v);
-    },
+    // onUpdate(v) {
+    //   console.log(v);
+    // },
     content: `
       <h2>
         Hi there,

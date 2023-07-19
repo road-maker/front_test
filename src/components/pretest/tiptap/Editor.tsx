@@ -1,16 +1,10 @@
 import Collaboration from '@tiptap/extension-collaboration';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { useState } from 'react';
-import { styled } from 'styled-components';
 import { WebrtcProvider } from 'y-webrtc';
 import * as Y from 'yjs';
 
 import { CollaborationAnnotation } from './extensions/collaboration-annotation';
-
-const chapterId = '123456123123aaaa';
-const ydoc = new Y.Doc();
-const provider = new WebrtcProvider(chapterId, ydoc);
 
 function AddTextStyles({ editor }) {
   return (
@@ -56,27 +50,14 @@ function AddTextStyles({ editor }) {
       >
         <span style={{ textDecoration: 'underline' }}>U</span>
       </button>
-      {/* 
-      <button
-        type="button"
-        onClick={() => addComment(editor)}
-        className={
-          editor.isActive('underline')
-            ? 'btn btn-primary-black'
-            : 'btn btn-primary-inactive'
-        }
-      >
-        <span>Annotation</span>
-      </button> */}
     </>
   );
 }
-export default function TipTapEditor() {
-  const [comments, setComments] = useState();
+
+export function Editor({ ydoc }) {
   const editorOne = useEditor({
     extensions: [
       StarterKit.configure({ history: false }),
-      Comment,
       CollaborationAnnotation.configure({
         document: ydoc,
         instance: 'editor1',
@@ -98,13 +79,8 @@ export default function TipTapEditor() {
   const editorTwo = useEditor({
     extensions: [
       StarterKit.configure({ history: false }),
-      Comment,
       CollaborationAnnotation.configure({
         document: ydoc,
-        // onUpdate: (items) => {
-        //   const comments = items;
-        //   setComments(comments);
-        // },
         instance: 'editor2',
       }),
       Collaboration.configure({
@@ -120,9 +96,8 @@ export default function TipTapEditor() {
         </p>
       `,
   });
-
   return (
-    <Editor ydoc={ydoc}>
+    <div>
       {editorOne && (
         <>
           <h1>Editor 1</h1>
@@ -132,9 +107,28 @@ export default function TipTapEditor() {
           <EditorContent className="editor-content" editor={editorTwo} />
         </>
       )}
-    </Editor>
+    </div>
   );
 }
-const Editor = styled.div`
-  width: 9em;
-`;
+
+export default function TipTapEditor() {
+  const chapterId = 'whydoesitalreadyexist?';
+  const ydoc = new Y.Doc();
+  const provider = new WebrtcProvider(chapterId, ydoc);
+  // const;
+  // useEffect(() => {
+  //   return () => {
+  //     if (provider) {
+  //       provider.destroy();
+  //     }
+  //   };
+
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
+  return (
+    <div>
+      {/* <button onClick={} type="button"></button> */}
+      <Editor ydoc={ydoc} />
+    </div>
+  );
+}

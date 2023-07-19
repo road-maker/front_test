@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Command, Extension } from '@tiptap/core';
 import * as Y from 'yjs';
+
 import { AnnotationPlugin, AnnotationPluginKey } from './AnnotationPlugin';
 
 export interface AddAnnotationAction {
   type: 'addAnnotation';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
   from: number;
   to: number;
@@ -12,6 +15,7 @@ export interface AddAnnotationAction {
 export interface UpdateAnnotationAction {
   type: 'updateAnnotation';
   id: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
 }
 
@@ -22,12 +26,14 @@ export interface DeleteAnnotationAction {
 
 export interface AnnotationOptions {
   HTMLAttributes: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
   };
   /**
    * An event listener which receives annotations for the current selection.
    */
-  onUpdate: (items: [any?]) => {};
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
+  // onUpdate: (items: AnnotationItem[] | [any?]) => {};
   /**
    * An initialized Y.js document.
    */
@@ -39,6 +45,7 @@ export interface AnnotationOptions {
   /**
    * A raw Y.js map, can be used instead of `document` and `field`.
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   map: Y.Map<any> | null;
   instance: string;
 }
@@ -46,13 +53,16 @@ export interface AnnotationOptions {
 function getMapFromOptions(options: AnnotationOptions): Y.Map<any> {
   return options.map
     ? options.map
-    : (options.document.getMap(options.field) as Y.Map<any>);
+    : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (options.document.getMap(options.field) as Y.Map<any>);
 }
 
 declare module '@tiptap/core' {
   interface Commands {
     annotation: {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       addAnnotation: (data: any) => Command;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       updateAnnotation: (id: string, data: any) => Command;
       deleteAnnotation: (id: string) => Command;
     };
@@ -62,21 +72,22 @@ declare module '@tiptap/core' {
 export const CollaborationAnnotation = Extension.create({
   name: 'annotation',
 
-  defaultOptions: <AnnotationOptions>{
+  defaultOptions: {
     HTMLAttributes: {
       class: 'annotation',
     },
-    onUpdate: (decorations) => decorations,
+    // onUpdate: (decorations) => decorations,
     document: null,
     field: 'annotations',
     map: null,
     instance: '',
-  },
+  } as AnnotationOptions,
 
   onCreate() {
     const map = getMapFromOptions(this.options);
 
     map.observe(() => {
+      // eslint-disable-next-line no-console
       console.log(
         `[${this.options.instance}] map updated  → createDecorations`,
       );
@@ -101,12 +112,12 @@ export const CollaborationAnnotation = Extension.create({
           }
 
           if (dispatch && data) {
-            state.tr.setMeta(AnnotationPluginKey, <AddAnnotationAction>{
+            state.tr.setMeta(AnnotationPluginKey, {
               type: 'addAnnotation',
               from: selection.from,
               to: selection.to,
               data,
-            });
+            } as AddAnnotationAction);
           }
 
           return true;
@@ -115,11 +126,11 @@ export const CollaborationAnnotation = Extension.create({
         (id: string, data: any) =>
         ({ dispatch, state }) => {
           if (dispatch) {
-            state.tr.setMeta(AnnotationPluginKey, <UpdateAnnotationAction>{
+            state.tr.setMeta(AnnotationPluginKey, {
               type: 'updateAnnotation',
               id,
               data,
-            });
+            } as UpdateAnnotationAction);
           }
 
           return true;
@@ -128,10 +139,10 @@ export const CollaborationAnnotation = Extension.create({
         (id) =>
         ({ dispatch, state }) => {
           if (dispatch) {
-            state.tr.setMeta(AnnotationPluginKey, <DeleteAnnotationAction>{
+            state.tr.setMeta(AnnotationPluginKey, {
               type: 'deleteAnnotation',
               id,
-            });
+            } as DeleteAnnotationAction);
           }
 
           return true;
@@ -143,7 +154,6 @@ export const CollaborationAnnotation = Extension.create({
     return [
       AnnotationPlugin({
         HTMLAttributes: this.options.HTMLAttributes,
-        onUpdate: this.options.onUpdate,
         map: getMapFromOptions(this.options),
         instance: this.options.instance,
       }),

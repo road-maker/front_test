@@ -1,14 +1,20 @@
 import { Plugin, PluginKey } from 'prosemirror-state';
 import * as Y from 'yjs';
+
 import { AnnotationState } from './AnnotationState';
 
 export const AnnotationPluginKey = new PluginKey('annotation');
 
 export interface AnnotationPluginOptions {
   HTMLAttributes: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
   };
-  onUpdate: (items: [any?]) => {};
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
+  // onUpdate: (items: AnnotationItem[] | [any?]) => {};
+  // onUpdate: (items: [any?]) => {};
+  // onUpdate: (items: [any?]) => NonNullable<unknown>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   map: Y.Map<any>;
   instance: string;
 }
@@ -41,7 +47,7 @@ export const AnnotationPlugin = (options: AnnotationPluginOptions) =>
 
         const annotations = this.getState(state).annotationsAt(selection.from);
 
-        options.onUpdate(annotations);
+        // options.onUpdate(annotations);
 
         return decorations;
       },
