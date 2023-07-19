@@ -1,72 +1,4 @@
-// import { Box, Button, Center, Space, Text, TextInput } from '@mantine/core';
-// import { useForm } from '@mantine/form';
-// import { ReactElement } from 'react';
-// import { useNavigate } from 'react-router-dom';
-
-// function LoginForm(): ReactElement {
-//   const navigate = useNavigate();
-//   const form = useForm({
-//     initialValues: {
-//       terms: false,
-//       user: {
-//         email: '',
-//         password: '',
-//       },
-//     },
-//   });
-
-//   return (
-//     <Box maw={320} mx="auto" mt="xl">
-//       <TextInput
-//         label="Email"
-//         placeholder="이메일을 입력해주세요."
-//         {...form.getInputProps('user.email')}
-//       />
-//       <TextInput
-//         label="Password"
-//         type="password"
-//         placeholder="비밀번호를 입력해주세요."
-//         mt="md"
-//         {...form.getInputProps('user.password')}
-//       />
-//       <Space h="md" />
-
-//       <Center>
-//         <Button mt="xl">로그인하기</Button>
-//       </Center>
-//       <Text ta="center" mt="xl">
-//         OR
-//       </Text>
-
-//       <Space h="md" />
-//       <Center>
-//         <Button>구글 계정으로 로그인하기</Button>
-//       </Center>
-//       <Space h="md" />
-//       <Text
-//         c="blue"
-//         td="underline"
-//         ta="center"
-//         sx={() => ({
-//           '&:hover': {
-//             cursor: 'pointer',
-//           },
-//         })}
-//         onClick={() => navigate('/users/signup')}
-//       >
-//         회원가입
-//       </Text>
-//       {/* <Text size="sm" weight={500} mt="xl">
-//         Form values:
-//       </Text>
-//       <Code block mt={5}>
-//         {JSON.stringify(form.values, null, 2)}
-//       </Code> */}
-//     </Box>
-//   );
-// }
-
-// export default LoginForm;
+/* eslint-disable no-console */
 
 import {
   Anchor,
@@ -83,12 +15,21 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { upperFirst, useToggle } from '@mantine/hooks';
+import { useAuth } from 'auth/useAuth';
 import { ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useInput } from './common/hooks/useInput';
+import { useUser } from './user/hooks/useUser';
+
 function LoginForm(props: PaperProps): ReactElement {
   const navigate = useNavigate();
+  const [email, onChangeEmail, setEmail] = useInput('');
+  const [password, onChangePassword, setPassword] = useInput('');
   const [type, toggle] = useToggle(['login', 'register']);
+  const auth = useAuth();
+  const { user } = useUser();
+
   const form = useForm({
     initialValues: {
       email: '',
@@ -100,8 +41,8 @@ function LoginForm(props: PaperProps): ReactElement {
     validate: {
       email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Invalid email'),
       password: (val) =>
-        val.length <= 6
-          ? 'Password should include at least 6 characters'
+        val.length < 8 || /^[A-Za-z0-9]{8,20}$/.test(val)
+          ? '비밀번호는 영문, 숫자, 특수문자를 조합해서 8자 이상 입력해주세요'
           : null,
     },
   });
@@ -113,9 +54,10 @@ function LoginForm(props: PaperProps): ReactElement {
       </Text>
 
       <form
-        onSubmit={form.onSubmit(() => {
-          // eslint-disable-next-line no-alert
-          alert('로그인 처리해주기');
+        onSubmit={form.onSubmit((values) => {
+          setEmail(values.email);
+          setPassword(values.password);
+          console.log(form);
         })}
       >
         <Stack>
@@ -123,10 +65,12 @@ function LoginForm(props: PaperProps): ReactElement {
             required
             label="Email"
             placeholder="hello@mantine.dev"
-            value={form.values.email}
-            onChange={(event) =>
-              form.setFieldValue('email', event.currentTarget.value)
-            }
+            // value={form.values.email}
+            // onChange={(event) =>
+            //   form.setFieldValue('email', event.currentTarget.value)
+            // }
+            value={email}
+            onChange={onChangeEmail}
             error={form.errors.email && 'Invalid email'}
             radius="md"
           />
@@ -135,10 +79,12 @@ function LoginForm(props: PaperProps): ReactElement {
             required
             label="Password"
             placeholder="Your password"
-            value={form.values.password}
-            onChange={(event) =>
-              form.setFieldValue('password', event.currentTarget.value)
-            }
+            value={password}
+            onChange={onChangePassword}
+            // value={form.values.password}
+            // onChange={(event) =>
+            //   form.setFieldValue('password', event.currentTarget.value)
+            // }
             error={
               form.errors.password &&
               'Password should include at least 6 characters'
@@ -181,7 +127,9 @@ function LoginForm(props: PaperProps): ReactElement {
       </form>
       <Divider label="Or" labelPosition="center" my="lg" />
       <Group grow mb="md" mt="md">
-        <button type="button">구글 계정으로 로그인하기</button>
+        <button type="button" onClick={() => auth.signin(email, password)}>
+          구글 계정으로 로그인하기
+        </button>
       </Group>
     </Paper>
   );
