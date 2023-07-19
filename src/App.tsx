@@ -1,11 +1,11 @@
-import EditorPage from 'pages/editor';
 import { ReactElement } from 'react';
 import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
+import EditorPage from './pages/editor';
 import ErrorPage from './pages/error';
-import LoginPage from './pages/login';
+import LoginPage, { action as loginAction } from './pages/login';
 import MainPage from './pages/main';
 import ResetInfoPage from './pages/resetInfo';
 import SignupPage from './pages/signup';
@@ -21,6 +21,7 @@ function App(): ReactElement {
         {
           path: '/users/signin',
           element: <LoginPage />,
+          action: loginAction,
         },
         { path: 'users/signup', element: <SignupPage /> },
         { path: 'users/reset', element: <ResetInfoPage /> },

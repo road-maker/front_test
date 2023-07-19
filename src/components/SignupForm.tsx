@@ -2,6 +2,8 @@
 import {
   Box,
   Button,
+  Center,
+  PaperProps,
   PasswordInput,
   Text,
   TextInput,
@@ -9,12 +11,13 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useAuth } from 'auth/useAuth';
+import { ReactElement } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useInput } from './common/hooks/useInput';
 import { useUser } from './user/hooks/useUser';
 
-function SignUpForm() {
+function SignUpForm(props: PaperProps): ReactElement {
   const [email, onChangeEmail, setEmail] = useInput('');
   const [nickname, onChangeNickname, setNickname] = useInput('');
   const [password, onChangePassword, setPassword] = useInput('');
@@ -73,16 +76,16 @@ function SignUpForm() {
           label="닉네임"
           placeholder="닉네임을 입력해주세요"
           withAsterisk
+          autoComplete="username"
           value={nickname}
           onChange={onChangeNickname}
-          autoComplete="username"
         />
         <TextInput
           mt="xl"
           label="이메일"
           placeholder="이메일을 입력해주세요"
-          autoComplete="new-email"
           withAsterisk
+          autoComplete="new-email"
           value={email}
           onChange={onChangeEmail}
         />
@@ -114,9 +117,11 @@ function SignUpForm() {
         <Text ta="center" mt={100}>
           OR
         </Text>
-        <Button type="submit" mt="xl">
-          구글 계정으로 회원가입
-        </Button>
+        <Center>
+          <Button type="submit" mt="xl">
+            구글 계정으로 회원가입
+          </Button>
+        </Center>
         <Text ta="center" mt="xl">
           <Link to="..">이미 계정이 있으신가요?</Link>
         </Text>
