@@ -1,17 +1,15 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Button } from '@mantine/core';
+import { useNavigate } from 'react-router-dom';
+
+import { HeaderMegaMenu } from './header';
+import { RoadmapRecommendation } from './roadmapRecommendation';
 
 function MainPage() {
-  const navigate = useNavigate();
-
   return (
     <>
-      <h1>MainPage</h1>
-      <Link to="users/signin">로그인</Link>
-      <button type="button" onClick={() => navigate('/roadmap/editor')}>
-        editor page
-      </button>
+      <HeaderMegaMenu />
+      <RoadmapRecommendation />
     </>
   );
 }
-
 export default MainPage;

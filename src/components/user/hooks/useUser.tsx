@@ -10,7 +10,6 @@ import {
   setStoredUser,
 } from '../../../user-storage';
 
-
 async function getUser(user: User | null): Promise<User | null> {
   if (!user) return null;
   const { data }: AxiosResponse<{ user: User }> = await axiosInstance.get(
