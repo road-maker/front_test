@@ -73,7 +73,7 @@ function LoginForm(props: PaperProps): ReactElement {
           <Stack>
             <TextInput
               required
-              label="Email"
+              label="이메일"
               value={form.values.email}
               onChange={(event) =>
                 form.setFieldValue('email', event.currentTarget.value)
@@ -84,7 +84,7 @@ function LoginForm(props: PaperProps): ReactElement {
 
             <PasswordInput
               required
-              label="Password"
+              label="비밀번호"
               value={form.values.password}
               onChange={(event) =>
                 form.setFieldValue('password', event.currentTarget.value)
