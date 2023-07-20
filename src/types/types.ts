@@ -1,9 +1,9 @@
 export interface Id {
-  id: number;
+  id?: number;
 }
 export interface NewUser {
   nickname?: string;
-  token?: string;
+  accessToken?: string;
   password?: string;
   email?: string;
 }

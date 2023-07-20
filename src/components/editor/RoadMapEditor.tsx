@@ -1,10 +1,12 @@
-/* eslint-disable react/jsx-no-bind */
+/* eslint-disable no-console */
+/* eslint-disable class-methods-use-this */
 // eslint-disable-next-line simple-import-sort/imports
 import 'reactflow/dist/style.css';
-
+import ResizableNodeSelected from './ResizableNodeSelected';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import dagre from '@dagrejs/dagre';
-import { ReactElement, useCallback } from 'react';
+import TextEditor from 'components/textEditor';
+import { ReactElement, useCallback, useEffect } from 'react';
 import ReactFlow, {
   Background,
   Controls,
@@ -14,16 +16,8 @@ import ReactFlow, {
   useEdgesState,
   useNodesState,
 } from 'reactflow';
+
 import { styled } from 'styled-components';
-// import { Button, Menu, Text } from '@mantine/core';
-// import {
-//   IconSettings,
-//   IconSearch,
-//   IconPhoto,
-//   IconMessageCircle,
-//   IconTrash,
-//   IconArrowsLeftRight,
-// } from '@tabler/icons-react';
 
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
@@ -58,81 +52,105 @@ const getLayoutedElements = (nodes, edges, direction = 'TB') => {
       x: nodeWithPosition.x - nodeWidth / 2,
       y: nodeWithPosition.y - nodeHeight / 2,
     };
-
     return node;
   });
 
   return { nodes, edges };
 };
 
-// interface InitialNode {
-//   id: string;
-//   type?: string;
-//   data?: {
-//     label: string;
-//   };
-//   position: {
-//     x: number;
-//     y: number;
-//   };
-// }
-
 const position = { x: 0, y: 0 };
 const edgeType = 'smoothstep';
+const nodeTypes = {
+  ResizableNodeSelected,
+};
+
 const initialNodes = [
   {
     id: '1',
-    type: 'input',
-    data: { label: 'input' },
+    type: 'ResizableNodeSelected',
     position,
+    data: { label: 'test' },
+    style: {
+      background: '#fff',
+      border: '1px solid black',
+      borderRadius: 15,
+      fontSize: 12,
+    },
   },
   {
     id: '2',
-    data: { label: 'node 2' },
+    type: 'ResizableNodeSelected',
+    data: { label: 'test 2' },
     position,
+    style: {
+      background: '#fff',
+      border: '1px solid black',
+      borderRadius: 15,
+      fontSize: 12,
+    },
   },
   {
     id: '2a',
-    data: { label: 'node 2a' },
+    type: 'ResizableNodeSelected',
+    data: { label: 'test 2' },
+    // data: { label: <TextEditor /> },
     position,
+    style: {
+      background: '#fff',
+      border: '1px solid black',
+      borderRadius: 15,
+      fontSize: 12,
+    },
   },
   {
     id: '2b',
+    type: 'ResizableNodeSelected',
     data: { label: 'node 2b' },
     position,
+    style: {
+      background: '#fff',
+      border: '1px solid black',
+      borderRadius: 15,
+      fontSize: 12,
+    },
   },
   {
     id: '2c',
     data: { label: 'node 2c' },
     position,
+    style: {
+      background: '#fff',
+      border: '1px solid black',
+      borderRadius: 15,
+      fontSize: 12,
+    },
   },
   {
     id: '2d',
+    type: 'ResizableNodeSelected',
     data: { label: 'node 2d' },
     position,
+    className: 'circle',
+    style: {
+      background: 'purple',
+      border: '1px solid black',
+      borderRadius: '100%',
+      padding: '2rem',
+      fontSize: 12,
+    },
   },
   {
     id: '3',
+    type: 'ResizableNodeSelected',
     data: { label: 'node 3' },
     position,
+    style: {
+      background: '#fff',
+      border: '1px solid black',
+      borderRadius: 15,
+      fontSize: 12,
+    },
   },
-  {
-    id: '4',
-    data: { label: 'node 4' },
-    position,
-  },
-  {
-    id: '5',
-    data: { label: 'node 5' },
-    position,
-  },
-  {
-    id: '6',
-    type: 'output',
-    data: { label: 'output' },
-    position,
-  },
-  { id: '7', type: 'output', data: { label: 'output' }, position },
 ];
 
 const initialEdges = [
@@ -147,12 +165,15 @@ const initialEdges = [
   { id: 'e57', source: '5', target: '7', type: edgeType, animated: true },
 ];
 
-function Editor(): ReactElement {
+function RoadMapEditor(): ReactElement {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   const onConnect = useCallback(
-    (params) => setEdges((els) => addEdge(params, els)),
+    (params) => {
+      setEdges((els) => addEdge(params, els));
+      console.log(params);
+    },
     [setEdges],
   );
   const onLayout = useCallback(
@@ -163,27 +184,52 @@ function Editor(): ReactElement {
       setNodes([...layoutedNodes]);
       setEdges([...layoutedEdges]);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [nodes, edges],
+    [nodes, edges, setEdges, setNodes],
   );
+
+  const onAddNode = useCallback(() => {
+    const nodeCount: number = [...nodes].length;
+    setNodes([
+      ...nodes,
+      {
+        id: (nodeCount + 1).toString(),
+        data: { label: `new node!` },
+        position,
+      },
+    ]);
+
+    console.log(nodes);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nodes]);
   const reactFlowStyle = {
     background: 'light-pink',
     width: '100%',
     height: 300,
   };
 
+  // 첫로딩 시의 포멧
+  useEffect(() => {
+    onLayout('TB');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <EditorWrap style={{ width: '100vw', height: '100vh' }}>
-      {/* <Menu shadow="md" width={200}>
-        <Menu.Target> */}
+      <TextEditor />
       <ReactFlow
         nodes={nodes}
         edges={edges}
+        contentEditable
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         fitView
+        elevateNodesOnSelect
+        nodeTypes={nodeTypes}
         style={reactFlowStyle}
+        className="react-flow-node-resizer-example"
+        minZoom={0.2}
+        maxZoom={4}
       >
         <Panel position="top-right">
           <button type="button" onClick={() => onLayout('TB')}>
@@ -192,45 +238,18 @@ function Editor(): ReactElement {
           <button type="button" onClick={() => onLayout('LR')}>
             horizontal layout
           </button>
+          <button type="button" onClick={() => onAddNode()}>
+            노드 추가
+          </button>
         </Panel>
-        <Background />
+        <Background gap={16} />
         <Controls />
-        <MiniMap />
+        <MiniMap zoomable pannable />
       </ReactFlow>
-      {/* </Menu.Target>
-
-        <Menu.Dropdown>
-          <Menu.Label>Application</Menu.Label>
-          <Menu.Item icon={<IconSettings size={14} />}>Settings</Menu.Item>
-          <Menu.Item icon={<IconMessageCircle size={14} />}>Messages</Menu.Item>
-          <Menu.Item icon={<IconPhoto size={14} />}>Gallery</Menu.Item>
-          <Menu.Item
-            icon={<IconSearch size={14} />}
-            rightSection={
-              <Text size="xs" color="dimmed">
-                ⌘K
-              </Text>
-            }
-          >
-            Search
-          </Menu.Item>
-
-          <Menu.Divider />
-
-          <Menu.Label>Danger zone</Menu.Label>
-          <Menu.Item icon={<IconArrowsLeftRight size={14} />}>
-            Transfer my data
-          </Menu.Item>
-          <Menu.Item color="red" icon={<IconTrash size={14} />}>
-            Delete my account
-          </Menu.Item>
-        </Menu.Dropdown>
-      </Menu> */}
     </EditorWrap>
   );
 }
-
-export default Editor;
+export default RoadMapEditor;
 const EditorWrap = styled.div`
   & .react-flow__node {
     color: 'pink';

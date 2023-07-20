@@ -1,9 +1,11 @@
+// import MonacoEditor from 'components/pretest/monaco/Editor';
+// import TipTapEditor from 'components/pretest/tiptap/Editor';
+import EditorPage from 'pages/editor';
 import { ReactElement } from 'react';
 import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-import EditorPage from './pages/editor';
 import ErrorPage from './pages/error';
 import LoginPage, { action as loginAction } from './pages/login';
 import MainPage from './pages/main';
@@ -26,6 +28,8 @@ function App(): ReactElement {
         { path: 'users/signup', element: <SignupPage /> },
         { path: 'users/reset', element: <ResetInfoPage /> },
         { path: 'roadmap/editor', element: <EditorPage /> },
+        // { path: 'roadmap/monacoeditor', element: <MonacoEditor /> },
+        // { path: 'roadmap/tiptapeditor', element: <TipTapEditor /> },
       ],
     },
   ]);
