@@ -70,7 +70,7 @@ export function useAuth(): UseAuth {
         });
       if (status === 201 || status === 200) {
         // eslint-disable-next-line no-alert
-        alert(`status code : ${status}! 회원가입 성공`);
+        alert(`status code : ${status}! 로그인 성공`);
         if ('user' in data) {
           // update stored user data
           updateUser(data.user);
