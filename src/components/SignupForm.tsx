@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Center,
+  PaperProps,
   PasswordInput,
   Text,
   TextInput,
@@ -10,12 +11,13 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useAuth } from 'auth/useAuth';
+import { ReactElement } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useInput } from './common/hooks/useInput';
 import { useUser } from './user/hooks/useUser';
 
-function SignUpForm() {
+function SignUpForm(props: PaperProps): ReactElement {
   const [email, onChangeEmail, setEmail] = useInput('');
   const [nickname, onChangeNickname, setNickname] = useInput('');
   const [password, onChangePassword, setPassword] = useInput('');
@@ -74,6 +76,7 @@ function SignUpForm() {
           label="닉네임"
           placeholder="닉네임을 입력해주세요"
           withAsterisk
+          autoComplete="username"
           value={nickname}
           onChange={onChangeNickname}
         />
@@ -82,6 +85,7 @@ function SignUpForm() {
           label="이메일"
           placeholder="이메일을 입력해주세요"
           withAsterisk
+          autoComplete="new-email"
           value={email}
           onChange={onChangeEmail}
         />
@@ -91,6 +95,7 @@ function SignUpForm() {
           placeholder="비밀번호를 입력해주세요"
           withAsterisk
           value={password}
+          autoComplete="new-password"
           onChange={onChangePassword}
         />
         <PasswordInput
@@ -98,6 +103,7 @@ function SignUpForm() {
           label="비밀번호 확인"
           placeholder="비밀번호를 입력해주세요"
           withAsterisk
+          autoComplete="current-password"
           value={confirmPassword}
           onChange={onChangeConfirmPassword}
         />

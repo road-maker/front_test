@@ -100,6 +100,7 @@ export default function TipTapEditor() {
   const chapterId = 'whydoesitalreadyexist?';
   const ydoc = new Y.Doc();
   console.log(ydoc.getText('tiptap'));
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const provider = new WebrtcProvider(chapterId, ydoc);
 
   return (

@@ -45,6 +45,7 @@ export const AnnotationPlugin = (options: AnnotationPluginOptions) =>
           return decorations;
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const annotations = this.getState(state).annotationsAt(selection.from);
 
         // options.onUpdate(annotations);
