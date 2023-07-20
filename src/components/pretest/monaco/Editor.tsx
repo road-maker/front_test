@@ -14,6 +14,8 @@ function MonacoEditor() {
   // initialize yjs, tell it to listen to our monaco instance
 
   const handleEditorDidMount = (editor, monaco) => {
+    // eslint-disable-next-line no-console
+    console.log('handleEditorDidMount', editor);
     editorRef.current = editor;
     // initilize yjs
     const doc = new Y.Doc(); // a colleciton of shared objects -> Text
@@ -21,6 +23,7 @@ function MonacoEditor() {
     const provider = new WebrtcProvider('test-room2', doc); // room1, room2
     const type = doc.getText('monaco'); // doc { 'monaco' :  'whar out IDE is showing' }
     // bind yjs to monaco
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const binding = new MonacoBinding(
       type,
       editorRef.current.getModel(),
