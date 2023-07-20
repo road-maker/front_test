@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-console */
 /* eslint-disable class-methods-use-this */
 // eslint-disable-next-line simple-import-sort/imports
