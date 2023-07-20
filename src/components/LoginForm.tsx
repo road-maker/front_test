@@ -88,7 +88,7 @@ function LoginForm(props: PaperProps): ReactElement {
 
             <PasswordInput
               required
-              label="Password"
+              label="비밀번호"
               placeholder="Your password"
               autoComplete="current-password"
               value={form.values.password}
