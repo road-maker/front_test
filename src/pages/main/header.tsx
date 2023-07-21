@@ -12,7 +12,9 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { IconArrowLeft, IconArrowRight, IconSearch } from '@tabler/icons-react';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from 'auth/useAuth';
+import { useUser } from 'components/user/hooks/useUser';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -86,6 +88,8 @@ const useStyles = createStyles((theme) => ({
 export function HeaderMegaMenu() {
   const { classes } = useStyles();
   const navigate = useNavigate();
+  const { user } = useUser();
+  const { signout } = useAuth();
 
   return (
     <Box pb={30}>
@@ -113,12 +117,14 @@ export function HeaderMegaMenu() {
             >
               Editor Page
             </Button>
-            <Button variant="default" onClick={() => navigate('users/signin')}>
-              로그인
-            </Button>
-            <Button onClick={() => navigate('users/signup')} color="indigo">
-              회원가입
-            </Button>
+            {user ? (
+              <>
+                <NavLink to="/">{user.email}</NavLink>
+                <Button onClick={() => signout()}>Sign out</Button>
+              </>
+            ) : (
+              <Button onClick={() => navigate('/users/signin')}>Sign in</Button>
+            )}
           </Group>
         </Group>
       </Header>

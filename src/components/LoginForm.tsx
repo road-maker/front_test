@@ -29,10 +29,11 @@ function LoginForm(props: PaperProps): ReactElement {
   const auth = useAuth();
   const { user } = useUser();
 
-  if (user) {
-    // eslint-disable-next-line no-alert
-    alert(`${user}, 로그인 성공~`);
-  }
+  // if (user) {
+  //   // eslint-disable-next-line no-alert
+  //   alert(`${user}, 로그인 성공~`);
+  // }
+
   const form = useForm({
     initialValues: {
       email: '',
