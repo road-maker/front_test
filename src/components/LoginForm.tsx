@@ -40,11 +40,12 @@ function LoginForm(props: PaperProps): ReactElement {
     },
 
     validate: {
-      email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Invalid email'),
+      // email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Invalid email'),
+      email: (val) => (/^\S+@\S+$/.test(val) ? 'Invalid email' : null),
       password: (val) =>
         val.length < 8 || /^[A-Za-z0-9]{8,20}$/.test(val)
-          ? '비밀번호는 영문, 숫자, 특수문자를 조합해서 8자 이상 입력해주세요'
-          : null,
+          ? null
+          : '비밀번호는 영문, 숫자, 특수문자를 조합해서 8자 이상 입력해주세요',
     },
     transformValues: (values) => ({
       email: `${values.email}`,

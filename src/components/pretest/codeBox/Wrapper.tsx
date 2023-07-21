@@ -1,18 +1,16 @@
-import { useSyncedStore } from '@syncedstore/react';
 import { useState } from 'react';
 
-import CodeBoxEditor from './index';
-import { connect, disconnect, store } from './store';
+// import { connect, disconnect, store } from './store';
 
 export default function Wrapper() {
   const [inspecting, setInspecting] = useState(false);
-  const state = useSyncedStore(store);
+  // const state = useSyncedStore(store);
   return (
     <div>
       <div className="toolbar">
-        <input type="radio" name="sync" defaultChecked onChange={connect} />{' '}
+        {/* <input type="radio" name="sync" defaultChecked onChange={connect} />{' '} */}
         Online (enable sync)
-        <input type="radio" name="sync" onChange={disconnect} /> Offline
+        {/* <input type="radio" name="sync" onChange={disconnect} /> Offline */}
         (disable sync)
         {inspecting && (
           <button
@@ -35,9 +33,11 @@ export default function Wrapper() {
       </div>
       <div className="wrapper">
         {inspecting ? (
-          <pre>{JSON.stringify(state, undefined, 2)}</pre>
+          <pre>text editor space</pre>
         ) : (
-          <CodeBoxEditor />
+          // <pre>{JSON.stringify(state, undefined, 2)}</pre>
+          // <CodeBoxEditor />
+          <div>code area</div>
         )}
       </div>
     </div>

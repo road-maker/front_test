@@ -1,67 +1,39 @@
-import Collaboration from '@tiptap/extension-collaboration';
-import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
-import Placeholder from '@tiptap/extension-placeholder';
-import { useEditor } from '@tiptap/react';
+/* eslint-disable no-console */
+import { Color } from '@tiptap/extension-color';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import ListItem from '@tiptap/extension-list-item';
+import TextStyle from '@tiptap/extension-text-style';
+import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { WebsocketProvider } from 'y-websocket';
+import { ReactElement } from 'react';
+import { WebrtcProvider } from 'y-webrtc';
 import * as Y from 'yjs';
-// import { store, webrtcProvider } from './store';
+
 const doc = new Y.Doc();
-const wsProvider = new WebsocketProvider(
-  'ws://localhost:1234',
+const documentList = doc.getArray('doc-list');
+// const wsProvider = new WebsocketProvider(
+//   'ws://localhost:1234',
+//   'my-roomname',
+//   doc,
+// );
+const wsProvider = new WebrtcProvider(
+  // 'ws://localhost:1234',
   'my-roomname',
   doc,
 );
-const ytext = doc.getText('quill');
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const { awareness } = wsProvider;
 
-// wsProvider.on('status', (event) => {
-//   // eslint-disable-next-line no-console
-//   console.log('event status', event.status); // logs "connected" or "disconnected"
-// });
+documentList.observe((event) => {
+  // Log a delta every time the type changes
+  // Learn more about the delta format here: https://quilljs.com/docs/delta/
+  console.log('delta:', event.changes.delta);
+});
 
-const colors = [
-  '#958DF1',
-  '#F98181',
-  '#FBBC88',
-  '#FAF594',
-  '#70CFF8',
-  '#94FADB',
-  '#B9F18D',
-];
-const names = ['Lea Thompson', 'Cyndi Lauper', 'Tom Cruise', 'Madonna'];
-
-const getRandomElement = (list) =>
-  list[Math.floor(Math.random() * list.length)];
-const getRandomColor = () => getRandomElement(colors);
-const getRandomName = () => getRandomElement(names);
-
-export default function CodeBox() {
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Placeholder.configure({
-        placeholder: 'Write something …',
-      }),
-      Collaboration.configure({
-        // document: doc,
-        fragment: doc,
-        // fragment: store.fragment,
-      }),
-      CollaborationCursor.configure({
-        provider: wsProvider,
-        user: { name: getRandomName(), color: getRandomColor() },
-      }),
-    ],
-  });
-
-  return (
-    <div className="editor">
-      {/* hehe */}
-      {/* <MenuBar editor={editor} /> */}
-      {/* <EditorContent editor={editor} /> */}
-    </div>
-  );
-}
+wsProvider.on('status', (event) => {
+  console.log(event.status); // logs "connected" or "disconnected"
+});
+documentList.insert(0, [<div>???</div>, 2, 3]);
 
 export function MenuBar({ editor }) {
   if (!editor) {
@@ -70,10 +42,10 @@ export function MenuBar({ editor }) {
 
   return (
     <>
-      <div>에러 찾는 중</div>
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleBold().run()}
+        disabled={!editor.can().chain().focus().toggleBold().run()}
         className={editor.isActive('bold') ? 'is-active' : ''}
       >
         bold
@@ -81,6 +53,7 @@ export function MenuBar({ editor }) {
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleItalic().run()}
+        disabled={!editor.can().chain().focus().toggleItalic().run()}
         className={editor.isActive('italic') ? 'is-active' : ''}
       >
         italic
@@ -88,6 +61,7 @@ export function MenuBar({ editor }) {
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleStrike().run()}
+        disabled={!editor.can().chain().focus().toggleStrike().run()}
         className={editor.isActive('strike') ? 'is-active' : ''}
       >
         strike
@@ -95,6 +69,7 @@ export function MenuBar({ editor }) {
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleCode().run()}
+        disabled={!editor.can().chain().focus().toggleCode().run()}
         className={editor.isActive('code') ? 'is-active' : ''}
       >
         code
@@ -200,12 +175,89 @@ export function MenuBar({ editor }) {
       >
         hard break
       </button>
-      <button type="button" onClick={() => editor.chain().focus().undo().run()}>
+      <button
+        type="button"
+        onClick={() => editor.chain().focus().undo().run()}
+        disabled={!editor.can().chain().focus().undo().run()}
+      >
         undo
       </button>
-      <button type="button" onClick={() => editor.chain().focus().redo().run()}>
+      <button
+        type="button"
+        onClick={() => editor.chain().focus().redo().run()}
+        disabled={!editor.can().chain().focus().redo().run()}
+      >
         redo
       </button>
+      <button
+        type="button"
+        onClick={() => editor.chain().focus().setColor('#958DF1').run()}
+        className={
+          editor.isActive('textStyle', { color: '#958DF1' }) ? 'is-active' : ''
+        }
+      >
+        purple
+      </button>
     </>
+  );
+}
+
+export default function TextEditor() {
+  const editor = useEditor({
+    extensions: [
+      Color.configure({ types: [TextStyle?.name, ListItem?.name] }),
+      // TextStyle.configure({ types: [ListItem?.name] }),
+      StarterKit.configure({
+        bulletList: {
+          keepMarks: true,
+          keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
+        },
+        orderedList: {
+          keepMarks: true,
+          keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
+        },
+      }),
+    ],
+    // onUpdate(v) {
+    //   console.log(v);
+    // },
+    content: `
+      <h2>
+        Hi there,
+      </h2>
+      <p>
+        this is a <em>basic</em> example of <strong>tiptap</strong>. Sure, there are all kind of basic text styles you’d probably expect from a text editor. But wait until you see the lists:
+      </p>
+      <ul>
+        <li>
+          That’s a bullet list with one …
+        </li>
+        <li>
+          … or two list items.
+        </li>
+      </ul>
+      <p>
+        Isn’t that great? And all of that is editable. But wait, there’s more. Let’s try a code block:
+      </p>
+      <pre><code class="language-css">body {
+  display: none;
+}</code></pre>
+      <p>
+        I know, I know, this is impressive. It’s only the tip of the iceberg though. Give it a try and click a little bit around. Don’t forget to check the other examples too.
+      </p>
+      <blockquote>
+        Wow, that’s amazing. Good work, boy! 👏
+        <br />
+        — Mom
+      </blockquote>
+    `,
+  });
+
+  return (
+    <div>
+      <MenuBar editor={editor} />
+      <EditorContent editor={editor} />
+      {documentList.toArray().map((v) => v as Iterable<ReactElement>)}
+    </div>
   );
 }

@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 /* eslint-disable no-console */
 import {
   Box,
@@ -27,26 +28,23 @@ function SignUpForm(props: PaperProps): ReactElement {
   const { user } = useUser();
   const form = useForm({
     initialValues: {
-      nickname: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
+      nickname,
+      email,
+      password,
+      confirmPassword,
     },
-
     validate: {
       nickname: (value) =>
-        value.length < 2 ? '닉네임은 2글자 이상이어야합니다' : null,
-      email: (value) =>
-        /^\S+@\S+$/.test(value) ? null : '유효한 이메일이 아닙니다',
-      confirmPassword: (value, values) =>
-        value !== values.password || value === ''
-          ? '비밀번호가 일치하지 않습니다'
-          : null,
+        value.length < 2 ? '닉네임은 2글자 이상이어야합니다.' : setNickname(''),
+      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
       password: (value) =>
-        value.length < 8 || /^[A-Za-z0-9]{8,20}$/.test(value)
-          ? '비밀번호는 영문, 숫자, 특수문자를 조합해서 8자 이상 입력해주세요'
+        value.length < 8 || /^[A-za-z0-9]{8,20}$/.test(value)
+          ? '비밀번호는 영문 , 숫자, 특수문자를 조합해서 8자 이상 입력해주세요.'
           : null,
+      confirmPassword: (value, values) =>
+        value !== values.password ? 'Passwords did not match' : null,
     },
+
     transformValues: (values) => ({
       nickname: `${values.nickname}`,
       email: `${values.email}`,
@@ -57,19 +55,24 @@ function SignUpForm(props: PaperProps): ReactElement {
 
   if (user) {
     console.log('redirect to user page!');
-    // return <Redirect to={`/users/${user.id}`} />;
   }
 
   return (
     <Box maw={400} mx="auto" m={200}>
       <Title order={1}>회원가입</Title>
       <form
-        onSubmit={form.onSubmit((values) => {
-          setNickname(values.nickname);
-          setEmail(values.email);
-          setPassword(values.password);
-          setConfirmPassword(values.confirmPassword);
-        })}
+        onSubmit={() => {
+          setNickname(nickname);
+          setEmail(email);
+          setPassword(password);
+          setConfirmPassword(confirmPassword);
+        }}
+        // onSubmit={form.onSubmit((values) => {
+        //   setNickname(values.nickname);
+        //   setEmail(values.email);
+        //   setPassword(values.password);
+        //   setConfirmPassword(values.confirmPassword);
+        // })}
       >
         <TextInput
           mt="xl"
@@ -79,6 +82,7 @@ function SignUpForm(props: PaperProps): ReactElement {
           autoComplete="username"
           value={nickname}
           onChange={onChangeNickname}
+          {...form.getInputProps('nickname')}
         />
         <TextInput
           mt="xl"
@@ -88,6 +92,7 @@ function SignUpForm(props: PaperProps): ReactElement {
           autoComplete="new-email"
           value={email}
           onChange={onChangeEmail}
+          {...form.getInputProps('email')}
         />
         <PasswordInput
           mt="xl"
@@ -97,6 +102,7 @@ function SignUpForm(props: PaperProps): ReactElement {
           value={password}
           autoComplete="new-password"
           onChange={onChangePassword}
+          {...form.getInputProps('password')}
         />
         <PasswordInput
           mt="xl"
@@ -106,6 +112,7 @@ function SignUpForm(props: PaperProps): ReactElement {
           autoComplete="current-password"
           value={confirmPassword}
           onChange={onChangeConfirmPassword}
+          {...form.getInputProps('confirmPassword')}
         />
         <Button
           type="submit"
