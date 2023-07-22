@@ -1,3 +1,5 @@
+/* eslint-disable import/no-unresolved */
+/* eslint-disable react/button-has-type */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-console */
 /* eslint-disable class-methods-use-this */
@@ -8,27 +10,32 @@ import { Button, Group, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import dagre from '@dagrejs/dagre';
-import { ReactElement, useCallback, useEffect, useMemo } from 'react';
+import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
 import ReactFlow, {
   Background,
   Controls,
   MiniMap,
+  useReactFlow,
   Panel,
   addEdge,
   useEdgesState,
   useNodesState,
+  ReactFlowProvider,
 } from 'reactflow';
 
 import { styled } from 'styled-components';
 
 import CodeBoxEditor from 'components/pretest/codeBox';
 import ColorSelectorNode from './ColorSelectorNode';
+import { defaultBlockAt } from '@tiptap/core';
 
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
 const nodeWidth = 172;
 const nodeHeight = 36;
+
+const flowKey = 'example-flow';
 
 const getLayoutedElements = (nodes, edges, direction = 'TB') => {
   const isHorizontal = direction === 'LR';
@@ -73,9 +80,11 @@ const nodeTypes = {
   ResizableNodeSelected,
 };
 
-function RoadMapEditor(): ReactElement {
+function Roadmap(): ReactElement {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [rfInstance, setRfInstance] = useState(null);
+  const { setViewport } = useReactFlow();
 
   const onConnect = useCallback(
     (params) => {
@@ -88,6 +97,29 @@ function RoadMapEditor(): ReactElement {
       console.log(params?.target.attributes[0]?.value);
     }
   }, []);
+
+  const onSave = useCallback(() => {
+    if (rfInstance) {
+      const flow = rfInstance.toObject();
+      localStorage.setItem(flowKey, JSON.stringify(flow));
+      console.log(flow);
+    }
+  }, [rfInstance]);
+
+  const onRestore = useCallback(() => {
+    const restoreFlow = async () => {
+      const flow = JSON.parse(localStorage.getItem(flowKey));
+      console.log(flow);
+      if (flow) {
+        const { x = 0, y = 0, zoom = 1 } = flow.viewport;
+        setNodes(flow.nodes || []);
+        setEdges(flow.edges || []);
+        setViewport({ x, y, zoom });
+      }
+    };
+
+    restoreFlow();
+  }, [setNodes, setViewport, setEdges]);
 
   const onLayout = useCallback(
     (direction) => {
@@ -168,8 +200,8 @@ function RoadMapEditor(): ReactElement {
         id: '2',
         type: 'ResizableNodeSelected',
         data: {
-          // label: 'test id=== 2',
-          onChange: onChangeEvent,
+          label: 'test id=== 2',
+          // onChange: onChangeEvent,
         },
         position,
         style: {
@@ -185,7 +217,7 @@ function RoadMapEditor(): ReactElement {
         // data: { onChange: onChangeEvent, color: initBgColor },
         // data: { onChange: onChangeEvent, color: initBgColor },
         // data: { label: <TextEditor /> },
-        data: { label: <CodeBoxEditor /> },
+        data: { label: 'test' },
         position,
         style: {
           background: '#fff',
@@ -293,6 +325,7 @@ function RoadMapEditor(): ReactElement {
         className="react-flow-node-resizer-example"
         minZoom={0.2}
         maxZoom={4}
+        onInit={setRfInstance}
       >
         <Panel position="top-right">
           <button type="button" onClick={() => onLayout('TB')}>
@@ -304,6 +337,8 @@ function RoadMapEditor(): ReactElement {
           <button type="button" onClick={() => onAddNode()}>
             노드 추가
           </button>
+          <button onClick={onSave}>save</button>
+          <button onClick={onRestore}>restore</button>
         </Panel>
         <Background gap={16} />
         <Controls />
@@ -312,9 +347,16 @@ function RoadMapEditor(): ReactElement {
     </EditorWrap>
   );
 }
-export default RoadMapEditor;
 const EditorWrap = styled.div`
   & .react-flow__node {
     border: '1px solid pink';
   }
 `;
+
+export default function RoadMapEditor() {
+  return (
+    <ReactFlowProvider>
+      <Roadmap />
+    </ReactFlowProvider>
+  );
+}

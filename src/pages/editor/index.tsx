@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import RoadMapEditor from 'components/editor/RoadMapEditor';
 import { ReactElement } from 'react';
 

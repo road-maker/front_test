@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 /* eslint-disable no-console */
 import {
   Anchor,
@@ -20,14 +21,14 @@ import { ReactElement } from 'react';
 import { Form, useNavigate } from 'react-router-dom';
 
 import { useInput } from './common/hooks/useInput';
-import { useUser } from './user/hooks/useUser';
+// import { useUser } from './user/hooks/useUser';
 
 function LoginForm(props: PaperProps): ReactElement {
   const navigate = useNavigate();
   const [email, onChangeEmail, setEmail] = useInput('');
   const [password, onChangePassword, setPassword] = useInput('');
   const auth = useAuth();
-  const { user } = useUser();
+  // const { user } = useUser();
 
   // if (user) {
   //   // eslint-disable-next-line no-alert
