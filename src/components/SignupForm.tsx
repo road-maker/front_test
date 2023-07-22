@@ -21,7 +21,6 @@ import { ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useInput } from './common/hooks/useInput';
-import { useUser } from './user/hooks/useUser';
 
 function SignUpForm(props: PaperProps): ReactElement {
   const [email, onChangeEmail, setEmail] = useInput('');
@@ -31,7 +30,7 @@ function SignUpForm(props: PaperProps): ReactElement {
     useInput('');
   const auth = useAuth();
   const navigate = useNavigate();
-  const { user } = useUser();
+  // const user = useUser();
   const form = useForm({
     initialValues: {
       nickname: '',

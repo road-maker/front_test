@@ -1,13 +1,14 @@
-/* eslint-disable import/no-unresolved */
-import RoadMapEditor from 'components/editor/RoadMapEditor';
-import { ReactElement } from 'react';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { ReactElement, useState } from 'react';
+
+import RoadMapEditor from '../../components/editor/RoadMapEditor';
 
 function EditorPage(): ReactElement {
+  const [fakeState, setFakeState] = useState('');
   return (
     <>
       {/* <Tiptap /> */}
-      {/* <TextEditor /> */}
-      <RoadMapEditor />
+      <RoadMapEditor editor={fakeState} setState={fakeState} />
     </>
   );
 }
