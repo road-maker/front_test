@@ -2,16 +2,22 @@ import {
   ActionIcon,
   Box,
   Button,
+  Center,
   createStyles,
   Group,
   Header,
   Image,
+  Modal,
   rem,
+  Space,
   TextInput,
   TextInputProps,
   useMantineTheme,
 } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { IconArrowLeft, IconArrowRight, IconSearch } from '@tabler/icons-react';
+import { useInput } from 'components/common/hooks/useInput';
+import { useMemo } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../auth/useAuth';
@@ -91,6 +97,7 @@ export function HeaderMegaMenu() {
   const navigate = useNavigate();
   const { user } = useUser();
   const { signout } = useAuth();
+  const [opened, { open, close }] = useDisclosure(false);
 
   return (
     <Box pb={30}>
@@ -111,14 +118,46 @@ export function HeaderMegaMenu() {
           </Group>
 
           <Group className={classes.hiddenMobile}>
-            <Button
+            <Modal opened={opened} onClose={close} size="50%">
+              <Center>
+                <h1>새로운 로드맵 생성하기</h1>
+              </Center>
+              <Center>
+                <Image
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDEv4qC_L_0WLYmLRBtBd2sYGkjMzWvGqrOw&usqp=CAU"
+                  width={300}
+                  height={300}
+                />
+                <Space />
+              </Center>
+              <Center>
+                <InputWithButton />
+              </Center>
+              <Center>
+                <h5>오늘은 그냥 템플릿 없이 빈 로드맵 만들게요.</h5>
+                <Button
+                  size="xs"
+                  variant="light"
+                  color="blue"
+                  onClick={() => navigate('/roadmap/editor')}
+                >
+                  빈 로드맵 만들기
+                </Button>
+              </Center>
+            </Modal>
+            <Group position="center">
+              <Button onClick={open} variant="light" color="indigo">
+                로드맵 생성하기
+              </Button>
+            </Group>
+            {/* <Button
               onClick={() => navigate('roadmap/editor')}
               variant="light"
               color="indigo"
             >
               Editor Page
-            </Button>
-            {user ? (
+            </Button> */}
+            {user && 'accessToken' in user ? (
               <>
                 <NavLink to="/">{user.email}</NavLink>
                 <Button onClick={() => signout()}>Sign out</Button>
@@ -135,15 +174,29 @@ export function HeaderMegaMenu() {
 
 export function InputWithButton(props: TextInputProps) {
   const theme = useMantineTheme();
-
+  const [prompt, onPromptChange, setPrompt] = useInput('');
+  const onRequestPrompt = (p) => {
+    // eslint-disable-next-line no-console
+    console.log(p);
+  };
+  useMemo(() => {
+    // eslint-disable-next-line no-console
+    console.log('submit', prompt);
+  }, [prompt]);
   return (
     <TextInput
+      value={prompt}
+      onChange={onPromptChange}
       icon={<IconSearch size="1.1rem" stroke={1.5} />}
       radius="md"
       w="600px"
       rightSection={
         <ActionIcon
           size={32}
+          onClick={() => {
+            setPrompt(prompt);
+            onRequestPrompt({ prompt });
+          }}
           radius="xl"
           color={theme.primaryColor}
           variant="filled"
@@ -155,8 +208,8 @@ export function InputWithButton(props: TextInputProps) {
           )}
         </ActionIcon>
       }
-      placeholder="Search questions"
       rightSectionWidth={42}
+      placeholder="키워드를 입력하세요"
       {...props}
     />
   );
