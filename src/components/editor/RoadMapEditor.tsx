@@ -86,8 +86,11 @@ function RoadMapCanvas({ editor, setState }) {
   );
   const onFocusInput = useCallback((params) => {
     if (params?.target?.attributes[0]?.value.split(' ')[0] === 'true') {
-      console.log(params?.target);
+      // console.log(params?.target);
     }
+  }, []);
+  const onClickItem = useCallback((e) => {
+    console.log(e);
   }, []);
 
   const onLayout = useCallback(
@@ -139,29 +142,28 @@ function RoadMapCanvas({ editor, setState }) {
   // }, []);
 
   useEffect(() => {
-    const onChangeEvent = (event) => {
-      setNodes((nds) =>
-        nds.map((node) => {
-          if (node.id !== '2') {
-            return node;
-          }
+    setNodes((nds) =>
+      nds.map((node) => {
+        if (node.id !== '2') {
+          return node;
+        }
 
-          return {
-            ...node,
-            data: {
-              ...node.data,
-            },
-          };
-        }),
-      );
-    };
+        return {
+          ...node,
+          data: {
+            ...node.data,
+          },
+        };
+      }),
+    );
+    // };
 
     setNodes([
       {
         id: '1',
         type: 'ResizableNodeSelected',
         position,
-        data: { label: editor },
+        data: { label: editor || <div>empty node</div> },
         style: {
           background: '#fff',
           border: '1px solid black',
@@ -173,7 +175,7 @@ function RoadMapCanvas({ editor, setState }) {
         id: '2',
         type: 'ResizableNodeSelected',
         data: {
-          label: editor,
+          label: editor || <div>empty node</div>,
         },
         position,
         style: {
@@ -183,86 +185,10 @@ function RoadMapCanvas({ editor, setState }) {
           fontSize: 12,
         },
       },
-      {
-        id: '2a',
-        type: 'ResizableNodeSelected',
-        data: { label: '' },
-        position,
-        style: {
-          background: '#fff',
-          border: '1px solid black',
-          borderRadius: 15,
-          fontSize: 12,
-          // overflowY: 'hidden',
-        },
-      },
-      {
-        id: '2b',
-        type: 'ResizableNodeSelected',
-        data: { label: 'node 2b' },
-        position,
-        style: {
-          background: '#fff',
-          border: '1px solid black',
-          borderRadius: 15,
-          fontSize: 12,
-        },
-      },
-      {
-        id: '2c',
-        data: { label: 'node 2c' },
-        position,
-        style: {
-          background: '#fff',
-          border: '1px solid black',
-          borderRadius: 15,
-          fontSize: 12,
-        },
-      },
-      {
-        id: '2d',
-        type: 'ResizableNodeSelected',
-        data: { label: 'node 2d' },
-        position,
-        className: 'circle',
-        style: {
-          background: 'purple',
-          border: '1px solid black',
-          borderRadius: '100%',
-          padding: '2rem',
-          fontSize: 12,
-        },
-      },
-      {
-        id: '3',
-        type: 'ResizableNodeSelected',
-        data: { label: 'node 3' },
-        position,
-        style: {
-          background: '#fff',
-          border: '1px solid black',
-          borderRadius: 15,
-          fontSize: 12,
-        },
-      },
     ]);
 
     setEdges([
       { id: 'e12', source: '1', target: '2', type: edgeType, animated: true },
-      { id: 'e13', source: '1', target: '3', type: edgeType, animated: true },
-      { id: 'e22a', source: '2', target: '2a', type: edgeType, animated: true },
-      { id: 'e22b', source: '2', target: '2b', type: edgeType, animated: true },
-      { id: 'e22c', source: '2', target: '2c', type: edgeType, animated: true },
-      {
-        id: 'e2c2d',
-        source: '2c',
-        target: '2d',
-        type: edgeType,
-        animated: true,
-      },
-      { id: 'e45', source: '4', target: '5', type: edgeType, animated: true },
-      { id: 'e56', source: '5', target: '6', type: edgeType, animated: true },
-      { id: 'e57', source: '5', target: '7', type: edgeType, animated: true },
     ]);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -280,12 +206,12 @@ function RoadMapCanvas({ editor, setState }) {
       <ReactFlow
         nodes={nodes}
         edges={edges}
+        onClick={onClickItem}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         fitView
         elevateNodesOnSelect
-        onFocus={onFocusInput}
         snapToGrid
         nodeTypes={nodeTypes}
         style={reactFlowStyle}

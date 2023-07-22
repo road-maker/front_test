@@ -49,7 +49,6 @@ export default function RoadMapEditor(): ReactElement {
     // content: state,
     content: `<div onChange={onChangeHandler}>${state}</div>`,
     onUpdate(e) {
-      console.log('e', e);
       console.log('ydoc', ydoc);
       console.log('ytext', ytext);
       console.log(e.editor?.getHTML());
