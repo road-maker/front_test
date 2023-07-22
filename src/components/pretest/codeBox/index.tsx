@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Button, Group, Modal } from '@mantine/core';
+import { Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
 import Placeholder from '@tiptap/extension-placeholder';
-import { useEditor } from '@tiptap/react';
+import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useInput } from 'components/common/hooks/useInput';
 import { Editor } from 'react-draft-wysiwyg';
@@ -85,7 +85,7 @@ export default function CodeBoxEditor({ editorState, onChange }) {
           link: { inDropdown: true },
           history: { inDropdown: true },
         }}
-
+      />
       <Modal opened={opened} onClose={close} title="Authentication">
         얍
       </Modal>
