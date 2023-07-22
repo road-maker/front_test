@@ -22,6 +22,7 @@ export default function RoadMapEditor(): ReactElement {
       'ws://localhost:1234',
       'please',
       ydoc.current,
+      { connect: true, maxBackoffTime: 0 },
     );
 
     // wsProvider.on('status', (event) => {
@@ -35,6 +36,9 @@ export default function RoadMapEditor(): ReactElement {
       setState(ytext.current.toString());
       onChangeHandler(ytext.current.toString());
     });
+    return () => {
+      wsProvider.destroy();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
