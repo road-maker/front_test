@@ -4,11 +4,15 @@ import { useDisclosure } from '@mantine/hooks';
 import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
 import Placeholder from '@tiptap/extension-placeholder';
-import { EditorContent, useEditor } from '@tiptap/react';
+import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useInput } from 'components/common/hooks/useInput';
+import { Editor } from 'react-draft-wysiwyg';
+import { WebsocketProvider } from 'y-websocket';
+import * as Y from 'yjs';
 
-import { store, webrtcProvider } from './store';
+import CodeBox from './CodeBox';
+// import { store, webrtcProvider } from './store';
 
 const colors = [
   '#958DF1',
@@ -26,7 +30,18 @@ const getRandomElement = (list) =>
 const getRandomColor = () => getRandomElement(colors);
 const getRandomName = () => getRandomElement(names);
 
-export default function CodeBoxEditor() {
+// import { store, webrtcProvider } from './store';
+const doc = new Y.Doc();
+const wsProvider = new WebsocketProvider(
+  'ws://localhost:1234',
+  'my-roomname',
+  doc,
+);
+// wsProvider.on('status', (event) => {
+//   // eslint-disable-next-line no-console
+//   console.log('event status', event.status); // logs "connected" or "disconnected"
+// });
+export default function CodeBoxEditor({ editorState, onChange }) {
   const [content, onChangeContent, setContent] = useInput([]);
   const [opened, { open, close }] = useDisclosure(false);
   const editor = useEditor({
@@ -36,10 +51,13 @@ export default function CodeBoxEditor() {
         placeholder: 'Write something …',
       }),
       Collaboration.configure({
-        fragment: store.fragment,
+        // fragment: 'xml',
+        document: doc,
+        // fragment: store.fragment,
       }),
       CollaborationCursor.configure({
-        provider: webrtcProvider,
+        provider: wsProvider,
+        // provider: webrtcProvider,
         user: { name: getRandomName(), color: getRandomColor() },
       }),
     ],
@@ -47,7 +65,27 @@ export default function CodeBoxEditor() {
 
   return (
     <div className="editor">
+      <CodeBox />
       <MenuBar editor={editor} />
+
+      <Editor
+        editorState={editorState}
+        onEditorStateChange={onChange}
+        ariaLabel="contents"
+        placeholder="내용을 작성해주세요."
+        wrapperClassName="wrapper-class"
+        toolbarClassName="toolbar"
+        editorClassName="editor"
+        localization={{
+          locale: 'ko',
+        }}
+        toolbar={{
+          list: { inDropdown: true },
+          textAlign: { inDropdown: true },
+          link: { inDropdown: true },
+          history: { inDropdown: true },
+        }}
+
       <Modal opened={opened} onClose={close} title="Authentication">
         얍
       </Modal>
@@ -57,6 +95,12 @@ export default function CodeBoxEditor() {
         // onChange={onChangeContent}
         // content={content}
       />
+
+      {/* <EditorContent
+        editor={editor}
+        onChange={onChangeContent}
+        content={content}
+      /> */}
     </div>
   );
 }

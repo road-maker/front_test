@@ -1,12 +1,9 @@
-/* eslint-disable react/no-danger */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-console */
 /* eslint-disable class-methods-use-this */
 // eslint-disable-next-line simple-import-sort/imports
 import 'reactflow/dist/style.css';
 import ResizableNodeSelected from './ResizableNodeSelected';
-import { Button, Group, Modal } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import dagre from '@dagrejs/dagre';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -72,7 +69,7 @@ const nodeTypes = {
   ResizableNodeSelected,
 };
 
-function RoadMapCanvas({ editor, setState }) {
+function RoadMapEditor(editor, setState) {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   useMemo(() => {
@@ -88,11 +85,8 @@ function RoadMapCanvas({ editor, setState }) {
   );
   const onFocusInput = useCallback((params) => {
     if (params?.target?.attributes[0]?.value.split(' ')[0] === 'true') {
-      // console.log(params?.target);
+      console.log(params?.target);
     }
-  }, []);
-  const onClickItem = useCallback((e) => {
-    console.log(e);
   }, []);
 
   const onLayout = useCallback(
@@ -112,8 +106,13 @@ function RoadMapCanvas({ editor, setState }) {
       ...nodes,
       {
         id: (nodeCount + 1).toString(),
+        // data: { label: '' },
         data: {
-          label: <div dangerouslySetInnerHTML={{ __html: editor }} />,
+          // label: <CodeBoxEditor editorState={nodes} onChange={onNodesChange} />,
+          // label: editor,
+          // eslint-disable-next-line react/no-danger
+          // label: <div dangerouslySetInnerHTML={{ __html: { editor } }} />,
+          label: <div>{editor}</div>,
         },
         type: 'ResizableNodeSelected',
         position,
@@ -125,11 +124,9 @@ function RoadMapCanvas({ editor, setState }) {
         },
       },
     ]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodes, editor]);
 
-  useMemo(() => {
     console.log(nodes);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodes]);
   const reactFlowStyle = {
     background: 'light-pink',
@@ -144,28 +141,31 @@ function RoadMapCanvas({ editor, setState }) {
   // }, []);
 
   useEffect(() => {
-    setNodes((nds) =>
-      nds.map((node) => {
-        if (node.id !== '2') {
-          return node;
-        }
+    const onChangeEvent = (event) => {
+      setNodes((nds) =>
+        nds.map((node) => {
+          if (node.id !== '2') {
+            return node;
+          }
 
-        return {
-          ...node,
-          data: {
-            ...node.data,
-          },
-        };
-      }),
-    );
-    // };
+          return {
+            ...node,
+            data: {
+              ...node.data,
+            },
+          };
+        }),
+      );
+    };
 
     setNodes([
       {
         id: '1',
         type: 'ResizableNodeSelected',
         position,
-        data: { label: editor || <div>empty node</div> },
+        // data: { label: JSON.stringify(editor) },
+        data: { content: editor },
+        // data: { label: 'test' },
         style: {
           background: '#fff',
           border: '1px solid black',
@@ -177,11 +177,78 @@ function RoadMapCanvas({ editor, setState }) {
         id: '2',
         type: 'ResizableNodeSelected',
         data: {
-          label: editor || <div>empty node</div>,
+          // label: 'test id=== 2',
+          onChange: onChangeEvent,
         },
         position,
         style: {
-          background: 'red',
+          background: '#fff',
+          border: '1px solid black',
+          borderRadius: 15,
+          fontSize: 12,
+        },
+      },
+      {
+        id: '2a',
+        type: 'ResizableNodeSelected',
+        // data: { onChange: onChangeEvent, color: initBgColor },
+        // data: { onChange: onChangeEvent, color: initBgColor },
+        // data: { label: <TextEditor /> },
+        // data: { label: <CodeBoxEditor /> },
+        data: { label: '' },
+        position,
+        style: {
+          background: '#fff',
+          border: '1px solid black',
+          borderRadius: 15,
+          fontSize: 12,
+          // overflowY: 'hidden',
+        },
+      },
+      {
+        id: '2b',
+        type: 'ResizableNodeSelected',
+        data: { label: 'node 2b' },
+        position,
+        style: {
+          background: '#fff',
+          border: '1px solid black',
+          borderRadius: 15,
+          fontSize: 12,
+        },
+      },
+      {
+        id: '2c',
+        data: { label: 'node 2c' },
+        position,
+        style: {
+          background: '#fff',
+          border: '1px solid black',
+          borderRadius: 15,
+          fontSize: 12,
+        },
+      },
+      {
+        id: '2d',
+        type: 'ResizableNodeSelected',
+        data: { label: 'node 2d' },
+        position,
+        className: 'circle',
+        style: {
+          background: 'purple',
+          border: '1px solid black',
+          borderRadius: '100%',
+          padding: '2rem',
+          fontSize: 12,
+        },
+      },
+      {
+        id: '3',
+        type: 'ResizableNodeSelected',
+        data: { label: 'node 3' },
+        position,
+        style: {
+          background: '#fff',
           border: '1px solid black',
           borderRadius: 15,
           fontSize: 12,
@@ -191,6 +258,20 @@ function RoadMapCanvas({ editor, setState }) {
 
     setEdges([
       { id: 'e12', source: '1', target: '2', type: edgeType, animated: true },
+      { id: 'e13', source: '1', target: '3', type: edgeType, animated: true },
+      { id: 'e22a', source: '2', target: '2a', type: edgeType, animated: true },
+      { id: 'e22b', source: '2', target: '2b', type: edgeType, animated: true },
+      { id: 'e22c', source: '2', target: '2c', type: edgeType, animated: true },
+      {
+        id: 'e2c2d',
+        source: '2c',
+        target: '2d',
+        type: edgeType,
+        animated: true,
+      },
+      { id: 'e45', source: '4', target: '5', type: edgeType, animated: true },
+      { id: 'e56', source: '5', target: '6', type: edgeType, animated: true },
+      { id: 'e57', source: '5', target: '7', type: edgeType, animated: true },
     ]);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -205,15 +286,17 @@ function RoadMapCanvas({ editor, setState }) {
   }, [edges, nodes]);
   return (
     <EditorWrap style={{ width: '100vw', height: '100vh' }}>
+      {/* <TextEditor /> */}
       <ReactFlow
         nodes={nodes}
         edges={edges}
-        onClick={onClickItem}
+        // contentEditable
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         fitView
         elevateNodesOnSelect
+        onFocus={onFocusInput}
         snapToGrid
         nodeTypes={nodeTypes}
         style={reactFlowStyle}
@@ -248,7 +331,7 @@ function RoadMapCanvas({ editor, setState }) {
     </EditorWrap>
   );
 }
-export default RoadMapCanvas;
+export default RoadMapEditor;
 const EditorWrap = styled.div`
   & .react-flow__node {
     border: '1px solid pink';

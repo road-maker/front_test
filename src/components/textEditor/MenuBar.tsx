@@ -1,79 +1,14 @@
-import Collaboration from '@tiptap/extension-collaboration';
-import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
-import Placeholder from '@tiptap/extension-placeholder';
-import { useEditor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import { WebsocketProvider } from 'y-websocket';
-import * as Y from 'yjs';
-// import { store, webrtcProvider } from './store';
-const doc = new Y.Doc();
-const wsProvider = new WebsocketProvider(
-  'ws://localhost:1234',
-  'my-roomname',
-  doc,
-);
-const ytext = doc.getText('quill');
-
-// wsProvider.on('status', (event) => {
-//   // eslint-disable-next-line no-console
-//   console.log('event status', event.status); // logs "connected" or "disconnected"
-// });
-
-const colors = [
-  '#958DF1',
-  '#F98181',
-  '#FBBC88',
-  '#FAF594',
-  '#70CFF8',
-  '#94FADB',
-  '#B9F18D',
-];
-const names = ['Lea Thompson', 'Cyndi Lauper', 'Tom Cruise', 'Madonna'];
-
-const getRandomElement = (list) =>
-  list[Math.floor(Math.random() * list.length)];
-const getRandomColor = () => getRandomElement(colors);
-const getRandomName = () => getRandomElement(names);
-
-export default function CodeBox() {
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Placeholder.configure({
-        placeholder: 'Write something …',
-      }),
-      Collaboration.configure({
-        // document: doc,
-        fragment: doc,
-        // fragment: store.fragment,
-      }),
-      CollaborationCursor.configure({
-        provider: wsProvider,
-        user: { name: getRandomName(), color: getRandomColor() },
-      }),
-    ],
-  });
-
-  return (
-    <div className="editor">
-      {/* hehe */}
-      {/* <MenuBar editor={editor} /> */}
-      {/* <EditorContent editor={editor} /> */}
-    </div>
-  );
-}
-
-export function MenuBar({ editor }) {
+export default function MenuBar({ editor }) {
   if (!editor) {
     return null;
   }
 
   return (
     <>
-      <div>에러 찾는 중</div>
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleBold().run()}
+        disabled={!editor.can().chain().focus().toggleBold().run()}
         className={editor.isActive('bold') ? 'is-active' : ''}
       >
         bold
@@ -81,6 +16,7 @@ export function MenuBar({ editor }) {
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleItalic().run()}
+        disabled={!editor.can().chain().focus().toggleItalic().run()}
         className={editor.isActive('italic') ? 'is-active' : ''}
       >
         italic
@@ -88,6 +24,7 @@ export function MenuBar({ editor }) {
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleStrike().run()}
+        disabled={!editor.can().chain().focus().toggleStrike().run()}
         className={editor.isActive('strike') ? 'is-active' : ''}
       >
         strike
@@ -95,6 +32,7 @@ export function MenuBar({ editor }) {
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleCode().run()}
+        disabled={!editor.can().chain().focus().toggleCode().run()}
         className={editor.isActive('code') ? 'is-active' : ''}
       >
         code
@@ -200,11 +138,28 @@ export function MenuBar({ editor }) {
       >
         hard break
       </button>
-      <button type="button" onClick={() => editor.chain().focus().undo().run()}>
+      <button
+        type="button"
+        onClick={() => editor.chain().focus().undo().run()}
+        disabled={!editor.can().chain().focus().undo().run()}
+      >
         undo
       </button>
-      <button type="button" onClick={() => editor.chain().focus().redo().run()}>
+      <button
+        type="button"
+        onClick={() => editor.chain().focus().redo().run()}
+        disabled={!editor.can().chain().focus().redo().run()}
+      >
         redo
+      </button>
+      <button
+        type="button"
+        onClick={() => editor.chain().focus().setColor('#958DF1').run()}
+        className={
+          editor.isActive('textStyle', { color: '#958DF1' }) ? 'is-active' : ''
+        }
+      >
+        purple
       </button>
     </>
   );
