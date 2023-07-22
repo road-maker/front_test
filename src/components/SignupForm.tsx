@@ -61,11 +61,6 @@ function SignUpForm(props: PaperProps): ReactElement {
     }),
   });
 
-  if (user) {
-    console.log('redirect to user page!');
-    // return <Redirect to={`/users/${user.id}`} />;
-  }
-
   return (
     <Box maw={400} mx="auto" m={200}>
       <Paper radius="md" p="xl" withBorder {...props}>

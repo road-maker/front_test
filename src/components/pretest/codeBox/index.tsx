@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { Button, Group, Modal } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -26,6 +28,7 @@ const getRandomName = () => getRandomElement(names);
 
 export default function CodeBoxEditor() {
   const [content, onChangeContent, setContent] = useInput([]);
+  const [opened, { open, close }] = useDisclosure(false);
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -45,8 +48,12 @@ export default function CodeBoxEditor() {
   return (
     <div className="editor">
       <MenuBar editor={editor} />
+      <Modal opened={opened} onClose={close} title="Authentication">
+        얍
+      </Modal>
       <EditorContent
         editor={editor}
+        onClick={open}
         // onChange={onChangeContent}
         // content={content}
       />

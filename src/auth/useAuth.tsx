@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 import { axiosInstance } from '../axiosInstance';
 import { useUser } from '../components/user/hooks/useUser';
@@ -17,6 +18,7 @@ type AuthResponseType = UserResponse | ErrorResponse;
 export function useAuth(): UseAuth {
   const SERVER_ERROR = 'There was an error contacting the server.';
   const { clearUser, updateUser } = useUser();
+  const navigate = useNavigate();
 
   async function authServerCall(
     urlEndpoint: string,
@@ -30,15 +32,18 @@ export function useAuth(): UseAuth {
           url: urlEndpoint,
           method: 'POST',
           data: { email, password, nickname },
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
         });
       if (status === 201) {
         // eslint-disable-next-line no-alert
-        alert(`status code : ${status}! 회원가입 성공`);
-        return;
+        alert(`${nickname}님, 환영합니다!`);
+        navigate('/users/signin');
       }
 
-      if ('user' in data && 'accessToken' in data.user) {
+      if ('user' in data) {
         // update stored user data
         updateUser(data.user);
       }
@@ -49,9 +54,10 @@ export function useAuth(): UseAuth {
           : SERVER_ERROR;
       status === 409
         ? // eslint-disable-next-line no-alert
-          alert(`status code : ${status}! already a member!`)
+          alert('이미 등록된 회원입니다.')
         : // eslint-disable-next-line no-alert
-          alert(`status code : ${status}!`);
+          alert('정확한 정보를 입력해주세요.');
+      // 403 alert인데 일단 이렇게 해놨어요 나중에 대안이 생기면 바꿔주세요!
     }
   }
   type accessToken = string;
@@ -66,42 +72,31 @@ export function useAuth(): UseAuth {
           url: urlEndpoint,
           method: 'POST',
           data: { email, password },
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+          },
         });
       if (status === 201 || status === 200) {
-        // eslint-disable-next-line no-alert
-        alert(`status code : ${status}! 로그인 성공`);
-        if ('user' in data) {
+        localStorage.setItem('accessToken', JSON.stringify(data));
+        // localStorage.setItem('user', JSON.stringify(data));
+        navigate('/');
+        // eslint-disable-next-line no-console
+        console.log(localStorage);
+        if ('user' in data && 'accessToken' in data) {
           // update stored user data
+          // eslint-disable-next-line no-alert
+          alert(`${data.user.nickname}님, 환영합니다!`);
           updateUser(data.user);
         }
-        // eslint-disable-next-line no-console
-        console.log('data', data);
-        // API 요청하는 콜마다 헤더에 accessToken 담아 보내도록 설정
-        // axios.defaults.headers.common[
-        //   'Authorization'
-        // ] = `Bearer ${accessToken}`;
-
-        // const user: User = { accessToken: token };
-        // setStoredUser({ data });
-        // setStoredUser(user);
-      }
-
-      // if ('user' in data && 'accessToken' in data.user) {
-      if ('user' in data && 'accessToken' in data.user) {
-        // eslint-disable-next-line no-console
-        console.log(data);
-        // update stored user data
-        updateUser(data.user);
       }
     } catch (errorResponse) {
       const status =
         axios.isAxiosError(errorResponse) && errorResponse?.response?.status
           ? errorResponse?.response?.status
           : SERVER_ERROR;
-      status === 409
+      status === 403
         ? // eslint-disable-next-line no-alert
-          alert(`status code : ${status}! already a member!`)
+          alert('이메일과 비밀번호가 일치하지 않습니다.')
         : // eslint-disable-next-line no-alert
           alert(`status code : ${status}!`);
     }
