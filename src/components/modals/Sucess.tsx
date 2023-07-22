@@ -16,4 +16,5 @@ function SucessModal() {
     </>
   );
 }
+
 export default SucessModal;
