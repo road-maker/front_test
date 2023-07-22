@@ -3,12 +3,13 @@ import { RichTextEditor } from '@mantine/tiptap';
 import Placeholder from '@tiptap/extension-placeholder';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { useInput } from 'components/common/hooks/useInput';
-import RoadMapCanvas from 'components/editor/RoadMapEditor';
-import BasicTest from 'components/pretest/array';
 import { ReactElement, useEffect, useRef } from 'react';
 import { WebsocketProvider } from 'y-websocket';
 import * as Y from 'yjs';
+
+import { useInput } from '../../components/common/hooks/useInput';
+import RoadMapCanvas from '../../components/editor/RoadMapEditor';
+import BasicTest from '../../components/pretest/array';
 
 export default function RoadMapEditor(): ReactElement {
   //   const [state, setState] = useState('');
