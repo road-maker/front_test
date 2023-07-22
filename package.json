@@ -2,6 +2,7 @@
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
+  "homepage": "http://roadmakertest.s3-website.ap-northeast-2.amazonaws.com",
   "dependencies": {
     "@dagrejs/dagre": "^1.0.2",
     "@emotion/react": "^11.11.1",
@@ -76,7 +77,8 @@
     "test": "env-cmd -f .env.production react-scripts test",
     "eject": "react-scripts eject",
     "lint": "yarn lint:ci --fix",
-    "lint:ci": "eslint src"
+    "lint:ci": "eslint src",
+    "build:y-websocket": "PORT=1234 npx y-websocket-server"
   },
   "browserslist": {
     "production": [
