@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { Button, Group, Modal } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -41,6 +43,7 @@ const wsProvider = new WebsocketProvider(
 // });
 export default function CodeBoxEditor({ editorState, onChange }) {
   const [content, onChangeContent, setContent] = useInput([]);
+  const [opened, { open, close }] = useDisclosure(false);
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -64,6 +67,7 @@ export default function CodeBoxEditor({ editorState, onChange }) {
     <div className="editor">
       <CodeBox />
       <MenuBar editor={editor} />
+
       <Editor
         editorState={editorState}
         onEditorStateChange={onChange}
@@ -81,6 +85,15 @@ export default function CodeBoxEditor({ editorState, onChange }) {
           link: { inDropdown: true },
           history: { inDropdown: true },
         }}
+
+      <Modal opened={opened} onClose={close} title="Authentication">
+        얍
+      </Modal>
+      <EditorContent
+        editor={editor}
+        onClick={open}
+        // onChange={onChangeContent}
+        // content={content}
       />
 
       {/* <EditorContent
