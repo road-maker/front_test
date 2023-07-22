@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
-import TextEditor from 'components/textEditor';
 import { memo } from 'react';
 import { Handle, Position } from 'reactflow';
+
+import TextEditor from '../textEditor';
 
 export default memo(({ data, isConnectable }) => {
   return (
