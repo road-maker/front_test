@@ -27,3 +27,6 @@ yarn-error.log*
 # lock files
 yarn.lock
 package.lock.json
+
+# editor log files
+/drDir

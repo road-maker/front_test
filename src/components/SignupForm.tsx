@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 /* eslint-disable no-console */
 import {
   Anchor,
@@ -29,7 +30,7 @@ function SignUpForm(props: PaperProps): ReactElement {
     useInput('');
   const auth = useAuth();
   const navigate = useNavigate();
-  // const { user } = useUser();
+  // const user = useUser();
   const form = useForm({
     initialValues: {
       nickname: '',

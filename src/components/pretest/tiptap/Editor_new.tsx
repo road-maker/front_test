@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import Collaboration from '@tiptap/extension-collaboration';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -6,7 +7,7 @@ import * as Y from 'yjs';
 
 import { CollaborationAnnotation } from './extensions/collaboration-annotation';
 
-export function AddTextStyles({ editor }) {
+function AddTextStyles({ editor }) {
   return (
     <>
       <button
@@ -54,26 +55,13 @@ export function AddTextStyles({ editor }) {
   );
 }
 
-export function Editor({ ydoc, docList }) {
+export function Editor({ ydoc }) {
   const editorOne = useEditor({
     extensions: [
       StarterKit.configure({ history: false }),
       CollaborationAnnotation.configure({
         document: ydoc,
         instance: 'editor1',
-      }),
-      Collaboration.configure({
-        document: ydoc,
-      }),
-    ],
-  });
-
-  const editorTwo = useEditor({
-    extensions: [
-      StarterKit.configure({ history: false }),
-      CollaborationAnnotation.configure({
-        document: ydoc,
-        instance: 'editor2',
       }),
       Collaboration.configure({
         document: ydoc,
@@ -88,6 +76,13 @@ export function Editor({ ydoc, docList }) {
         </p>
       `,
   });
+
+  // useEffect((editor)=>{},[
+  //   const editorRef = useRef(null);
+  //   editorRef.current = editor;
+  //   console.log('editorRef.current',editorRef.current);
+  // ])
+
   return (
     <div>
       {editorOne && (
@@ -95,8 +90,6 @@ export function Editor({ ydoc, docList }) {
           <h1>Editor 1</h1>
           <AddTextStyles editor={editorOne} />
           <EditorContent className="editor-content" editor={editorOne} />
-          <h1>Editor 2</h1>
-          <EditorContent className="editor-content" editor={editorTwo} />
         </>
       )}
     </div>
@@ -104,16 +97,32 @@ export function Editor({ ydoc, docList }) {
 }
 
 export default function TipTapEditor() {
-  const chapterId = 'whydoesitalreadyexist?';
+  // eslint-disable-next-line prefer-const
+  let binding = null;
+  const chapterId = 'shared-test?';
   const ydoc = new Y.Doc();
-  const docList = ydoc.getArray('docs-list');
+  // console.log(ydoc.getText('tiptap'));
+  console.log(ydoc.getArray('doc-list'));
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const provider = new WebrtcProvider(chapterId, ydoc);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { awareness } = provider;
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const bindEditor = (ytext) => {
+    if (binding) {
+      // 이미 존재하는 editor 재사용 but 바인딩 이전
+      // 이벤트 핸들러 제거
+      binding.destroy();
+    }
+    // 첫유저가 document열었을때, 에디터가 아직 초기화 안됨
+    // editor 인스턴스 생성
+  };
 
   return (
     <div>
       {/* <button onClick={} type="button"></button> */}
-      <Editor ydoc={ydoc} docList={docList} />
+      <Editor ydoc={ydoc} />
     </div>
   );
 }

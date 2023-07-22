@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 /* eslint-disable no-console */
 import {
   Anchor,
@@ -20,6 +21,7 @@ import { ReactElement } from 'react';
 import { Form, useNavigate } from 'react-router-dom';
 
 import { useInput } from './common/hooks/useInput';
+// import { useUser } from './user/hooks/useUser';
 
 function LoginForm(props: PaperProps): ReactElement {
   const navigate = useNavigate();
@@ -40,11 +42,12 @@ function LoginForm(props: PaperProps): ReactElement {
     },
 
     validate: {
-      email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Invalid email'),
+      // email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Invalid email'),
+      email: (val) => (/^\S+@\S+$/.test(val) ? 'Invalid email' : null),
       password: (val) =>
         val.length < 8 || /^[A-Za-z0-9]{8,20}$/.test(val)
-          ? '비밀번호는 영문, 숫자, 특수문자를 조합해서 8자 이상 입력해주세요'
-          : null,
+          ? null
+          : '비밀번호는 영문, 숫자, 특수문자를 조합해서 8자 이상 입력해주세요',
     },
     transformValues: (values) => ({
       email: `${values.email}`,

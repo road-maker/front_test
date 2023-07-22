@@ -13,6 +13,7 @@ import {
   Text,
 } from '@mantine/core';
 import { IconBookmark, IconHeart, IconShare } from '@tabler/icons-react';
+import RoadMapEditor from 'components/editor/RoadMapEditor';
 
 const mockdata = [
   {
