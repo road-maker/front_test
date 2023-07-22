@@ -35,6 +35,4 @@ jobs:
             --recursive \
             --region ap-northeast-2 \
             build s3://roadmakertest
-      - name: WebSocket
-        run : PORT=1234 npx y-websocket-server
        
