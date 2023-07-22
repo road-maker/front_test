@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 import { Color } from '@tiptap/extension-color';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import ListItem from '@tiptap/extension-list-item';
 import TextStyle from '@tiptap/extension-text-style';
 import { EditorContent, useEditor } from '@tiptap/react';

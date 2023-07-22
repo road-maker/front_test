@@ -1,15 +1,14 @@
 /* eslint-disable no-console */
 import { Color } from '@tiptap/extension-color';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import ListItem from '@tiptap/extension-list-item';
 import TextStyle from '@tiptap/extension-text-style';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import RoadMapEditor from 'components/editor/RoadMapEditor';
 import { ReactElement, useCallback, useEffect } from 'react';
 import { WebrtcProvider } from 'y-webrtc';
 import * as Y from 'yjs';
 
+import RoadMapEditor from '../editor/RoadMapEditor';
 import MenuBar from './MenuBar';
 
 const doc = new Y.Doc();

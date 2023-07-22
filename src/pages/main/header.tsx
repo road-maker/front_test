@@ -12,9 +12,10 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { IconArrowLeft, IconArrowRight, IconSearch } from '@tabler/icons-react';
-import { useAuth } from 'auth/useAuth';
-import { useUser } from 'components/user/hooks/useUser';
 import { NavLink, useNavigate } from 'react-router-dom';
+
+import { useAuth } from '../../auth/useAuth';
+import { useUser } from '../../components/user/hooks/useUser';
 
 const useStyles = createStyles((theme) => ({
   link: {

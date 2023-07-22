@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 /* eslint-disable no-console */
 import {
   Anchor,
@@ -16,10 +15,10 @@ import {
   Title,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { useAuth } from 'auth/useAuth';
 import { ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useAuth } from '../auth/useAuth';
 import { useInput } from './common/hooks/useInput';
 
 function SignUpForm(props: PaperProps): ReactElement {

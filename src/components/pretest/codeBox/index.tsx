@@ -1,5 +1,4 @@
 /* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable import/no-unresolved */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -8,11 +7,11 @@ import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
 import Placeholder from '@tiptap/extension-placeholder';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { useInput } from 'components/common/hooks/useInput';
 import { Editor } from 'react-draft-wysiwyg';
 import { WebsocketProvider } from 'y-websocket';
 import * as Y from 'yjs';
 
+import { useInput } from '../../common/hooks/useInput';
 import CodeBox from './CodeBox';
 // import { store, webrtcProvider } from './store';
 

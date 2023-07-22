@@ -1,24 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-console */
-/* eslint-disable class-methods-use-this */
-// eslint-disable-next-line simple-import-sort/imports
+
 import 'reactflow/dist/style.css';
-import ResizableNodeSelected from './ResizableNodeSelected';
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import dagre from '@dagrejs/dagre';
 import { useCallback, useEffect, useMemo } from 'react';
 import ReactFlow, {
+  addEdge,
   Background,
   Controls,
   MiniMap,
   Panel,
-  addEdge,
   useEdgesState,
   useNodesState,
 } from 'reactflow';
 import { styled } from 'styled-components';
 
 import ColorSelectorNode from './ColorSelectorNode';
+import ResizableNodeSelected from './ResizableNodeSelected';
 
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
