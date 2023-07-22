@@ -8,3 +8,9 @@ export interface NewUser {
   email?: string;
 }
 export type User = Id & NewUser;
+
+export interface NewPrompt {
+  keyword: string;
+  content?: string;
+}
+export type Prompt = Id & NewPrompt;

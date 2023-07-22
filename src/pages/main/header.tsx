@@ -12,6 +12,8 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { IconArrowLeft, IconArrowRight, IconSearch } from '@tabler/icons-react';
+import { useInput } from 'components/common/hooks/useInput';
+import { useMemo } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../auth/useAuth';
@@ -135,15 +137,29 @@ export function HeaderMegaMenu() {
 
 export function InputWithButton(props: TextInputProps) {
   const theme = useMantineTheme();
-
+  const [prompt, onPromptChange, setPrompt] = useInput('');
+  const onRequestPrompt = (p) => {
+    // eslint-disable-next-line no-console
+    console.log(p);
+  };
+  useMemo(() => {
+    // eslint-disable-next-line no-console
+    console.log('submit', prompt);
+  }, [prompt]);
   return (
     <TextInput
+      value={prompt}
+      onChange={onPromptChange}
       icon={<IconSearch size="1.1rem" stroke={1.5} />}
       radius="md"
       w="600px"
       rightSection={
         <ActionIcon
           size={32}
+          onClick={() => {
+            setPrompt(prompt);
+            onRequestPrompt({ prompt });
+          }}
           radius="xl"
           color={theme.primaryColor}
           variant="filled"

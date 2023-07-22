@@ -24,9 +24,10 @@ export default function RoadMapEditor(): ReactElement {
       ydoc.current,
     );
 
-    wsProvider.on('status', (event) => {
-      console.log(event.status); // logs "connected" or "disconnected"
-    });
+    // wsProvider.on('status', (event) => {
+    //   console.log(event.status); // logs "connected" or "disconnected"
+    // });
+    wsProvider.shouldConnect = false;
 
     ytext.current = ydoc.current.getText('600');
     ytext.current.observe(() => {
@@ -36,10 +37,11 @@ export default function RoadMapEditor(): ReactElement {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ history: false }),
-      Placeholder.configure({ placeholder: 'This is placeholder' }),
+      Placeholder.configure({ placeholder: '\n\nThis is placeholder\n\n' }),
       //   Underline,
       //   Link,
       //   Superscript,

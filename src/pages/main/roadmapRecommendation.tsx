@@ -1,6 +1,5 @@
 import {
   ActionIcon,
-  Avatar,
   Card,
   Container,
   createStyles,
@@ -13,9 +12,6 @@ import {
   Text,
 } from '@mantine/core';
 import { IconBookmark, IconHeart, IconShare } from '@tabler/icons-react';
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import RoadMapEditor from '../../components/editor/RoadMapEditor';
 
 const mockdata = [
   {
@@ -49,7 +45,6 @@ const mockdata = [
     author: {
       name: '표혜민',
       description: '한 번 정복해보아요~^^',
-      profile: 'avatar.png',
     },
   },
 ];
@@ -100,7 +95,7 @@ export function RoadmapRecommendation(props: PaperProps) {
         {`#${article.category}`}
       </Text>
       <Group spacing={5}>
-        <Avatar src={article.author.profile} alt="it's me" />
+        {/* <Avatar src={article.author?.profile} alt="it's me" /> */}
         <Text className={classes.author} mt={5}>
           {article.author.name}
         </Text>
