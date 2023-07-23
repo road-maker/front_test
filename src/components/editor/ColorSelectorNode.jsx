@@ -2,8 +2,6 @@
 import { memo } from 'react';
 import { Handle, Position } from 'reactflow';
 
-import TextEditor from '../textEditor';
-
 export default memo(({ data, isConnectable }) => {
   return (
     <>
@@ -17,13 +15,6 @@ export default memo(({ data, isConnectable }) => {
       <div>
         Custom Color Picker Node: <strong>{data.color}</strong>
       </div>
-      <TextEditor />
-      {/* <iput
-        className="nodrag"
-        type="color"
-        onChange={data.onChange}
-        defaultValue={data.color}
-      /> */}
       <Handle
         type="source"
         position={Position.Right}

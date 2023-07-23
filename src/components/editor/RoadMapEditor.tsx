@@ -1,32 +1,21 @@
 /* eslint-disable react/no-danger */
-/* eslint-disable import/no-unresolved */
-/* eslint-disable react/button-has-type */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-console */
-/* eslint-disable class-methods-use-this */
-// eslint-disable-next-line simple-import-sort/imports
+/* eslint-disable simple-import-sort/imports */
 import 'reactflow/dist/style.css';
-import ResizableNodeSelected from './ResizableNodeSelected';
-import { Button, Group, Modal } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import dagre from '@dagrejs/dagre';
-import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import ReactFlow, {
   Background,
   Controls,
   MiniMap,
-  useReactFlow,
   Panel,
   addEdge,
   useEdgesState,
   useNodesState,
-  ReactFlowProvider,
+  useReactFlow,
 } from 'reactflow';
-import { styled } from 'styled-components';
 
-import ColorSelectorNode from './ColorSelectorNode';
-import { defaultBlockAt } from '@tiptap/core';
+import ResizableNodeSelected from './ResizableNodeSelected';
 
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
@@ -50,9 +39,9 @@ const getLayoutedElements = (nodes, edges, direction = 'TB') => {
 
   dagre.layout(dagreGraph);
 
-  const nodeTypes = {
-    selectorNode: ColorSelectorNode,
-  };
+  // const nodeTypes = {
+  //   selectorNode: ColorSelectorNode,
+  // };
 
   nodes.forEach((node) => {
     const nodeWithPosition = dagreGraph.node(node.id);
@@ -79,14 +68,14 @@ const nodeTypes = {
   ResizableNodeSelected,
 };
 
-function Roadmap({ editor, setState }) {
+function RoadMapCanvas({ editor, setState, onChange }) {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
   const [rfInstance, setRfInstance] = useState(null);
   const { setViewport } = useReactFlow();
-
   useMemo(() => {
-    console.log('roadmapeditor props', editor);
+    // console.log('roadmapeditor props', editor);
     setNodes([...nodes]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);
@@ -96,35 +85,13 @@ function Roadmap({ editor, setState }) {
     },
     [setEdges],
   );
-  const onFocusInput = useCallback((params) => {
-    if (params?.target?.attributes[0]?.value.split(' ')[0] === 'true') {
-      // console.log(params?.target);
-    }
-  }, []);
-  const onSave = useCallback(() => {
-    if (rfInstance) {
-      const flow = rfInstance.toObject();
-      localStorage.setItem(flowKey, JSON.stringify(flow));
-      console.log(flow);
-    }
-  }, [rfInstance]);
-
-  const onRestore = useCallback(() => {
-    const restoreFlow = async () => {
-      const flow = JSON.parse(localStorage.getItem(flowKey));
-      console.log(flow);
-      if (flow) {
-        const { x = 0, y = 0, zoom = 1 } = flow.viewport;
-        setNodes(flow.nodes || []);
-        setEdges(flow.edges || []);
-        setViewport({ x, y, zoom });
-      }
-    };
-
-    restoreFlow();
-  }, [setNodes, setViewport, setEdges]);
-
+  // const onFocusInput = useCallback((params) => {
+  //   if (params?.target?.attributes[0]?.value.split(' ')[0] === 'true') {
+  //     // console.log(params?.target);
+  //   }
+  // }, []);
   const onClickItem = useCallback((e) => {
+    // eslint-disable-next-line no-console
     console.log(e);
   }, []);
 
@@ -147,7 +114,6 @@ function Roadmap({ editor, setState }) {
         id: (nodeCount + 1).toString(),
         data: {
           label: <div dangerouslySetInnerHTML={{ __html: editor }} />,
-          // label: 'testsadsd',
         },
         type: 'ResizableNodeSelected',
         position,
@@ -162,14 +128,30 @@ function Roadmap({ editor, setState }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodes, editor]);
 
-  useMemo(() => {
-    console.log(nodes);
-  }, [nodes]);
-  const reactFlowStyle = {
-    background: 'light-pink',
-    width: '100%',
-    height: 300,
-  };
+  const onRestore = useCallback(() => {
+    const restoreFlow = async () => {
+      const flow = JSON.parse(localStorage.getItem(flowKey));
+      const { data } = flow;
+      // eslint-disable-next-line no-console
+      console.log('restore', data);
+      // const nodeData = data?.nodes;
+      if (flow) {
+        const { x = 0, y = 0, zoom = 1 } = flow.viewport;
+        setNodes(flow.nodes || []);
+        setEdges(flow.edges || []);
+        setViewport({ x, y, zoom });
+      }
+    };
+
+    restoreFlow();
+  }, [setNodes, setViewport, setEdges]);
+
+  const onSave = useCallback(() => {
+    if (rfInstance) {
+      const flow = rfInstance.toObject();
+      localStorage.setItem(flowKey, JSON.stringify(flow));
+    }
+  }, [rfInstance]);
 
   // 첫로딩 시의 포멧 => 노드랑 간선이 null이면 에러!~
   // useEffect(() => {
@@ -199,7 +181,7 @@ function Roadmap({ editor, setState }) {
         id: '1',
         type: 'ResizableNodeSelected',
         position,
-        data: { label: 'test' },
+        data: { label: editor || <div>empty node</div> },
         style: {
           background: '#fff',
           border: '1px solid black',
@@ -211,75 +193,11 @@ function Roadmap({ editor, setState }) {
         id: '2',
         type: 'ResizableNodeSelected',
         data: {
-          label: 'node1',
+          label: editor || <div>empty node</div>,
         },
         position,
         style: {
-          background: '#fff',
-          border: '1px solid black',
-          borderRadius: 15,
-          fontSize: 12,
-        },
-      },
-      {
-        id: '2a',
-        type: 'ResizableNodeSelected',
-        // data: { onChange: onChangeEvent, color: initBgColor },
-        // data: { onChange: onChangeEvent, color: initBgColor },
-        // data: { label: <TextEditor /> },
-        data: { label: 'test' },
-        position,
-        style: {
-          background: '#fff',
-          border: '1px solid black',
-          borderRadius: 15,
-          fontSize: 12,
-          // overflowY: 'hidden',
-        },
-      },
-      {
-        id: '2b',
-        type: 'ResizableNodeSelected',
-        data: { label: 'node 2b' },
-        position,
-        style: {
-          background: '#fff',
-          border: '1px solid black',
-          borderRadius: 15,
-          fontSize: 12,
-        },
-      },
-      {
-        id: '2c',
-        data: { label: 'node 2c' },
-        position,
-        style: {
-          background: '#fff',
-          border: '1px solid black',
-          borderRadius: 15,
-          fontSize: 12,
-        },
-      },
-      {
-        id: '2d',
-        type: 'ResizableNodeSelected',
-        data: { label: 'node 2d' },
-        position,
-        className: 'circle',
-        style: {
-          background: 'purple',
-          border: '1px solid black',
-          borderRadius: '100%',
-          padding: '2rem',
-          fontSize: 12,
-        },
-      },
-      {
-        id: '3',
-        type: 'ResizableNodeSelected',
-        data: { label: 'node 3' },
-        position,
-        style: {
+          // background: 'red',
           background: '#fff',
           border: '1px solid black',
           borderRadius: 15,
@@ -303,7 +221,7 @@ function Roadmap({ editor, setState }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [edges, nodes]);
   return (
-    <EditorWrap style={{ width: '100vw', height: '100vh' }}>
+    <div style={{ width: '100%', height: '100%' }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -314,12 +232,16 @@ function Roadmap({ editor, setState }) {
         fitView
         elevateNodesOnSelect
         snapToGrid
+        onInit={setRfInstance}
         nodeTypes={nodeTypes}
-        style={reactFlowStyle}
-        className="react-flow-node-resizer-example"
         minZoom={0.2}
         maxZoom={4}
-        onInit={setRfInstance}
+        style={{
+          width: '100%',
+          height: '100%',
+          backgroundColor: '#ebf6fc',
+          opacity: '80%',
+        }}
       >
         <Panel position="top-right">
           <button type="button" onClick={() => onLayout('TB')}>
@@ -340,26 +262,19 @@ function Roadmap({ editor, setState }) {
           >
             노드 전체 삭제
           </button>
-          <button onClick={onSave}>save</button>
-          <button onClick={onRestore}>restore</button>
+          <button type="button" onClick={onSave}>
+            save
+          </button>
+
+          <button type="button" onClick={onRestore}>
+            restore
+          </button>
         </Panel>
         <Background gap={16} />
         <Controls />
         <MiniMap zoomable pannable />
       </ReactFlow>
-    </EditorWrap>
+    </div>
   );
 }
-const EditorWrap = styled.div`
-  & .react-flow__node {
-    border: '1px solid pink';
-  }
-`;
-
-export default function RoadMapCanvas({ editor, setState }) {
-  return (
-    <ReactFlowProvider>
-      <Roadmap editor={editor} setState={setState} />
-    </ReactFlowProvider>
-  );
-}
+export default RoadMapCanvas;
