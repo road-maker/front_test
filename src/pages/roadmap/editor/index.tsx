@@ -15,6 +15,7 @@ export default function RoadMapEditor(): ReactElement {
   // const { search } = useLocation();
   const [search] = useSearchParams();
   const [state, onChangeHandler, setState] = useInput('');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [roadMapTitle, onRoadMapTitleChange, setRoadMapTitle] = useInput(
     search.get('title') || '',
   );
