@@ -8,9 +8,14 @@ export interface NewUser {
   email?: string;
 }
 export type User = Id & NewUser;
+export interface GptNode {
+  id: string;
+  content?: string;
+}
 
 export interface NewPrompt {
   keyword: string;
-  content?: string;
+  data?: Array<GptNode | null>;
+  // response?: Array<GptNode | null>;
 }
-export type Prompt = Id & NewPrompt;
+export type Prompt = NewPrompt;

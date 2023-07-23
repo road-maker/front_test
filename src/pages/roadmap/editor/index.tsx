@@ -4,6 +4,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { ReactElement, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { ReactFlowProvider } from 'reactflow';
 import { styled } from 'styled-components';
 
@@ -11,7 +12,12 @@ import { useInput } from '../../../components/common/hooks/useInput';
 import RoadMapCanvas from '../../../components/editor/RoadMapEditor';
 
 export default function RoadMapEditor(): ReactElement {
+  // const { search } = useLocation();
+  const [search] = useSearchParams();
   const [state, onChangeHandler, setState] = useInput('');
+  const [roadMapTitle, onRoadMapTitleChange, setRoadMapTitle] = useInput(
+    search.get('title') || '',
+  );
   const ydoc = useRef(null);
   const ytext = useRef(null);
   // useEffect(() => {
@@ -65,6 +71,15 @@ export default function RoadMapEditor(): ReactElement {
   return (
     <EditorWrap>
       <div>
+        {/* {search? input } */}
+        <div>
+          로드맵 제목 :{' '}
+          <input
+            value={roadMapTitle}
+            onChange={onRoadMapTitleChange}
+            placeholder="로드맵 제목을 입력해주세요."
+          />
+        </div>
         {/* <BasicTest
           state={state}
           setState={setState}
@@ -123,7 +138,8 @@ export default function RoadMapEditor(): ReactElement {
         <ReactFlowProvider>
           <RoadMapCanvas
             // state={state}
-            editor={state}
+            // editor={state}
+            editor={editor}
             setState={setState}
             onChange={onChangeHandler}
             // ydoc={ydoc}

@@ -18,7 +18,6 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconArrowLeft, IconArrowRight, IconSearch } from '@tabler/icons-react';
 import { useInput } from 'components/common/hooks/useInput';
 import { usePrompt } from 'components/prompts/hooks/usePrompt';
-import { useMemo } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../auth/useAuth';
@@ -178,14 +177,9 @@ export function InputWithButton(props: TextInputProps) {
   const [prompt, onPromptChange, setPrompt] = useInput('');
   const { getprompt } = usePrompt();
   const onRequestPrompt = (p) => {
-    // // eslint-disable-next-line no-console
-    // console.log(p);
     getprompt(p.prompt);
   };
-  useMemo(() => {
-    // eslint-disable-next-line no-console
-    console.log('submit', prompt);
-  }, [prompt]);
+
   return (
     <TextInput
       value={prompt}

@@ -3,12 +3,12 @@ import { useQuery, useQueryClient } from 'react-query';
 
 import { axiosInstance, getJWTHeader } from '../../../axiosInstance';
 import { queryKeys } from '../../../react-query/constants';
-import type { User } from '../../../types/types';
 import {
   clearStoredUser,
   getStoredUser,
   setStoredUser,
-} from '../../../user-storage';
+} from '../../../storage/user-storage';
+import type { User } from '../../../types/types';
 
 async function getUser(user: User | null): Promise<User | null> {
   if (!user) return null;

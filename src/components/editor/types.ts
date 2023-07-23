@@ -27,3 +27,34 @@ export interface addedNode {
   data?: data;
   positionAbsolute?: position;
 }
+
+export interface XYPosition {
+  x: number;
+  y: number;
+}
+export type label = unknown;
+export interface nodeStyle {
+  background?: string;
+  border?: string;
+  borderRadius?: number;
+  fontSize?: number;
+}
+export interface RoadmapNode {
+  id: string;
+  type?: string;
+  position: XYPosition;
+  data: label;
+  style?: nodeStyle;
+  content?: string;
+}
+// export type RoadmapNodes = Array<RoadmapNode> | Set<RoadMapEdge>;
+export type RoadmapNodes = Array<RoadmapNode>;
+
+export interface RoadMapEdge {
+  id: string;
+  source: string;
+  target: string;
+  type: string;
+  animated: boolean;
+}
+export type RoadMapEdges = Array<RoadMapEdge>;

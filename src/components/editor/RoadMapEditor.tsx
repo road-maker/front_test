@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable react/no-danger */
 /* eslint-disable simple-import-sort/imports */
 import 'reactflow/dist/style.css';
@@ -15,7 +16,10 @@ import ReactFlow, {
   useReactFlow,
 } from 'reactflow';
 
+import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
+import { useSearchParams } from 'react-router-dom';
 import ResizableNodeSelected from './ResizableNodeSelected';
+import { RoadmapNodes } from './types';
 
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
@@ -39,10 +43,6 @@ const getLayoutedElements = (nodes, edges, direction = 'TB') => {
 
   dagre.layout(dagreGraph);
 
-  // const nodeTypes = {
-  //   selectorNode: ColorSelectorNode,
-  // };
-
   nodes.forEach((node) => {
     const nodeWithPosition = dagreGraph.node(node.id);
     // eslint-disable-next-line no-param-reassign
@@ -64,18 +64,63 @@ const getLayoutedElements = (nodes, edges, direction = 'TB') => {
 
 const position = { x: 0, y: 0 };
 const edgeType = 'smoothstep';
+
 const nodeTypes = {
   ResizableNodeSelected,
 };
 
 function RoadMapCanvas({ editor, setState, onChange }) {
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const { prompt } = usePromptAnswer();
+  const [search] = useSearchParams();
+  const initialNodes = [];
+  const initialEdges = [];
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  useEffect(() => {
+    if (search) {
+      const { data } = prompt;
+      const dataCopy = [...data] as RoadmapNodes;
+      setNodes([...dataCopy]);
 
+      // eslint-disable-next-line array-callback-return
+      dataCopy.map((v) => {
+        initialNodes.push({
+          id: v?.id,
+          data: {
+            label: v?.content,
+          },
+          type: 'ResizableNodeSelected',
+          position,
+          style: {
+            background: '#fff',
+            border: '1px solid black',
+            borderRadius: 15,
+            fontSize: 12,
+          },
+        });
+        // source랑 target 구해서 간선id 만들고 이어주기
+        // parseInt는 오로지 숫자인 부분만 parse해줬음
+
+        if (v.id !== `${parseInt(v?.id, 10)}`) {
+          initialEdges.push({
+            id: `e${parseInt(v?.id, 10)}${v?.id}`,
+            source: `${parseInt(v?.id, 10)}`,
+            target: v.id,
+            type: edgeType,
+            animated: true,
+          });
+        }
+      });
+      console.log('search', search);
+      search ? setNodes(initialNodes) : setNodes([]);
+      search ? setEdges(initialEdges) : setEdges([]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [rfInstance, setRfInstance] = useState(null);
   const { setViewport } = useReactFlow();
+
   useMemo(() => {
-    // console.log('roadmapeditor props', editor);
     setNodes([...nodes]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);
@@ -85,15 +130,10 @@ function RoadMapCanvas({ editor, setState, onChange }) {
     },
     [setEdges],
   );
-  // const onFocusInput = useCallback((params) => {
-  //   if (params?.target?.attributes[0]?.value.split(' ')[0] === 'true') {
-  //     // console.log(params?.target);
-  //   }
+
+  // const onClickItem = useCallback((e) => {
+  //   console.log(e);
   // }, []);
-  const onClickItem = useCallback((e) => {
-    // eslint-disable-next-line no-console
-    console.log(e);
-  }, []);
 
   const onLayout = useCallback(
     (direction) => {
@@ -108,12 +148,19 @@ function RoadMapCanvas({ editor, setState, onChange }) {
 
   const onAddNode = useCallback(() => {
     const nodeCount: number = [...nodes].length;
+    console.log(
+      'onAddNode',
+      editor?.props?.editor?.contentComponent?.editorContentRef?.current,
+    );
     setNodes([
       ...nodes,
       {
+        // TODO : 노드id 는 '1a' 형식이다. 자식 노드면 '1a'지만 '1'의 형제 노드면 '2'가 된다
         id: (nodeCount + 1).toString(),
         data: {
-          label: <div dangerouslySetInnerHTML={{ __html: editor }} />,
+          // label: <div dangerouslySetInnerHTML={{ __html: editor }} />,
+          // label: ,
+          label: 'testing..',
         },
         type: 'ResizableNodeSelected',
         position,
@@ -125,8 +172,7 @@ function RoadMapCanvas({ editor, setState, onChange }) {
         },
       },
     ]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodes, editor]);
+  }, [nodes, editor, setNodes]);
 
   const onRestore = useCallback(() => {
     const restoreFlow = async () => {
@@ -174,42 +220,7 @@ function RoadMapCanvas({ editor, setState, onChange }) {
         };
       }),
     );
-    // };
-
-    setNodes([
-      {
-        id: '1',
-        type: 'ResizableNodeSelected',
-        position,
-        data: { label: editor || <div>empty node</div> },
-        style: {
-          background: '#fff',
-          border: '1px solid black',
-          borderRadius: 15,
-          fontSize: 12,
-        },
-      },
-      {
-        id: '2',
-        type: 'ResizableNodeSelected',
-        data: {
-          label: editor || <div>empty node</div>,
-        },
-        position,
-        style: {
-          // background: 'red',
-          background: '#fff',
-          border: '1px solid black',
-          borderRadius: 15,
-          fontSize: 12,
-        },
-      },
-    ]);
-
-    setEdges([
-      { id: 'e12', source: '1', target: '2', type: edgeType, animated: true },
-    ]);
-
+    // onLayout('TB');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -225,7 +236,7 @@ function RoadMapCanvas({ editor, setState, onChange }) {
       <ReactFlow
         nodes={nodes}
         edges={edges}
-        onClick={onClickItem}
+        // onClick={onClickItem}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}

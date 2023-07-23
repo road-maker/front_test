@@ -10,12 +10,6 @@ interface UsePrompt {
   getprompt: (keyword: string) => Promise<void>;
 }
 
-// async function getRecentPrompt(
-//   prompt: Prompt['keyword'] | null,
-// ): Promise<Prompts | null> {
-//     if (!prompt) return null;
-//     const {data} : AxiosResponse<{prompt:Prompt}>= await axiosInstance.post()
-// }
 type ErrorResponse = { message: string };
 type PromptResponse = { prompt: Array<Prompt> };
 
@@ -36,10 +30,14 @@ export function usePrompt(): UsePrompt {
           headers: { 'Content-Type': 'application/json' },
         });
       if (status === 200) {
-        localStorage.setItem('recent_gpt_search', JSON.stringify(data));
+        localStorage.setItem(
+          'recent_gpt_search',
+          JSON.stringify({ keyword, data }), // 검색어에 대한 data 저장하도록
+        );
+        navigate(`/roadmap/editor?title=${keyword}`);
       }
     } catch (errorResponse) {
-      console.log(errorResponse);
+      console.log(`${SERVER_ERROR}!: ${errorResponse}`);
     }
   }
 
