@@ -1,5 +1,5 @@
 // import Quil from 'components/pretest/codeBox';
-import RoadMapEditor from 'pages/roadmap';
+import RoadMapEditor from 'pages/roadmap/editor';
 import { ReactElement } from 'react';
 import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
@@ -26,11 +26,6 @@ function App(): ReactElement {
         { path: 'users/signup', element: <SignupPage /> },
         { path: 'users/reset', element: <ResetInfoPage /> },
         { path: 'roadmap/editor', element: <RoadMapEditor /> },
-        // { path: 'roadmap/editor', element: <EditorPage /> },
-        // { path: 'roadmap/monacoeditor', element: <MonacoEditor /> },
-        // { path: 'roadmap/tiptapeditor', element: <TipTapEditor /> },
-        // { path: 'roadmap/basic', element: <BasicTest /> },
-        // { path: 'roadmap/basic', element: <RoadMapEditor /> },
       ],
     },
   ]);

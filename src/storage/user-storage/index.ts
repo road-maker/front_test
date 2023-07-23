@@ -1,4 +1,4 @@
-import { User } from '../types/types';
+import { User } from '../../types/types';
 
 const USER_LOCALSTORAGE_KEY = 'user';
 
