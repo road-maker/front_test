@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-console */
 import { AxiosResponse } from 'axios';
 import { axiosInstance } from 'axiosInstance';
@@ -10,7 +9,6 @@ interface UsePrompt {
   getprompt: (keyword: string) => Promise<void>;
 }
 
-type ErrorResponse = { message: string };
 type PromptResponse = { prompt: Array<Prompt> };
 
 export function usePrompt(): UsePrompt {

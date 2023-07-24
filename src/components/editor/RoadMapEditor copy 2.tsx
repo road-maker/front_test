@@ -71,15 +71,31 @@
 //   ResizableNodeSelected,
 // };
 
-// function RoadMapCanvas({ editor, setState, onChange }) {
+// function RoadMapCanvas({
+//   editor,
+//   setState,
+//   onChange,
+//   label,
+//   onChangeLabel,
+//   setLabel,
+// }) {
 //   const { prompt } = usePromptAnswer();
 //   const [search] = useSearchParams();
 //   const initialNodes = [];
 //   const initialEdges = [];
 //   const edgeSet = new Set<RoadmapEdge['id']>();
-//   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-//   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+//   const [nodeState, setNodes, onNodesChange] = useNodesState(initialNodes);
+
+//   const [edgeState, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 //   useEffect(() => {
+//     if (getStoredRoadmap()) {
+//       const { edges, nodes, viewport } = getStoredRoadmap();
+//       setNodes(nodes);
+//       setEdges(edges);
+
+//       console.log(getStoredRoadmap());
+//       return;
+//     }
 //     if (search) {
 //       const { data } = prompt;
 //       const dataCopy = [...data] as RoadmapNodes;
@@ -136,50 +152,51 @@
 //   );
 
 //   const onClickItem = useCallback((e) => {
-//     console.log(e);
+//     console.log('onClickNode', e);
+//     console.log('onClickItem', e.target);
+//     setLabel(e.target.innerHTML);
+//     onSave();
 //   }, []);
 
 //   const onLayout = useCallback(
 //     (direction) => {
 //       const { nodes: layoutedNodes, edges: layoutedEdges } =
-//         getLayoutedElements(nodes, edges, direction);
+//         getLayoutedElements(nodeState, edgeState, direction);
 
 //       setNodes([...layoutedNodes]);
 //       setEdges([...layoutedEdges]);
 //     },
-//     [nodes, edges, setEdges, setNodes],
+//     [nodeState, edgeState, setEdges, setNodes],
 //   );
 
 //   const onAddNode = useCallback(() => {
-//     const nodeCount: number = [...nodes].length;
-//     console.log(
-//       'onAddNode',
-//       editor?.props?.editor?.contentComponent?.editorContentRef?.current,
-//     );
+//     const nodeCount: number = [...nodeState].length;
+//     // console.log(
+//     //   'onAddNode',
+//     //   editor?.props?.editor?.contentComponent?.editorContentRef?.current,
+//     // );
 //     setNodes([
-//       ...nodes,
+//       ...nodeState,
 //       {
 //         // TODO : 노드id 는 '1a' 형식이다. 자식 노드면 '1a'지만 '1'의 형제 노드면 '2'가 된다
 //         // label에 들어가는 데이터가 에러를 발생시키는 걸 해결하자.
 //         id: (nodeCount + 1).toString(),
 //         data: {
-//           label: (
-//             <div dangerouslySetInnerHTML={{ __html: editor?.getHTML() }} />
-//           ),
-//           // label: editor?.getHTML(),
-//           // label: 'testing..',
+//           label: ``,
+//           // label: '',
 //         },
 //         type: 'ResizableNodeSelected',
 //         position,
+
 //         style: {
 //           background: '#fff',
 //           border: '1px solid black',
-//           borderRadius: 15,
+//           borderRadius: 3,
 //           fontSize: 12,
 //         },
 //       },
 //     ]);
-//   }, [nodes, editor, setNodes]);
+//   }, [nodeState,setNodes]);
 //   const { postRoadmap } = useRoadmap();
 //   const onPublishRoadmap = useCallback(() => {
 //     // eslint-disable-next-line no-alert
@@ -193,13 +210,13 @@
 //         recommendedExecutionTimeValue: 0,
 //         recommendedExecutionTimeUnit: '',
 //       },
-//       roadmapNodes: nodes,
-//       roadmapEdges: edges,
+//       nodes,
+//       edges,
 //       viewport,
 //     };
-//     // postRoadmap(data);
+//     postRoadmap(data);
 //     // eslint-disable-next-line react-hooks/exhaustive-deps
-//   }, [nodes, editor]);
+//   }, [nodeState, editor]);
 
 //   const onRestore = useCallback(() => {
 //     const restoreFlow = async () => {
@@ -253,24 +270,26 @@
 //   }, []);
 
 //   useMemo(() => {
-//     if (edges && nodes) {
+//     if (edgeState && nodeState) {
 //       return;
 //     }
 //     onLayout('TB');
 //     // eslint-disable-next-line react-hooks/exhaustive-deps
-//   }, [edges, nodes]);
+//   }, [edgeState, nodeState]);
 
 //   const proOptions = { hideAttribution: true };
 //   return (
 //     <div style={{ width: '100%', height: '100%' }}>
 //       <ReactFlow
-//         nodes={nodes}
-//         edges={edges}
+//         nodes={nodeState}
+//         edges={edgeState}
 //         onClick={onClickItem}
+//         // onChange={onChangeLabel}
 //         onNodesChange={onNodesChange}
 //         onEdgesChange={onEdgesChange}
 //         onConnect={onConnect}
 //         fitView
+//         // contentEditable
 //         elevateNodesOnSelect
 //         snapToGrid
 //         proOptions={proOptions}

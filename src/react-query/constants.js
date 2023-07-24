@@ -1,4 +1,5 @@
 export const queryKeys = {
-  user: 'user',
+  user: 'accessToken',
   prompt: 'prompts',
+  roadmap: 'roadmap',
 };

@@ -18,10 +18,13 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconArrowLeft, IconArrowRight, IconSearch } from '@tabler/icons-react';
 import { useInput } from 'components/common/hooks/useInput';
 import { usePrompt } from 'components/prompts/hooks/usePrompt';
-import { useNavigate } from 'react-router-dom';
+import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { clearStoredGpt } from 'storage/gpt-storage';
+import { clearStoredRoadmap } from 'storage/roadmap-storage';
 
-import { useAuth } from '../../auth/useAuth';
-import { useUser } from '../../components/user/hooks/useUser';
+import { useAuth } from '../../../auth/useAuth';
+import { useUser } from '../../../components/user/hooks/useUser';
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -73,7 +76,7 @@ const useStyles = createStyles((theme) => ({
     margin: `calc(${theme.spacing.md} * -1)`,
     marginTop: theme.spacing.sm,
     padding: `${theme.spacing.md} calc(${theme.spacing.md} * 2)`,
-    paddingBottom: theme.spacing.xl,
+    // paddingBottom: theme.spacing.xl,
     borderTop: `${rem(1)} solid ${
       theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1]
     }`,
@@ -98,7 +101,6 @@ export function HeaderMegaMenu() {
   const { user } = useUser();
   const { signout } = useAuth();
   const [opened, { open, close }] = useDisclosure(false);
-
   return (
     <Box pb={30}>
       <Header height={60} px="md">
@@ -139,7 +141,11 @@ export function HeaderMegaMenu() {
                   size="xs"
                   variant="light"
                   color="blue"
-                  onClick={() => navigate('/roadmap/editor')}
+                  onClick={() => {
+                    clearStoredRoadmap();
+                    clearStoredGpt();
+                    navigate('/roadmap/editor');
+                  }}
                 >
                   빈 로드맵 만들기
                 </Button>
@@ -150,19 +156,21 @@ export function HeaderMegaMenu() {
                 로드맵 생성하기
               </Button>
             </Group>
-            {user ? (
-              <Button onClick={() => signout()}>Sign out</Button>
-            ) : (
-              <Button onClick={() => navigate('/users/signin')}>Sign in</Button>
-            )}
-            {/* {user && 'accessToken' in user ? (
+            {/* <Button
+              onClick={() => navigate('roadmap/editor')}
+              variant="light"
+              color="indigo"
+            >
+              Editor Page
+            </Button> */}
+            {user && 'accessToken' in user ? (
               <>
                 <NavLink to="/">{user.email}</NavLink>
                 <Button onClick={() => signout()}>Sign out</Button>
               </>
             ) : (
               <Button onClick={() => navigate('/users/signin')}>Sign in</Button>
-            )} */}
+            )}
           </Group>
         </Group>
       </Header>
@@ -174,10 +182,10 @@ export function InputWithButton(props: TextInputProps) {
   const theme = useMantineTheme();
   const [prompt, onPromptChange, setPrompt] = useInput('');
   const { getprompt } = usePrompt();
+  const { clearGptAnswer } = usePromptAnswer();
   const onRequestPrompt = (p) => {
     getprompt(p.prompt);
   };
-
   return (
     <TextInput
       value={prompt}
@@ -190,6 +198,7 @@ export function InputWithButton(props: TextInputProps) {
           size={32}
           onClick={() => {
             setPrompt(prompt);
+            clearGptAnswer();
             onRequestPrompt({ prompt });
           }}
           radius="xl"

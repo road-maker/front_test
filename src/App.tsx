@@ -1,5 +1,4 @@
 // import Quil from 'components/pretest/codeBox';
-import RoadMapEditor from 'pages/roadmap/editor';
 import { ReactElement } from 'react';
 import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
@@ -9,6 +8,7 @@ import ErrorPage from './pages/error';
 import LoginPage from './pages/login';
 import MainPage from './pages/main';
 import ResetInfoPage from './pages/resetInfo';
+import RoadMapEditor from './pages/roadmap/editor';
 import SignupPage from './pages/signup';
 import { queryClient } from './react-query/queryClient';
 
@@ -25,13 +25,18 @@ function App(): ReactElement {
         },
         { path: 'users/signup', element: <SignupPage /> },
         { path: 'users/reset', element: <ResetInfoPage /> },
-        { path: 'roadmap/editor', element: <RoadMapEditor /> },
+        {
+          path: 'roadmap/editor',
+          // element: <RoadMapEditor />,
+          element: <RoadMapEditor />,
+        },
       ],
     },
   ]);
   return (
     <QueryClientProvider client={queryClient}>
       <div className="App">
+        {/* <Loading /> */}
         <RouterProvider router={router} />
       </div>
       <ReactQueryDevtools />

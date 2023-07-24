@@ -1,7 +1,12 @@
-import SignupForm from '../../components/SignupForm';
+import SignupForm from '../../components/user/forms/SignupForm';
+import MainLayout from '../../layout/mainLayout';
 
 function SignupPage() {
-  return <SignupForm />;
+  return (
+    <MainLayout>
+      <SignupForm />
+    </MainLayout>
+  );
 }
 
 export default SignupPage;

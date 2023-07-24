@@ -1,31 +1,30 @@
-export interface position {
+export interface Id {
+  id: number;
+}
+
+export interface Position {
   x: number;
   y: number;
 }
-export interface style {
-  background?: string;
-  border?: string;
-  borderRadius?: number;
-  fontSize?: string;
-}
-export interface dataProps {
+
+export interface DataProps {
   children?: string;
   ref?: string | unknown;
 }
-export interface data {
+export interface Data {
   label?: string;
-  key?: string | undefined;
-  props?: dataProps;
+  // key?: string | undefined;
+  // props?: DataProps;
 }
-export interface addedNode {
+export interface AddedNode {
   id: string;
   height: number;
   width: number;
   dragging?: boolean;
   selected?: boolean;
   type?: string;
-  data?: data;
-  positionAbsolute?: position;
+  data?: Data;
+  positionAbsolute?: Position;
 }
 
 export interface XYPosition {
@@ -47,14 +46,35 @@ export interface RoadmapNode {
   style?: nodeStyle;
   content?: string;
 }
-// export type RoadmapNodes = Array<RoadmapNode> | Set<RoadMapEdge>;
+
 export type RoadmapNodes = Array<RoadmapNode>;
 
-export interface RoadMapEdge {
+export interface RoadmapEdge {
   id: string;
   source: string;
   target: string;
   type: string;
   animated: boolean;
 }
-export type RoadMapEdges = Array<RoadMapEdge>;
+export type RoadmapEdges = Array<RoadmapEdge>;
+export type zoom = number;
+// export type Viewport = XYPosition | zoom | null;
+
+export interface Viewport {
+  x: number;
+  y: number;
+  zoom: number;
+}
+
+export interface NewRoadmap {
+  title?: string;
+  description?: string;
+  recommendedExecutionTimeValue?: number;
+  recommendedExecutionTimeUnit?: string;
+  edges: RoadmapEdges | [];
+  // nodes: RoadmapNodes | [];
+  nodes: RoadmapNodes;
+  viewport: Viewport;
+}
+
+export type Roadmap = NewRoadmap & Id;

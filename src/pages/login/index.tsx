@@ -1,12 +1,12 @@
-// import { json, redirect } from 'react-router-dom';
-
-import LoginForm from '../../components/LoginForm';
+import LoginForm from '../../components/user/forms/LoginForm';
+import MainLayout from '../../layout/mainLayout';
 
 function LoginPage() {
+  // const { user } = useUser();
   return (
-    <>
-      <LoginForm />;
-    </>
+    <MainLayout>
+      <LoginForm />
+    </MainLayout>
   );
 }
 
