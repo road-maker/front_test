@@ -20,9 +20,8 @@ import ReactFlow, {
 import { getStoredRoadmap, setStoredRoadmap } from 'storage/roadmap-storage';
 import { styled } from 'styled-components';
 
-import { useInput } from 'components/common/hooks/useInput';
 import ResizableNodeSelected from './ResizableNodeSelected';
-import { RoadmapEdge } from './types';
+import { RoadmapEdge, RoadmapNode } from './types';
 
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
@@ -100,18 +99,26 @@ const initialEdges = [
 ];
 const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
 
-function RoadMapCanvas({ label, onChangeLabel, setLabel }) {
+function RoadMapCanvas({
+  label,
+  onChangeLabel,
+  setLabel,
+  id,
+  onChangeId,
+  setId,
+}) {
   const { prompt } = usePromptAnswer();
   const [search] = useSearchParams();
 
   // const initialNodes = [];
   // const initialEdges = [];
   const edgeSet = new Set<RoadmapEdge['id']>();
+  const nodeSet = new Set<RoadmapNode['id']>();
   const [nodeState, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edgeState, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   // const [nodeName, setNodeName] = useState('');
-  const [nodeName, onNodeNameChange, setNodeName] = useInput('');
+  // const [nodeName, onNodeNameChange, setNodeName] = useInput('');
   const [nodeBg, setNodeBg] = useState('#eee');
   const [nodeHidden, setNodeHidden] = useState(false);
 
@@ -136,20 +143,24 @@ function RoadMapCanvas({ label, onChangeLabel, setLabel }) {
 
       // eslint-disable-next-line array-callback-return
       dataCopy.map((v) => {
-        initialNodes.push({
-          id: v?.id,
-          data: {
-            label: v?.content,
-          },
-          // type: 'ResizableNodeSelected',
-          position,
-          // style: {
-          //   background: '#fff',
-          //   border: '1px solid black',
-          //   borderRadius: 15,
-          //   fontSize: 12,
-          // },
-        });
+        if (!nodeSet.has(v?.id)) {
+          initialNodes.push({
+            id: v?.id,
+            data: {
+              label: v?.content,
+            },
+            // type: 'ResizableNodeSelected',
+            position,
+            // style: {
+            //   background: '#fff',
+            //   border: '1px solid black',
+            //   borderRadius: 15,
+            //   fontSize: 12,
+            // },
+          });
+          nodeSet.add(`${v?.id}`);
+        }
+
         // source랑 target 구해서 간선id 만들고 이어주기
         // parseInt는 오로지 숫자인 부분만 parse해줬음
 
@@ -175,13 +186,14 @@ function RoadMapCanvas({ label, onChangeLabel, setLabel }) {
       setNodes((nds) =>
         nds.map((node) => {
           // if (node.id === '1') {
-          if (node.id === label) {
+          if (node.id === id) {
             // it's important that you create a new object here
             // in order to notify react flow about the change
             // eslint-disable-next-line no-param-reassign
             node.data = {
               ...node.data,
-              label: nodeName,
+              // label: nodeName,
+              label,
             };
           }
           console.log(node);
@@ -190,13 +202,33 @@ function RoadMapCanvas({ label, onChangeLabel, setLabel }) {
         }),
       );
     }
-  }, [nodeName, prompt, search]);
+    // }, [nodeName, prompt, search]);
+  }, [prompt, search]);
 
+  useMemo(() => {
+    setNodes((nds) =>
+      nds.map((node) => {
+        // if (node.id === '1') {
+        if (node.id === id) {
+          // it's important that you create a new object here
+          // in order to notify react flow about the change
+          // eslint-disable-next-line no-param-reassign
+          node.data = {
+            ...node.data,
+            label,
+          };
+        }
+        console.log(node);
+
+        return node;
+      }),
+    );
+  }, [label, id]);
   // useMemo(() => {
   //   setNodes((nds) =>
   //     nds.map((node) => {
   //       // if (node.id === '1') {
-  //       if (node.id === label) {
+  //       if (node.id === id) {
   //         // it's important that you create a new object here
   //         // in order to notify react flow about the change
   //         // eslint-disable-next-line no-param-reassign
@@ -341,7 +373,7 @@ function RoadMapCanvas({ label, onChangeLabel, setLabel }) {
     setNodes((nds) =>
       nds.map((node) => {
         // if (node.id === '1') {
-        if (node.id === label) {
+        if (node.id === id) {
           // eslint-disable-next-line no-param-reassign
           node.style = { ...node.style, backgroundColor: nodeBg };
         }
@@ -362,8 +394,11 @@ function RoadMapCanvas({ label, onChangeLabel, setLabel }) {
   useEffect(() => {
     setNodes((nds) =>
       nds.map((node) => {
+        // console.log(nds);
         // if (node.id === '1') {
-        if (node.id === label) {
+        // if (node.id === label) {
+        // if (node.id === label) {
+        if (node.id === id) {
           // when you update a simple type you can just update the value
           // eslint-disable-next-line no-param-reassign
           node.hidden = nodeHidden;
@@ -372,28 +407,32 @@ function RoadMapCanvas({ label, onChangeLabel, setLabel }) {
         return node;
       }),
     );
-    // setNodes((nds) =>
-    //   nds.map((node) => {
-    //     // if (node.id === '1') {
-    //     if (node.id === label) {
-    //       // when you update a simple type you can just update the value
-    //       // eslint-disable-next-line no-param-reassign
-    //       node.data.label = label;
-    //     }
-
-    //     return node;
-    //   }),
-    // );
-    setEdges((eds) =>
-      eds.map((edge) => {
-        if (edge.id === 'e1-2') {
+    setNodes((nds) =>
+      nds.map((node) => {
+        // if (node.id === '1') {
+        if (node.id === label) {
+          // when you update a simple type you can just update the value
           // eslint-disable-next-line no-param-reassign
-          edge.hidden = nodeHidden;
+          // node.data.label = label;
+          console.log(node.data.label);
         }
 
-        return edge;
+        return node;
       }),
     );
+    // setEdges((eds) =>
+    //   eds.map((edge) => {
+    //     // if (edge.id === 'e1-2') {
+    //     if (edge.id === 'e11a') {
+    //       // console.log(edge);
+    //       // if (parseInt(edge.id, 10) === label) {
+    //       // eslint-disable-next-line no-param-reassign
+    //       edge.hidden = nodeHidden;
+    //     }
+
+    //     return edge;
+    //   }),
+    // );
   }, [nodeHidden, setNodes, setEdges, label]);
   return (
     <Wrap>
@@ -408,8 +447,11 @@ function RoadMapCanvas({ label, onChangeLabel, setLabel }) {
         onConnect={onConnect}
         // onNodeClick={(e, n) => console.log(n)}
         onNodeClick={(e, n) => {
-          setLabel(`${n?.id}`);
+          // setLabel(`${n?.id}`);
+          setLabel(`${n?.data?.label}`);
+          setId(`${n?.id}`);
           // setLabel(`${n?.id} ${n?.data.label}`);
+          // setNodeName(n?.data?.label);
           // setNodeName(n?.data?.label);
           console.log(n);
           console.log(e);
@@ -436,12 +478,18 @@ function RoadMapCanvas({ label, onChangeLabel, setLabel }) {
           <div className="updatenode__controls">
             <div>label:</div>
             <input
-              value={nodeName}
+              // value={nodeName}
+              value={label}
               // onChange={(evt) => setNodeName(evt.target.value)}
               onChange={(evt) => {
-                setNodeName(evt.target.value);
+                setLabel(evt.target.value);
                 // setLabel;
               }}
+              // onChange={(evt) => {
+              //   setNodeName(evt.target.value);
+              //   // setLabel;
+              // }}
+              // onChange={onChangeLabel}
             />
 
             <div className="updatenode__bglabel">background:</div>
@@ -478,7 +526,7 @@ function RoadMapCanvas({ label, onChangeLabel, setLabel }) {
             노드 전체 삭제
           </button>
           <button type="button" onClick={useRemoveNode}>
-            {label} 노드삭제
+            {id} 노드삭제
           </button>
           <button type="button" onClick={onSave}>
             save

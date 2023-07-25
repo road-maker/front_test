@@ -20,6 +20,7 @@ import RoadMapCanvas from '../../../components/editor/RoadMapEditor';
 export default function RoadMapEditor(): ReactElement {
   // const { search } = useLocation();
   const [label, onChangeLabel, setLabel] = useInput('');
+  const [id, onChangeId, setId] = useInput('');
   // const [toggle, setToggle] = useState(null);
   const [toggle, onChangeToggle, setToggle] = useInput('');
   const [search] = useSearchParams();
@@ -87,7 +88,7 @@ export default function RoadMapEditor(): ReactElement {
       // );
 
       state.map((item, idx) => {
-        if (item.id !== label) return;
+        if (item.id !== id) return;
         // console.log('state.map, item ,label', label);
 
         const copyState = [...state];
@@ -184,7 +185,7 @@ export default function RoadMapEditor(): ReactElement {
         </button>
       </div>
     );
-  }, [toggle, label]);
+  }, [toggle, id]);
 
   return (
     <EditorWrap>
@@ -303,7 +304,10 @@ export default function RoadMapEditor(): ReactElement {
           <RoadMapCanvas
             // state={state}
             // editor={state}
-            // editor={editor}
+            // editor={editor
+            id={id}
+            onChangeId={onChangeId}
+            setId={setId}
             label={label}
             onChangeLabel={onChangeLabel}
             setLabel={setLabel}
