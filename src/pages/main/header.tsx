@@ -1,5 +1,6 @@
 import {
   ActionIcon,
+  Avatar,
   Box,
   Button,
   Center,
@@ -21,7 +22,7 @@ import { usePrompt } from 'components/prompts/hooks/usePrompt';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../auth/useAuth';
-import { useUser } from '../../components/user/hooks/useUser';
+// import { useUser } from '../../components/user/hooks/useUser';
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -95,7 +96,7 @@ const useStyles = createStyles((theme) => ({
 export function HeaderMegaMenu() {
   const { classes } = useStyles();
   const navigate = useNavigate();
-  const { user } = useUser();
+  // const { user } = useUser();
   const { signout } = useAuth();
   const [opened, { open, close }] = useDisclosure(false);
 
@@ -150,19 +151,17 @@ export function HeaderMegaMenu() {
                 로드맵 생성하기
               </Button>
             </Group>
-            {user ? (
+            {/* {user ? (
               <Button onClick={() => signout()}>Sign out</Button>
             ) : (
               <Button onClick={() => navigate('/users/signin')}>Sign in</Button>
-            )}
-            {/* {user && 'accessToken' in user ? (
-              <>
-                <NavLink to="/">{user.email}</NavLink>
-                <Button onClick={() => signout()}>Sign out</Button>
-              </>
-            ) : (
-              <Button onClick={() => navigate('/users/signin')}>Sign in</Button>
             )} */}
+            <Button onClick={() => signout()}>Sign out</Button>
+            <ActionIcon onClick={() => navigate('users/mypage')}>
+              <Avatar color="cyan" radius="xl">
+                주영
+              </Avatar>
+            </ActionIcon>
           </Group>
         </Group>
       </Header>
@@ -184,7 +183,7 @@ export function InputWithButton(props: TextInputProps) {
       onChange={onPromptChange}
       icon={<IconSearch size="1.1rem" stroke={1.5} />}
       radius="md"
-      w="600px"
+      w="500px"
       rightSection={
         <ActionIcon
           size={32}

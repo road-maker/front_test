@@ -4,9 +4,13 @@ import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
+import EditUserProfile from './components/user/editUserProfile';
+import { UserProfile } from './components/user/userProfile';
 import ErrorPage from './pages/error';
 import LoginPage from './pages/login';
 import MainPage from './pages/main';
+import PostedRoadmap from './pages/main/postedRoadmap';
+// import InteractionFlow from './pages/main/userRoadmap';
 import ResetInfoPage from './pages/resetInfo';
 import RoadMapEditor from './pages/roadmap/editor';
 import SignupPage from './pages/signup';
@@ -20,15 +24,21 @@ function App(): ReactElement {
       children: [
         { index: true, element: <MainPage /> },
         {
-          path: '/users/signin',
+          path: 'users/signin',
           element: <LoginPage />,
         },
         { path: 'users/signup', element: <SignupPage /> },
         { path: 'users/reset', element: <ResetInfoPage /> },
         {
           path: 'roadmap/editor',
-          // element: <RoadMapEditor />,
           element: <RoadMapEditor />,
+          children: [{ path: 'view', element: <PostedRoadmap /> }],
+        },
+
+        {
+          path: 'users/mypage',
+          element: <UserProfile />,
+          children: [{ path: 'edit', element: <EditUserProfile /> }],
         },
       ],
     },

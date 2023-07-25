@@ -1,5 +1,6 @@
 import {
   ActionIcon,
+  Avatar,
   Card,
   Container,
   createStyles,
@@ -12,6 +13,7 @@ import {
   Text,
 } from '@mantine/core';
 import { IconBookmark, IconHeart, IconShare } from '@tabler/icons-react';
+import { useNavigate } from 'react-router-dom';
 
 const mockdata = [
   {
@@ -23,6 +25,7 @@ const mockdata = [
     author: {
       name: '표혜민',
       description: '한 번 정복해보아요~^^',
+      profile: 'HM',
     },
   },
   {
@@ -34,6 +37,7 @@ const mockdata = [
     author: {
       name: '표혜민',
       description: '한 번 정복해보아요~^^',
+      profile: 'HM',
     },
   },
   {
@@ -45,6 +49,7 @@ const mockdata = [
     author: {
       name: '표혜민',
       description: '한 번 정복해보아요~^^',
+      profile: 'HM',
     },
   },
 ];
@@ -69,8 +74,9 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function RoadmapRecommendation(props: PaperProps) {
+export default function RoadmapRecommendation(props: PaperProps) {
   const { classes, theme } = useStyles();
+  const navigate = useNavigate();
 
   const cards = mockdata.map((article) => (
     <Card key={article.id} radius="md" component="a" className={classes.card}>
@@ -85,7 +91,13 @@ export function RoadmapRecommendation(props: PaperProps) {
       <Text color="dimmed" size="xs" transform="uppercase" weight={700} mt="md">
         {article.date}
       </Text>
-      <Text className={classes.title} mt={5}>
+      <Text
+        className={classes.title}
+        mt={5}
+        onClick={() => {
+          navigate('/roadmap/editor/view');
+        }}
+      >
         {article.title}
       </Text>
       <Text fz="sm" color="dimmed" lineClamp={4} mt={5}>
@@ -95,7 +107,9 @@ export function RoadmapRecommendation(props: PaperProps) {
         {`#${article.category}`}
       </Text>
       <Group spacing={5}>
-        {/* <Avatar src={article.author?.profile} alt="it's me" /> */}
+        <Avatar color="purple" radius="xl">
+          {article.author.profile}
+        </Avatar>
         <Text className={classes.author} mt={5}>
           {article.author.name}
         </Text>

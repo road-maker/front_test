@@ -317,14 +317,14 @@ export default function RoadMapEditor(): ReactElement {
           <RoadMapCanvas
             state={state}
             // editor={state}
-            // editor={editor
+            editor={editor}
             id={id}
             onChangeId={onChangeId}
             setId={setId}
             label={label}
             onChangeLabel={onChangeLabel}
             setLabel={setLabel}
-            // setState={setState}
+            setState={setState}
             // onChange={onChangeHandler}
             // ydoc={ydoc}
             // ytext={ytext}

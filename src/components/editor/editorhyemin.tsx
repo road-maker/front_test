@@ -1,27 +1,18 @@
-/* eslint-disable react/no-danger */
-/* eslint-disable import/no-unresolved */
-/* eslint-disable react/button-has-type */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable simple-import-sort/imports */
 /* eslint-disable no-console */
 import 'reactflow/dist/style.css';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import dagre from '@dagrejs/dagre';
-import { Button, Group, Modal, TextInput } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { defaultBlockAt } from '@tiptap/core';
-import { usePatchUser } from 'components/common/hooks/usePatchUser';
 import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
 import { useRoadmap } from 'components/roadmaps/hooks/useRoadmap';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ReactFlow, {
-  addEdge,
   Background,
   Controls,
   MiniMap,
   Panel,
-  ReactFlowProvider,
+  addEdge,
   useEdgesState,
   useNodesState,
   useReactFlow,
@@ -29,14 +20,7 @@ import ReactFlow, {
 import { getStoredRoadmap, setStoredRoadmap } from 'storage/roadmap-storage';
 import { styled } from 'styled-components';
 
-import { axiosInstance } from '../../axiosInstance';
-// import ResizableNodeSelected from './ResizableNodeSelected';
-import CustomNode from '../../pages/main/customNode';
-import { useInput } from '../common/hooks/useInput';
-import ColorSelectorNode from './ColorSelectorNode';
 import { RoadmapEdge, RoadmapNode } from './types';
-
-// const flowKey = 'roadmap';
 
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
@@ -44,7 +28,8 @@ dagreGraph.setDefaultEdgeLabel(() => ({}));
 const nodeWidth = 172;
 const nodeHeight = 36;
 
-const flowKey = 'example-flow';
+// const flowKey = 'example-flow'; //////// 이 부분에 여러번 추가하는 에러가 있음!!!!
+const flowKey = 'roadmap';
 
 const getLayoutedElements = (nodes, edges, direction = 'TB') => {
   const isHorizontal = direction === 'LR';
@@ -81,10 +66,10 @@ const getLayoutedElements = (nodes, edges, direction = 'TB') => {
 
 const position = { x: 0, y: 0 };
 const edgeType = 'smoothstep';
-const nodeTypes = {
-  // ResizableNodeSelected,
-  custom: CustomNode,
-};
+
+// const nodeTypes = {
+//   ResizableNodeSelected,
+// };
 
 const initialNodes = [
   {
@@ -114,13 +99,11 @@ const initialEdges = [
 ];
 const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
 
-function Roadmap({
-  editor,
+function RoadMapCanvas({
   label,
   onChangeLabel,
   setLabel,
   id,
-  setState,
   state,
   onChangeId,
   setId,
@@ -134,22 +117,11 @@ function Roadmap({
   const nodeSet = new Set<RoadmapNode['id']>();
   const [nodeState, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edgeState, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const roadmap = useRoadmap();
-  const [title, onChangeTitle, setTitle] = useInput('');
-  const [desc, onChangeDesc, setDesc] = useInput('');
 
   // const [nodeName, setNodeName] = useState('');
   // const [nodeName, onNodeNameChange, setNodeName] = useInput('');
   const [nodeBg, setNodeBg] = useState('#eee');
   const [nodeHidden, setNodeHidden] = useState(false);
-  const [rfInstance, setRfInstance] = useState(null);
-  const { setViewport } = useReactFlow();
-
-  // useMemo(() => {
-  //   console.log('roadmapeditor props', editor);
-  //   setNodes([...nodes]);
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [editor]);
 
   const proOptions = { hideAttribution: true };
   useEffect(() => {
@@ -274,71 +246,14 @@ function Roadmap({
   //   );
   // }, [label, nodeName]);
 
-  useMemo(() => {
-    console.log('roadmapeditor props', editor);
-    setNodes([...nodeState]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editor]);
-
+  const [rfInstance, setRfInstance] = useState(null);
+  const { setViewport } = useReactFlow();
   const onConnect = useCallback(
     (params) => {
       setEdges((els) => addEdge(params, els));
     },
     [setEdges],
   );
-
-  // const onSave = useCallback(() => {
-  //   if (rfInstance) {
-  //     const flow = rfInstance.toObject();
-  //     localStorage.setItem(flowKey, JSON.stringify(flow));
-  //     console.log(flow);
-  //   }
-  // }, [rfInstance]);
-
-  const onSave = useCallback(() => {
-    if (rfInstance) {
-      const flow = rfInstance.toObject();
-      localStorage.setItem(flowKey, JSON.stringify(flow));
-      setStoredRoadmap(flow);
-    }
-  }, [rfInstance]);
-
-  const onRestore = useCallback(() => {
-    const restoreFlow = async () => {
-      const flowStr = localStorage.getItem(flowKey);
-      if (flowStr) {
-        const flow = JSON.parse(flowStr);
-        const {
-          x = 0,
-          y = 0,
-          zoom = 1,
-          nodes: restoredNodes,
-          edges: restoredEdges,
-        } = flow;
-        setNodes(restoredNodes || []);
-        setEdges(restoredEdges || []);
-        setViewport({ x, y, zoom });
-        console.log(flowStr);
-      }
-    };
-
-    restoreFlow();
-    // roadmap.getRoadmap(title, desc, flowKey);
-  }, [setNodes, setEdges, setViewport]);
-  const onClickItem = useCallback((e) => {
-    console.log(e);
-  }, []);
-
-  // const onLayout = useCallback(
-  //   (direction) => {
-  //     const { nodes: layoutedNodes, edges: layoutedEdges } =
-  //       getLayoutedElements(nodes, edges, direction);
-
-  //     setNodes([...layoutedNodes]);
-  //     setEdges([...layoutedEdges]);
-  //   },
-  //   [nodes, edges, setEdges, setNodes],
-  // );
 
   const onLayout = useCallback(
     (direction) => {
@@ -402,18 +317,55 @@ function Roadmap({
   const useRemoveNode = useCallback(() => {
     setNodes((nds) => nds.filter((node) => node.id !== label));
   }, [label]);
-  useMemo(() => {
-    console.log(nodeState);
-  }, [nodeState]);
-  const reactFlowStyle = {
-    background: 'light-pink',
-    width: '100%',
-    height: 300,
-  };
 
-  // 첫로딩 시의 포멧 => 노드랑 간선이 null이면 에러!~
+  const onRestore = useCallback(() => {
+    const restoreFlow = async () => {
+      const flow = JSON.parse(localStorage.getItem(flowKey));
+      const { data } = flow;
+      // eslint-disable-next-line no-console
+      console.log('restore', data);
+      // const nodeData = data?.nodes;
+      if (flow) {
+        const { x = 0, y = 0, zoom = 1 } = flow.viewport;
+        setNodes(flow.nodes || []);
+        setEdges(flow.edges || []);
+        setViewport({ x, y, zoom });
+      }
+    };
+
+    restoreFlow();
+  }, [setNodes, setViewport, setEdges]);
+
+  const onSave = useCallback(() => {
+    if (rfInstance) {
+      const flow = rfInstance.toObject();
+      localStorage.setItem(flowKey, JSON.stringify(flow));
+      setStoredRoadmap(flow);
+    }
+  }, [rfInstance]);
+
+  // // 첫로딩 시의 포멧 => 노드랑 간선이 null이면 에러!~
   // useEffect(() => {
-  //   onLayout('TB');
+  //   onLayout('LR');
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
+
+  // useEffect(() => {
+  //   setNodes((nds) =>
+  //     nds.map((node) => {
+  //       if (node.id !== '2') {
+  //         return node;
+  //       }
+
+  //       return {
+  //         ...node,
+  //         data: {
+  //           ...node.data,
+  //         },
+  //       };
+  //     }),
+  //   );
+  //   // onLayout('TB');
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, []);
 
@@ -430,8 +382,7 @@ function Roadmap({
         return node;
       }),
     );
-    // };
-  }, []);
+  }, [nodeBg, setNodes, label]);
 
   useMemo(() => {
     if (edgeState && nodeState) {
@@ -470,20 +421,20 @@ function Roadmap({
         return node;
       }),
     );
-  });
-  // setEdges((eds) =>
-  //   eds.map((edge) => {
-  //     // if (edge.id === 'e1-2') {
-  //     if (edge.id === 'e11a') {
-  //       // console.log(edge);
-  //       // if (parseInt(edge.id, 10) === label) {
-  //       // eslint-disable-next-line no-param-reassign
-  //       edge.hidden = nodeHidden;
-  //     }
+    // setEdges((eds) =>
+    //   eds.map((edge) => {
+    //     // if (edge.id === 'e1-2') {
+    //     if (edge.id === 'e11a') {
+    //       // console.log(edge);
+    //       // if (parseInt(edge.id, 10) === label) {
+    //       // eslint-disable-next-line no-param-reassign
+    //       edge.hidden = nodeHidden;
+    //     }
 
-  //     return edge;
-  //   }),
-  // );
+    //     return edge;
+    //   }),
+    // );
+  }, [nodeHidden, setNodes, setEdges, label]);
   return (
     <Wrap>
       <ReactFlow
@@ -524,16 +475,6 @@ function Roadmap({
           opacity: '80%',
         }}
       >
-        <Panel position="top-center">
-          <TextInput
-            placeholder="제목을 입력해주세요"
-            onChange={onChangeTitle}
-          />
-          <TextInput
-            placeholder="설명을 입력해주세요"
-            onChange={onChangeDesc}
-          />
-        </Panel>
         <Panel position="top-right">
           <div className="updatenode__controls">
             <div>label:</div>
@@ -585,7 +526,6 @@ function Roadmap({
           >
             노드 전체 삭제
           </button>
-          <button onClick={onSave}>save</button>
           <button type="button" onClick={useRemoveNode}>
             {id} 노드삭제
           </button>
@@ -607,6 +547,8 @@ function Roadmap({
     </Wrap>
   );
 }
+
+export default RoadMapCanvas;
 const Wrap = styled.div`
   width: 100%;
   height: 100vh;
@@ -632,30 +574,3 @@ const Wrap = styled.div`
     align-items: center;
   }
 `;
-export default function RoadMapCanvas({
-  editor,
-  label,
-  onChangeLabel,
-  setLabel,
-  id,
-  setState,
-  state,
-  onChangeId,
-  setId,
-}) {
-  return (
-    <ReactFlowProvider>
-      <Roadmap
-        editor={editor}
-        setState={setState}
-        label={label}
-        onChangeLabel={onChangeLabel}
-        setLabel={setLabel}
-        state={state}
-        onChangeId={onChangeId}
-        id={id}
-        setId={setId}
-      />
-    </ReactFlowProvider>
-  );
-}
