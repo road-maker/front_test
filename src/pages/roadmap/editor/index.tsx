@@ -123,6 +123,7 @@ export default function RoadMapEditor(): ReactElement {
     console.log('filt', filt);
     setToggle(filt);
     if (editor) {
+      // mount 시 에러
       editor.commands.setContent(filt[0]?.details || '');
     }
 
@@ -130,7 +131,7 @@ export default function RoadMapEditor(): ReactElement {
       setState([...state, { id, details: '' }]);
     }
     // console.log('state', state);
-  }, [state, id, setToggle, label]);
+  }, [state, id, setToggle, label, editor]);
 
   const toggleEditor = useMemo(() => {
     if (toggle.length === 0) return <div />;

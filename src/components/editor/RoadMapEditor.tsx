@@ -28,7 +28,8 @@ dagreGraph.setDefaultEdgeLabel(() => ({}));
 const nodeWidth = 172;
 const nodeHeight = 36;
 
-const flowKey = 'example-flow';
+// const flowKey = 'example-flow'; //////// 이 부분에 여러번 추가하는 에러가 있음!!!!
+const flowKey = 'roadmap';
 
 const getLayoutedElements = (nodes, edges, direction = 'TB') => {
   const isHorizontal = direction === 'LR';
