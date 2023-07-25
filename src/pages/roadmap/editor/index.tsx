@@ -65,7 +65,9 @@ export default function RoadMapEditor(): ReactElement {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ history: false }), // history handled by  yjs
-      Placeholder.configure({ placeholder: 'This is placeholder' }),
+      Placeholder.configure({
+        placeholder: '로드맵 상세 내용을 입력해주세요.',
+      }),
       Underline,
       Link,
       Superscript,
@@ -75,12 +77,19 @@ export default function RoadMapEditor(): ReactElement {
     ],
     // content: state,
     // content: `<div onChange={onChangeLabel}>${toggle.details || ''}</div>`,
-    content: `<div>${toggle}</div>`,
+    // content: `<div >${toggle}</div>`,
+    // content: `<div onChange={onChangeToggle}>${toggle}</div>`,
+    // content: `${toggle}`,
+    // content: state.id === id ? `${state[id]?.details}` : ``,
+    // content: state.id === id ? `${state[id]?.details}` : ``,
+    content: state.filter((v) => v.id === id)[0]?.details || '',
     // content: <input onChange={onChangeToggle} value={toggle} />,
     onUpdate(e) {
       // console.log('ydoc', ydoc);
       // console.log('ytext', ytext);
       console.log(e.editor?.getHTML());
+      setToggle(e.editor?.getHTML());
+      console.log('e.editor', e.editor);
       // state.map((item) =>
       //   item.id === label
       //     ? console.log('state.map, item', item)
@@ -110,20 +119,23 @@ export default function RoadMapEditor(): ReactElement {
   useMemo(() => {
     // console.log('state', state);
     // console.log('label', label);
-    const filt = state.filter((v) => v.id === label);
+    const filt = state.filter((v) => v.id === id);
     console.log('filt', filt);
     setToggle(filt);
+    if (editor) {
+      editor.commands.setContent(filt[0]?.details || '');
+    }
 
     if (label !== '' && filt.length === 0) {
-      setState([...state, { id: label, details: '' }]);
+      setState([...state, { id, details: '' }]);
     }
     // console.log('state', state);
-  }, [state, label, setToggle]);
+  }, [state, id, setToggle, label]);
 
   const toggleEditor = useMemo(() => {
     if (toggle.length === 0) return <div />;
     // return label === toggle[0].id ? <div>hehe</div> : <div>hoho</div>;
-    return label === toggle[0].id ? (
+    return id === toggle[0].id ? (
       <div>
         로드맵 제목 :{' '}
         <input
@@ -302,7 +314,7 @@ export default function RoadMapEditor(): ReactElement {
       <div className="roadMapWrap">
         <ReactFlowProvider>
           <RoadMapCanvas
-            // state={state}
+            state={state}
             // editor={state}
             // editor={editor
             id={id}

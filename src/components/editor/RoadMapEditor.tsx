@@ -20,7 +20,6 @@ import ReactFlow, {
 import { getStoredRoadmap, setStoredRoadmap } from 'storage/roadmap-storage';
 import { styled } from 'styled-components';
 
-import ResizableNodeSelected from './ResizableNodeSelected';
 import { RoadmapEdge, RoadmapNode } from './types';
 
 const dagreGraph = new dagre.graphlib.Graph();
@@ -67,9 +66,9 @@ const getLayoutedElements = (nodes, edges, direction = 'TB') => {
 const position = { x: 0, y: 0 };
 const edgeType = 'smoothstep';
 
-const nodeTypes = {
-  ResizableNodeSelected,
-};
+// const nodeTypes = {
+//   ResizableNodeSelected,
+// };
 
 const initialNodes = [
   {
@@ -88,7 +87,7 @@ const initialNodes = [
     id: '2',
     data: { label: 'Node 2' },
     position: { x: 100, y: 200 },
-    type: edgeType,
+    // type: edgeType,
   },
 ];
 // const initialNodes = [];
@@ -104,6 +103,7 @@ function RoadMapCanvas({
   onChangeLabel,
   setLabel,
   id,
+  state,
   onChangeId,
   setId,
 }) {
@@ -179,9 +179,10 @@ function RoadMapCanvas({
       });
       search.size !== 0 ? setNodes(initialNodes) : setNodes([]);
       search.size !== 0 ? setEdges(initialEdges) : setEdges([]);
-      // if (search.size !== 0) {
-      //   onLayout('TB');
-      // }
+      if (search.size !== 0) {
+        // onLayout('TB');
+        onLayout('LR');
+      }
 
       setNodes((nds) =>
         nds.map((node) => {
@@ -248,7 +249,6 @@ function RoadMapCanvas({
   const { setViewport } = useReactFlow();
   const onConnect = useCallback(
     (params) => {
-      console.log('params', params);
       setEdges((els) => addEdge(params, els));
     },
     [setEdges],
@@ -343,11 +343,11 @@ function RoadMapCanvas({
     }
   }, [rfInstance]);
 
-  // 첫로딩 시의 포멧 => 노드랑 간선이 null이면 에러!~
-  useEffect(() => {
-    onLayout('LR');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // // 첫로딩 시의 포멧 => 노드랑 간선이 null이면 에러!~
+  // useEffect(() => {
+  //   onLayout('LR');
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   // useEffect(() => {
   //   setNodes((nds) =>
@@ -466,7 +466,7 @@ function RoadMapCanvas({
         snapToGrid
         proOptions={proOptions}
         onInit={setRfInstance}
-        nodeTypes={nodeTypes}
+        // nodeTypes={nodeTypes}
         style={{
           width: '100%',
           height: '100%',

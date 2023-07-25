@@ -11,11 +11,14 @@ export interface DataProps {
   children?: string;
   ref?: string | unknown;
 }
-export interface Data {
-  label?: string;
-  // key?: string | undefined;
-  // props?: DataProps;
-}
+// export interface data {
+//   label?: string;
+//   // key?: string | undefined;
+//   // props?: DataProps;
+// }
+// export type label = string | unknown;
+// export type label = string;
+// export type data = label;
 export interface AddedNode {
   id: string;
   height: number;
@@ -23,7 +26,7 @@ export interface AddedNode {
   dragging?: boolean;
   selected?: boolean;
   type?: string;
-  data?: Data;
+  data?: { label: string };
   positionAbsolute?: Position;
 }
 
@@ -31,7 +34,7 @@ export interface XYPosition {
   x: number;
   y: number;
 }
-export type label = unknown;
+
 export interface nodeStyle {
   background?: string;
   border?: string;
@@ -42,7 +45,7 @@ export interface RoadmapNode {
   id: string;
   type?: string;
   position: XYPosition;
-  data: label;
+  data: { label: string };
   style?: nodeStyle;
   content?: string;
 }
@@ -72,8 +75,8 @@ export interface NewRoadmap {
   recommendedExecutionTimeValue?: number;
   recommendedExecutionTimeUnit?: string;
   edges: RoadmapEdges | [];
-  // nodes: RoadmapNodes | [];
   nodes: RoadmapNodes;
+  // nodes: RoadmapNodes | [];
   viewport: Viewport;
 }
 
