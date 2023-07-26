@@ -13,10 +13,12 @@ function Minimap(): ReactElement {
   //   }
   // };
   return (
-    <ReactFlow fitView>
-      {/* <MiniMap zoomable pannable nodeColor={nodeColor} /> */}
-      <MiniMap zoomable pannable />
-    </ReactFlow>
+    <div style={{ width: '6rem', height: '6rem' }}>
+      <ReactFlow fitView>
+        {/* <MiniMap zoomable pannable nodeColor={nodeColor} /> */}
+        <MiniMap zoomable pannable />
+      </ReactFlow>
+    </div>
   );
 }
 export default Minimap;

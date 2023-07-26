@@ -1,9 +1,9 @@
 import axios, { AxiosResponse } from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { NewUser } from 'types/types';
 
 import { axiosInstance } from '../axiosInstance';
 import { useUser } from '../components/user/hooks/useUser';
-import { User } from '../types/types';
 
 interface UseAuth {
   signin: (email: string, password: string) => Promise<void>;
@@ -11,7 +11,7 @@ interface UseAuth {
   signout: () => void;
 }
 
-type UserResponse = { user: User };
+type UserResponse = { user: NewUser };
 type ErrorResponse = { message: string };
 type AuthResponseType = UserResponse | ErrorResponse;
 
@@ -34,40 +34,54 @@ export function useAuth(): UseAuth {
           data: { email, password, nickname },
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
           },
         });
-      if (status === 201) {
-        // eslint-disable-next-line no-alert
-        alert(`${nickname}님, 환영합니다!`);
-        navigate('/users/signin');
+      if (status === 201 || status === 200) {
+        updateUser({
+          avatarUrl: '',
+          baekjoonId: '',
+          bio: '',
+          blogUrl: '',
+          email,
+          exp: 0,
+          githubUrl: '',
+          level: 0,
+          nickname,
+        });
+        console.log('useAuth ServiceCall', data);
+        // navigate('/');
       }
+      // if ('accessToken' in data) {
+      //   updateUser(data.accessToken);
+      // }
 
-      if ('user' in data) {
-        // update stored user data
-        updateUser(data.user);
-      }
+      // eslint-disable-next-line no-console
+      // console.log('authServerCall', data);
+      // update stored user data
+      // updateUser(data.user);
+
+      // if ('user' in data) {
+      //   // update stored user data
+      //   updateUser(data.user);
+      // }
     } catch (errorResponse) {
       const status =
         axios.isAxiosError(errorResponse) && errorResponse?.response?.status
           ? errorResponse?.response?.status
           : SERVER_ERROR;
-      status === 409
-        ? // eslint-disable-next-line no-alert
-          alert('이미 등록된 회원입니다.')
-        : // eslint-disable-next-line no-alert
-          alert('정확한 정보를 입력해주세요.');
-      // 403 alert인데 일단 이렇게 해놨어요 나중에 대안이 생기면 바꿔주세요!
+      if (status === 409) {
+        // eslint-disable-next-line no-alert
+        alert('이미 등록된 회원입니다.');
+      }
     }
   }
-  type accessToken = string;
   async function authLoginServerCall(
     urlEndpoint: string,
     email: string,
     password: string,
   ): Promise<void> {
     try {
-      const { data, status }: AxiosResponse<AuthResponseType, accessToken> =
+      const { data, status }: AxiosResponse<AuthResponseType> =
         await axiosInstance({
           url: urlEndpoint,
           method: 'POST',
@@ -77,17 +91,22 @@ export function useAuth(): UseAuth {
           },
         });
       if (status === 201 || status === 200) {
-        localStorage.setItem('accessToken', JSON.stringify(data));
-        // localStorage.setItem('user', JSON.stringify(data));
-        navigate('/');
-        // eslint-disable-next-line no-console
-        console.log(localStorage);
-        if ('user' in data && 'accessToken' in data) {
-          // update stored user data
-          // eslint-disable-next-line no-alert
-          alert(`${data.user.nickname}님, 환영합니다!`);
-          updateUser(data.user);
+        // const { accessToken } = data.user;
+
+        // localStorage.setItem('accessToken', JSON.stringify(data));
+        localStorage.setItem('user', JSON.stringify(data));
+        console.log('useAuth', data);
+        // navigate('/');
+        if ('tokenInfo' in data) {
+          navigate('/');
         }
+        // updateUser({ username, tokenInfo });
+        // if ('accessToken' in data) {
+        //   // update stored user data
+        //   // updateUser(data.accessToken);
+        //   updateUser(data.accessToken);
+        //   navigate('/');
+        // }
       }
     } catch (errorResponse) {
       const status =

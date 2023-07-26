@@ -1,7 +1,12 @@
-import ResetInfoForm from '../../components/ResetInfoForm';
+import ResetInfoForm from '../../components/user/forms/ResetInfoForm';
+import MainLayout from '../../layout/mainLayout';
 
 function ResetInfoPage() {
-  return <ResetInfoForm />;
+  return (
+    <MainLayout>
+      <ResetInfoForm />
+    </MainLayout>
+  );
 }
 
 export default ResetInfoPage;

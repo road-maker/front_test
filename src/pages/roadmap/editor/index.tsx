@@ -1,9 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-console */
 import { RichTextEditor } from '@mantine/tiptap';
-import Placeholder from '@tiptap/extension-placeholder';
+import { Highlight } from '@tiptap/extension-highlight';
+import { Link } from '@tiptap/extension-link';
+import { Placeholder } from '@tiptap/extension-placeholder';
+import { Subscript } from '@tiptap/extension-subscript';
+import { Superscript } from '@tiptap/extension-superscript';
+import { TextAlign } from '@tiptap/extension-text-align';
+import { Underline } from '@tiptap/extension-underline';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { ReactElement, useRef } from 'react';
+import MainLayout from 'layout/mainLayout';
+import { ReactElement, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ReactFlowProvider } from 'reactflow';
 import { styled } from 'styled-components';
@@ -13,14 +21,21 @@ import RoadMapCanvas from '../../../components/editor/RoadMapEditor';
 
 export default function RoadMapEditor(): ReactElement {
   // const { search } = useLocation();
+  const [label, onChangeLabel, setLabel] = useInput('');
+  const [id, onChangeId, setId] = useInput('');
+  // const [toggle, setToggle] = useState(null);
+  const [toggle, onChangeToggle, setToggle] = useInput('');
   const [search] = useSearchParams();
-  const [state, onChangeHandler, setState] = useInput('');
+  // const [state, onChangeHandler, setState] = useInput('');
+  const [state, setState] = useState([
+    { id: '1', details: '' },
+    { id: '2', details: '' },
+  ]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [roadMapTitle, onRoadMapTitleChange, setRoadMapTitle] = useInput(
     search.get('title') || '',
   );
-  const ydoc = useRef(null);
-  const ytext = useRef(null);
+
   // useEffect(() => {
   //   ydoc.current = new Y.Doc();
   //   const wsProvider = new WebsocketProvider(
@@ -50,44 +65,73 @@ export default function RoadMapEditor(): ReactElement {
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({ history: false }),
-      Placeholder.configure({ placeholder: 'This is placeholder' }),
-      //   Underline,
-      //   Link,
-      //   Superscript,
-      //   SubScript,
-      //   Highlight,
-      //   TextAlign.configure({ types: ['heading', 'paragraph'] }),
+      StarterKit.configure({ history: false }), // history handled by  yjs
+      Placeholder.configure({
+        placeholder: '로드맵 상세 내용을 입력해주세요.',
+      }),
+      Underline,
+      Link,
+      Superscript,
+      Subscript,
+      Highlight,
+      TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
-    // content: state,
-    content: `<div onChange={onChangeHandler}>${state}</div>`,
+    content: state.filter((v) => v.id === id)[0]?.details || '',
+
     onUpdate(e) {
-      console.log('ydoc', ydoc);
-      console.log('ytext', ytext);
+      // console.log('ydoc', ydoc);
+      // console.log('ytext', ytext);
       console.log(e.editor?.getHTML());
-      setState(e.editor?.getHTML());
+      setToggle(e.editor?.getHTML());
+      console.log('e.editor', e.editor);
+      state.map((item, idx) => {
+        if (item.id !== id) return;
+        // console.log('state.map, item ,label', label);
+
+        const copyState = [...state];
+        // copyState.splice(idx, 1, {
+        copyState.splice(idx, 1, {
+          id: item.id,
+          details: e.editor?.getHTML(),
+        });
+        setState(copyState);
+      });
+
+      // setState()
+      // setState(e.editor?.getHTML());
     },
   });
+  // const removeNode=useMemo(()=>{
 
-  return (
-    <EditorWrap>
+  // },[label]);
+  useMemo(() => {
+    // console.log('state', state);
+    // console.log('label', label);
+    const filt = state.filter((v) => v.id === id);
+    console.log('filt', filt);
+    setToggle(filt);
+    if (editor) {
+      // mount 시 에러
+      editor.commands.setContent(filt[0]?.details || '');
+    }
+
+    if (label !== '' && filt.length === 0) {
+      setState([...state, { id, details: '' }]);
+    }
+    // console.log('state', state);
+  }, [state, id, setToggle, label, editor]);
+
+  const toggleEditor = useMemo(() => {
+    if (toggle.length === 0) return <div />;
+    // return label === toggle[0].id ? <div>hehe</div> : <div>hoho</div>;
+    return id === toggle[0].id ? (
       <div>
-        {/* {search? input } */}
-        <div>
-          로드맵 제목 :{' '}
-          <input
-            value={roadMapTitle}
-            onChange={onRoadMapTitleChange}
-            placeholder="로드맵 제목을 입력해주세요."
-          />
-        </div>
-        {/* <BasicTest
-          state={state}
-          setState={setState}
-          ydoc={ydoc}
-          ytext={ytext}
-        /> */}
-
+        로드맵 제목 :{' '}
+        <input
+          value={roadMapTitle}
+          onChange={onRoadMapTitleChange}
+          placeholder="로드맵 제목을 입력해주세요."
+        />
         <div>
           <RichTextEditor editor={editor}>
             <RichTextEditor.Toolbar sticky stickyOffset={5}>
@@ -135,22 +179,44 @@ export default function RoadMapEditor(): ReactElement {
           </RichTextEditor>
         </div>
       </div>
-      <div className="roadMapWrap">
-        <ReactFlowProvider>
-          <RoadMapCanvas
-            // state={state}
-            // editor={state}
-            editor={editor}
-            setState={setState}
-            onChange={onChangeHandler}
-            // ydoc={ydoc}
-            // ytext={ytext}
-          />
-        </ReactFlowProvider>
+    ) : (
+      <div>
+        <button type="button" onClick={() => setToggle(toggle[0].id)}>
+          상세 내용 수정하기
+        </button>
       </div>
-    </EditorWrap>
+    );
+  }, [toggle, id]);
+
+  return (
+    <MainLayout>
+      <EditorWrap>
+        <div>{toggleEditor}</div>
+
+        <div className="roadMapWrap">
+          <ReactFlowProvider>
+            <RoadMapCanvas
+              state={state}
+              // editor={state}
+              editor={editor}
+              id={id}
+              onChangeId={onChangeId}
+              setId={setId}
+              label={label}
+              onChangeLabel={onChangeLabel}
+              setLabel={setLabel}
+              setState={setState}
+              // onChange={onChangeHandler}
+              // ydoc={ydoc}
+              // ytext={ytext}
+            />
+          </ReactFlowProvider>
+        </div>
+      </EditorWrap>
+    </MainLayout>
   );
 }
+
 const EditorWrap = styled.div`
   display: inline-flex;
   width: 100vw;

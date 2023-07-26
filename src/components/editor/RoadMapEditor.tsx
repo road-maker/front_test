@@ -1,25 +1,29 @@
-/* eslint-disable no-console */
-/* eslint-disable react/no-danger */
-/* eslint-disable simple-import-sort/imports */
+// eslint-disable-next-line simple-import-sort/imports
 import 'reactflow/dist/style.css';
 
+// eslint-disable-next-line import/no-extraneous-dependencies
 import dagre from '@dagrejs/dagre';
+import { TextInput } from '@mantine/core';
+import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
+import { useRoadmap } from 'components/roadmaps/hooks/useRoadmap';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import ReactFlow, {
   Background,
   Controls,
   MiniMap,
   Panel,
+  ReactFlowProvider,
   addEdge,
   useEdgesState,
   useNodesState,
   useReactFlow,
 } from 'reactflow';
+import { getStoredRoadmap, setStoredRoadmap } from 'storage/roadmap-storage';
+import { styled } from 'styled-components';
 
-import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
-import { useSearchParams } from 'react-router-dom';
-import ResizableNodeSelected from './ResizableNodeSelected';
-import { RoadmapNodes } from './types';
+import { useInput } from '../common/hooks/useInput';
+import { RoadmapEdge, RoadmapNode } from './types';
 
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
@@ -64,66 +68,201 @@ const getLayoutedElements = (nodes, edges, direction = 'TB') => {
 
 const position = { x: 0, y: 0 };
 const edgeType = 'smoothstep';
+// const nodeTypes = {
+//  ResizableNodeSelected,
+//   custom: CustomNode,
+// };
 
-const nodeTypes = {
-  ResizableNodeSelected,
-};
+const initialNodes = [
+  {
+    id: '1',
+    data: { label: 'test' },
+    position: { x: 100, y: 100 },
+    // type: 'custom',
+    style: {
+      background: '#fff',
+      border: '1px solid black',
+      borderRadius: 15,
+      fontSize: 12,
+    },
+  },
+  {
+    id: '2',
+    data: { label: 'Node 2' },
+    position: { x: 100, y: 200 },
+    // type: 'custom',
+    style: {
+      background: '#fff',
+      border: '1px solid black',
+      borderRadius: 15,
+      fontSize: 12,
+    },
+  },
+];
 
-function RoadMapCanvas({ editor, setState, onChange }) {
+const initialEdges = [
+  { id: 'e11a', source: '1', target: '1a', type: edgeType },
+];
+const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
+
+function Roadmap({
+  editor,
+  label,
+  onChangeLabel,
+  setLabel,
+  id,
+  setState,
+  state,
+  onChangeId,
+  setId,
+}) {
   const { prompt } = usePromptAnswer();
   const [search] = useSearchParams();
-  const initialNodes = [];
-  const initialEdges = [];
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
+  const edgeSet = new Set<RoadmapEdge['id']>();
+  const nodeSet = new Set<RoadmapNode['id']>();
+  const [nodeState, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edgeState, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const roadmap = useRoadmap();
+  const [title, onChangeTitle, setTitle] = useInput('');
+  const [desc, onChangeDesc, setDesc] = useInput('');
+
+  const [nodeBg, setNodeBg] = useState('#eee');
+  const [nodeHidden, setNodeHidden] = useState(false);
+  const [rfInstance, setRfInstance] = useState(null);
+  const { setViewport } = useReactFlow();
+
+  const proOptions = { hideAttribution: true };
   useEffect(() => {
-    if (search) {
+    // if (getStoredRoadmap()) {
+    // const { edges, nodes, viewport } = getStoredRoadmap();
+    // setNodes(nodes);
+    //   setEdges(edges);
+    //   setViewport(viewport);
+
+    //   return;
+    // }
+    // console.log(search.get('title'));
+
+    if (prompt && search.size > 0 && prompt.keyword === search.get('title')) {
+      // gpt 자동생성
+
       const { data } = prompt;
-      const dataCopy = [...data] as RoadmapNodes;
-      setNodes([...dataCopy]);
+      const dataCopy = [...data];
+      setNodes([]);
+      setEdges([]);
 
       // eslint-disable-next-line array-callback-return
       dataCopy.map((v) => {
-        initialNodes.push({
-          id: v?.id,
-          data: {
-            label: v?.content,
-          },
-          type: 'ResizableNodeSelected',
-          position,
-          style: {
-            background: '#fff',
-            border: '1px solid black',
-            borderRadius: 15,
-            fontSize: 12,
-          },
-        });
+        if (!nodeSet.has(v?.id)) {
+          initialNodes.push({
+            id: v?.id,
+            data: {
+              label: v?.content,
+            },
+            // type: 'custom',
+            position,
+            style: {
+              background: '#fff',
+              border: '1px solid black',
+              borderRadius: 15,
+              fontSize: 12,
+            },
+          });
+          nodeSet.add(`${v?.id}`);
+        }
+
         // source랑 target 구해서 간선id 만들고 이어주기
         // parseInt는 오로지 숫자인 부분만 parse해줬음
 
         if (v.id !== `${parseInt(v?.id, 10)}`) {
-          initialEdges.push({
-            id: `e${parseInt(v?.id, 10)}${v?.id}`,
-            source: `${parseInt(v?.id, 10)}`,
-            target: v.id,
-            type: edgeType,
-            animated: true,
-          });
+          if (!edgeSet.has(`e${parseInt(v?.id, 10)}${v?.id}`)) {
+            initialEdges.push({
+              id: `e${parseInt(v?.id, 10)}${v?.id}`,
+              source: `${parseInt(v?.id, 10)}`,
+              target: v.id,
+              type: edgeType,
+              // animated: true,
+            });
+          }
+          edgeSet.add(`e${parseInt(v?.id, 10)}${v?.id}`);
         }
       });
-      console.log('search', search);
-      search ? setNodes(initialNodes) : setNodes([]);
-      search ? setEdges(initialEdges) : setEdges([]);
+      search.size !== 0 ? setNodes(initialNodes) : setNodes([]);
+      search.size !== 0 ? setEdges(initialEdges) : setEdges([]);
+      if (search.size !== 0) {
+        // onLayout('TB');
+        onLayout('LR');
+      }
+
+      setNodes((nds) =>
+        nds.map((node) => {
+          // if (node.id === '1') {
+          if (node.id === id) {
+            // it's important that you create a new object here
+            // in order to notify react flow about the change
+            // eslint-disable-next-line no-param-reassign
+            node.data = {
+              ...node.data,
+              // label: nodeName,
+              label,
+            };
+          }
+          console.log('요놈이 무한 출력?', node); // 요놈이 무한 출력?
+
+          return node;
+        }),
+      );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  const [rfInstance, setRfInstance] = useState(null);
-  const { setViewport } = useReactFlow();
+    // }, [nodeName, prompt, search]);
+  }, [prompt, search]);
+  // }, []);
 
   useMemo(() => {
-    setNodes([...nodes]);
+    setNodes((nds) =>
+      nds.map((node) => {
+        // if (node.id === '1') {
+        if (node.id === id) {
+          // it's important that you create a new object here
+          // in order to notify react flow about the change
+          // eslint-disable-next-line no-param-reassign
+          node.data = {
+            ...node.data,
+            label,
+          };
+        }
+        console.log(node);
+
+        return node;
+      }),
+    );
+  }, [label, id]);
+  // useMemo(() => {
+  //   setNodes((nds) =>
+  //     nds.map((node) => {
+  //       // if (node.id === '1') {
+  //       if (node.id === id) {
+  //         // it's important that you create a new object here
+  //         // in order to notify react flow about the change
+  //         // eslint-disable-next-line no-param-reassign
+  //         node.data = {
+  //           ...node.data,
+  //           label: nodeName,
+  //         };
+  //       }
+  //       console.log(node);
+
+  //       return node;
+  //     }),
+  //   );
+  // }, [label, nodeName]);
+
+  useMemo(() => {
+    console.log('roadmapeditor props', editor);
+    setNodes([...nodeState]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);
+
   const onConnect = useCallback(
     (params) => {
       setEdges((els) => addEdge(params, els));
@@ -131,38 +270,83 @@ function RoadMapCanvas({ editor, setState, onChange }) {
     [setEdges],
   );
 
+  // const onSave = useCallback(() => {
+  //   if (rfInstance) {
+  //     const flow = rfInstance.toObject();
+  //     localStorage.setItem(flowKey, JSON.stringify(flow));
+  //     console.log(flow);
+  //   }
+  // }, [rfInstance]);
+
+  const onSave = useCallback(() => {
+    if (rfInstance) {
+      const flow = rfInstance.toObject();
+      localStorage.setItem(flowKey, JSON.stringify(flow));
+      setStoredRoadmap(flow);
+    }
+  }, [rfInstance]);
+
+  const onRestore = useCallback(() => {
+    const restoreFlow = async () => {
+      const flowStr = localStorage.getItem(flowKey);
+      if (flowStr) {
+        const flow = JSON.parse(flowStr);
+        const {
+          x = 0,
+          y = 0,
+          zoom = 1,
+          nodes: restoredNodes,
+          edges: restoredEdges,
+        } = flow;
+        setNodes(restoredNodes || []);
+        setEdges(restoredEdges || []);
+        setViewport({ x, y, zoom });
+        console.log(flowStr);
+      }
+    };
+
+    restoreFlow();
+    // roadmap.getRoadmap(title, desc, flowKey);
+  }, [setNodes, setEdges, setViewport]);
   // const onClickItem = useCallback((e) => {
   //   console.log(e);
   // }, []);
 
+  // const onLayout = useCallback(
+  //   (direction) => {
+  //     const { nodes: layoutedNodes, edges: layoutedEdges } =
+  //       getLayoutedElements(nodes, edges, direction);
+
+  //     setNodes([...layoutedNodes]);
+  //     setEdges([...layoutedEdges]);
+  //   },
+  //   [nodes, edges, setEdges, setNodes],
+  // );
+
   const onLayout = useCallback(
     (direction) => {
       const { nodes: layoutedNodes, edges: layoutedEdges } =
-        getLayoutedElements(nodes, edges, direction);
+        getLayoutedElements(nodeState, edgeState, direction);
 
       setNodes([...layoutedNodes]);
       setEdges([...layoutedEdges]);
     },
-    [nodes, edges, setEdges, setNodes],
+    [nodeState, edgeState, setEdges, setNodes],
   );
 
   const onAddNode = useCallback(() => {
-    const nodeCount: number = [...nodes].length;
-    console.log(
-      'onAddNode',
-      editor?.props?.editor?.contentComponent?.editorContentRef?.current,
-    );
+    const nodeCount: number = [...nodeState]?.length;
     setNodes([
-      ...nodes,
+      ...nodeState,
       {
         // TODO : 노드id 는 '1a' 형식이다. 자식 노드면 '1a'지만 '1'의 형제 노드면 '2'가 된다
+        // label에 들어가는 데이터가 에러를 발생시키는 걸 해결하자.
         id: (nodeCount + 1).toString(),
         data: {
-          // label: <div dangerouslySetInnerHTML={{ __html: editor }} />,
-          // label: ,
-          label: 'testing..',
+          label: ``,
+          // label: '',
         },
-        type: 'ResizableNodeSelected',
+        // type: 'custom',
         position,
         style: {
           background: '#fff',
@@ -172,32 +356,113 @@ function RoadMapCanvas({ editor, setState, onChange }) {
         },
       },
     ]);
-  }, [nodes, editor, setNodes]);
+  }, [nodeState, setNodes]);
 
-  const onRestore = useCallback(() => {
-    const restoreFlow = async () => {
-      const flow = JSON.parse(localStorage.getItem(flowKey));
-      const { data } = flow;
-      // eslint-disable-next-line no-console
-      console.log('restore', data);
-      // const nodeData = data?.nodes;
-      if (flow) {
-        const { x = 0, y = 0, zoom = 1 } = flow.viewport;
-        setNodes(flow.nodes || []);
-        setEdges(flow.edges || []);
-        setViewport({ x, y, zoom });
-      }
+  const { postRoadmap } = useRoadmap();
+
+  const onPublishRoadmap = useCallback(() => {
+    // eslint-disable-next-line no-alert
+    // console.log(getStoredRoadmap());
+    const { edges, nodes, viewport } = getStoredRoadmap();
+    // const data = {
+    //   roadmap: {
+    //     title: 'backend developer',
+    //     description:
+    //       '백엔드 개발자에 도전하고 싶은 사람들을 위한 맛보기 로드맵입니다.',
+    //     recommendedExecutionTimeValue: 0,
+    //     recommendedExecutionTimeUnit: '',
+    //     thumbnailUrl: '',
+    //   },
+    //   nodes,
+    //   edges,
+    //   viewport,
+    // };
+    const nodesCopy = [...nodes];
+    nodesCopy.map((v) => {
+      state.map((item) => {
+        if (v.id === item.id) {
+          console.log('onPublish', item.details);
+          // eslint-disable-next-line no-param-reassign
+          v.detailedContent = item.details;
+        }
+      });
+    });
+
+    // nodes.map((v) => console.log('onPublish', v));
+    // nodes.map((v) => {
+    //   state.map((item)=>
+    //   {console.log('onPublish', v));}
+
+    // )});
+
+    const data = {
+      roadmap: {
+        title: 'test입니당',
+        description:
+          '개발자에 도전하고 싶은 사람들을 위한 맛보기 로드맵입니다.',
+        thumbnailUrl: '',
+        recommendedExecutionTimeValue: 0,
+        recommendedExecutionTimeUnit: '',
+      },
+      // nodes: [
+      //   {
+      //     width: 131,
+      //     height: 38,
+      //     id: '1',
+      //     detailedContent: '',
+      //     data: {
+      //       label: 'Introduction to Java',
+      //     },
+      //     type: 'ResizableNodeSelected',
+      //     position: {
+      //       x: 1230,
+      //       y: 480,
+      //     },
+      //     style: {
+      //       background: '#fff',
+      //       border: '1px solid black',
+      //       borderRadius: 15,
+      //       fontSize: 12,
+      //     },
+      //     targetPosition: 'left',
+      //     sourcePosition: 'right',
+      //     selected: true,
+      //     positionAbsolute: {
+      //       x: 1230,
+      //       y: 480,
+      //     },
+      //     dragging: false,
+      //   },
+      // ],
+      nodes: nodesCopy,
+      // edges: [
+      //   {
+      //     id: 'e11a',
+      //     source: '1',
+      //     target: '1a',
+      //     type: 'smoothstep',
+      //     animated: true,
+      //   },
+      // ],
+      edges,
+      // viewport: {
+      //   x: 610.1553814135862,
+      //   y: 80.07905945269988,
+      //   zoom: 0.5946035575013613,
+      // },
+      viewport: defaultViewport,
     };
+    postRoadmap(data);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nodeState]);
 
-    restoreFlow();
-  }, [setNodes, setViewport, setEdges]);
-
-  const onSave = useCallback(() => {
-    if (rfInstance) {
-      const flow = rfInstance.toObject();
-      localStorage.setItem(flowKey, JSON.stringify(flow));
-    }
-  }, [rfInstance]);
+  // const { deleteElements } = useReactFlow();
+  const useRemoveNode = useCallback(() => {
+    setNodes((nds) => nds.filter((node) => node.id !== label));
+  }, [label]);
+  // useMemo(() => {
+  //   console.log(nodeState);
+  // }, [nodeState]);
 
   // 첫로딩 시의 포멧 => 노드랑 간선이 null이면 에러!~
   // useEffect(() => {
@@ -205,48 +470,106 @@ function RoadMapCanvas({ editor, setState, onChange }) {
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, []);
 
+  // useEffect(() => {
   useEffect(() => {
     setNodes((nds) =>
       nds.map((node) => {
-        if (node.id !== '2') {
-          return node;
+        // if (node.id === '1') {
+        if (node.id === id) {
+          // eslint-disable-next-line no-param-reassign
+          node.style = { ...node.style, backgroundColor: nodeBg };
         }
 
-        return {
-          ...node,
-          data: {
-            ...node.data,
-          },
-        };
+        return node;
       }),
     );
-    // onLayout('TB');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // };
   }, []);
 
   useMemo(() => {
-    if (edges && nodes) {
+    if (edgeState && nodeState) {
       return;
     }
     onLayout('TB');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [edges, nodes]);
+  }, [edgeState, nodeState]);
+
+  useEffect(() => {
+    setNodes((nds) =>
+      nds.map((node) => {
+        // console.log(nds);
+        // if (node.id === '1') {
+        // if (node.id === label) {
+        // if (node.id === label) {
+        if (node.id === id) {
+          // when you update a simple type you can just update the value
+          // eslint-disable-next-line no-param-reassign
+          node.hidden = nodeHidden;
+        }
+
+        return node;
+      }),
+    );
+    setNodes((nds) =>
+      nds.map((node) => {
+        // if (node.id === '1') {
+        if (node.id === label) {
+          // when you update a simple type you can just update the value
+          // eslint-disable-next-line no-param-reassign
+          // node.data.label = label;
+          console.log(node.data.label);
+        }
+
+        return node;
+      }),
+    );
+  }, [nodeState, edgeState]);
+  // setEdges((eds) =>
+  //   eds.map((edge) => {
+  //     // if (edge.id === 'e1-2') {
+  //     if (edge.id === 'e11a') {
+  //       // console.log(edge);
+  //       // if (parseInt(edge.id, 10) === label) {
+  //       // eslint-disable-next-line no-param-reassign
+  //       edge.hidden = nodeHidden;
+  //     }
+
+  //     return edge;
+  //   }),
+  // );
   return (
-    <div style={{ width: '100%', height: '100%' }}>
+    <Wrap>
       <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        // onClick={onClickItem}
+        nodes={nodeState}
+        edges={edgeState}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        fitView
-        elevateNodesOnSelect
-        snapToGrid
-        onInit={setRfInstance}
-        nodeTypes={nodeTypes}
+        defaultViewport={defaultViewport}
         minZoom={0.2}
         maxZoom={4}
+        onConnect={onConnect}
+        // onNodeClick={(e, n) => console.log(n)}
+        onNodeClick={(e, n) => {
+          // setLabel(`${n?.id}`);
+          setLabel(`${n?.data?.label}`);
+          setId(`${n?.id}`);
+          // setLabel(`${n?.id} ${n?.data.label}`);
+          // setNodeName(n?.data?.label);
+          // setNodeName(n?.data?.label);
+          console.log(n);
+          console.log(e);
+        }}
+        attributionPosition="bottom-left"
+        // onClick={(e) => console.log(e)}
+        // onChange={(e) => console.log(e)}
+        // onChange={onNodeNameChange}
+        fitView
+        zoomOnDoubleClick
+        elevateNodesOnSelect
+        snapToGrid
+        proOptions={proOptions}
+        onInit={setRfInstance}
+        // nodeTypes={nodeTypes}
         style={{
           width: '100%',
           height: '100%',
@@ -254,7 +577,49 @@ function RoadMapCanvas({ editor, setState, onChange }) {
           opacity: '80%',
         }}
       >
+        <Panel position="top-center">
+          <TextInput
+            placeholder="제목을 입력해주세요"
+            onChange={onChangeTitle}
+          />
+          <TextInput
+            placeholder="설명을 입력해주세요"
+            onChange={onChangeDesc}
+          />
+        </Panel>
         <Panel position="top-right">
+          <div className="updatenode__controls">
+            <div>label:</div>
+            <input
+              // value={nodeName}
+              value={label}
+              // onChange={(evt) => setNodeName(evt.target.value)}
+              onChange={(evt) => {
+                setLabel(evt.target.value);
+                // setLabel;
+              }}
+              // onChange={(evt) => {
+              //   setNodeName(evt.target.value);
+              //   // setLabel;
+              // }}
+              // onChange={onChangeLabel}
+            />
+
+            <div className="updatenode__bglabel">background:</div>
+            <input
+              value={nodeBg}
+              onChange={(evt) => setNodeBg(evt.target.value)}
+            />
+
+            <div className="updatenode__checkboxwrapper">
+              <div>hidden:</div>
+              <input
+                type="checkbox"
+                checked={nodeHidden}
+                onChange={(evt) => setNodeHidden(evt.target.checked)}
+              />
+            </div>
+          </div>
           <button type="button" onClick={() => onLayout('TB')}>
             vertical layout
           </button>
@@ -276,16 +641,76 @@ function RoadMapCanvas({ editor, setState, onChange }) {
           <button type="button" onClick={onSave}>
             save
           </button>
+          <button type="button" onClick={useRemoveNode}>
+            {id} 노드삭제
+          </button>
+          <button type="button" onClick={onSave}>
+            save
+          </button>
 
           <button type="button" onClick={onRestore}>
             restore
+          </button>
+          <button type="button" onClick={() => onPublishRoadmap()}>
+            로드맵 발행
           </button>
         </Panel>
         <Background gap={16} />
         <Controls />
         <MiniMap zoomable pannable />
       </ReactFlow>
-    </div>
+    </Wrap>
   );
 }
-export default RoadMapCanvas;
+const Wrap = styled.div`
+  width: 100%;
+  height: 100vh;
+  & .updatenode__controls {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    z-index: 4;
+    font-size: 12px;
+  }
+
+  & .updatenode__controls label {
+    display: block;
+  }
+
+  & .updatenode__bglabel {
+    margin-top: 10px;
+  }
+
+  & .updatenode__checkboxwrapper {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+  }
+`;
+export default function RoadMapCanvas({
+  editor,
+  label,
+  onChangeLabel,
+  setLabel,
+  id,
+  setState,
+  state,
+  onChangeId,
+  setId,
+}) {
+  return (
+    <ReactFlowProvider>
+      <Roadmap
+        editor={editor}
+        setState={setState}
+        label={label}
+        onChangeLabel={onChangeLabel}
+        setLabel={setLabel}
+        state={state}
+        onChangeId={onChangeId}
+        id={id}
+        setId={setId}
+      />
+    </ReactFlowProvider>
+  );
+}

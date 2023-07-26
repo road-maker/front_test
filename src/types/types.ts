@@ -1,13 +1,68 @@
-export interface Id {
-  id?: number;
+// export interface AccessToken {
+//   accessToken?: string;
+// }
+// export interface NewUser {
+//   nickname?: string;
+//   text?: string;
+//   bjid?: string;
+//   // accessToken?: string;
+//   password?: string;
+//   email?: string;
+// }
+// export interface Map {
+//   text?: string;
+//   flowkey?: string;
+// }
+
+// export type Roadmap = Map;
+
+// export type User = AccessToken & NewUser;
+
+// // export type User = Id & NewUser;
+
+// export interface GptNode {
+//   id: string;
+//   content?: string;
+// }
+
+// export interface NewPrompt {
+//   keyword: string;
+//   data?: Array<GptNode | null>;
+// }
+// export type Prompt = NewPrompt;
+
+export interface TokenInfo {
+  accessToken?: string;
+  grantType?: string;
+  refreshToken?: string;
 }
 export interface NewUser {
+  accessToken?: TokenInfo['accessToken'];
   nickname?: string;
-  accessToken?: string;
+  text?: string;
   password?: string;
   email?: string;
 }
-export type User = Id & NewUser;
+export interface MemberInfo {
+  avatarUrl: string | null;
+  baekjoonId: string | null;
+  bio: string | null;
+  blogUrl: string | null;
+  exp?: number;
+  githubUrl?: string | null;
+  level?: 0;
+}
+export interface Map {
+  text?: string;
+  flowkey?: string;
+}
+
+export type Roadmap = Map;
+
+export type User = MemberInfo & NewUser;
+
+// export type User = Id & NewUser;
+
 export interface GptNode {
   id: string;
   content?: string;
@@ -16,6 +71,5 @@ export interface GptNode {
 export interface NewPrompt {
   keyword: string;
   data?: Array<GptNode | null>;
-  // response?: Array<GptNode | null>;
 }
 export type Prompt = NewPrompt;
