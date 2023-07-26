@@ -32,14 +32,13 @@ function App(): ReactElement {
         {
           path: 'roadmap/editor',
           element: <RoadMapEditor />,
-          children: [{ path: 'view', element: <PostedRoadmap /> }],
         },
-
+        { path: 'roadmap/editor/view', element: <PostedRoadmap /> },
         {
           path: 'users/mypage',
           element: <UserProfile />,
-          children: [{ path: 'edit', element: <EditUserProfile /> }],
         },
+        { path: 'users/mypage/edit', element: <EditUserProfile /> },
       ],
     },
   ]);

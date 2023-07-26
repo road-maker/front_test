@@ -27,14 +27,14 @@ const defaultNodeStyle = {
 
 export const initialNodes = [
   {
-    id: 'interaction-1',
+    id: '1',
     type: 'custom',
     data: { label: 'Node 1', toolbarPosition: Position.Top },
     position: { x: 250, y: 5 },
     style: defaultNodeStyle,
   },
   {
-    id: 'interaction-2',
+    id: '2',
     type: 'custom',
     data: { label: 'Node 2', toolbarPosition: Position.Top },
     position: { x: 100, y: 100 },
@@ -73,6 +73,10 @@ function UserRoadmap() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const { setViewport } = useReactFlow();
+  const [completeRoadmapState, setCompleteRoadmapState] = useState([
+    { id: '1', details: '' },
+    { id: '2', details: '' },
+  ]);
   // const roadmap = useRoadmap();
   // const [title, onChangeTitle] = useInput('');
   // const [desc, onChangeDesc] = useInput('');
@@ -133,6 +137,10 @@ function UserRoadmap() {
         panOnScroll={panOnScroll}
         zoomOnDoubleClick={zoomOnDoubleClick}
         onConnect={onConnect}
+        onNodeClick={(e, n) => {
+          console.log(e);
+          console.log(n);
+        }}
         panOnDrag={panOnDrag}
         fitView
         attributionPosition="top-right"

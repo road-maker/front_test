@@ -334,6 +334,7 @@ export default function RoadMapEditor(): ReactElement {
     </EditorWrap>
   );
 }
+
 const EditorWrap = styled.div`
   display: inline-flex;
   width: 100vw;

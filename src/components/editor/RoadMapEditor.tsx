@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-danger */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable react/button-has-type */
@@ -91,19 +92,25 @@ const initialNodes = [
     id: '1',
     data: { label: 'test' },
     position: { x: 100, y: 100 },
-    // type: 'ResizableNodeSelected',
-    // style: {
-    //   background: '#fff',
-    //   border: '1px solid black',
-    //   borderRadius: 15,
-    //   fontSize: 12,
-    // },
+    // type: 'custom',
+    style: {
+      background: '#fff',
+      border: '1px solid black',
+      borderRadius: 15,
+      fontSize: 12,
+    },
   },
   {
     id: '2',
     data: { label: 'Node 2' },
     position: { x: 100, y: 200 },
-    // type: edgeType,
+    // type: 'custom',
+    style: {
+      background: '#fff',
+      border: '1px solid black',
+      borderRadius: 15,
+      fontSize: 12,
+    },
   },
 ];
 // const initialNodes = [];
@@ -178,14 +185,14 @@ function Roadmap({
             data: {
               label: v?.content,
             },
-            // type: 'ResizableNodeSelected',
+            // type: 'custom',
             position,
-            // style: {
-            //   background: '#fff',
-            //   border: '1px solid black',
-            //   borderRadius: 15,
-            //   fontSize: 12,
-            // },
+            style: {
+              background: '#fff',
+              border: '1px solid black',
+              borderRadius: 15,
+              fontSize: 12,
+            },
           });
           nodeSet.add(`${v?.id}`);
         }
@@ -363,15 +370,14 @@ function Roadmap({
           label: ``,
           // label: '',
         },
-        // type: 'ResizableNodeSelected',
+        // type: 'custom',
         position,
-
-        // style: {
-        //   background: '#fff',
-        //   border: '1px solid black',
-        //   borderRadius: 2,
-        //   fontSize: 12,
-        // },
+        style: {
+          background: '#fff',
+          border: '1px solid black',
+          borderRadius: 15,
+          fontSize: 12,
+        },
       },
     ]);
   }, [nodeState, setNodes]);
@@ -516,7 +522,7 @@ function Roadmap({
         snapToGrid
         proOptions={proOptions}
         onInit={setRfInstance}
-        // nodeTypes={nodeTypes}
+        nodeTypes={nodeTypes}
         style={{
           width: '100%',
           height: '100%',

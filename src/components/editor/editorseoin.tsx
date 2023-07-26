@@ -7,7 +7,7 @@
 /* eslint-disable class-methods-use-this */
 // eslint-disable-next-line simple-import-sort/imports
 import 'reactflow/dist/style.css';
-import CustomNode from '../../pages/main/customNode';
+// import CustomNode from '../../pages/main/customNode';
 import { axiosInstance } from '../../axiosInstance';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import dagre from '@dagrejs/dagre';
@@ -72,9 +72,9 @@ const getLayoutedElements = (nodes, edges, direction = 'TB') => {
 
 const position = { x: 0, y: 0 };
 const edgeType = 'smoothstep';
-const nodeTypes = {
-  custom: CustomNode,
-};
+// const nodeTypes = {
+//   custom: CustomNode,
+// };
 
 function Roadmap({ editor, setState }) {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
@@ -287,7 +287,7 @@ function Roadmap({ editor, setState }) {
         fitView
         elevateNodesOnSelect
         snapToGrid
-        nodeTypes={nodeTypes}
+        // nodeTypes={nodeTypes}
         style={reactFlowStyle}
         className="react-flow-node-resizer-example"
         minZoom={0.2}
