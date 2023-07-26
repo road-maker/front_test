@@ -1,28 +1,20 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/no-danger */
-/* eslint-disable import/no-unresolved */
-/* eslint-disable react/button-has-type */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-console */
+// eslint-disable-next-line simple-import-sort/imports
 import 'reactflow/dist/style.css';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import dagre from '@dagrejs/dagre';
-import { Button, Group, Modal, TextInput } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { defaultBlockAt } from '@tiptap/core';
-import { usePatchUser } from 'components/common/hooks/usePatchUser';
+import { TextInput } from '@mantine/core';
 import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
 import { useRoadmap } from 'components/roadmaps/hooks/useRoadmap';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ReactFlow, {
-  addEdge,
   Background,
   Controls,
   MiniMap,
   Panel,
   ReactFlowProvider,
+  addEdge,
   useEdgesState,
   useNodesState,
   useReactFlow,
@@ -30,14 +22,8 @@ import ReactFlow, {
 import { getStoredRoadmap, setStoredRoadmap } from 'storage/roadmap-storage';
 import { styled } from 'styled-components';
 
-// import { axiosInstance } from '../../axiosInstance';
-// import ResizableNodeSelected from './ResizableNodeSelected';
-// import CustomNode from '../../pages/main/customNode';
 import { useInput } from '../common/hooks/useInput';
-// import ColorSelectorNode from './ColorSelectorNode';
 import { RoadmapEdge, RoadmapNode } from './types';
-
-// const flowKey = 'roadmap';
 
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
@@ -113,9 +99,7 @@ const initialNodes = [
     },
   },
 ];
-// const initialNodes = [];
 
-// const initialEdges = [];
 const initialEdges = [
   { id: 'e11a', source: '1', target: '1a', type: edgeType },
 ];
@@ -135,8 +119,6 @@ function Roadmap({
   const { prompt } = usePromptAnswer();
   const [search] = useSearchParams();
 
-  // const initialNodes = [];
-  // const initialEdges = [];
   const edgeSet = new Set<RoadmapEdge['id']>();
   const nodeSet = new Set<RoadmapNode['id']>();
   const [nodeState, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -145,18 +127,10 @@ function Roadmap({
   const [title, onChangeTitle, setTitle] = useInput('');
   const [desc, onChangeDesc, setDesc] = useInput('');
 
-  // const [nodeName, setNodeName] = useState('');
-  // const [nodeName, onNodeNameChange, setNodeName] = useInput('');
   const [nodeBg, setNodeBg] = useState('#eee');
   const [nodeHidden, setNodeHidden] = useState(false);
   const [rfInstance, setRfInstance] = useState(null);
   const { setViewport } = useReactFlow();
-
-  // useMemo(() => {
-  //   console.log('roadmapeditor props', editor);
-  //   setNodes([...nodes]);
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [editor]);
 
   const proOptions = { hideAttribution: true };
   useEffect(() => {
@@ -170,8 +144,9 @@ function Roadmap({
     // }
     // console.log(search.get('title'));
 
-    if (search.size > 0 && prompt.keyword === search.get('title')) {
+    if (prompt && search.size > 0 && prompt.keyword === search.get('title')) {
       // gpt 자동생성
+
       const { data } = prompt;
       const dataCopy = [...data];
       setNodes([]);
@@ -233,7 +208,7 @@ function Roadmap({
               label,
             };
           }
-          console.log(node);
+          console.log('요놈이 무한 출력?', node); // 요놈이 무한 출력?
 
           return node;
         }),
@@ -241,6 +216,7 @@ function Roadmap({
     }
     // }, [nodeName, prompt, search]);
   }, [prompt, search]);
+  // }, []);
 
   useMemo(() => {
     setNodes((nds) =>
@@ -332,9 +308,9 @@ function Roadmap({
     restoreFlow();
     // roadmap.getRoadmap(title, desc, flowKey);
   }, [setNodes, setEdges, setViewport]);
-  const onClickItem = useCallback((e) => {
-    console.log(e);
-  }, []);
+  // const onClickItem = useCallback((e) => {
+  //   console.log(e);
+  // }, []);
 
   // const onLayout = useCallback(
   //   (direction) => {
@@ -359,7 +335,7 @@ function Roadmap({
   );
 
   const onAddNode = useCallback(() => {
-    const nodeCount: number = [...nodeState].length;
+    const nodeCount: number = [...nodeState]?.length;
     setNodes([
       ...nodeState,
       {
@@ -388,17 +364,93 @@ function Roadmap({
     // eslint-disable-next-line no-alert
     // console.log(getStoredRoadmap());
     const { edges, nodes, viewport } = getStoredRoadmap();
+    // const data = {
+    //   roadmap: {
+    //     title: 'backend developer',
+    //     description:
+    //       '백엔드 개발자에 도전하고 싶은 사람들을 위한 맛보기 로드맵입니다.',
+    //     recommendedExecutionTimeValue: 0,
+    //     recommendedExecutionTimeUnit: '',
+    //     thumbnailUrl: '',
+    //   },
+    //   nodes,
+    //   edges,
+    //   viewport,
+    // };
+    const nodesCopy = [...nodes];
+    nodesCopy.map((v) => {
+      state.map((item) => {
+        if (v.id === item.id) {
+          console.log('onPublish', item.details);
+          // eslint-disable-next-line no-param-reassign
+          v.detailedContent = item.details;
+        }
+      });
+    });
+
+    // nodes.map((v) => console.log('onPublish', v));
+    // nodes.map((v) => {
+    //   state.map((item)=>
+    //   {console.log('onPublish', v));}
+
+    // )});
+
     const data = {
       roadmap: {
-        title: 'backend developer',
+        title: 'test입니당',
         description:
-          '백엔드 개발자에 도전하고 싶은 사람들을 위한 맛보기 로드맵입니다.',
+          '개발자에 도전하고 싶은 사람들을 위한 맛보기 로드맵입니다.',
+        thumbnailUrl: '',
         recommendedExecutionTimeValue: 0,
         recommendedExecutionTimeUnit: '',
       },
-      nodes,
+      // nodes: [
+      //   {
+      //     width: 131,
+      //     height: 38,
+      //     id: '1',
+      //     detailedContent: '',
+      //     data: {
+      //       label: 'Introduction to Java',
+      //     },
+      //     type: 'ResizableNodeSelected',
+      //     position: {
+      //       x: 1230,
+      //       y: 480,
+      //     },
+      //     style: {
+      //       background: '#fff',
+      //       border: '1px solid black',
+      //       borderRadius: 15,
+      //       fontSize: 12,
+      //     },
+      //     targetPosition: 'left',
+      //     sourcePosition: 'right',
+      //     selected: true,
+      //     positionAbsolute: {
+      //       x: 1230,
+      //       y: 480,
+      //     },
+      //     dragging: false,
+      //   },
+      // ],
+      nodes: nodesCopy,
+      // edges: [
+      //   {
+      //     id: 'e11a',
+      //     source: '1',
+      //     target: '1a',
+      //     type: 'smoothstep',
+      //     animated: true,
+      //   },
+      // ],
       edges,
-      viewport,
+      // viewport: {
+      //   x: 610.1553814135862,
+      //   y: 80.07905945269988,
+      //   zoom: 0.5946035575013613,
+      // },
+      viewport: defaultViewport,
     };
     postRoadmap(data);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -408,14 +460,9 @@ function Roadmap({
   const useRemoveNode = useCallback(() => {
     setNodes((nds) => nds.filter((node) => node.id !== label));
   }, [label]);
-  useMemo(() => {
-    console.log(nodeState);
-  }, [nodeState]);
-  const reactFlowStyle = {
-    background: 'light-pink',
-    width: '100%',
-    height: 300,
-  };
+  // useMemo(() => {
+  //   console.log(nodeState);
+  // }, [nodeState]);
 
   // 첫로딩 시의 포멧 => 노드랑 간선이 null이면 에러!~
   // useEffect(() => {
@@ -476,7 +523,7 @@ function Roadmap({
         return node;
       }),
     );
-  });
+  }, [nodeState, edgeState]);
   // setEdges((eds) =>
   //   eds.map((edge) => {
   //     // if (edge.id === 'e1-2') {
@@ -591,7 +638,9 @@ function Roadmap({
           >
             노드 전체 삭제
           </button>
-          <button onClick={onSave}>save</button>
+          <button type="button" onClick={onSave}>
+            save
+          </button>
           <button type="button" onClick={useRemoveNode}>
             {id} 노드삭제
           </button>

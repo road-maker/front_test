@@ -25,8 +25,9 @@ type RoadmapResponseType = RoadmapResponse | ErrorResponse;
 
 export function useRoadmap(): UseRoadmap {
   const SERVER_ERROR = 'There was an error contacting the server.';
-  const { updateUser } = useUser();
+  // const { updateUser } = useUser();
   const navigate = useNavigate();
+  const { user } = useUser();
   async function roadmapServerCall(
     urlEndpoint: string,
     title: string,
@@ -45,7 +46,10 @@ export function useRoadmap(): UseRoadmap {
           },
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+            // Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+            // Authorization: `Bearer ${localStorage.getItem('user')}`,
+            // Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaWdudXBAbmF2ZXIuY29tIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTY5MDk3Nzk2Mn0.5XZmXtA2arG_VsEJN5SwQzBj5P2LHFMvdw4Ha8JZVTY`,
           },
         });
 
@@ -55,12 +59,13 @@ export function useRoadmap(): UseRoadmap {
         navigate('/');
         alert('Data has been successfully saved!');
         // eslint-disable-next-line no-console
-        console.log(localStorage);
       }
-      if ('user' in data) {
-        // update stored user data
-        updateUser(data.user);
-      }
+      // if ('user' in data) {
+      // update stored user data
+      // updateUser(data.user);
+      // updateUser(data.user);
+      // updateUser(data);
+      // }
     } catch (errorResponse) {
       const status =
         axios.isAxiosError(errorResponse) &&
@@ -90,7 +95,9 @@ export function useRoadmap(): UseRoadmap {
           data: { title, description, flowkey },
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+            // Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+            // Authorization: `Bearer ${localStorage.getItem('user')}`,
+            Authorization: `Bearer ${user.accessToken}`,
           },
         });
 
@@ -100,7 +107,7 @@ export function useRoadmap(): UseRoadmap {
 
       if ('user' in data) {
         // update stored user data
-        updateUser(data.user);
+        // updateUser(data.user);
       }
       // if ('roadmap' in data) {
       //   updateUser(data.roadmap);
