@@ -99,7 +99,6 @@
 //   // const { user } = useUser();
 //   const { signout } = useAuth();
 //   const [opened, { open, close }] = useDisclosure(false);
-
 //   return (
 //     <Box pb={30}>
 //       <Header height={60} px="md">
@@ -114,10 +113,10 @@
 //               width={200}
 //               height={50}
 //               onClick={() => navigate('..')}
+//               style={{ cursor: 'pointer' }}
 //             />
 //             <InputWithButton ml="5rem" />
 //           </Group>
-
 //           <Group className={classes.hiddenMobile}>
 //             <Modal opened={opened} onClose={close} size="50%">
 //               <Center>

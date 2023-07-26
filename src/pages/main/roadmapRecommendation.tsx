@@ -52,6 +52,18 @@ const mockdata = [
       profile: 'HM',
     },
   },
+  {
+    id: 4,
+    title: 'Javascript 정복하기',
+    category: 'Frontend',
+    image: 'https://t1.daumcdn.net/cfile/tistory/21221F4258E793521D',
+    date: 'August 18, 2022',
+    author: {
+      name: '표혜민',
+      description: '한 번 정복해보아요~^^',
+      profile: 'HM',
+    },
+  },
 ];
 
 const useStyles = createStyles((theme) => ({
@@ -85,7 +97,11 @@ export default function RoadmapRecommendation(props: PaperProps) {
           src={article.image}
           alt={article.title}
           height={160}
-          width={240}
+          width={260}
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            navigate('/roadmap/editor/view');
+          }}
         />
       </Card.Section>
       <Text color="dimmed" size="xs" transform="uppercase" weight={700} mt="md">
@@ -97,6 +113,7 @@ export default function RoadmapRecommendation(props: PaperProps) {
         onClick={() => {
           navigate('/roadmap/editor/view');
         }}
+        style={{ cursor: 'pointer' }}
       >
         {article.title}
       </Text>
@@ -131,19 +148,31 @@ export default function RoadmapRecommendation(props: PaperProps) {
   ));
 
   return (
-    <Container>
-      <h1>추천 로드맵</h1>
-      <Paper radius="md" p="xl" ml={50} mr={50} withBorder {...props}>
+    <>
+      <Group position="center" mt={30}>
+        <h1>추천 로드맵</h1>
+      </Group>
+      <Paper
+        radius="md"
+        px={60}
+        py={30}
+        mt={40}
+        m="auto"
+        withBorder
+        {...props}
+        w={1200}
+      >
         <SimpleGrid
-          cols={3}
-          breakpoints={[
-            { maxWidth: 'sm', cols: 2 },
-            { maxWidth: 'sm', cols: 1 },
-          ]}
+          cols={4}
+          spacing={20}
+          // breakpoints={[
+          //   { maxWidth: 'sm', cols: 2 },
+          //   { maxWidth: 'sm', cols: 1 },
+          // ]}
         >
           {cards}
         </SimpleGrid>
       </Paper>
-    </Container>
+    </>
   );
 }
