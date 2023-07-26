@@ -1,4 +1,8 @@
 // import Quil from 'components/pretest/codeBox';
+import EditUserProfile from 'components/user/editUserProfile';
+import { UserProfile } from 'components/user/userProfile';
+import PostedRoadmap from 'pages/main/postedRoadmap';
+import RoadMapEditor from 'pages/roadmap/editor';
 import { ReactElement } from 'react';
 import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
@@ -8,7 +12,6 @@ import ErrorPage from './pages/error';
 import LoginPage from './pages/login';
 import MainPage from './pages/main';
 import ResetInfoPage from './pages/resetInfo';
-import RoadMapEditor from './pages/roadmap/editor';
 import SignupPage from './pages/signup';
 import { queryClient } from './react-query/queryClient';
 
@@ -20,15 +23,27 @@ function App(): ReactElement {
       children: [
         { index: true, element: <MainPage /> },
         {
-          path: '/users/signin',
           element: <LoginPage />,
         },
+        { path: 'users/signin', element: <LoginPage /> },
         { path: 'users/signup', element: <SignupPage /> },
         { path: 'users/reset', element: <ResetInfoPage /> },
+        // {
+        //   path: 'roadmap/editor',
+        //   element: <RoadMapEditor />,
+        // },
         {
-          path: 'roadmap/editor',
-          // element: <RoadMapEditor />,
+          path: 'roadmap',
           element: <RoadMapEditor />,
+          children: [
+            { path: 'view', element: <PostedRoadmap /> },
+            { path: 'editor', element: <RoadMapEditor /> },
+          ],
+        },
+        {
+          path: 'users/mypage',
+          element: <UserProfile />,
+          children: [{ path: 'edit', element: <EditUserProfile /> }],
         },
       ],
     },
@@ -36,7 +51,6 @@ function App(): ReactElement {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="App">
-        {/* <Loading /> */}
         <RouterProvider router={router} />
       </div>
       <ReactQueryDevtools />

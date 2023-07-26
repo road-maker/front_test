@@ -1,5 +1,5 @@
 import MainLayout from '../../layout/mainLayout';
-import { RoadmapRecommendation } from './roadmapRecommendation';
+import RoadmapRecommendation from './roadmapRecommendation';
 
 function MainPage() {
   return (

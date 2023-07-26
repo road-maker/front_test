@@ -101,6 +101,7 @@ export function HeaderMegaMenu() {
   const { user } = useUser();
   const { signout } = useAuth();
   const [opened, { open, close }] = useDisclosure(false);
+
   return (
     <Box pb={30}>
       <Header height={60} px="md">
@@ -163,7 +164,7 @@ export function HeaderMegaMenu() {
             >
               Editor Page
             </Button> */}
-            {user && 'accessToken' in user ? (
+            {user ? (
               <>
                 <NavLink to="/">{user.email}</NavLink>
                 <Button onClick={() => signout()}>Sign out</Button>

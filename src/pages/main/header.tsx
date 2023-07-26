@@ -18,10 +18,10 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconArrowLeft, IconArrowRight, IconSearch } from '@tabler/icons-react';
 import { useInput } from 'components/common/hooks/useInput';
 import { usePrompt } from 'components/prompts/hooks/usePrompt';
+import { useUser } from 'components/user/hooks/useUser';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../auth/useAuth';
-import { useUser } from '../../components/user/hooks/useUser';
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -109,7 +109,7 @@ export function HeaderMegaMenu() {
             className={classes.hiddenMobile}
           >
             <Image
-              src="/img/logo.png"
+              src="img/logo.png"
               width={200}
               height={50}
               onClick={() => navigate('..')}
@@ -150,15 +150,15 @@ export function HeaderMegaMenu() {
                 로드맵 생성하기
               </Button>
             </Group>
-            {user ? (
-              <Button onClick={() => signout()}>Sign out</Button>
-            ) : (
-              <Button onClick={() => navigate('/users/signin')}>Sign in</Button>
-            )}
+
             {/* {user && 'accessToken' in user ? (
               <>
-                <NavLink to="/">{user.email}</NavLink>
                 <Button onClick={() => signout()}>Sign out</Button>
+                <ActionIcon onClick={() => navigate('users/mypage')}>
+                  <Avatar color="cyan" radius="xl">
+                    <div>{user.nickname}</div>
+                  </Avatar>
+                </ActionIcon>
               </>
             ) : (
               <Button onClick={() => navigate('/users/signin')}>Sign in</Button>
@@ -184,7 +184,7 @@ export function InputWithButton(props: TextInputProps) {
       onChange={onPromptChange}
       icon={<IconSearch size="1.1rem" stroke={1.5} />}
       radius="md"
-      w="600px"
+      w="500px"
       rightSection={
         <ActionIcon
           size={32}

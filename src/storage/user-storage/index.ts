@@ -1,6 +1,7 @@
 import { User } from '../../types/types';
 
-const USER_LOCALSTORAGE_KEY = 'user';
+// const USER_LOCALSTORAGE_KEY = 'user';
+const USER_LOCALSTORAGE_KEY = 'accessToken';
 
 // helper to get user from localstorage
 export function getStoredUser(): User | null {

@@ -30,6 +30,8 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "node_modules/@types",
-    "src/setProxy.js"
+    "src/setProxy.js",
+    "src/axiosInstance/constants.js",
+    "src/react-query/constants.js"
   ]
 }

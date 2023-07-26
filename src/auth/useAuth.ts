@@ -1,23 +1,26 @@
 import axios, { AxiosResponse } from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { setStoredUser } from 'storage/user-storage';
 
 import { axiosInstance } from '../axiosInstance';
 import { useUser } from '../components/user/hooks/useUser';
-import { User } from '../types/types';
+import { NewUser, User } from '../types/types';
 
 interface UseAuth {
-  signin: (email: string, password: string) => Promise<void>;
+  signin: (email: string, password: string, nickname?: string) => Promise<void>;
   signup: (email: string, password: string, nickname: string) => Promise<void>;
   signout: () => void;
 }
 
 type UserResponse = { user: User };
+// type NewUserResponse = { user: NewUser };
 type ErrorResponse = { message: string };
-type AuthResponseType = UserResponse | ErrorResponse;
+// type AuthResponseType = UserResponse | ErrorResponse ;
+type AuthResponseType = NewUser;
 
 export function useAuth(): UseAuth {
   const SERVER_ERROR = 'There was an error contacting the server.';
-  const { clearUser, updateUser } = useUser();
+  const { user, clearUser, updateUser } = useUser();
   const navigate = useNavigate();
 
   async function authServerCall(
@@ -34,16 +37,17 @@ export function useAuth(): UseAuth {
           data: { email, password, nickname },
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
           },
         });
-      if (status === 201) {
+      if (status === 201 || status === 200) {
+        // if ('accessToken' in data) {
+        // if ('user' in data) {
+        // updateUser(data.accessToken);
+        // updateUser(data.user);
+        updateUser({ email, nickname, accessToken: data.accessToken });
+        // }
         navigate('/');
       }
-      if ('accessToken' in data) {
-        updateUser(data.accessToken);
-      }
-
       // eslint-disable-next-line no-console
       // console.log('authServerCall', data);
       // update stored user data
@@ -68,6 +72,7 @@ export function useAuth(): UseAuth {
     urlEndpoint: string,
     email: string,
     password: string,
+    nickname?: string,
   ): Promise<void> {
     try {
       const { data, status }: AxiosResponse<AuthResponseType> =
@@ -81,14 +86,35 @@ export function useAuth(): UseAuth {
         });
       if (status === 201 || status === 200) {
         // const { accessToken } = data.user;
-
-        localStorage.setItem('accessToken', JSON.stringify(data));
+        console.log(data);
+        // updateUser({ email, nickname, accessToken: data.accessToken });
+        // localStorage.setItem('accessToken', JSON.stringify(data));
+        // localStorage.setItem('user', JSON.stringify(data));
+        // localStorage.setItem(
+        //   'user',
+        //   // JSON.stringify(
+        //   JSON.stringify({ email, nickname, accessToken: data.accessToken }),
+        //   // ),
+        // );
+        localStorage.setItem(
+          'user',
+          // JSON.stringify(
+          JSON.stringify({ data }),
+          // ),
+        );
+        setStoredUser(data);
+        // if (data) {
+        //   updateUser({ email, nickname, accessToken: data.accessToken });
+        // alert('로그인 성공');
         // navigate('/');
-        if ('accessToken' in data) {
-          // update stored user data
-          updateUser(data.accessToken);
-          navigate('/');
-        }
+        // }
+        // navigate('/');
+        // if ('accessToken' in data) {
+        // if ('user' in data) {
+        //   // update stored user data
+        // updateUser(data.user);
+        // updateUser({ email, nickname, accessToken: data.accessToken });
+        // }
       }
     } catch (errorResponse) {
       const status =
@@ -103,7 +129,11 @@ export function useAuth(): UseAuth {
     }
   }
 
-  async function signin(email: string, password: string): Promise<void> {
+  async function signin(
+    email: string,
+    password: string,
+    nickname: string,
+  ): Promise<void> {
     authLoginServerCall('/members/signin', email, password);
     // authServerCall('/members/signin', email, password);
   }

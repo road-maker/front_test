@@ -43,6 +43,10 @@
     "classcat": "^5.0.4",
     "draft-js": "^0.11.7",
     "embla-carousel-react": "^8.0.0-rc11",
+    "fast-json-patch": "^3.1.1",
+    "formik": "^2.4.2",
+    "http-proxy-middleware": "^2.0.6",
+    "jsonpatch": "^3.1.0",
     "lowlight": "^2.9.0",
     "monaco-editor": "^0.40.0",
     "nanoid": "^4.0.2",
@@ -76,7 +80,7 @@
     "eject": "react-scripts eject",
     "lint": "yarn lint:ci --fix",
     "lint:ci": "eslint src",
-    "build:y-websocket": "PORT=1234 npx y-websocket-server"
+    "start:y-websocket": "PORT=1234 npx y-websocket-server"
   },
   "browserslist": {
     "production": [

@@ -80,7 +80,7 @@ export default function RoadMapEditor(): ReactElement {
     // content: `<div >${toggle}</div>`,
     // content: `<div onChange={onChangeToggle}>${toggle}</div>`,
     // content: `${toggle}`,
-    // content: state.id === id ? `${state[id]?.details}` : ``,s
+    // content: state.id === id ? `${state[id]?.details}` : ``,
     // content: state.id === id ? `${state[id]?.details}` : ``,
     content: state.filter((v) => v.id === id)[0]?.details || '',
     // content: <input onChange={onChangeToggle} value={toggle} />,
@@ -216,7 +216,7 @@ export default function RoadMapEditor(): ReactElement {
             label={label}
             onChangeLabel={onChangeLabel}
             setLabel={setLabel}
-            setState={setState}
+            setState={setState} // setState={setState}
             // onChange={onChangeHandler}
             // ydoc={ydoc}
             // ytext={ytext}
