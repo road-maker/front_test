@@ -16,11 +16,11 @@ import {
   IconStars,
   IconUser,
 } from '@tabler/icons-react';
+// import { HeaderMegaMenu } from '../../main/header';
+import MainLayout from 'layout/mainLayout';
 
 import CommentPage from '../../main/commentPage';
-import { HeaderMegaMenu } from '../../main/header';
 import CompleteRoadmap from './completeRoadmap';
-import InteractionFlow from './userRoadmap';
 
 const mockdata = [
   {
@@ -105,32 +105,34 @@ function PostedRoadmap() {
 
   return (
     <>
-      <HeaderMegaMenu />
-      <Container px="xs">
-        <Title className={classes.title} mt="sm">
-          Javasript 정복하기
-        </Title>
-        <Group>
-          <Avatar color="purple" radius="xl">
-            HM
-          </Avatar>
-          표혜민
-        </Group>
-        <Button ml={800}>참여하기</Button>
-        <Text c="dimmed" className={classes.description} mt="md">
-          이 로드맵은 초보 프론트엔드 개발자를 위한 로드맵입니다.
-        </Text>
-        <SimpleGrid
-          cols={4}
-          spacing="xl"
-          mt={50}
-          breakpoints={[{ maxWidth: 'md', cols: 1 }]}
-        >
-          {features}
-        </SimpleGrid>
-        <CompleteRoadmap />
-        <CommentPage />
-      </Container>
+      {/* <HeaderMegaMenu /> */}
+      <MainLayout>
+        <Container px="xs">
+          <Title className={classes.title} mt="sm">
+            Javasript 정복하기
+          </Title>
+          <Group>
+            <Avatar color="purple" radius="xl">
+              HM
+            </Avatar>
+            표혜민
+          </Group>
+          <Button ml={800}>참여하기</Button>
+          <Text c="dimmed" className={classes.description} mt="md">
+            이 로드맵은 초보 프론트엔드 개발자를 위한 로드맵입니다.
+          </Text>
+          <SimpleGrid
+            cols={4}
+            spacing="xl"
+            mt={50}
+            breakpoints={[{ maxWidth: 'md', cols: 1 }]}
+          >
+            {features}
+          </SimpleGrid>
+          <CompleteRoadmap />
+          <CommentPage />
+        </Container>
+      </MainLayout>
     </>
   );
 }

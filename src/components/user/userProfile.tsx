@@ -3,7 +3,7 @@ import { IconSettings } from '@tabler/icons-react';
 import { ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { HeaderMegaMenu } from '../../pages/main/header';
+// import { HeaderMegaMenu } from '../../pages/main/header';
 // import { usePatchUser } from '../common/hooks/usePatchUser';
 // import { useUser } from './hooks/useUser';
 import UserRoadmap from './userRoadmap';
@@ -12,7 +12,7 @@ export function UserProfile(): ReactElement {
   const navigate = useNavigate();
   return (
     <>
-      <HeaderMegaMenu />
+      {/* <HeaderMegaMenu /> */}
       <Paper withBorder shadow="md" radius="xs" p="xl" m={50}>
         <Group position="center">
           <Avatar color="cyan" radius="xl">

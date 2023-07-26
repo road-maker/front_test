@@ -27,6 +27,7 @@ export interface AddedNode {
   selected?: boolean;
   type?: string;
   data?: { label: string };
+
   positionAbsolute?: Position;
 }
 
@@ -48,6 +49,12 @@ export interface RoadmapNode {
   data: { label: string };
   style?: nodeStyle;
   content?: string;
+  targetPosition?: string;
+  sourcePosition?: string;
+  selected?: boolean;
+  detailedContent?: string;
+  positionAbsolute?: Position;
+  dragging?: boolean;
 }
 
 export type RoadmapNodes = Array<RoadmapNode>;
@@ -76,6 +83,7 @@ export interface NewRoadmap {
   recommendedExecutionTimeUnit?: string;
   edges: RoadmapEdges | [];
   nodes: RoadmapNodes;
+  detailedContent?: string;
   // nodes: RoadmapNodes | [];
   viewport: Viewport;
 }

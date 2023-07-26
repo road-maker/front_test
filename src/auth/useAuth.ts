@@ -1,9 +1,9 @@
 import axios, { AxiosResponse } from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { NewUser } from 'types/types';
 
 import { axiosInstance } from '../axiosInstance';
 import { useUser } from '../components/user/hooks/useUser';
-import { User } from '../types/types';
 
 interface UseAuth {
   signin: (email: string, password: string) => Promise<void>;
@@ -11,7 +11,7 @@ interface UseAuth {
   signout: () => void;
 }
 
-type UserResponse = { user: User };
+type UserResponse = { user: NewUser };
 type ErrorResponse = { message: string };
 type AuthResponseType = UserResponse | ErrorResponse;
 
@@ -34,15 +34,26 @@ export function useAuth(): UseAuth {
           data: { email, password, nickname },
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
           },
         });
-      if (status === 201) {
-        navigate('/');
+      if (status === 201 || status === 200) {
+        updateUser({
+          avatarUrl: '',
+          baekjoonId: '',
+          bio: '',
+          blogUrl: '',
+          email,
+          exp: 0,
+          githubUrl: '',
+          level: 0,
+          nickname,
+        });
+        console.log('useAuth ServiceCall', data);
+        // navigate('/');
       }
-      if ('accessToken' in data) {
-        updateUser(data.accessToken);
-      }
+      // if ('accessToken' in data) {
+      //   updateUser(data.accessToken);
+      // }
 
       // eslint-disable-next-line no-console
       // console.log('authServerCall', data);
@@ -82,13 +93,20 @@ export function useAuth(): UseAuth {
       if (status === 201 || status === 200) {
         // const { accessToken } = data.user;
 
-        localStorage.setItem('accessToken', JSON.stringify(data));
+        // localStorage.setItem('accessToken', JSON.stringify(data));
+        localStorage.setItem('user', JSON.stringify(data));
+        console.log('useAuth', data);
         // navigate('/');
-        if ('accessToken' in data) {
-          // update stored user data
-          updateUser(data.accessToken);
+        if ('tokenInfo' in data) {
           navigate('/');
         }
+        // updateUser({ username, tokenInfo });
+        // if ('accessToken' in data) {
+        //   // update stored user data
+        //   // updateUser(data.accessToken);
+        //   updateUser(data.accessToken);
+        //   navigate('/');
+        // }
       }
     } catch (errorResponse) {
       const status =

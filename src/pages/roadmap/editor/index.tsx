@@ -10,7 +10,8 @@ import { TextAlign } from '@tiptap/extension-text-align';
 import { Underline } from '@tiptap/extension-underline';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { ReactElement, useMemo, useRef, useState } from 'react';
+import MainLayout from 'layout/mainLayout';
+import { ReactElement, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ReactFlowProvider } from 'reactflow';
 import { styled } from 'styled-components';
@@ -75,27 +76,14 @@ export default function RoadMapEditor(): ReactElement {
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
-    // content: state,
-    // content: `<div onChange={onChangeLabel}>${toggle.details || ''}</div>`,
-    // content: `<div >${toggle}</div>`,
-    // content: `<div onChange={onChangeToggle}>${toggle}</div>`,
-    // content: `${toggle}`,
-    // content: state.id === id ? `${state[id]?.details}` : ``,
-    // content: state.id === id ? `${state[id]?.details}` : ``,
     content: state.filter((v) => v.id === id)[0]?.details || '',
-    // content: <input onChange={onChangeToggle} value={toggle} />,
+
     onUpdate(e) {
       // console.log('ydoc', ydoc);
       // console.log('ytext', ytext);
       console.log(e.editor?.getHTML());
       setToggle(e.editor?.getHTML());
       console.log('e.editor', e.editor);
-      // state.map((item) =>
-      //   item.id === label
-      //     ? console.log('state.map, item', item)
-      //     : console.log('state.map, state', state),
-      // );
-
       state.map((item, idx) => {
         if (item.id !== id) return;
         // console.log('state.map, item ,label', label);
@@ -201,137 +189,31 @@ export default function RoadMapEditor(): ReactElement {
   }, [toggle, id]);
 
   return (
-    <EditorWrap>
-      <div>
-        {/* {search? input } */}
-        {/* <div>
-          로드맵 제목 :{' '}
-          <input
-            value={roadMapTitle}
-            onChange={onRoadMapTitleChange}
-            placeholder="로드맵 제목을 입력해주세요."
-          />
-        </div> */}
-        {toggleEditor}
-        {/* {label === toggle.id ? (
-          <div>
-            <RichTextEditor editor={editor}>
-              <RichTextEditor.Toolbar sticky stickyOffset={5}>
-                <RichTextEditor.ControlsGroup>
-                  <RichTextEditor.Bold />
-                  <RichTextEditor.Italic />
-                  <RichTextEditor.Underline />
-                  <RichTextEditor.Strikethrough />
-                  <RichTextEditor.ClearFormatting />
-                  <RichTextEditor.Highlight />
-                  <RichTextEditor.Code />
-                </RichTextEditor.ControlsGroup>
+    <MainLayout>
+      <EditorWrap>
+        <div>{toggleEditor}</div>
 
-                <RichTextEditor.ControlsGroup>
-                  <RichTextEditor.H1 />
-                  <RichTextEditor.H2 />
-                  <RichTextEditor.H3 />
-                  <RichTextEditor.H4 />
-                </RichTextEditor.ControlsGroup>
-
-                <RichTextEditor.ControlsGroup>
-                  <RichTextEditor.Blockquote />
-                  <RichTextEditor.Hr />
-                  <RichTextEditor.BulletList />
-                  <RichTextEditor.OrderedList />
-                  <RichTextEditor.Subscript />
-                  <RichTextEditor.Superscript />
-                </RichTextEditor.ControlsGroup>
-
-                <RichTextEditor.ControlsGroup>
-                  <RichTextEditor.Link />
-                  <RichTextEditor.Unlink />
-                </RichTextEditor.ControlsGroup>
-
-                <RichTextEditor.ControlsGroup>
-                  <RichTextEditor.AlignLeft />
-                  <RichTextEditor.AlignCenter />
-                  <RichTextEditor.AlignJustify />
-                  <RichTextEditor.AlignRight />
-                </RichTextEditor.ControlsGroup>
-              </RichTextEditor.Toolbar>
-              <div className="content">
-                <RichTextEditor.Content />
-              </div>
-            </RichTextEditor>
-          </div>
-        ) : (
-          <div>none to show</div>
-        )} */}
-      </div>
-      {/* <div>
-          <RichTextEditor editor={editor}>
-            <RichTextEditor.Toolbar sticky stickyOffset={5}>
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Bold />
-                <RichTextEditor.Italic />
-                <RichTextEditor.Underline />
-                <RichTextEditor.Strikethrough />
-                <RichTextEditor.ClearFormatting />
-                <RichTextEditor.Highlight />
-                <RichTextEditor.Code />
-              </RichTextEditor.ControlsGroup>
-
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.H1 />
-                <RichTextEditor.H2 />
-                <RichTextEditor.H3 />
-                <RichTextEditor.H4 />
-              </RichTextEditor.ControlsGroup>
-
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Blockquote />
-                <RichTextEditor.Hr />
-                <RichTextEditor.BulletList />
-                <RichTextEditor.OrderedList />
-                <RichTextEditor.Subscript />
-                <RichTextEditor.Superscript />
-              </RichTextEditor.ControlsGroup>
-
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Link />
-                <RichTextEditor.Unlink />
-              </RichTextEditor.ControlsGroup>
-
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.AlignLeft />
-                <RichTextEditor.AlignCenter />
-                <RichTextEditor.AlignJustify />
-                <RichTextEditor.AlignRight />
-              </RichTextEditor.ControlsGroup>
-            </RichTextEditor.Toolbar>
-            <div className="content">
-              <RichTextEditor.Content />
-            </div>
-          </RichTextEditor>
+        <div className="roadMapWrap">
+          <ReactFlowProvider>
+            <RoadMapCanvas
+              state={state}
+              // editor={state}
+              editor={editor}
+              id={id}
+              onChangeId={onChangeId}
+              setId={setId}
+              label={label}
+              onChangeLabel={onChangeLabel}
+              setLabel={setLabel}
+              setState={setState}
+              // onChange={onChangeHandler}
+              // ydoc={ydoc}
+              // ytext={ytext}
+            />
+          </ReactFlowProvider>
         </div>
-      </div> */}
-
-      <div className="roadMapWrap">
-        <ReactFlowProvider>
-          <RoadMapCanvas
-            state={state}
-            // editor={state}
-            editor={editor}
-            id={id}
-            onChangeId={onChangeId}
-            setId={setId}
-            label={label}
-            onChangeLabel={onChangeLabel}
-            setLabel={setLabel}
-            setState={setState}
-            // onChange={onChangeHandler}
-            // ydoc={ydoc}
-            // ytext={ytext}
-          />
-        </ReactFlowProvider>
-      </div>
-    </EditorWrap>
+      </EditorWrap>
+    </MainLayout>
   );
 }
 
