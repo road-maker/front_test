@@ -114,6 +114,7 @@ export function HeaderMegaMenu() {
               width={200}
               height={50}
               onClick={() => navigate('..')}
+              style={{ cursor: 'pointer' }}
             />
             <InputWithButton ml="5rem" />
           </Group>
