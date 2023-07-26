@@ -96,7 +96,7 @@ export default function CompleteRoadmap(): ReactElement {
 
   return (
     <EditorWrap>
-      <div>{toggleEditor}</div>
+      <div style={{ textAlign: 'center', margin: 'auto' }}>{toggleEditor}</div>
       <div className="roadMapWrap">
         <ReactFlowProvider>
           <InteractionFlow
@@ -124,8 +124,8 @@ export default function CompleteRoadmap(): ReactElement {
 
 const EditorWrap = styled.div`
   display: inline-flex;
-  width: 100vw;
-  height: 100vh;
+  width: 80vw;
+  height: 60vh;
   & .editor {
     & > .content {
       width: 100%;
