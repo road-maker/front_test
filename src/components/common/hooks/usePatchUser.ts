@@ -18,10 +18,11 @@ async function patchUserOnServer(
 
   // send patched data to the server
   const { data } = await axiosInstance.patch(
-    `/user/${originalData.email}`,
+    // `/user/${originalData.email}`,
+    `/user/${originalData.nickname}`,
     { patch },
     {
-      headers: getJWTHeader(originalData),
+      headers: getJWTHeader(originalData.accessToken),
     },
   );
   return data.user;

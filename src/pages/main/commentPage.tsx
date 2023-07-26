@@ -17,7 +17,8 @@ import {
 import { useCounter, useDisclosure } from '@mantine/hooks';
 import { IconHeart } from '@tabler/icons-react';
 
-import { InputWithButton } from './header';
+// import { InputWithButton } from './header';
+// import { InputWithButton } from '../../layout/mainLayout/header';
 
 const dummy = [
   {
@@ -125,7 +126,7 @@ function CommentPage() {
         </Center>
       </Modal>
       <Group>
-        <InputWithButton />
+        {/* <InputWithButton /> */}
         <Select
           defaultValue="최신순"
           data={[

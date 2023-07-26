@@ -40,7 +40,8 @@ function EditUserProfile() {
           initialValues={{
             nickname: user?.nickname ?? '',
             text: user?.text ?? '',
-            bjid: user?.bjid ?? '',
+            bjid: '',
+            // bjid: user?.bjid ?? '',
           }}
           onSubmit={(values: FormValues) => {
             patchUser({ ...user, ...values });

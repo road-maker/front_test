@@ -79,8 +79,7 @@
     "test": "env-cmd -f .env.production react-scripts test",
     "eject": "react-scripts eject",
     "lint": "yarn lint:ci --fix",
-    "lint:ci": "eslint src",
-    "build:y-websocket": "PORT=1234 npx y-websocket-server"
+    "lint:ci": "eslint src"
   },
   "browserslist": {
     "production": [
