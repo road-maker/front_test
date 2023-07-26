@@ -68,7 +68,7 @@ export function useRoadmap(): UseRoadmap {
     }
   }
   async function getRoadmap(id: number): Promise<void> {
-    roadmapServerCall(`/roadmaps/load-roadmap/`, id);
+    roadmapServerCall(`/roadmaps/load-roadmap`, id);
   }
 
   async function postRoadmap(newRoadmap: NewRoadmap): Promise<void> {
