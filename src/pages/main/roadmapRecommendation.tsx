@@ -1,17 +1,18 @@
+import { Carousel } from '@mantine/carousel';
 import {
   ActionIcon,
   Avatar,
   Card,
-  Container,
   createStyles,
   Group,
   Image,
   Paper,
   PaperProps,
   rem,
-  SimpleGrid,
   Text,
+  useMantineTheme,
 } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { IconBookmark, IconHeart, IconShare } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -89,9 +90,17 @@ const useStyles = createStyles((theme) => ({
 export default function RoadmapRecommendation(props: PaperProps) {
   const { classes, theme } = useStyles();
   const navigate = useNavigate();
+  const themes = useMantineTheme();
+  const mobile = useMediaQuery(`(max-width: ${themes.breakpoints.sm})`);
 
   const cards = mockdata.map((article) => (
-    <Card key={article.id} radius="md" component="a" className={classes.card}>
+    <Card
+      key={article.id}
+      radius="md"
+      component="a"
+      className={classes.card}
+      ml={100}
+    >
       <Card.Section>
         <Image
           src={article.image}
@@ -160,18 +169,22 @@ export default function RoadmapRecommendation(props: PaperProps) {
         m="auto"
         withBorder
         {...props}
-        w={1200}
+        w={1500}
+        h={400}
       >
-        <SimpleGrid
-          cols={4}
-          spacing={20}
-          // breakpoints={[
-          //   { maxWidth: 'sm', cols: 2 },
-          //   { maxWidth: 'sm', cols: 1 },
-          // ]}
+        <Carousel
+          slideSize="100%"
+          slideGap="100%"
+          loop
+          align="start"
+          slidesToScroll={mobile ? 1 : 2}
+          breakpoints={[
+            { maxWidth: 'md', slideSize: '50%' },
+            { maxWidth: 'sm', slideSize: '100%', slideGap: 100 },
+          ]}
         >
           {cards}
-        </SimpleGrid>
+        </Carousel>
       </Paper>
     </>
   );
