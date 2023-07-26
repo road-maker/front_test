@@ -106,11 +106,11 @@ function PostedRoadmap() {
   return (
     <>
       <HeaderMegaMenu />
-      <Container px="xs">
+      <Container px="xs" mb={30}>
         <Title className={classes.title} mt="sm">
           Javasript 정복하기
         </Title>
-        <Group>
+        <Group mt={20}>
           <Avatar color="purple" radius="xl">
             HM
           </Avatar>
@@ -128,7 +128,9 @@ function PostedRoadmap() {
         >
           {features}
         </SimpleGrid>
-        <CompleteRoadmap />
+      </Container>
+      <CompleteRoadmap />
+      <Container mt={30}>
         <CommentPage />
       </Container>
     </>

@@ -124,7 +124,7 @@ function CommentPage() {
           <Button mt={30}>작성하기</Button>
         </Center>
       </Modal>
-      <Group>
+      <Group position="apart">
         <InputWithButton />
         <Select
           defaultValue="최신순"
@@ -132,11 +132,11 @@ function CommentPage() {
             { value: 'svelte', label: '최신순' },
             { value: 'vue', label: '공감순' },
           ]}
-          ml={20}
-          mr={50}
         />
-        <Button onClick={open}>코멘트 작성하기</Button>
       </Group>
+      <Center mt={20}>
+        <Button onClick={open}>코멘트 작성하기</Button>
+      </Center>
       {values}
     </>
   );

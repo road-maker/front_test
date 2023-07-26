@@ -158,7 +158,7 @@ export function HeaderMegaMenu() {
               <Button onClick={() => navigate('/users/signin')}>Sign in</Button>
             )} */}
             <Button onClick={() => signout()}>Sign out</Button>
-            <ActionIcon onClick={() => navigate('users/mypage')}>
+            <ActionIcon onClick={() => navigate('/users/mypage')}>
               <Avatar color="cyan" radius="xl">
                 주영
               </Avatar>
