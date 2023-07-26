@@ -9,10 +9,10 @@ import { UserProfile } from './components/user/userProfile';
 import ErrorPage from './pages/error';
 import LoginPage from './pages/login';
 import MainPage from './pages/main';
-import PostedRoadmap from './pages/main/postedRoadmap';
 // import InteractionFlow from './pages/main/userRoadmap';
 import ResetInfoPage from './pages/resetInfo';
 import RoadMapEditor from './pages/roadmap/editor';
+import PostedRoadmap from './pages/roadmap/view/postedRoadmap';
 import SignupPage from './pages/signup';
 import { queryClient } from './react-query/queryClient';
 

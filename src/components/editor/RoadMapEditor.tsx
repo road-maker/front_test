@@ -30,11 +30,11 @@ import ReactFlow, {
 import { getStoredRoadmap, setStoredRoadmap } from 'storage/roadmap-storage';
 import { styled } from 'styled-components';
 
-import { axiosInstance } from '../../axiosInstance';
+// import { axiosInstance } from '../../axiosInstance';
 // import ResizableNodeSelected from './ResizableNodeSelected';
-import CustomNode from '../../pages/main/customNode';
+// import CustomNode from '../../pages/main/customNode';
 import { useInput } from '../common/hooks/useInput';
-import ColorSelectorNode from './ColorSelectorNode';
+// import ColorSelectorNode from './ColorSelectorNode';
 import { RoadmapEdge, RoadmapNode } from './types';
 
 // const flowKey = 'roadmap';
@@ -82,10 +82,10 @@ const getLayoutedElements = (nodes, edges, direction = 'TB') => {
 
 const position = { x: 0, y: 0 };
 const edgeType = 'smoothstep';
-const nodeTypes = {
-  // ResizableNodeSelected,
-  custom: CustomNode,
-};
+// const nodeTypes = {
+//  ResizableNodeSelected,
+//   custom: CustomNode,
+// };
 
 const initialNodes = [
   {
@@ -522,7 +522,7 @@ function Roadmap({
         snapToGrid
         proOptions={proOptions}
         onInit={setRfInstance}
-        nodeTypes={nodeTypes}
+        // nodeTypes={nodeTypes}
         style={{
           width: '100%',
           height: '100%',

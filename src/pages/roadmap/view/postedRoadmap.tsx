@@ -17,8 +17,9 @@ import {
   IconUser,
 } from '@tabler/icons-react';
 
-import CommentPage from './commentPage';
-import { HeaderMegaMenu } from './header';
+import CommentPage from '../../main/commentPage';
+import { HeaderMegaMenu } from '../../main/header';
+import CompleteRoadmap from './completeRoadmap';
 import InteractionFlow from './userRoadmap';
 
 const mockdata = [
@@ -127,7 +128,7 @@ function PostedRoadmap() {
         >
           {features}
         </SimpleGrid>
-        <InteractionFlow />
+        <CompleteRoadmap />
         <CommentPage />
       </Container>
     </>
