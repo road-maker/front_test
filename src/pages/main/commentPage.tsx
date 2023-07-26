@@ -126,7 +126,7 @@ function CommentPage() {
         </Center>
       </Modal>
       <Group position="apart">
-        <InputWithButton />
+        {/* <InputWithButton /> */}
         <Select
           defaultValue="최신순"
           data={[

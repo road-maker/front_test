@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-console */
-import { RichTextEditor } from '@mantine/tiptap';
 import { Highlight } from '@tiptap/extension-highlight';
 import { Link } from '@tiptap/extension-link';
-import { Placeholder } from '@tiptap/extension-placeholder';
 import { Subscript } from '@tiptap/extension-subscript';
 import { Superscript } from '@tiptap/extension-superscript';
 import { TextAlign } from '@tiptap/extension-text-align';
@@ -16,8 +14,6 @@ import { ReactFlowProvider } from 'reactflow';
 import { styled } from 'styled-components';
 
 import { useInput } from '../../../components/common/hooks/useInput';
-import RoadMapCanvas from '../../../components/editor/RoadMapEditor';
-import PostedRoadmap from './postedRoadmap';
 import InteractionFlow from './userRoadmap';
 
 export default function CompleteRoadmap(): ReactElement {
@@ -106,6 +102,8 @@ export default function CompleteRoadmap(): ReactElement {
           <InteractionFlow
             state={state}
             // editor={state}
+            // onRoadMapTitleChange={onRoadMapTitleChange}
+            // setRoadMapTitle={onRoadMapTitleChange}
             editor={editor}
             id={id}
             onChangeId={onChangeId}
