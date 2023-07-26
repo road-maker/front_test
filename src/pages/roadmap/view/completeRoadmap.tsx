@@ -29,8 +29,8 @@ export default function CompleteRoadmap(): ReactElement {
   const [search] = useSearchParams();
   // const [state, onChangeHandler, setState] = useInput('');
   const [state, setState] = useState([
-    { id: '1', details: '' },
-    { id: '2', details: '' },
+    { id: '1', details: 'test' },
+    { id: '2', details: 'sdfsdfsdfdf' },
   ]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [roadMapTitle, onRoadMapTitleChange, setRoadMapTitle] = useInput(
@@ -42,9 +42,6 @@ export default function CompleteRoadmap(): ReactElement {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ history: false }),
-      Placeholder.configure({
-        placeholder: '로드맵 상세 내용을 입력해주세요.',
-      }),
       Underline,
       Link,
       Superscript,
@@ -52,7 +49,8 @@ export default function CompleteRoadmap(): ReactElement {
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
-    content: state.filter((v) => v.id === id)[0]?.details || '',
+    // content: state.filter((v) => v.id === id)[0]?.details || '',
+    content: <div>{state.filter((v) => v.id === id)[0]?.details || ''}</div>,
     onUpdate(e) {
       console.log(e.editor?.getHTML());
       setToggle(e.editor?.getHTML());
@@ -88,59 +86,8 @@ export default function CompleteRoadmap(): ReactElement {
   const toggleEditor = useMemo(() => {
     if (toggle.length === 0) return <div />;
     return id === toggle[0].id ? (
-      <div>
-        로드맵 제목 :{' '}
-        <input
-          value={roadMapTitle}
-          onChange={onRoadMapTitleChange}
-          placeholder="로드맵 제목을 입력해주세요."
-        />
-        <div>
-          <RichTextEditor editor={editor}>
-            <RichTextEditor.Toolbar sticky stickyOffset={5}>
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Bold />
-                <RichTextEditor.Italic />
-                <RichTextEditor.Underline />
-                <RichTextEditor.Strikethrough />
-                <RichTextEditor.ClearFormatting />
-                <RichTextEditor.Highlight />
-                <RichTextEditor.Code />
-              </RichTextEditor.ControlsGroup>
-
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.H1 />
-                <RichTextEditor.H2 />
-                <RichTextEditor.H3 />
-                <RichTextEditor.H4 />
-              </RichTextEditor.ControlsGroup>
-
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Blockquote />
-                <RichTextEditor.Hr />
-                <RichTextEditor.BulletList />
-                <RichTextEditor.OrderedList />
-                <RichTextEditor.Subscript />
-                <RichTextEditor.Superscript />
-              </RichTextEditor.ControlsGroup>
-
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Link />
-                <RichTextEditor.Unlink />
-              </RichTextEditor.ControlsGroup>
-
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.AlignLeft />
-                <RichTextEditor.AlignCenter />
-                <RichTextEditor.AlignJustify />
-                <RichTextEditor.AlignRight />
-              </RichTextEditor.ControlsGroup>
-            </RichTextEditor.Toolbar>
-            <div className="content">
-              <RichTextEditor.Content />
-            </div>
-          </RichTextEditor>
-        </div>
+      <div className="content" style={{ width: '20rem', height: '3rem' }}>
+        {state.filter((v) => v.id === id)[0]?.details || ''}
       </div>
     ) : (
       <div>
