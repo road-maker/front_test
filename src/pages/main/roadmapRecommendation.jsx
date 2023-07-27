@@ -8,7 +8,9 @@ import {
   rem,
   SimpleGrid,
   Text,
+  useMantineTheme,
 } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { IconBookmark, IconHeart, IconShare } from '@tabler/icons-react';
 import { useRoadmap } from 'components/roadmaps/hooks/useRoadmap';
 import { useRoadmapData } from 'components/roadmaps/hooks/useRoadMapResponse';

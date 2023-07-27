@@ -168,7 +168,6 @@ export function HeaderMegaMenu() {
             </Group>
             {/* {user && 'accessToken' in user ? ( */}
             {user && 'tokenInfo' in user ? (
-//             {user ? (
               <>
                 <NavLink to="/">{user.email}</NavLink>
                 <Button onClick={() => signout()}>Sign out</Button>
