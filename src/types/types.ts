@@ -52,18 +52,12 @@ export interface MemberInfo {
   githubUrl?: string | null;
   level?: 0;
 }
-export interface Roadmap {
-  // data?: unknown;
-  id?: number;
-  thumbnailUrl?: string;
-  title?: string;
-  recommendedExecutionTimeValue?: number;
-  recommendedExecutionTimeUnit?: string;
+export interface Map {
   text?: string;
   flowkey?: string;
 }
 
-// export type Roadmap = Map;
+export type Roadmap = Map;
 
 export type User = MemberInfo & NewUser;
 

@@ -81,8 +81,8 @@ export interface NewRoadmap {
   description?: string;
   recommendedExecutionTimeValue?: number;
   recommendedExecutionTimeUnit?: string;
-  edges?: RoadmapEdges | [];
-  nodes?: RoadmapNodes;
+  edges: RoadmapEdges | [];
+  nodes: RoadmapNodes;
   detailedContent?: string;
   // nodes: RoadmapNodes | [];
   viewport: Viewport;

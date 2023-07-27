@@ -120,7 +120,7 @@ export function HeaderMegaMenu() {
           </Group>
 
           <Group className={classes.hiddenMobile}>
-            <Modal opened={opened} onClose={close} size="70%">
+            <Modal opened={opened} onClose={close} size="50%">
               <Center>
                 <h1>새로운 로드맵 생성하기</h1>
               </Center>
@@ -128,13 +128,14 @@ export function HeaderMegaMenu() {
                 <Image
                   src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDEv4qC_L_0WLYmLRBtBd2sYGkjMzWvGqrOw&usqp=CAU"
                   width={300}
-                  height={280}
+                  height={300}
                 />
+                <Space />
               </Center>
               <Center>
                 <InputWithButton />
               </Center>
-              <Center mt={50}>
+              <Center>
                 <h5>오늘은 그냥 템플릿 없이 빈 로드맵 만들게요.</h5>
                 <Button
                   size="xs"

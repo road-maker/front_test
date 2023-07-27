@@ -108,9 +108,6 @@ const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
 function Roadmap({
   editor,
   label,
-  roadMapTitle,
-  onRoadMapTitleChange,
-  setRoadMapTitle,
   onChangeLabel,
   setLabel,
   id,
@@ -147,9 +144,9 @@ function Roadmap({
     // }
     // console.log(search.get('title'));
 
-    if (prompt) {
-      // if (prompt && search.size > 0 && prompt.keyword === search.get('title')) {
+    if (prompt && search.size > 0 && prompt.keyword === search.get('title')) {
       // gpt 자동생성
+
       const { data } = prompt;
       const dataCopy = [...data];
       setNodes([]);
@@ -198,28 +195,28 @@ function Roadmap({
         onLayout('LR');
       }
 
-      // setNodes((nds) =>
-      //   nds.map((node) => {
-      //     // if (node.id === '1') {
-      //     if (node.id === id) {
-      //       // it's important that you create a new object here
-      //       // in order to notify react flow about the change
-      //       // eslint-disable-next-line no-param-reassign
-      //       node.data = {
-      //         ...node.data,
-      //         // label: nodeName,
-      //         label,
-      //       };
-      //     }
-      //     console.log('요놈이 무한 출력?', node); // 요놈이 무한 출력?
+      setNodes((nds) =>
+        nds.map((node) => {
+          // if (node.id === '1') {
+          if (node.id === id) {
+            // it's important that you create a new object here
+            // in order to notify react flow about the change
+            // eslint-disable-next-line no-param-reassign
+            node.data = {
+              ...node.data,
+              // label: nodeName,
+              label,
+            };
+          }
+          console.log('요놈이 무한 출력?', node); // 요놈이 무한 출력?
 
-      //     return node;
-      //   }),
-      // );
+          return node;
+        }),
+      );
     }
     // }, [nodeName, prompt, search]);
-    // }, [edgeSet, id, label, nodeSet, prompt, search, setEdges, setNodes]);
-  }, []);
+  }, [prompt, search]);
+  // }, []);
 
   useMemo(() => {
     setNodes((nds) =>
@@ -239,7 +236,6 @@ function Roadmap({
         return node;
       }),
     );
-    // }, [label, id]);
   }, [label, id]);
   // useMemo(() => {
   //   setNodes((nds) =>
@@ -305,7 +301,7 @@ function Roadmap({
         setNodes(restoredNodes || []);
         setEdges(restoredEdges || []);
         setViewport({ x, y, zoom });
-        // console.log(flowStr);
+        console.log(flowStr);
       }
     };
 
@@ -365,8 +361,22 @@ function Roadmap({
   const { postRoadmap } = useRoadmap();
 
   const onPublishRoadmap = useCallback(() => {
+    // eslint-disable-next-line no-alert
+    // console.log(getStoredRoadmap());
     const { edges, nodes, viewport } = getStoredRoadmap();
-
+    // const data = {
+    //   roadmap: {
+    //     title: 'backend developer',
+    //     description:
+    //       '백엔드 개발자에 도전하고 싶은 사람들을 위한 맛보기 로드맵입니다.',
+    //     recommendedExecutionTimeValue: 0,
+    //     recommendedExecutionTimeUnit: '',
+    //     thumbnailUrl: '',
+    //   },
+    //   nodes,
+    //   edges,
+    //   viewport,
+    // };
     const nodesCopy = [...nodes];
     nodesCopy.map((v) => {
       state.map((item) => {
@@ -378,18 +388,68 @@ function Roadmap({
       });
     });
 
+    // nodes.map((v) => console.log('onPublish', v));
+    // nodes.map((v) => {
+    //   state.map((item)=>
+    //   {console.log('onPublish', v));}
+
+    // )});
+
     const data = {
       roadmap: {
-        title: roadMapTitle,
-        // title: '',
+        title: 'test입니당',
         description:
           '개발자에 도전하고 싶은 사람들을 위한 맛보기 로드맵입니다.',
         thumbnailUrl: '',
         recommendedExecutionTimeValue: 0,
         recommendedExecutionTimeUnit: '',
       },
+      // nodes: [
+      //   {
+      //     width: 131,
+      //     height: 38,
+      //     id: '1',
+      //     detailedContent: '',
+      //     data: {
+      //       label: 'Introduction to Java',
+      //     },
+      //     type: 'ResizableNodeSelected',
+      //     position: {
+      //       x: 1230,
+      //       y: 480,
+      //     },
+      //     style: {
+      //       background: '#fff',
+      //       border: '1px solid black',
+      //       borderRadius: 15,
+      //       fontSize: 12,
+      //     },
+      //     targetPosition: 'left',
+      //     sourcePosition: 'right',
+      //     selected: true,
+      //     positionAbsolute: {
+      //       x: 1230,
+      //       y: 480,
+      //     },
+      //     dragging: false,
+      //   },
+      // ],
       nodes: nodesCopy,
+      // edges: [
+      //   {
+      //     id: 'e11a',
+      //     source: '1',
+      //     target: '1a',
+      //     type: 'smoothstep',
+      //     animated: true,
+      //   },
+      // ],
       edges,
+      // viewport: {
+      //   x: 610.1553814135862,
+      //   y: 80.07905945269988,
+      //   zoom: 0.5946035575013613,
+      // },
       viewport: defaultViewport,
     };
     postRoadmap(data);
@@ -400,10 +460,21 @@ function Roadmap({
   const useRemoveNode = useCallback(() => {
     setNodes((nds) => nds.filter((node) => node.id !== label));
   }, [label]);
+  // useMemo(() => {
+  //   console.log(nodeState);
+  // }, [nodeState]);
 
+  // 첫로딩 시의 포멧 => 노드랑 간선이 null이면 에러!~
+  // useEffect(() => {
+  //   onLayout('TB');
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
+
+  // useEffect(() => {
   useEffect(() => {
     setNodes((nds) =>
       nds.map((node) => {
+        // if (node.id === '1') {
         if (node.id === id) {
           // eslint-disable-next-line no-param-reassign
           node.style = { ...node.style, backgroundColor: nodeBg };
@@ -413,7 +484,7 @@ function Roadmap({
       }),
     );
     // };
-  }, [nodeState, nodeBg, id]);
+  }, []);
 
   useMemo(() => {
     if (edgeState && nodeState) {
@@ -426,11 +497,16 @@ function Roadmap({
   useEffect(() => {
     setNodes((nds) =>
       nds.map((node) => {
+        // console.log(nds);
+        // if (node.id === '1') {
+        // if (node.id === label) {
+        // if (node.id === label) {
         if (node.id === id) {
           // when you update a simple type you can just update the value
           // eslint-disable-next-line no-param-reassign
           node.hidden = nodeHidden;
         }
+
         return node;
       }),
     );
@@ -443,11 +519,11 @@ function Roadmap({
           // node.data.label = label;
           console.log(node.data.label);
         }
+
         return node;
       }),
     );
   }, [nodeState, edgeState]);
-  // }, [nodeState, edgeState, setNodes, id, nodeHidden, label]);
   // setEdges((eds) =>
   //   eds.map((edge) => {
   //     // if (edge.id === 'e1-2') {
@@ -472,11 +548,21 @@ function Roadmap({
         minZoom={0.2}
         maxZoom={4}
         onConnect={onConnect}
+        // onNodeClick={(e, n) => console.log(n)}
         onNodeClick={(e, n) => {
+          // setLabel(`${n?.id}`);
           setLabel(`${n?.data?.label}`);
           setId(`${n?.id}`);
+          // setLabel(`${n?.id} ${n?.data.label}`);
+          // setNodeName(n?.data?.label);
+          // setNodeName(n?.data?.label);
+          console.log(n);
+          console.log(e);
         }}
         attributionPosition="bottom-left"
+        // onClick={(e) => console.log(e)}
+        // onChange={(e) => console.log(e)}
+        // onChange={onNodeNameChange}
         fitView
         zoomOnDoubleClick
         elevateNodesOnSelect
@@ -505,10 +591,18 @@ function Roadmap({
           <div className="updatenode__controls">
             <div>label:</div>
             <input
+              // value={nodeName}
               value={label}
+              // onChange={(evt) => setNodeName(evt.target.value)}
               onChange={(evt) => {
                 setLabel(evt.target.value);
+                // setLabel;
               }}
+              // onChange={(evt) => {
+              //   setNodeName(evt.target.value);
+              //   // setLabel;
+              // }}
+              // onChange={onChangeLabel}
             />
 
             <div className="updatenode__bglabel">background:</div>
@@ -596,10 +690,7 @@ const Wrap = styled.div`
 export default function RoadMapCanvas({
   editor,
   label,
-  roadMapTitle,
-  onRoadMapTitleChange,
   onChangeLabel,
-  setRoadMapTitle,
   setLabel,
   id,
   setState,
@@ -613,9 +704,6 @@ export default function RoadMapCanvas({
         editor={editor}
         setState={setState}
         label={label}
-        roadMapTitle={roadMapTitle}
-        onRoadMapTitleChange={onRoadMapTitleChange}
-        setRoadMapTitle={setRoadMapTitle}
         onChangeLabel={onChangeLabel}
         setLabel={setLabel}
         state={state}

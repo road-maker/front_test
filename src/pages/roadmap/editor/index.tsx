@@ -33,8 +33,7 @@ export default function RoadMapEditor(): ReactElement {
   ]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [roadMapTitle, onRoadMapTitleChange, setRoadMapTitle] = useInput(
-    // search.get('title') || '',
-    '',
+    search.get('title') || '',
   );
 
   // useEffect(() => {
@@ -127,13 +126,12 @@ export default function RoadMapEditor(): ReactElement {
     // return label === toggle[0].id ? <div>hehe</div> : <div>hoho</div>;
     return id === toggle[0].id ? (
       <div>
-        {/* 로드맵 제목 :{' '}
+        로드맵 제목 :{' '}
         <input
-          //value={roadMapTitle || ''}
           value={roadMapTitle}
           onChange={onRoadMapTitleChange}
           placeholder="로드맵 제목을 입력해주세요."
-        /> */}
+        />
         <div>
           <RichTextEditor editor={editor}>
             <RichTextEditor.Toolbar sticky stickyOffset={5}>
@@ -193,16 +191,7 @@ export default function RoadMapEditor(): ReactElement {
   return (
     <MainLayout>
       <EditorWrap>
-        <div>
-          로드맵 제목 :{' '}
-          <input
-            // value={roadMapTitle || ''}
-            value={roadMapTitle}
-            onChange={onRoadMapTitleChange}
-            placeholder="로드맵 제목을 입력해주세요."
-          />
-          {toggleEditor}
-        </div>
+        <div>{toggleEditor}</div>
 
         <div className="roadMapWrap">
           <ReactFlowProvider>
@@ -211,10 +200,7 @@ export default function RoadMapEditor(): ReactElement {
               // editor={state}
               editor={editor}
               id={id}
-              roadMapTitle={roadMapTitle}
               onChangeId={onChangeId}
-              onRoadMapTitleChange={onRoadMapTitleChange}
-              setRoadMapTitle={setRoadMapTitle}
               setId={setId}
               label={label}
               onChangeLabel={onChangeLabel}

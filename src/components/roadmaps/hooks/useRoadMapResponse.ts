@@ -4,22 +4,20 @@ import {
   getStoredRoadmap,
   setStoredRoadmap,
 } from 'storage/roadmap-storage';
-import { Roadmap } from 'types/types';
 
 import { queryKeys } from '../../../react-query/constants';
 import type { NewRoadmap } from '../../editor/types';
 // import type { Roadmap } from '../../editor/types';
 
 interface UseRoadmapData {
-  // roadmaps: NewRoadmap | Roadmap | null;
-  roadmaps: Roadmap | null; // //////////////////////////////////////
+  roadmap: NewRoadmap | null;
   updateRoadmapdata: (prompt: NewRoadmap) => void;
   clearRoadmapdata: () => void;
 }
 export function useRoadmapData(): UseRoadmapData {
   const queryClient = useQueryClient();
-  const { data: roadmaps } = useQuery(
-    queryKeys.roadmaps,
+  const { data: roadmap } = useQuery(
+    queryKeys.roadmap,
     () => getStoredRoadmap(),
     {
       initialData: getStoredRoadmap,
@@ -29,11 +27,11 @@ export function useRoadmapData(): UseRoadmapData {
     },
   );
   function updateRoadmapdata(newPrompt: NewRoadmap): void {
-    queryClient.setQueriesData(queryKeys.roadmaps, newPrompt);
+    queryClient.setQueriesData(queryKeys.prompt, newPrompt);
   }
   function clearRoadmapdata() {
-    queryClient.setQueriesData(queryKeys.roadmaps, null);
+    queryClient.setQueriesData(queryKeys.user, null);
   }
 
-  return { roadmaps, updateRoadmapdata, clearRoadmapdata };
+  return { roadmap, updateRoadmapdata, clearRoadmapdata };
 }
