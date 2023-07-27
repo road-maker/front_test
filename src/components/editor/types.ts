@@ -85,7 +85,7 @@ export interface NewRoadmap {
   nodes?: RoadmapNodes;
   detailedContent?: string;
   // nodes: RoadmapNodes | [];
-  viewport: Viewport;
+  viewport?: Viewport;
 }
 
 export type Roadmap = NewRoadmap & Id;

@@ -44,7 +44,7 @@ export default function RoadmapRecommendation(props) {
   const navigate = useNavigate();
   const themes = useMantineTheme();
   const mobile = useMediaQuery(`(max-width: ${themes.breakpoints.sm})`);
-  const { getAllRoadmap } = useRoadmap();
+  const { getAllRoadmap, getRoadmap } = useRoadmap();
   const { roadmaps } = useRoadmapData();
 
   useEffect(() => {
@@ -64,6 +64,7 @@ export default function RoadmapRecommendation(props) {
             component="a"
             className={classes.card}
             ml={100}
+            onClick={() => getRoadmap(article.id)}
           >
             <Card.Section>
               {article.thumbnailUrl ? (
@@ -74,7 +75,7 @@ export default function RoadmapRecommendation(props) {
                   width={260}
                   style={{ cursor: 'pointer' }}
                   onClick={() => {
-                    navigate(`/roadmap/editor/view/${article.id}`);
+                    navigate(`/roadmap/post/${article.id}`);
                   }}
                 />
               ) : (

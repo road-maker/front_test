@@ -228,7 +228,7 @@ function Roadmap({
         }),
       );
     }
-  }, [useGpt, prompt, search]);
+  }, [prompt, search]);
   // }, [edgeSet, id, label, nodeSet, prompt, search, setEdges, setNodes]);
   // }, []);
 

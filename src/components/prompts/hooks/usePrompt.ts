@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { AxiosResponse } from 'axios';
 import { axiosInstance } from 'axiosInstance';
+import { useUser } from 'components/user/hooks/useUser';
 import { useNavigate } from 'react-router-dom';
 
 import { Prompt } from '../../../types/types';
@@ -14,7 +15,7 @@ type PromptResponse = { prompt: Array<Prompt> };
 export function usePrompt(): UsePrompt {
   const SERVER_ERROR = 'error contacting server';
   const navigate = useNavigate();
-  // const { user } = useUser();
+  const { user } = useUser();
 
   async function promptServerCall(
     urlEndpoint: string,
