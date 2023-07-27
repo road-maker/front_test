@@ -60,10 +60,10 @@ export function useAuth(): UseAuth {
       // update stored user data
       // updateUser(data.user);
 
-      // if ('user' in data) {
-      //   // update stored user data
-      //   updateUser(data.user);
-      // }
+      if ('user' in data) {
+        // update stored user data
+        updateUser(data.user);
+      }
     } catch (errorResponse) {
       const status =
         axios.isAxiosError(errorResponse) && errorResponse?.response?.status
@@ -94,10 +94,12 @@ export function useAuth(): UseAuth {
         // const { accessToken } = data.user;
 
         // localStorage.setItem('accessToken', JSON.stringify(data));
-        localStorage.setItem('user', JSON.stringify(data));
-        console.log('useAuth', data);
+        // localStorage.setItem('user', JSON.stringify(data));
+        // console.log('useAuth', data);
         // navigate('/');
         if ('tokenInfo' in data) {
+          // if ('tokenInfo' in data ) {
+          // updateUser({data.tokenInfo});
           alert('로그인 성공');
           navigate('/');
         }

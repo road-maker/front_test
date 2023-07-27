@@ -9,7 +9,6 @@ import {
   Image,
   Modal,
   rem,
-  Space,
   TextInput,
   TextInputProps,
   useMantineTheme,
@@ -143,7 +142,7 @@ export function HeaderMegaMenu() {
                   onClick={() => {
                     clearStoredRoadmap();
                     clearStoredGpt();
-                    navigate('/roadmap/editor');
+                    // navigate('/roadmap/editor');
                   }}
                 >
                   빈 로드맵 만들기
@@ -162,7 +161,14 @@ export function HeaderMegaMenu() {
             >
               Editor Page
             </Button> */}
-            {user ? (
+            <Group position="center">
+              <Button onClick={open} variant="light" color="indigo">
+                로드맵 생성하기
+              </Button>
+            </Group>
+            {/* {user && 'accessToken' in user ? ( */}
+            {user && 'tokenInfo' in user ? (
+//             {user ? (
               <>
                 <NavLink to="/">{user.email}</NavLink>
                 <Button onClick={() => signout()}>Sign out</Button>
