@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 // eslint-disable-next-line simple-import-sort/imports
 import 'reactflow/dist/style.css';
 
@@ -142,6 +143,7 @@ function Roadmap({
   }, []);
 
   const proOptions = { hideAttribution: true };
+
   // useMemo(() => {
   useEffect(() => {
     // if (getStoredRoadmap()) {
@@ -154,9 +156,10 @@ function Roadmap({
     // }
     // console.log(search.get('title'));
 
-    // if (prompt && search.size > 0 && prompt.keyword === search.get('title')) {
-    if (useGpt) {
+    if (prompt && search.size > 0 && prompt.keyword === search.get('title')) {
+      // if (useGpt && search.size > 0) {
       // gpt 자동생성
+
       const { data } = prompt;
       const dataCopy = [...data];
       console.log(dataCopy);
@@ -225,7 +228,7 @@ function Roadmap({
         }),
       );
     }
-  }, [useGpt, prompt]);
+  }, [useGpt, prompt, search]);
   // }, [edgeSet, id, label, nodeSet, prompt, search, setEdges, setNodes]);
   // }, []);
 
