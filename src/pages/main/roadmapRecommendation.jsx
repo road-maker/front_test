@@ -1,20 +1,20 @@
-import { Carousel } from '@mantine/carousel';
 import {
   ActionIcon,
   Card,
+  Container,
   createStyles,
   Group,
   Image,
-  Paper,
   rem,
+  SimpleGrid,
   Text,
-  useMantineTheme,
 } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
 import { IconBookmark, IconHeart, IconShare } from '@tabler/icons-react';
 import { useRoadmap } from 'components/roadmaps/hooks/useRoadmap';
 import { useRoadmapData } from 'components/roadmaps/hooks/useRoadMapResponse';
 import { useEffect, useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroller';
+import { useInfiniteQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 
 const useStyles = createStyles((theme) => ({
@@ -37,13 +37,17 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export default function RoadmapRecommendation(props) {
+const initialUrl = '/roadmaps/load-roadmap';
+const fetchUrl = async (url) => {
+  const response = await fetch(url);
+  return response.json();
+};
+
+export default function RoadmapRecommendation() {
   const [allRoadmapData, setAllRoadmapData] = useState([]);
 
   const { classes, theme } = useStyles();
   const navigate = useNavigate();
-  const themes = useMantineTheme();
-  const mobile = useMediaQuery(`(max-width: ${themes.breakpoints.sm})`);
   const { getAllRoadmap } = useRoadmap();
   const { roadmaps } = useRoadmapData();
 
@@ -52,12 +56,24 @@ export default function RoadmapRecommendation(props) {
     if (roadmaps !== undefined) {
       setAllRoadmapData(roadmaps?.data);
     }
-  }, []);
+  }, [getAllRoadmap, roadmaps]);
+
+  const { fetchNextPage, hasNextPage, isLoading, isError, error } =
+    useInfiniteQuery(
+      'roadmaps',
+      ({ pageParam = initialUrl }) => fetchUrl(pageParam),
+      {
+        getNextPageParam: (lastPage) => lastPage.next || undefined,
+      },
+    );
+
+  if (isLoading) return <div className="loading">Loading...</div>;
+  if (isError) return <div>Error! {error.toString()}</div>;
 
   const cards = !allRoadmapData
     ? '아직 만들어진 로드맵이 없습니다.'
     : allRoadmapData.map((article) => (
-        <Carousel.Slide>
+        <InfiniteScroll loadMore={fetchNextPage} hasMore={hasNextPage}>
           <Card
             key={article.id}
             radius="md"
@@ -92,7 +108,7 @@ export default function RoadmapRecommendation(props) {
             </Card.Section>
             <Text
               className={classes.title}
-              mt={5}
+              mt={10}
               onClick={() => {
                 navigate('/roadmap/editor/view');
               }}
@@ -134,39 +150,26 @@ export default function RoadmapRecommendation(props) {
               </ActionIcon>
             </Group>
           </Card>
-        </Carousel.Slide>
+        </InfiniteScroll>
       ));
 
   return (
     <>
-      <Group position="center" mt={30}>
+      <Group position="center" mt={30} mb={50}>
         <h1>추천 로드맵</h1>
       </Group>
-      <Paper
-        radius="md"
-        px={60}
-        py={30}
-        mt={40}
-        m="auto"
-        withBorder
-        {...props}
-        w={1500}
-        h={400}
-      >
-        <Carousel
-          slideSize="100%"
-          slideGap="100%"
-          loop
-          align="start"
-          slidesToScroll={mobile ? 1 : 2}
+      <Container maw={1400}>
+        <SimpleGrid
+          cols={4}
           breakpoints={[
-            { maxWidth: 'md', slideSize: '50%' },
-            { maxWidth: 'sm', slideSize: '100%', slideGap: 100 },
+            { maxWidth: 'sm', cols: 2 },
+            { maxWidth: 'sm', cols: 1 },
           ]}
+          spacing="sm"
         >
           {cards}
-        </Carousel>
-      </Paper>
+        </SimpleGrid>
+      </Container>
     </>
   );
 }

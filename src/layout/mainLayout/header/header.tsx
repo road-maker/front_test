@@ -150,19 +150,19 @@ export function HeaderMegaMenu() {
                 </Button>
               </Center>
             </Modal>
-            {/* <Button
-              onClick={() => navigate('roadmap/editor')}
-              variant="light"
-              color="indigo"
-              >
-              Editor Page
-            </Button> */}
             <Group position="center">
               <Button onClick={open} variant="light" color="indigo">
                 로드맵 생성하기
               </Button>
             </Group>
-            {user && 'accessToken' in user ? (
+            {/* <Button
+              onClick={() => navigate('roadmap/editor')}
+              variant="light"
+              color="indigo"
+            >
+              Editor Page
+            </Button> */}
+            {user ? (
               <>
                 <NavLink to="/">{user.email}</NavLink>
                 <Button onClick={() => signout()}>Sign out</Button>

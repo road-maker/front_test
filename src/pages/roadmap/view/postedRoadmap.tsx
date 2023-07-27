@@ -106,11 +106,11 @@ function PostedRoadmap() {
 
   return (
     <MainLayout>
-      <Container px="xs">
+      <Container px="xs" maw={1000}>
         <Title className={classes.title} mt="sm">
           Javasript 정복하기
         </Title>
-        <Group>
+        <Group mt={20}>
           <Avatar color="purple" radius="xl">
             HM
           </Avatar>
