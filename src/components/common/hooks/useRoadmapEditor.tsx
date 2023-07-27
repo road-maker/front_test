@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { axiosInstance } from '../../../axiosInstance/index';
 import { Roadmap } from '../../../types/types';
-import { useUser } from '../../user/hooks/useUser';
 
 interface UseRoadmap {
   saveRoadmap: (
@@ -27,7 +26,7 @@ export function useRoadmap(): UseRoadmap {
   const SERVER_ERROR = 'There was an error contacting the server.';
   // const { updateUser } = useUser();
   const navigate = useNavigate();
-  const { user } = useUser();
+  // const { user } = useUser();
   async function roadmapServerCall(
     urlEndpoint: string,
     title: string,
@@ -97,7 +96,8 @@ export function useRoadmap(): UseRoadmap {
             'Content-Type': 'application/json',
             // Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
             // Authorization: `Bearer ${localStorage.getItem('user')}`,
-            Authorization: `Bearer ${user.accessToken}`,
+            // Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaWdudXBAbmF2ZXIuY29tIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTY5MDk3Nzk2Mn0.5XZmXtA2arG_VsEJN5SwQzBj5P2LHFMvdw4Ha8JZVTY`,
           },
         });
 

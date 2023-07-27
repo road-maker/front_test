@@ -126,7 +126,6 @@ function Roadmap({
   const nodeSet = new Set<RoadmapNode['id']>();
   const [nodeState, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edgeState, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const roadmap = useRoadmap();
   const [title, onChangeTitle, setTitle] = useInput('');
   const [desc, onChangeDesc, setDesc] = useInput('');
 
@@ -134,8 +133,16 @@ function Roadmap({
   const [nodeHidden, setNodeHidden] = useState(false);
   const [rfInstance, setRfInstance] = useState(null);
   const { setViewport } = useReactFlow();
+  const [useGpt, setUseGpt] = useState(false);
+  useEffect(() => {
+    const getRecentGpt = localStorage.getItem('recent_gpt_search');
+    if (getRecentGpt) {
+      setUseGpt(true);
+    }
+  }, []);
 
   const proOptions = { hideAttribution: true };
+  // useMemo(() => {
   useEffect(() => {
     // if (getStoredRoadmap()) {
     // const { edges, nodes, viewport } = getStoredRoadmap();
@@ -147,13 +154,12 @@ function Roadmap({
     // }
     // console.log(search.get('title'));
 
-    if (prompt) {
-      // if (prompt && search.size > 0 && prompt.keyword === search.get('title')) {
+    // if (prompt && search.size > 0 && prompt.keyword === search.get('title')) {
+    if (useGpt) {
       // gpt 자동생성
       const { data } = prompt;
       const dataCopy = [...data];
-      setNodes([]);
-      setEdges([]);
+      console.log(dataCopy);
 
       // eslint-disable-next-line array-callback-return
       dataCopy.map((v) => {
@@ -191,35 +197,37 @@ function Roadmap({
           edgeSet.add(`e${parseInt(v?.id, 10)}${v?.id}`);
         }
       });
-      search.size !== 0 ? setNodes(initialNodes) : setNodes([]);
-      search.size !== 0 ? setEdges(initialEdges) : setEdges([]);
+      setNodes(initialNodes);
+      setEdges(initialEdges);
+      // search.size !== 0 ? setNodes(initialNodes) : setNodes([]);
+      // search.size !== 0 ? setEdges(initialEdges) : setEdges([]);
       if (search.size !== 0) {
         // onLayout('TB');
         onLayout('LR');
       }
 
-      // setNodes((nds) =>
-      //   nds.map((node) => {
-      //     // if (node.id === '1') {
-      //     if (node.id === id) {
-      //       // it's important that you create a new object here
-      //       // in order to notify react flow about the change
-      //       // eslint-disable-next-line no-param-reassign
-      //       node.data = {
-      //         ...node.data,
-      //         // label: nodeName,
-      //         label,
-      //       };
-      //     }
-      //     console.log('요놈이 무한 출력?', node); // 요놈이 무한 출력?
+      setNodes((nds) =>
+        nds.map((node) => {
+          // if (node.id === '1') {
+          if (node.id === id) {
+            // it's important that you create a new object here
+            // in order to notify react flow about the change
+            // eslint-disable-next-line no-param-reassign
+            node.data = {
+              ...node.data,
+              // label: nodeName,
+              label,
+            };
+          }
+          // console.log('요놈이 무한 출력?', node); // 요놈이 무한 출력?
 
-      //     return node;
-      //   }),
-      // );
+          return node;
+        }),
+      );
     }
-    // }, [nodeName, prompt, search]);
-    // }, [edgeSet, id, label, nodeSet, prompt, search, setEdges, setNodes]);
-  }, []);
+  }, [useGpt, prompt]);
+  // }, [edgeSet, id, label, nodeSet, prompt, search, setEdges, setNodes]);
+  // }, []);
 
   useMemo(() => {
     setNodes((nds) =>
