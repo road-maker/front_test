@@ -63,6 +63,7 @@ function CommentPage() {
   const [count, handlers] = useCounter(0, { min: 0, max: 1000 });
   const values = dummy.map((v) => (
     <SimpleGrid
+      key={v.id}
       cols={1}
       spacing="xl"
       mt={20}
@@ -125,19 +126,20 @@ function CommentPage() {
           <Button mt={30}>작성하기</Button>
         </Center>
       </Modal>
-      <Group>
+      <Group position="right">
         {/* <InputWithButton /> */}
         <Select
+          mt={20}
           defaultValue="최신순"
           data={[
             { value: 'svelte', label: '최신순' },
             { value: 'vue', label: '공감순' },
           ]}
-          ml={20}
-          mr={50}
         />
-        <Button onClick={open}>코멘트 작성하기</Button>
       </Group>
+      <Center mt={20}>
+        <Button onClick={open}>코멘트 작성하기</Button>
+      </Center>
       {values}
     </>
   );
