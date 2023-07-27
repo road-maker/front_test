@@ -98,6 +98,7 @@ export function useAuth(): UseAuth {
         console.log('useAuth', data);
         // navigate('/');
         if ('tokenInfo' in data) {
+          alert('로그인 성공');
           navigate('/');
         }
         // updateUser({ username, tokenInfo });

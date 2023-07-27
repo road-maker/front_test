@@ -19,7 +19,8 @@ async function patchUserOnServer(
   // send patched data to the server
   const { data } = await axiosInstance.patch(
     // `/user/${originalData.email}`,
-    `/user/${originalData.nickname}`,
+    // `/user/${originalData.nickname}`,
+    `/member/${originalData.nickname}`,
     { patch },
     {
       headers: getJWTHeader(originalData.accessToken),
