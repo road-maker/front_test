@@ -25,9 +25,12 @@ export default function CompleteRoadmap(): ReactElement {
   const [search] = useSearchParams();
   // const [state, onChangeHandler, setState] = useInput('');
   const [state, setState] = useState([
-    { id: '1', details: 'test' },
-    { id: '2', details: 'sdfsdfsdfdf' },
+    { id: '1', details: `<div>자바스크립트</div>` },
+    { id: '2', details: `<div>'함수 개념과 활용법'</div>` },
+    { id: '2b', details: `<div>'자바스크립트 상세'</div>` },
+    { id: '2c', details: `<div>'조건문과 반복문 상세'</div>` },
   ]);
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [roadMapTitle, onRoadMapTitleChange, setRoadMapTitle] = useInput(
     search.get('title') || '',
@@ -67,7 +70,7 @@ export default function CompleteRoadmap(): ReactElement {
   });
   useMemo(() => {
     const filt = state.filter((v) => v.id === id);
-    console.log('filt', filt);
+    // console.log('filt', filt);
     setToggle(filt);
     if (editor) {
       editor.commands.setContent(filt[0]?.details || '');
@@ -79,31 +82,54 @@ export default function CompleteRoadmap(): ReactElement {
     // console.log('state', state);
   }, [state, id, setToggle, label, editor]);
 
-  const toggleEditor = useMemo(() => {
-    if (toggle.length === 0) return <div />;
-    return id === toggle[0].id ? (
-      <div className="content" style={{ width: '20rem', height: '3rem' }}>
-        {state.filter((v) => v.id === id)[0]?.details || ''}
-      </div>
-    ) : (
-      <div>
-        <button type="button" onClick={() => setToggle(toggle[0].id)}>
-          상세 내용 수정하기
-        </button>
-      </div>
-    );
-  }, [toggle, id]);
+  // const toggleEditor = useMemo(() => {
+  //   if (toggle.length === 0) return <div />;
+  //   return id === toggle[0].id ? (
+  //     <div className="content" style={{ width: '20rem', height: '3rem' }}>
+  //       {state.filter((v) => v.id === id)[0]?.details || ''}
+  //     </div>
+  //   ) : (
+  //     <div>
+  //       <button type="button" onClick={() => setToggle(toggle[0].id)}>
+  //         상세 내용 수정하기
+  //       </button>
+  //     </div>
+  //   );
+  // }, [toggle, id]);
+
+  // const toggleEditor = useMemo(() => {
+  //   if (toggle.length === 0) return <div />;
+  //   return id === toggle[0].id ? (
+  //     <Group position="center">
+  //       <Button
+  //         onClick={() => {
+  //           modals.open({
+  //             children: (
+  //               <>
+  //                 {state.filter((v) => v.id === id)[0]?.details || ''}
+  //                 <Button fullWidth onClick={modals.closeAll} mt="md">
+  //                   close
+  //                 </Button>
+  //               </>
+  //             ),
+  //           });
+  //         }}
+  //       >
+  //         Open content modal
+  //       </Button>
+  //     </Group>
+  //   ) : (
+  //     <div />
+  //   );
+  // }, [toggle, id]);
 
   return (
     <EditorWrap>
-      <div style={{ textAlign: 'center', margin: 'auto' }}>{toggleEditor}</div>
+      {/* <div style={{ textAlign: 'center', margin: 'auto' }}>{toggleEditor}</div> */}
       <div className="roadMapWrap">
         <ReactFlowProvider>
           <InteractionFlow
             state={state}
-            // editor={state}
-            // onRoadMapTitleChange={onRoadMapTitleChange}
-            // setRoadMapTitle={onRoadMapTitleChange}
             editor={editor}
             id={id}
             onChangeId={onChangeId}
@@ -112,9 +138,6 @@ export default function CompleteRoadmap(): ReactElement {
             onChangeLabel={onChangeLabel}
             setLabel={setLabel}
             setState={setState}
-            // onChange={onChangeHandler}
-            // ydoc={ydoc}
-            // ytext={ytext}
           />
         </ReactFlowProvider>
       </div>
@@ -123,30 +146,13 @@ export default function CompleteRoadmap(): ReactElement {
 }
 
 const EditorWrap = styled.div`
-  display: inline-flex;
-  width: 80vw;
-  height: 60vh;
   & .editor {
     & > .content {
       width: 100%;
-      /* height: 85vh; */
-      overflow-y: scroll;
-      /*
-      ::-webkit-scrollbar {
-        width: 0.2rem;
-      }
-      ::-webkit-scrollbar-thumb {
-        height: 30%;
-        background-color: '#cee6f3';
-      }
-      ::-webkit-scrollbar-track {
-        background-color: '#cee6f3';
-      } */
     }
   }
 
   & .roadMapWrap {
-    /* height: 100%; */
-    width: 100%;
+    overflow-x: hidden;
   }
 `;

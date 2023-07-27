@@ -1,16 +1,25 @@
-import 'reactflow/dist/style.css';
-
-// eslint-disable-next-line import/no-extraneous-dependencies
+/* eslint-disable simple-import-sort/imports */
+// import { modals } from '@mantine/modals';
+import { Button, Center, Modal } from '@mantine/core';
+import { Highlight } from '@tiptap/extension-highlight';
+import { Link } from '@tiptap/extension-link';
+import { Subscript } from '@tiptap/extension-subscript';
+import { Superscript } from '@tiptap/extension-superscript';
+import { TextAlign } from '@tiptap/extension-text-align';
+import { Underline } from '@tiptap/extension-underline';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 import { useCallback, useState } from 'react';
 import ReactFlow, {
-  addEdge,
   Background,
   Controls,
   MiniMap,
   ReactFlowProvider,
+  addEdge,
   useEdgesState,
   useNodesState,
 } from 'reactflow';
+import 'reactflow/dist/style.css';
 import { styled } from 'styled-components';
 
 const edgeType = 'smoothstep';
@@ -68,6 +77,7 @@ function Roadmap({
   const [panOnScroll] = useState(false); // 위아래 스크롤
   const [zoomOnDoubleClick] = useState(false);
   const [panOnDrag] = useState(true); // 마우스로 이동
+  const [isOpen, setIsOpen] = useState(false);
 
   const onConnect = useCallback(
     (params) => {
@@ -75,11 +85,30 @@ function Roadmap({
     },
     [setEdges],
   );
+  const proOptions = { hideAttribution: true };
+  // const [opened, { open, close }] = useDisclosure(false);
+
+  const readOnlyEditor = useEditor({
+    extensions: [
+      StarterKit,
+      Underline,
+      Link,
+      Superscript,
+      Subscript,
+      Highlight,
+      TextAlign.configure({ types: ['heading', 'paragraph'] }),
+    ],
+    // content: `${state}`
+    content: `${
+      state.filter((v) => v.id === id) && <div>{state.details}</div>
+    }`,
+  });
   return (
-    <Wrap style={{ width: '100vw', height: '60vh' }}>
+    <Wrap style={{ height: '60vh' }}>
       <ReactFlow
         nodes={nodeState}
         edges={edgeState}
+        proOptions={proOptions}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         elementsSelectable={isSelectable}
@@ -96,6 +125,9 @@ function Roadmap({
         onNodeClick={(e, n) => {
           setLabel(`${n?.data?.label}`);
           setId(`${n?.id}`);
+          setIsOpen(!isOpen);
+          console.log(n?.id);
+          console.log(state);
         }}
         fitView
         style={{
@@ -106,6 +138,15 @@ function Roadmap({
         <Controls />
         <MiniMap zoomable pannable />
       </ReactFlow>
+      <Modal opened={isOpen} onClose={() => setIsOpen(!isOpen)}>
+        <Center>
+          <EditorContent editor={editor} readOnly />
+
+          <Button mt={30} onClick={() => setIsOpen(!isOpen)}>
+            닫기
+          </Button>
+        </Center>
+      </Modal>
     </Wrap>
   );
 }

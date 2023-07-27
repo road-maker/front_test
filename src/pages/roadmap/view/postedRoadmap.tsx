@@ -88,6 +88,7 @@ function PostedRoadmap() {
   const features = mockdata.map((feature) => (
     <Card
       key={feature.title}
+      mb={30}
       shadow="md"
       radius="md"
       className={classes.card}
