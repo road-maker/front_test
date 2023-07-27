@@ -11,7 +11,8 @@ import type { NewRoadmap } from '../../editor/types';
 // import type { Roadmap } from '../../editor/types';
 
 interface UseRoadmapData {
-  roadmaps: NewRoadmap | Roadmap | null;
+  // roadmaps: NewRoadmap | Roadmap | null;
+  roadmaps: Roadmap | null; // //////////////////////////////////////
   updateRoadmapdata: (prompt: NewRoadmap) => void;
   clearRoadmapdata: () => void;
 }
