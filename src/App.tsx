@@ -33,7 +33,7 @@ function App(): ReactElement {
           path: 'roadmap/editor',
           element: <RoadMapEditor />,
         },
-        { path: '/roadmap/post', element: <PostedRoadmap /> },
+        { path: '/roadmap/post/:id', element: <PostedRoadmap /> },
         {
           path: 'users/mypage',
           element: <UserProfile />,

@@ -37,7 +37,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const initialUrl = '/roadmaps/load-roadmap';
+const initialUrl = '/roadmaps/load-roadmap/:roadmapId';
 const fetchUrl = async (url) => {
   const response = await fetch(url);
   return response.json();
@@ -48,8 +48,6 @@ export default function RoadmapRecommendation() {
 
   const { classes, theme } = useStyles();
   const navigate = useNavigate();
-  const themes = useMantineTheme();
-  const mobile = useMediaQuery(`(max-width: ${themes.breakpoints.sm})`);
   const { getAllRoadmap, getRoadmap } = useRoadmap();
   const { roadmaps } = useRoadmapData();
 
@@ -104,7 +102,7 @@ export default function RoadmapRecommendation() {
                   width={260}
                   style={{ cursor: 'pointer' }}
                   onClick={() => {
-                    navigate('/roadmap/editor/view');
+                    navigate('/roadmap/post/:id');
                   }}
                 />
               )}
@@ -113,7 +111,7 @@ export default function RoadmapRecommendation() {
               className={classes.title}
               mt={10}
               onClick={() => {
-                navigate('/roadmap/editor/view');
+                navigate('/roadmap/post/:id');
               }}
               style={{ cursor: 'pointer' }}
             >
@@ -126,8 +124,7 @@ export default function RoadmapRecommendation() {
               weight={700}
               mt="md"
             >
-              권장 수행 시간 : {`#${article.recommendedExecutionTimeValue}`}{' '}
-              {`#${article.recommendedExecutionTimeValue}`}
+              권장 수행 시간 : {`#${article.recommendedExecutionTimeValue}`}
             </Text>
             <Group spacing={5}>
               <ActionIcon>

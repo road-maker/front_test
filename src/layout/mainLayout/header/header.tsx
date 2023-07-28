@@ -142,18 +142,13 @@ export function HeaderMegaMenu() {
                   onClick={() => {
                     clearStoredRoadmap();
                     clearStoredGpt();
-                    // navigate('/roadmap/editor');
+                    navigate('/roadmap/editor');
                   }}
                 >
                   빈 로드맵 만들기
                 </Button>
               </Center>
             </Modal>
-            <Group position="center">
-              <Button onClick={open} variant="light" color="indigo">
-                로드맵 생성하기
-              </Button>
-            </Group>
             {/* <Button
               onClick={() => navigate('roadmap/editor')}
               variant="light"
@@ -168,7 +163,6 @@ export function HeaderMegaMenu() {
             </Group>
             {/* {user && 'accessToken' in user ? ( */}
             {user && 'tokenInfo' in user ? (
-//             {user ? (
               <>
                 <NavLink to="/">{user.email}</NavLink>
                 <Button onClick={() => signout()}>Sign out</Button>

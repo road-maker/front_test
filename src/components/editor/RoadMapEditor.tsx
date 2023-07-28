@@ -4,10 +4,23 @@ import 'reactflow/dist/style.css';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import dagre from '@dagrejs/dagre';
-import { TextInput } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import {
+  Modal,
+  Button,
+  Group,
+  Text,
+  TextInput,
+  Textarea,
+  Center,
+  Select,
+  MultiSelect,
+  Image,
+  SimpleGrid,
+} from '@mantine/core';
 import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
 import { useRoadmap } from 'components/roadmaps/hooks/useRoadmap';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ReactFlow, {
   Background,
@@ -22,6 +35,7 @@ import ReactFlow, {
 } from 'reactflow';
 import { getStoredRoadmap, setStoredRoadmap } from 'storage/roadmap-storage';
 import { styled } from 'styled-components';
+import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from '@mantine/dropzone';
 
 import { useInput } from '../common/hooks/useInput';
 import { RoadmapEdge, RoadmapNode } from './types';
@@ -110,10 +124,15 @@ function Roadmap({
   editor,
   label,
   roadMapTitle,
+  roadmapImage,
+  roadmapDescription,
+  roadmapRecommendedTime,
+  roadmapTag,
+  roadmapDifficulty,
   onRoadMapTitleChange,
   setRoadMapTitle,
-  onChangeLabel,
   setLabel,
+  onChangeLabel,
   id,
   setState,
   state,
@@ -129,12 +148,20 @@ function Roadmap({
   const [edgeState, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [title, onChangeTitle, setTitle] = useInput('');
   const [desc, onChangeDesc, setDesc] = useInput('');
+  const openRef = useRef<() => void>(null);
 
   const [nodeBg, setNodeBg] = useState('#eee');
   const [nodeHidden, setNodeHidden] = useState(false);
   const [rfInstance, setRfInstance] = useState(null);
   const { setViewport } = useReactFlow();
   const [useGpt, setUseGpt] = useState(false);
+  const [opened, { open, close }] = useDisclosure(false);
+  const [selectedData, setSelectedData] = useState([
+    { value: 'react', label: 'React' },
+    { value: 'ng', label: 'Angular' },
+  ]);
+  const [files, setFiles] = useState<FileWithPath[]>([]);
+
   useEffect(() => {
     const getRecentGpt = localStorage.getItem('recent_gpt_search');
     if (getRecentGpt) {
@@ -393,11 +420,10 @@ function Roadmap({
       roadmap: {
         title: roadMapTitle,
         // title: '',
-        description:
-          '개발자에 도전하고 싶은 사람들을 위한 맛보기 로드맵입니다.',
+        description: roadmapDescription,
         thumbnailUrl: '',
-        recommendedExecutionTimeValue: 0,
-        recommendedExecutionTimeUnit: '',
+        recommendedExecutionTimeValue: roadmapRecommendedTime,
+        tag: roadmapTag,
       },
       nodes: nodesCopy,
       edges,
@@ -472,8 +498,91 @@ function Roadmap({
   //     return edge;
   //   }),
   // );
+
+  const previews = files.map((file, index) => {
+    const imageUrl = URL.createObjectURL(file);
+    return (
+      <Image
+        key={index}
+        src={imageUrl}
+        imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
+      />
+    );
+  });
+
   return (
     <Wrap>
+      <Modal opened={opened} onClose={close} size="40rem">
+        <Center>
+          <h2>로드맵 정보</h2>
+        </Center>
+        <TextInput
+          mt={50}
+          placeholder="제목을 입력하세요"
+          label="로드맵 이름"
+          onChange={onChangeTitle}
+        />
+        <Group position="apart" mt={20}>
+          <TextInput
+            placeholder="기간을 입력하세요"
+            label="권장 수행기간"
+            w={200}
+          />
+          <Select
+            label="난이도 설정"
+            placeholder="입문"
+            data={[
+              { value: '1', label: '입문' },
+              { value: '2', label: '초급' },
+              { value: '3', label: '중급 이상' },
+            ]}
+            w={200}
+          />
+        </Group>
+        <MultiSelect
+          label="로드맵 태그 설정"
+          mt={20}
+          data={selectedData}
+          placeholder="태그를 선택해주세요"
+          searchable
+          creatable
+          getCreateLabel={(query) => `+ Create ${query}`}
+          onCreate={(query) => {
+            const item = { value: query, label: query };
+            setSelectedData((current) => [...current, item]);
+            return item;
+          }}
+        />
+        <Dropzone accept={IMAGE_MIME_TYPE} onDrop={setFiles} mt={30}>
+          <Text align="center">Drop images here</Text>
+        </Dropzone>
+        <SimpleGrid
+          cols={4}
+          breakpoints={[{ maxWidth: 'sm', cols: 1 }]}
+          mt={previews.length > 0 ? 'xl' : 0}
+        >
+          {previews}
+        </SimpleGrid>
+        <Textarea
+          label="로드맵 설명"
+          autosize
+          minRows={5}
+          maxRows={10}
+          mt={30}
+          placeholder="내용을 입력하세요"
+          onChange={onChangeDesc}
+        />
+        <Center>
+          <Button
+            mt={30}
+            onClick={() => {
+              onPublishRoadmap();
+            }}
+          >
+            작성하기
+          </Button>
+        </Center>
+      </Modal>
       <ReactFlow
         nodes={nodeState}
         edges={edgeState}
@@ -502,16 +611,6 @@ function Roadmap({
           opacity: '80%',
         }}
       >
-        <Panel position="top-center">
-          <TextInput
-            placeholder="제목을 입력해주세요"
-            onChange={onChangeTitle}
-          />
-          <TextInput
-            placeholder="설명을 입력해주세요"
-            onChange={onChangeDesc}
-          />
-        </Panel>
         <Panel position="top-right">
           <div className="updatenode__controls">
             <div>label:</div>
@@ -527,7 +626,7 @@ function Roadmap({
               value={nodeBg}
               onChange={(evt) => setNodeBg(evt.target.value)}
             />
-
+            {/* 
             <div className="updatenode__checkboxwrapper">
               <div>hidden:</div>
               <input
@@ -535,42 +634,42 @@ function Roadmap({
                 checked={nodeHidden}
                 onChange={(evt) => setNodeHidden(evt.target.checked)}
               />
-            </div>
+            </div> */}
           </div>
-          <button type="button" onClick={() => onLayout('TB')}>
+        </Panel>
+        <Panel position="bottom-center">
+          <Button type="button" onClick={() => onLayout('TB')} mr={10}>
             vertical layout
-          </button>
-          <button type="button" onClick={() => onLayout('LR')}>
+          </Button>
+          <Button type="button" onClick={() => onLayout('LR')} mr={10}>
             horizontal layout
-          </button>
-          <button type="button" onClick={() => onAddNode()}>
+          </Button>
+          <Button type="button" onClick={() => onAddNode()} mr={10}>
             노드 추가
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={() => {
               setNodes([]);
               setEdges([]);
             }}
+            mr={10}
           >
             노드 전체 삭제
-          </button>
-          <button type="button" onClick={onSave}>
-            save
-          </button>
-          <button type="button" onClick={useRemoveNode}>
+          </Button>
+          <Button type="button" onClick={useRemoveNode} mr={10}>
             {id} 노드삭제
-          </button>
-          <button type="button" onClick={onSave}>
+          </Button>
+          <Button type="button" onClick={onSave} mr={10}>
             save
-          </button>
+          </Button>
 
-          <button type="button" onClick={onRestore}>
+          <Button type="button" onClick={onRestore} mr={10}>
             restore
-          </button>
-          <button type="button" onClick={() => onPublishRoadmap()}>
+          </Button>
+          <Button type="button" onClick={open} mr={10} mt={10}>
             로드맵 발행
-          </button>
+          </Button>
         </Panel>
         <Background gap={16} />
         <Controls />
@@ -581,7 +680,7 @@ function Roadmap({
 }
 const Wrap = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 90vh;
   & .updatenode__controls {
     position: absolute;
     right: 10px;
@@ -608,11 +707,16 @@ export default function RoadMapCanvas({
   editor,
   label,
   roadMapTitle,
-  onRoadMapTitleChange,
-  onChangeLabel,
-  setRoadMapTitle,
+  roadmapImage,
+  roadmapDescription,
+  roadmapRecommendedTime,
+  roadmapTag,
+  roadmapDifficulty,
   setLabel,
+  onRoadMapTitleChange,
+  setRoadMapTitle,
   id,
+  onChangeLabel,
   setState,
   state,
   onChangeId,
@@ -625,12 +729,17 @@ export default function RoadMapCanvas({
         setState={setState}
         label={label}
         roadMapTitle={roadMapTitle}
+        roadmapImage={roadmapImage}
+        roadmapDescription={roadmapDescription}
+        roadmapRecommendedTime={roadmapRecommendedTime}
         onRoadMapTitleChange={onRoadMapTitleChange}
+        roadmapTag={roadmapTag}
+        roadmapDifficulty={roadmapDifficulty}
         setRoadMapTitle={setRoadMapTitle}
-        onChangeLabel={onChangeLabel}
         setLabel={setLabel}
         state={state}
         onChangeId={onChangeId}
+        onChangeLabel={onChangeLabel}
         id={id}
         setId={setId}
       />
