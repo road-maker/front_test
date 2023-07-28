@@ -16,8 +16,9 @@ import {
   IconStars,
   IconUser,
 } from '@tabler/icons-react';
-// import { HeaderMegaMenu } from '../../main/header';
+import { useRoadmap } from 'components/roadmaps/hooks/useRoadmap';
 import MainLayout from 'layout/mainLayout';
+import { useParams } from 'react-router-dom';
 
 import CommentPage from '../../main/commentPage';
 import CompleteRoadmap from './completeRoadmap';
@@ -85,6 +86,9 @@ const useStyles = createStyles((theme) => ({
 
 function PostedRoadmap() {
   const { classes, theme } = useStyles();
+  const { Id } = useParams();
+  const { getRoadmap } = useRoadmap();
+  console.log('postedRoadmap', getRoadmap(parseInt(Id, 10)));
   const features = mockdata.map((feature) => (
     <Card
       key={feature.title}

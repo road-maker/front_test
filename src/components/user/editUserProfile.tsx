@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 // import { useRef } from 'react';
 // import { useInput } from '../common/hooks/useInput';
-import { usePatchUser } from '../common/hooks/usePatchUser';
+import { usePatchUser } from './hooks/usePatchUser';
 import { useUser } from './hooks/useUser';
 
 function EditUserProfile() {

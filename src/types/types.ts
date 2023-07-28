@@ -30,6 +30,8 @@ export interface Roadmap {
   flowkey?: string;
 }
 
+// export type UserRoadmap = Roadmap &
+
 export type User = MemberInfo & NewUser;
 
 export interface GptNode {

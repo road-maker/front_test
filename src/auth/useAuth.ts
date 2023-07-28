@@ -11,7 +11,7 @@ interface UseAuth {
   signout: () => void;
 }
 
-type UserResponse = { user: NewUser };
+type UserResponse = { data: NewUser };
 type ErrorResponse = { message: string };
 type AuthResponseType = UserResponse | ErrorResponse;
 
@@ -48,7 +48,7 @@ export function useAuth(): UseAuth {
           level: 0,
           nickname,
         });
-        console.log('useAuth ServiceCall', data);
+        // console.log('useAuth ServiceCall', data);
         // navigate('/');
       }
       // if ('accessToken' in data) {
@@ -92,6 +92,7 @@ export function useAuth(): UseAuth {
         });
       if (status === 201 || status === 200) {
         // const { accessToken } = data.user;
+        // updateUser(data); // 이 부분 타입 맞추기
 
         // localStorage.setItem('accessToken', JSON.stringify(data));
         // localStorage.setItem('user', JSON.stringify(data));
@@ -100,7 +101,7 @@ export function useAuth(): UseAuth {
         if ('tokenInfo' in data) {
           // if ('tokenInfo' in data ) {
           // updateUser({data.tokenInfo});
-          alert('로그인 성공');
+          // alert('로그인 성공');
           navigate('/');
         }
         // updateUser({ username, tokenInfo });

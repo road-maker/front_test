@@ -83,7 +83,7 @@ export function useRoadmap(): UseRoadmap {
 
       if (status === 200) {
         alert('Data has been successfully loaded!');
-        console.log('roadmapCall', data);
+        // console.log('roadmapCall', data);
       }
     } catch (errorResponse) {
       const status =
