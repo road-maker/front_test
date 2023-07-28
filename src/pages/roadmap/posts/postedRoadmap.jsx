@@ -77,7 +77,6 @@ function PostedRoadmap() {
     pathname.slice(pathname.lastIndexOf('/') + 1),
   );
   const [currentRoadmap, setCurrentRoadmap] = useState(roadmapById?.data || []);
-  const [currentNodes, setCurrentNodes] = useState(roadmapById?.data || []);
   // const [currentNodes, setCurrentNodes] = useState(
   //   roadmapById?.data?.edges || [],
   // );
@@ -93,9 +92,7 @@ function PostedRoadmap() {
       setCurrentRoadmap(
         JSON.parse(localStorage.getItem('roadmapById'))?.data?.roadmap,
       );
-      setCurrentNodes(
-        JSON.parse(localStorage.getItem('roadmapById'))?.data?.roadmap,
-      );
+
       // setCurrentNodes(
       //   JSON.parse(localStorage.getItem('roadmapById'))?.data?.roadmap?.nodes,
       // );
@@ -243,9 +240,10 @@ function PostedRoadmap() {
           </Card>
         </SimpleGrid>
         <CompleteRoadmap
-        // postNodes={currentNodes}
-        // postEdges={currentEdges}
-        // postViewport={currentViewport}
+          currentRoadmap={currentRoadmap}
+          // postNodes={currentNodes}
+          // postEdges={currentEdges}
+          // postViewport={currentViewport}
         />
         <CommentPage />
       </Container>

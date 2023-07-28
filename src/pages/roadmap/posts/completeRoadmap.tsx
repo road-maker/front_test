@@ -8,7 +8,7 @@ import { TextAlign } from '@tiptap/extension-text-align';
 import { Underline } from '@tiptap/extension-underline';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { ReactElement, useMemo, useState } from 'react';
+import { ReactElement, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ReactFlowProvider } from 'reactflow';
 import { styled } from 'styled-components';
@@ -16,7 +16,7 @@ import { styled } from 'styled-components';
 import { useInput } from '../../../components/common/hooks/useInput';
 import InteractionFlow from './userRoadmap';
 
-export default function CompleteRoadmap(): ReactElement {
+export default function CompleteRoadmap(currentRoadmap): ReactElement {
   // const { search } = useLocation();
   const [label, onChangeLabel, setLabel] = useInput('');
   const [id, onChangeId, setId] = useInput('');
@@ -62,6 +62,11 @@ export default function CompleteRoadmap(): ReactElement {
       });
     },
   });
+
+  useEffect(() => {
+    console.log('currentRoadmap', currentRoadmap);
+  }, []);
+
   useMemo(() => {
     const filt = state.filter((v) => v.id === id);
     setToggle(filt);
@@ -89,6 +94,7 @@ export default function CompleteRoadmap(): ReactElement {
             onChangeLabel={onChangeLabel}
             setLabel={setLabel}
             setState={setState}
+            currentRoadmap={currentRoadmap}
           />
         </ReactFlowProvider>
       </div>
