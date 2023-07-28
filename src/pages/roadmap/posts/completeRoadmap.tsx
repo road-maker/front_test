@@ -8,7 +8,7 @@ import { TextAlign } from '@tiptap/extension-text-align';
 import { Underline } from '@tiptap/extension-underline';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { ReactElement, useMemo, useRef, useState } from 'react';
+import { ReactElement, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ReactFlowProvider } from 'reactflow';
 import { styled } from 'styled-components';
@@ -35,12 +35,10 @@ export default function CompleteRoadmap(): ReactElement {
   const [roadMapTitle, onRoadMapTitleChange, setRoadMapTitle] = useInput(
     search.get('title') || '',
   );
-  const ydoc = useRef(null);
-  const ytext = useRef(null);
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({ history: false }),
+      StarterKit,
       Underline,
       Link,
       Superscript,

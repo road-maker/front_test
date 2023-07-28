@@ -60,8 +60,13 @@ function Roadmap({
   state,
   onChangeId,
   setId,
+  // postNodes,
+  // postEdges,
+  // postViewport,
 }) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // const [nodeState, setNodes, onNodesChange] = useNodesState(postNodes);
+  // const [edgeState, setEdges, onEdgesChange] = useEdgesState(postEdges);
   const [nodeState, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edgeState, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [isSelectable] = useState(true);
@@ -82,8 +87,18 @@ function Roadmap({
   const proOptions = { hideAttribution: true };
   // const [opened, { open, close }] = useDisclosure(false);
 
+  // useEffect(() => {
+  //   console.log('postNodes', postNodes);
+  //   if ('postNodes' in postNodes) {
+  //     setNodes(postNodes.postNodes);
+  //   }
+  //   if ('postEdges' in postNodes) {
+  //     setEdges(postNodes.postEdges);
+  //   }
+  // }, [postNodes]);
+
   return (
-    <Wrap style={{ height: '60vh' }}>
+    <Wrap style={{ height: '70vh' }}>
       <ReactFlow
         nodes={nodeState}
         edges={edgeState}
@@ -176,6 +191,9 @@ export default function InteractionFlow({
         onChangeId={onChangeId}
         id={id}
         setId={setId}
+        // postNodes={postNodes}
+        // postEdges={postEdges}
+        // postViewport={postViewport}
       />
     </ReactFlowProvider>
   );

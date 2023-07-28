@@ -24,25 +24,6 @@ import { useLocation } from 'react-router-dom';
 import CommentPage from '../../main/commentPage';
 import CompleteRoadmap from './completeRoadmap';
 
-const mockdata = [
-  {
-    title: '참여인원: 800명',
-    icon: IconUser,
-  },
-  {
-    title: '완료인원: 80명',
-    icon: IconChecklist,
-  },
-  {
-    title: '권장 수행기간: 6개월',
-    icon: Icon24Hours,
-  },
-  {
-    title: '난이도: 입문',
-    icon: IconStars,
-  },
-];
-
 const useStyles = createStyles((theme) => ({
   title: {
     fontSize: rem(34),
@@ -88,40 +69,65 @@ const useStyles = createStyles((theme) => ({
 function PostedRoadmap() {
   const { classes, theme } = useStyles();
   const { pathname } = useLocation();
-  // const [roadmapId, setRoadmapdId] = useState(pathname.lastIndexOf('/'));
   const [currentPage, setCurrentPage] = useState(
     pathname.slice(pathname.lastIndexOf('/') + 1),
   );
 
-  const { roadmapById } = useRoadmapData();
+  const { roadmapById } = useRoadmapData(
+    pathname.slice(pathname.lastIndexOf('/') + 1),
+  );
   const [currentRoadmap, setCurrentRoadmap] = useState(roadmapById?.data || []);
+  const [currentNodes, setCurrentNodes] = useState(roadmapById?.data || []);
+  // const [currentNodes, setCurrentNodes] = useState(
+  //   roadmapById?.data?.edges || [],
+  // );
+  // const [currentEdges, setCurrentEdges] = useState(
+  //   roadmapById?.data?.nodes || [],
+  // );
+  // const [currentViewport, setCurrentViewport] = useState(
+  //   roadmapById?.data?.viewport || [],
+  // );
 
   useEffect(() => {
     if (currentPage !== roadmapById?.data?.roadmap?.id) {
       setCurrentRoadmap(
         JSON.parse(localStorage.getItem('roadmapById'))?.data?.roadmap,
       );
+      setCurrentNodes(
+        JSON.parse(localStorage.getItem('roadmapById'))?.data?.roadmap,
+      );
+      // setCurrentNodes(
+      //   JSON.parse(localStorage.getItem('roadmapById'))?.data?.roadmap?.nodes,
+      // );
+      // setCurrentEdges(
+      //   JSON.parse(localStorage.getItem('roadmapById'))?.data?.roadmap?.edges,
+      // );
+      // setCurrentViewport(
+      //   JSON.parse(localStorage.getItem('roadmapById'))?.data?.roadmap
+      //     ?.viewport,
+      // );
+      // console.log('currentRoadmap', currentRoadmap);
     }
   }, []);
 
-  const features = mockdata.map((feature) => (
-    <Card
-      key={feature.title}
-      mb={30}
-      shadow="md"
-      radius="md"
-      className={classes.card}
-      padding="xl"
-    >
-      <feature.icon size={rem(50)} stroke={2} color={theme.fn.primaryColor()} />
-      <Text fz="lg" fw={500} className={classes.cardTitle} mt="md" c="dimmed">
-        {feature.title}
-      </Text>
-      <Text fz="sm" c="dimmed" mt="sm">
-        {feature.description}
-      </Text>
-    </Card>
-  ));
+  // const features = data.map((feature) => (
+  //   <Card
+  //     key={feature.title}
+  //     mb={30}
+  //     shadow="md"
+  //     radius="md"
+  //     className={classes.card}
+  //     padding="xl"
+  //   >
+  //     <feature.icon size={rem(50)} stroke={2} color={theme.fn.primaryColor()} />
+  //     <Text fz="lg" fw={500} className={classes.cardTitle} mt="md" c="dimmed">
+  //       {feature.title}
+  //     </Text>
+  //     <Text fz="sm" c="dimmed" mt="sm">
+  //       {feature.description}
+  //     </Text>
+  //   </Card>
+  // ));
 
   return (
     <MainLayout>
@@ -133,12 +139,10 @@ function PostedRoadmap() {
           <Avatar color="purple" radius="xl">
             {currentRoadmap?.ownerAvatarUrl || '없음'}
           </Avatar>
-          {/* 표혜민 */}
-          {currentRoadmap?.ownerNickname || '없음'}
+          {currentRoadmap?.ownerNickname || 'no nickname'}
         </Group>
         <Button ml={800}>참여하기</Button>
         <Text c="dimmed" className={classes.description} mt="md">
-          {/* 이 로드맵은 초보 프론트엔드 개발자를 위한 로드맵입니다. */}
           {currentRoadmap?.description || '없음'}
         </Text>
         <SimpleGrid
@@ -148,18 +152,17 @@ function PostedRoadmap() {
           breakpoints={[{ maxWidth: 'md', cols: 1 }]}
         >
           <Card
-            key={currentRoadmap?.title}
             mb={30}
             shadow="md"
             radius="md"
             className={classes.card}
             padding="xl"
           >
-            {/* <feature.icon
+            <IconUser
               size={rem(50)}
               stroke={2}
               color={theme.fn.primaryColor()}
-            /> */}
+            />
             <Text
               fz="lg"
               fw={500}
@@ -167,12 +170,83 @@ function PostedRoadmap() {
               mt="md"
               c="dimmed"
             >
-              {/* {feature.title} */}
-              {currentRoadmap?.title}
+              참여인원: 명
+            </Text>
+          </Card>
+          <Card
+            mb={30}
+            shadow="md"
+            radius="md"
+            className={classes.card}
+            padding="xl"
+          >
+            <IconChecklist
+              size={rem(50)}
+              stroke={2}
+              color={theme.fn.primaryColor()}
+            />
+            <Text
+              fz="lg"
+              fw={500}
+              className={classes.cardTitle}
+              mt="md"
+              c="dimmed"
+            >
+              완료인원: 명
+            </Text>
+          </Card>
+          <Card
+            mb={30}
+            shadow="md"
+            radius="md"
+            className={classes.card}
+            padding="xl"
+          >
+            <Icon24Hours
+              size={rem(50)}
+              stroke={2}
+              color={theme.fn.primaryColor()}
+            />
+            <Text
+              fz="lg"
+              fw={500}
+              className={classes.cardTitle}
+              mt="md"
+              c="dimmed"
+            >
+              권장 수행기간:{' '}
+              {currentRoadmap?.recommendedExecutionTimeValue || 'X'}{' '}
+              {currentRoadmap?.recommendedExecutionTimeUnit}
+            </Text>
+          </Card>
+          <Card
+            mb={30}
+            shadow="md"
+            radius="md"
+            className={classes.card}
+            padding="xl"
+          >
+            <IconStars
+              size={rem(50)}
+              stroke={2}
+              color={theme.fn.primaryColor()}
+            />
+            <Text
+              fz="lg"
+              fw={500}
+              className={classes.cardTitle}
+              mt="md"
+              c="dimmed"
+            >
+              난이도: {currentRoadmap?.recommendedExecutionTimeUnit}
             </Text>
           </Card>
         </SimpleGrid>
-        <CompleteRoadmap />
+        <CompleteRoadmap
+        // postNodes={currentNodes}
+        // postEdges={currentEdges}
+        // postViewport={currentViewport}
+        />
         <CommentPage />
       </Container>
     </MainLayout>
