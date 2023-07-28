@@ -1,11 +1,9 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-restricted-globals */
 // eslint-disable-next-line simple-import-sort/imports
 import 'reactflow/dist/style.css';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import dagre from '@dagrejs/dagre';
 import { TextInput } from '@mantine/core';
 import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
