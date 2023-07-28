@@ -11,6 +11,7 @@ export interface NewUser {
   email?: string;
 }
 export interface MemberInfo {
+  memberId?: number;
   avatarUrl?: string | null;
   baekjoonId?: string | null;
   bio?: string | null;
@@ -18,7 +19,10 @@ export interface MemberInfo {
   exp?: number;
   githubUrl?: string | null;
   level?: 0;
+  inProcessRoadmapDto: [];
 }
+
+export type User = MemberInfo & NewUser;
 export interface Roadmap {
   // data?: unknown;
   id?: number;
@@ -29,8 +33,6 @@ export interface Roadmap {
   text?: string;
   flowkey?: string;
 }
-
-export type User = MemberInfo & NewUser;
 
 export interface GptNode {
   id: string;
