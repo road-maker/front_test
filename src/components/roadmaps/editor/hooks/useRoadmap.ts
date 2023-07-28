@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { NewRoadmap, Roadmap } from '../../../editor/types';
 
 interface UseRoadmap {
-  getRoadmap: (id: number) => Promise<void>;
+  getRoadmapById: (id: number) => Promise<void>;
   getAllRoadmap: () => Promise<void>;
   postRoadmap: (NewRoadmap: NewRoadmap) => Promise<void>;
 }
@@ -66,7 +66,7 @@ export function useRoadmap(): UseRoadmap {
       console.log(`${SERVER_ERROR}!: ${errorResponse}`);
     }
   }
-  async function getRoadmap(id: number): Promise<void> {
+  async function getRoadmapById(id: number): Promise<void> {
     roadmapServerCall(`/roadmaps/load-roadmap/${id}`, id);
   }
   async function getAllRoadmap(): Promise<void> {
@@ -76,5 +76,5 @@ export function useRoadmap(): UseRoadmap {
   async function postRoadmap(newRoadmap: NewRoadmap): Promise<void> {
     roadmapPostSeverCall(`/roadmaps`, newRoadmap);
   }
-  return { postRoadmap, getRoadmap, getAllRoadmap };
+  return { postRoadmap, getRoadmapById, getAllRoadmap };
 }

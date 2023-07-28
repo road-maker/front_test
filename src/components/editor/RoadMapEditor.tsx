@@ -1,3 +1,6 @@
+/* eslint-disable array-callback-return */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-restricted-globals */
 // eslint-disable-next-line simple-import-sort/imports
 import 'reactflow/dist/style.css';
@@ -162,7 +165,7 @@ function Roadmap({
 
       const { data } = prompt;
       const dataCopy = [...data];
-      console.log(dataCopy);
+      // console.log(dataCopy);
 
       // eslint-disable-next-line array-callback-return
       dataCopy.map((v) => {
@@ -245,7 +248,7 @@ function Roadmap({
             label,
           };
         }
-        console.log(node);
+        // console.log(node);
 
         return node;
       }),
@@ -273,7 +276,7 @@ function Roadmap({
   // }, [label, nodeName]);
 
   useMemo(() => {
-    console.log('roadmapeditor props', editor);
+    // console.log('roadmapeditor props', editor);
     setNodes([...nodeState]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);
@@ -382,7 +385,7 @@ function Roadmap({
     nodesCopy.map((v) => {
       state.map((item) => {
         if (v.id === item.id) {
-          console.log('onPublish', item.details);
+          // console.log('onPublish', item.details);
           // eslint-disable-next-line no-param-reassign
           v.detailedContent = item.details;
         }
@@ -451,8 +454,8 @@ function Roadmap({
         if (node.id === label) {
           // when you update a simple type you can just update the value
           // eslint-disable-next-line no-param-reassign
-          // node.data.label = label;
-          console.log(node.data.label);
+          node.data.label = label;
+          // console.log(node.data.label);
         }
         return node;
       }),
