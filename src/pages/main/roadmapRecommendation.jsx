@@ -59,7 +59,8 @@ export default function RoadmapRecommendation() {
     if ('data' in roadmaps) {
       setAllRoadmapData(roadmaps.data);
     }
-  }, [getAllRoadmap, roadmaps]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const { fetchNextPage, hasNextPage, isLoading, isError, error } =
     useInfiniteQuery(
