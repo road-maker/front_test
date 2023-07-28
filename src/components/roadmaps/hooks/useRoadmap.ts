@@ -18,57 +18,11 @@ type ErrorResponse = { message: string };
 // type GetResponse = { message: number };
 type GetResponse = { message: number };
 type RoadMapResponse = { roadmap: Array<Roadmap> } | GetResponse;
-
+// 이거 쓰는 중
 export function useRoadmap(): UseRoadmap {
   const SERVER_ERROR = 'error contacting server';
   const navigate = useNavigate();
 
-  // async function roadmapServerCall(
-  //   urlEndpoint: string,
-  //   id?: number,
-  // ): Promise<void> {
-  //   try {
-  //     const { data, status }: AxiosResponse<RoadMapResponse> =
-  //       await axiosInstance({
-  //         url: urlEndpoint,
-  //         method: 'GET',
-  //         data: { id },
-  //         headers: { 'Content-Type': 'application/json' },
-  //       });
-  //     if (status === 200) {
-  //       localStorage.setItem(
-  //         'recent_roadmap_search',
-  //         JSON.stringify({ data }), // 검색어에 대한 data 저장하도록
-  //       );
-  //       navigate(`/roadmap/${id}`);
-  //     }
-  //   } catch (errorResponse) {
-  //     console.log(`${SERVER_ERROR}!: ${errorResponse}`);
-  //   }
-  // }
-
-  // async function roadmapGetAllRoadmapsServerCall(
-  //   urlEndpoint: string,
-  // ): Promise<void> {
-  //   try {
-  //     const { data, status }: AxiosResponse<RoadMapResponse> =
-  //       await axiosInstance({
-  //         url: urlEndpoint,
-  //         method: 'GET',
-  //         headers: { 'Content-Type': 'application/json' },
-  //       });
-  //     if (status === 200) {
-  //       localStorage.setItem(
-  //         'all_roadmaps',
-  //         JSON.stringify({ data }), // 검색어에 대한 data 저장하도록
-  //       );
-  //       console.log(data);
-  //       // navigate(`/roadmaps`);
-  //     }
-  //   } catch (errorResponse) {
-  //     console.log(`${SERVER_ERROR}!: ${errorResponse}`);
-  //   }
-  // }
   async function roadmapServerCall(
     urlEndpoint: string,
     id?: number,
@@ -83,10 +37,10 @@ export function useRoadmap(): UseRoadmap {
         });
       if (status === 200) {
         localStorage.setItem(
-          // 'recent_roadmap_search',
           'roadmaps',
           JSON.stringify({ data }), // 검색어에 대한 data 저장하도록
         );
+        console.log(data);
         // console.log('roadmaps', data);
         // navigate(`/roadmaps`);
       }
@@ -118,7 +72,7 @@ export function useRoadmap(): UseRoadmap {
     }
   }
   async function getRoadmap(id: number): Promise<void> {
-    roadmapServerCall(`/roadmaps/load-roadmap`, id);
+    roadmapServerCall(`/roadmaps/load-roadmap/${id}`, id);
   }
   async function getAllRoadmap(): Promise<void> {
     roadmapServerCall(`/roadmaps`);

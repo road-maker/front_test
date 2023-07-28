@@ -39,6 +39,7 @@ export function usePrompt(): UsePrompt {
           'recent_gpt_search',
           JSON.stringify({ keyword, data }), // 검색어에 대한 data 저장하도록
         );
+        // window.onload(navigate(`/roadmap/editor?title=${keyword}`));
         navigate(`/roadmap/editor?title=${keyword}`);
       }
     } catch (errorResponse) {

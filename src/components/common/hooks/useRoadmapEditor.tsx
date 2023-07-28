@@ -1,10 +1,10 @@
 /* eslint-disable no-alert */
 import axios, { AxiosResponse } from 'axios';
+import { useUser } from 'components/user/hooks/useUser';
 import { useNavigate } from 'react-router-dom';
 
 import { axiosInstance } from '../../../axiosInstance/index';
 import { Roadmap } from '../../../types/types';
-import { useUser } from '../../user/hooks/useUser';
 
 interface UseRoadmap {
   saveRoadmap: (
@@ -12,11 +12,7 @@ interface UseRoadmap {
     description: string,
     flowkey: string,
   ) => Promise<void>;
-  getRoadmap: (
-    title: string,
-    description: string,
-    flowkey: string,
-  ) => Promise<void>;
+  getRoadmap: (id: number) => Promise<void>;
 }
 
 type RoadmapResponse = { roadmap: Roadmap };
@@ -46,26 +42,17 @@ export function useRoadmap(): UseRoadmap {
           },
           headers: {
             'Content-Type': 'application/json',
-            // Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-            // Authorization: `Bearer ${localStorage.getItem('user')}`,
-            // Authorization: `Bearer ${user.accessToken}`,
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaWdudXBAbmF2ZXIuY29tIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTY5MDk3Nzk2Mn0.5XZmXtA2arG_VsEJN5SwQzBj5P2LHFMvdw4Ha8JZVTY`,
+            Authorization: `Bearer ${user.accessToken}`,
           },
         });
 
       if (status === 201) {
+        // setStoredRoadmap(data.flowkey);
         localStorage.setItem('flowkey', JSON.stringify(data));
-        // localStorage.setItem('user', JSON.stringify(data));
         navigate('/');
         alert('Data has been successfully saved!');
         // eslint-disable-next-line no-console
       }
-      // if ('user' in data) {
-      // update stored user data
-      // updateUser(data.user);
-      // updateUser(data.user);
-      // updateUser(data);
-      // }
     } catch (errorResponse) {
       const status =
         axios.isAxiosError(errorResponse) &&
@@ -80,38 +67,24 @@ export function useRoadmap(): UseRoadmap {
     }
   }
 
-  async function RoadmapCall(
-    urlEndpoint: string,
-    title: string,
-    description: string,
-    flowkey: string,
-  ): Promise<void> {
+  async function roadmapCall(urlEndpoint: string, id: number): Promise<void> {
     try {
       // Adjust the API endpoint URL to fetch the roadmap data from the backend
       const { data, status }: AxiosResponse<RoadmapResponseType> =
         await axiosInstance({
           url: urlEndpoint,
           method: 'GET', // Adjust the method according to your API endpoint
-          data: { title, description, flowkey },
+          // data: { title, description, flowkey },
+          data: { id },
           headers: {
             'Content-Type': 'application/json',
-            // Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-            // Authorization: `Bearer ${localStorage.getItem('user')}`,
-            Authorization: `Bearer ${user.accessToken}`,
           },
         });
 
-      if (status === 400) {
+      if (status === 200) {
         alert('Data has been successfully loaded!');
+        // console.log('roadmapCall', data);
       }
-
-      if ('user' in data) {
-        // update stored user data
-        // updateUser(data.user);
-      }
-      // if ('roadmap' in data) {
-      //   updateUser(data.roadmap);
-      // }
     } catch (errorResponse) {
       const status =
         axios.isAxiosError(errorResponse) &&
@@ -133,17 +106,9 @@ export function useRoadmap(): UseRoadmap {
     roadmapServerCall('roadmaps', title, description, flowkey);
   }
 
-  async function getRoadmap(
-    title: string,
-    description: string,
-    flowkey: string,
-  ): Promise<void> {
-    RoadmapCall(
-      'roadmaps/load-roadmap/:roadmapId',
-      title,
-      description,
-      flowkey,
-    );
+  async function getRoadmap(id: number): Promise<void> {
+    const idStr = id.toString();
+    roadmapCall(`roadmaps/load-roadmap/${idStr}`, id);
   }
 
   // Return the roadmap methods

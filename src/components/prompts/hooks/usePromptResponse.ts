@@ -17,7 +17,8 @@ export function usePromptAnswer(): UsePromptAnswer {
   const queryClient = useQueryClient();
   const { data: prompt } = useQuery(
     queryKeys.prompt,
-    () => getStoredGpt(prompt),
+    // () => getStoredGpt(prompt),
+    () => getStoredGpt(),
     {
       initialData: getStoredGpt,
       onSuccess: (received: Prompt | null) => {

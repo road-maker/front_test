@@ -141,8 +141,9 @@ function Roadmap({
       <Modal opened={isOpen} onClose={() => setIsOpen(!isOpen)}>
         <Center>
           <EditorContent editor={editor} readOnly />
-
-          <Button mt={30} onClick={() => setIsOpen(!isOpen)}>
+        </Center>
+        <Center>
+          <Button mt={30} onClick={() => setIsOpen(!isOpen)} variant="light">
             닫기
           </Button>
         </Center>

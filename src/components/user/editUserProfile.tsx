@@ -1,15 +1,17 @@
-import { Box, Button, Paper, TextInput } from '@mantine/core';
+import { Box, Button, Group, Paper, TextInput } from '@mantine/core';
 // import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { Form, Formik } from 'formik';
+import { useNavigate } from 'react-router-dom';
 
 // import { useRef } from 'react';
 // import { useInput } from '../common/hooks/useInput';
-import { usePatchUser } from '../common/hooks/usePatchUser';
+import { usePatchUser } from './hooks/usePatchUser';
 import { useUser } from './hooks/useUser';
 
 function EditUserProfile() {
   const { user } = useUser();
   const patchUser = usePatchUser();
+  const navigate = useNavigate();
   //   const openRef = useRef<() => void>(null);
   const formElements = ['닉네임', '자기소개', '백준 아이디'];
   interface FormValues {
@@ -51,9 +53,21 @@ function EditUserProfile() {
             {formElements.map((element) => (
               <TextInput mt="xl" id={element} label={element} />
             ))}
-            <Button mt={6} type="submit">
-              수정하기
-            </Button>
+            <Group position="apart" mt={30}>
+              <Button type="submit" variant="outline" color="indigo">
+                수정하기
+              </Button>
+              <Button
+                type="submit"
+                variant="outline"
+                color="indigo"
+                onClick={() => {
+                  navigate('..');
+                }}
+              >
+                취소
+              </Button>
+            </Group>
           </Form>
         </Formik>
       </Paper>
