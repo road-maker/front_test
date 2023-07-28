@@ -8,12 +8,10 @@ import {
   rem,
   SimpleGrid,
   Text,
-  useMantineTheme,
 } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
 import { IconBookmark, IconHeart, IconShare } from '@tabler/icons-react';
-import { useRoadmap } from 'components/roadmaps/hooks/useRoadmap';
-import { useRoadmapData } from 'components/roadmaps/hooks/useRoadMapResponse';
+import { useRoadmap } from 'components/roadmaps/posts/hooks/useRoadmap';
+import { useRoadmapData } from 'components/roadmaps/posts/hooks/useRoadMapResponse';
 import { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useInfiniteQuery } from 'react-query';
@@ -50,14 +48,14 @@ export default function RoadmapRecommendation() {
 
   const { classes, theme } = useStyles();
   const navigate = useNavigate();
-  const themes = useMantineTheme();
-  const mobile = useMediaQuery(`(max-width: ${themes.breakpoints.sm})`);
+  // const themes = useMantineTheme();
+  // const mobile = useMediaQuery(`(max-width: ${themes.breakpoints.sm})`);
   const { getAllRoadmap, getRoadmap } = useRoadmap();
   const { roadmaps } = useRoadmapData();
 
   useEffect(() => {
     getAllRoadmap();
-    console.log('roadmaps', roadmaps);
+    // console.log('roadmaps', roadmaps);
     if ('data' in roadmaps) {
       setAllRoadmapData(roadmaps.data);
     }

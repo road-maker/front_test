@@ -5,7 +5,7 @@ import { AxiosResponse } from 'axios';
 import { axiosInstance } from 'axiosInstance';
 import { useNavigate } from 'react-router-dom';
 
-import { NewRoadmap, Roadmap } from '../../editor/types';
+import { NewRoadmap, Roadmap } from '../../../editor/types';
 
 interface UseRoadmap {
   getRoadmap: (id: number) => Promise<void>;
@@ -14,11 +14,8 @@ interface UseRoadmap {
 }
 
 type ErrorResponse = { message: string };
-// type GetResponse = { message: string };
-// type GetResponse = { message: number };
 type GetResponse = { message: number };
 type RoadMapResponse = { roadmap: Array<Roadmap> } | GetResponse;
-// 이거 쓰는 중
 export function useRoadmap(): UseRoadmap {
   const SERVER_ERROR = 'error contacting server';
   const navigate = useNavigate();
@@ -40,9 +37,7 @@ export function useRoadmap(): UseRoadmap {
           'roadmaps',
           JSON.stringify({ data }), // 검색어에 대한 data 저장하도록
         );
-        console.log(data);
-        // console.log('roadmaps', data);
-        // navigate(`/roadmaps`);
+        // console.log('useRoadmap', data);
       }
     } catch (errorResponse) {
       console.log(`${SERVER_ERROR}!: ${errorResponse}`);

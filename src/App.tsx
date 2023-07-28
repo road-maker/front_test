@@ -13,7 +13,7 @@ import LoginPage from './pages/login';
 import MainPage from './pages/main';
 import ResetInfoPage from './pages/resetInfo';
 import RoadMapEditor from './pages/roadmap/editor';
-import PostedRoadmap from './pages/roadmap/view/postedRoadmap';
+import PostedRoadmap from './pages/roadmap/posts/postedRoadmap';
 import SignupPage from './pages/signup';
 
 function App(): ReactElement {

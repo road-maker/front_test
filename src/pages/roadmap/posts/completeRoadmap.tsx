@@ -48,18 +48,14 @@ export default function CompleteRoadmap(): ReactElement {
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
-    // content: state.filter((v) => v.id === id)[0]?.details || '',
-    content: <div>{state.filter((v) => v.id === id)[0]?.details || ''}</div>,
+    content: state.filter((v) => v.id === id)[0]?.details || '',
     onUpdate(e) {
-      console.log(e.editor?.getHTML());
       setToggle(e.editor?.getHTML());
-      console.log('e.editor', e.editor);
-
+      // eslint-disable-next-line array-callback-return
       state.map((item, idx) => {
         if (item.id !== id) return;
 
         const copyState = [...state];
-        // copyState.splice(idx, 1, {
         copyState.splice(idx, 1, {
           id: item.id,
           details: e.editor?.getHTML(),
@@ -70,7 +66,6 @@ export default function CompleteRoadmap(): ReactElement {
   });
   useMemo(() => {
     const filt = state.filter((v) => v.id === id);
-    // console.log('filt', filt);
     setToggle(filt);
     if (editor) {
       editor.commands.setContent(filt[0]?.details || '');
@@ -82,50 +77,8 @@ export default function CompleteRoadmap(): ReactElement {
     // console.log('state', state);
   }, [state, id, setToggle, label, editor]);
 
-  // const toggleEditor = useMemo(() => {
-  //   if (toggle.length === 0) return <div />;
-  //   return id === toggle[0].id ? (
-  //     <div className="content" style={{ width: '20rem', height: '3rem' }}>
-  //       {state.filter((v) => v.id === id)[0]?.details || ''}
-  //     </div>
-  //   ) : (
-  //     <div>
-  //       <button type="button" onClick={() => setToggle(toggle[0].id)}>
-  //         상세 내용 수정하기
-  //       </button>
-  //     </div>
-  //   );
-  // }, [toggle, id]);
-
-  // const toggleEditor = useMemo(() => {
-  //   if (toggle.length === 0) return <div />;
-  //   return id === toggle[0].id ? (
-  //     <Group position="center">
-  //       <Button
-  //         onClick={() => {
-  //           modals.open({
-  //             children: (
-  //               <>
-  //                 {state.filter((v) => v.id === id)[0]?.details || ''}
-  //                 <Button fullWidth onClick={modals.closeAll} mt="md">
-  //                   close
-  //                 </Button>
-  //               </>
-  //             ),
-  //           });
-  //         }}
-  //       >
-  //         Open content modal
-  //       </Button>
-  //     </Group>
-  //   ) : (
-  //     <div />
-  //   );
-  // }, [toggle, id]);
-
   return (
     <EditorWrap>
-      {/* <div style={{ textAlign: 'center', margin: 'auto' }}>{toggleEditor}</div> */}
       <div className="roadMapWrap">
         <ReactFlowProvider>
           <InteractionFlow
