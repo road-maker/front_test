@@ -15,6 +15,7 @@ import { useRoadmapData } from 'components/roadmaps/posts/hooks/useRoadMapRespon
 import { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useInfiniteQuery } from 'react-query';
+import { queryClient } from 'react-query/queryClient';
 import { useNavigate } from 'react-router-dom';
 
 const useStyles = createStyles((theme) => ({
@@ -48,16 +49,25 @@ export default function RoadmapRecommendation() {
 
   const { classes, theme } = useStyles();
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState('');
   // const themes = useMantineTheme();
   // const mobile = useMediaQuery(`(max-width: ${themes.breakpoints.sm})`);
-  const { getAllRoadmap, getRoadmapById } = useRoadmap();
+  const { getRoadmapById, getAllRoadmap } = useRoadmap();
   const { roadmaps } = useRoadmapData();
 
   useEffect(() => {
+    if (currentPage) {
+      queryClient.prefetchQuery(['roadmapById', currentPage], () =>
+        getRoadmapById(currentPage),
+      );
+    }
+  }, [currentPage, queryClient]);
+
+  useEffect(() => {
     getAllRoadmap();
-    // console.log('roadmaps', roadmaps);
-    if ('data' in roadmaps) {
-      setAllRoadmapData(roadmaps.data);
+
+    if (roadmaps && 'data' in roadmaps) {
+      setAllRoadmapData(roadmaps?.data);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -98,7 +108,6 @@ export default function RoadmapRecommendation() {
                     component="a"
                     className={classes.card}
                     ml={100}
-                    onClick={() => getRoadmapById(article.id)}
                   >
                     <Card.Section>
                       {article.thumbnailUrl ? (
@@ -108,8 +117,12 @@ export default function RoadmapRecommendation() {
                           height={160}
                           width={260}
                           style={{ cursor: 'pointer' }}
+                          onMouseOver={() => {
+                            setCurrentPage(article.id);
+                          }}
                           onClick={() => {
-                            navigate(`/roadmap/post/${article.id}`);
+                            currentPage &&
+                              navigate(`/roadmap/post/${currentPage}`);
                           }}
                         />
                       ) : (
@@ -119,8 +132,12 @@ export default function RoadmapRecommendation() {
                           height={160}
                           width={260}
                           style={{ cursor: 'pointer' }}
+                          onMouseOver={() => {
+                            setCurrentPage(article.id);
+                          }}
                           onClick={() => {
-                            navigate(`/roadmap/post/${article.id}`);
+                            currentPage &&
+                              navigate(`/roadmap/post/${currentPage}`);
                           }}
                         />
                       )}
@@ -128,8 +145,11 @@ export default function RoadmapRecommendation() {
                     <Text
                       className={classes.title}
                       mt={10}
+                      onMouseOver={() => {
+                        setCurrentPage(article.id);
+                      }}
                       onClick={() => {
-                        navigate(`/roadmap/post/${article.id}`);
+                        currentPage && navigate(`/roadmap/post/${currentPage}`);
                       }}
                       style={{ cursor: 'pointer' }}
                     >

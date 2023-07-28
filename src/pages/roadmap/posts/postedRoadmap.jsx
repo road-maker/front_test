@@ -16,7 +16,10 @@ import {
   IconStars,
   IconUser,
 } from '@tabler/icons-react';
+import { useRoadmapData } from 'components/roadmaps/posts/hooks/useRoadMapResponse';
 import MainLayout from 'layout/mainLayout';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import CommentPage from '../../main/commentPage';
 import CompleteRoadmap from './completeRoadmap';
@@ -84,8 +87,22 @@ const useStyles = createStyles((theme) => ({
 
 function PostedRoadmap() {
   const { classes, theme } = useStyles();
-  // const { Id } = useParams();
-  // const { getRoadmapById } = useRoadmap();
+  const { pathname } = useLocation();
+  // const [roadmapId, setRoadmapdId] = useState(pathname.lastIndexOf('/'));
+  const [currentPage, setCurrentPage] = useState(
+    pathname.slice(pathname.lastIndexOf('/') + 1),
+  );
+
+  const { roadmapById } = useRoadmapData();
+  const [currentRoadmap, setCurrentRoadmap] = useState(roadmapById?.data || []);
+
+  useEffect(() => {
+    if (currentPage !== roadmapById?.data?.roadmap?.id) {
+      setCurrentRoadmap(
+        JSON.parse(localStorage.getItem('roadmapById'))?.data?.roadmap,
+      );
+    }
+  }, []);
 
   const features = mockdata.map((feature) => (
     <Card
@@ -100,9 +117,9 @@ function PostedRoadmap() {
       <Text fz="lg" fw={500} className={classes.cardTitle} mt="md" c="dimmed">
         {feature.title}
       </Text>
-      {/* <Text fz="sm" c="dimmed" mt="sm">
+      <Text fz="sm" c="dimmed" mt="sm">
         {feature.description}
-      </Text> */}
+      </Text>
     </Card>
   ));
 
@@ -110,17 +127,19 @@ function PostedRoadmap() {
     <MainLayout>
       <Container px="xs" maw={1000}>
         <Title className={classes.title} mt="sm">
-          Javasript 정복하기
+          {currentRoadmap?.title}
         </Title>
         <Group mt={20}>
           <Avatar color="purple" radius="xl">
-            HM
+            {currentRoadmap?.ownerAvatarUrl || '없음'}
           </Avatar>
-          표혜민
+          {/* 표혜민 */}
+          {currentRoadmap?.ownerNickname || '없음'}
         </Group>
         <Button ml={800}>참여하기</Button>
         <Text c="dimmed" className={classes.description} mt="md">
-          이 로드맵은 초보 프론트엔드 개발자를 위한 로드맵입니다.
+          {/* 이 로드맵은 초보 프론트엔드 개발자를 위한 로드맵입니다. */}
+          {currentRoadmap?.description || '없음'}
         </Text>
         <SimpleGrid
           cols={4}
@@ -128,7 +147,30 @@ function PostedRoadmap() {
           mt={50}
           breakpoints={[{ maxWidth: 'md', cols: 1 }]}
         >
-          {features}
+          <Card
+            key={currentRoadmap?.title}
+            mb={30}
+            shadow="md"
+            radius="md"
+            className={classes.card}
+            padding="xl"
+          >
+            {/* <feature.icon
+              size={rem(50)}
+              stroke={2}
+              color={theme.fn.primaryColor()}
+            /> */}
+            <Text
+              fz="lg"
+              fw={500}
+              className={classes.cardTitle}
+              mt="md"
+              c="dimmed"
+            >
+              {/* {feature.title} */}
+              {currentRoadmap?.title}
+            </Text>
+          </Card>
         </SimpleGrid>
         <CompleteRoadmap />
         <CommentPage />

@@ -1,21 +1,26 @@
 import { useQuery, useQueryClient } from 'react-query';
 import {
   clearStoredRoadmap,
+  clearStoredRoadmapById,
   getStoredRoadmap,
+  getStoredRoadmapById,
   setStoredRoadmap,
+  setStoredRoadmapById,
 } from 'storage/roadmap-storage';
-import { Roadmap } from 'types/types';
+import { UserRoadmap } from 'types/types';
 
 import { queryKeys } from '../../../../react-query/constants';
-import type { NewRoadmap } from '../../../editor/types';
+import type { NewRoadmap, Roadmap } from '../../../editor/types';
 
 interface UseRoadmapData {
-  roadmapById: Roadmap;
+  roadmapById: UserRoadmap;
   roadmaps: Roadmap | null;
-  updateRoadmapdata: (prompt: NewRoadmap) => void;
+  updateRoadmapdata: (roadmap: NewRoadmap | Roadmap) => void;
+  updateRoadmapByIdData: (roadmap: NewRoadmap | Roadmap) => void;
   clearRoadmapdata: () => void;
+  clearRoadmapByIdData: () => void;
 }
-export function useRoadmapData(): UseRoadmapData {
+export function useRoadmapData(id?: string): UseRoadmapData {
   const queryClient = useQueryClient();
   const { data: roadmaps } = useQuery(
     queryKeys.roadmaps,
@@ -25,25 +30,39 @@ export function useRoadmapData(): UseRoadmapData {
       onSuccess: (received: NewRoadmap | null) => {
         !received ? clearStoredRoadmap() : setStoredRoadmap(received);
       },
+      refetchOnMount: 'always',
     },
   );
   const { data: roadmapById } = useQuery(
     queryKeys.roadmapById,
-    () => getStoredRoadmap(),
+    () => getStoredRoadmapById(),
     {
-      initialData: getStoredRoadmap,
+      initialData: getStoredRoadmapById,
       onSuccess: (received: NewRoadmap | null) => {
-        // console.log('roadmapById', roadmapById);
-        // !received ? clearStoredRoadmap() : setStoredRoadmap(received);
+        !received ? clearStoredRoadmapById() : setStoredRoadmapById(received);
       },
+      // refetchOnMount: 'always',
     },
   );
-  function updateRoadmapdata(newPrompt: NewRoadmap): void {
-    queryClient.setQueriesData(queryKeys.roadmaps, newPrompt);
+  function updateRoadmapdata(newRoadmap: NewRoadmap | Roadmap): void {
+    queryClient.setQueriesData(queryKeys.roadmaps, newRoadmap);
+  }
+  function updateRoadmapByIdData(newRoadmap: NewRoadmap | Roadmap): void {
+    queryClient.setQueriesData(queryKeys.roadmaps, newRoadmap);
+  }
+  function clearRoadmapByIdData() {
+    queryClient.setQueriesData(queryKeys.roadmapById, null);
   }
   function clearRoadmapdata() {
     queryClient.setQueriesData(queryKeys.roadmaps, null);
   }
 
-  return { roadmapById, roadmaps, updateRoadmapdata, clearRoadmapdata };
+  return {
+    roadmapById,
+    roadmaps,
+    updateRoadmapdata,
+    updateRoadmapByIdData,
+    clearRoadmapdata,
+    clearRoadmapByIdData,
+  };
 }

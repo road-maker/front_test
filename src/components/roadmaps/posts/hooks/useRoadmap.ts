@@ -33,10 +33,15 @@ export function useRoadmap(): UseRoadmap {
           headers: { 'Content-Type': 'application/json' },
         });
       if (status === 200) {
-        localStorage.setItem(
-          'roadmaps',
-          JSON.stringify({ data }), // 검색어에 대한 data 저장하도록
-        );
+        !id
+          ? localStorage.setItem(
+              'roadmaps',
+              JSON.stringify({ data }), // 전체 로드맵 list 저장
+            )
+          : localStorage.setItem(
+              'roadmapById',
+              JSON.stringify({ data }), // id에 대한 roadmap 저장
+            );
       }
     } catch (errorResponse) {
       console.log(`${SERVER_ERROR}!: ${errorResponse}`);

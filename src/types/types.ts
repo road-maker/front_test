@@ -1,3 +1,5 @@
+import { Roadmap } from 'components/editor/types';
+
 export interface TokenInfo {
   accessToken?: string;
   grantType?: string;
@@ -19,7 +21,7 @@ export interface MemberInfo {
   githubUrl?: string | null;
   level?: 0;
 }
-export interface Roadmap {
+export interface RoadmapMetaData {
   // data?: unknown;
   id?: number;
   thumbnailUrl?: string;
@@ -30,7 +32,7 @@ export interface Roadmap {
   flowkey?: string;
 }
 
-// export type UserRoadmap = Roadmap &
+export type UserRoadmap = RoadmapMetaData & Roadmap;
 
 export type User = MemberInfo & NewUser;
 
