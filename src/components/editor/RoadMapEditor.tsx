@@ -6,7 +6,7 @@ import 'reactflow/dist/style.css';
 import dagre from '@dagrejs/dagre';
 import { TextInput } from '@mantine/core';
 import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
-import { useRoadmap } from 'components/roadmaps/hooks/useRoadmap';
+import { useRoadmap } from 'components/roadmaps/posts/hooks/useRoadmap';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ReactFlow, {

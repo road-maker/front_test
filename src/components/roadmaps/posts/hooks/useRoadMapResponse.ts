@@ -6,13 +6,12 @@ import {
 } from 'storage/roadmap-storage';
 import { Roadmap } from 'types/types';
 
-import { queryKeys } from '../../../react-query/constants';
-import type { NewRoadmap } from '../../editor/types';
-// import type { Roadmap } from '../../editor/types';
+import { queryKeys } from '../../../../react-query/constants';
+import type { NewRoadmap } from '../../../editor/types';
 
 interface UseRoadmapData {
   // roadmaps: NewRoadmap | Roadmap | null;
-  roadmaps: Roadmap | null; // //////////////////////////////////////
+  roadmaps: Roadmap | null;
   updateRoadmapdata: (prompt: NewRoadmap) => void;
   clearRoadmapdata: () => void;
 }

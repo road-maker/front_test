@@ -1,14 +1,7 @@
 /* eslint-disable simple-import-sort/imports */
 // import { modals } from '@mantine/modals';
 import { Button, Center, Modal } from '@mantine/core';
-import { Highlight } from '@tiptap/extension-highlight';
-import { Link } from '@tiptap/extension-link';
-import { Subscript } from '@tiptap/extension-subscript';
-import { Superscript } from '@tiptap/extension-superscript';
-import { TextAlign } from '@tiptap/extension-text-align';
-import { Underline } from '@tiptap/extension-underline';
-import { EditorContent, useEditor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
+import { EditorContent } from '@tiptap/react';
 import { useCallback, useState } from 'react';
 import ReactFlow, {
   Background,
@@ -68,6 +61,7 @@ function Roadmap({
   onChangeId,
   setId,
 }) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [nodeState, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edgeState, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [isSelectable] = useState(true);
@@ -88,21 +82,6 @@ function Roadmap({
   const proOptions = { hideAttribution: true };
   // const [opened, { open, close }] = useDisclosure(false);
 
-  const readOnlyEditor = useEditor({
-    extensions: [
-      StarterKit,
-      Underline,
-      Link,
-      Superscript,
-      Subscript,
-      Highlight,
-      TextAlign.configure({ types: ['heading', 'paragraph'] }),
-    ],
-    // content: `${state}`
-    content: `${
-      state.filter((v) => v.id === id) && <div>{state.details}</div>
-    }`,
-  });
   return (
     <Wrap style={{ height: '60vh' }}>
       <ReactFlow
@@ -126,8 +105,6 @@ function Roadmap({
           setLabel(`${n?.data?.label}`);
           setId(`${n?.id}`);
           setIsOpen(!isOpen);
-          console.log(n?.id);
-          console.log(state);
         }}
         fitView
         style={{

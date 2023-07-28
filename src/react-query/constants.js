@@ -3,4 +3,5 @@ export const queryKeys = {
   user: 'user',
   prompt: 'prompts',
   roadmaps: 'roadmaps',
+  roadmapById: 'roadmapById',
 };
