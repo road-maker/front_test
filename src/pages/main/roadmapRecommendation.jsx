@@ -78,8 +78,8 @@ export default function RoadmapRecommendation() {
       <Group position="center" mt={30} mb={50}>
         <h1>추천 로드맵</h1>
       </Group>
-      <Container maw={1400}>
-        <InfiniteScroll loadMore={fetchNextPage} hasMore={hasNextPage}>
+      <InfiniteScroll loadMore={fetchNextPage} hasMore={hasNextPage}>
+        <Container maw={1400}>
           <SimpleGrid
             cols={4}
             breakpoints={[
@@ -171,8 +171,8 @@ export default function RoadmapRecommendation() {
                   </Card>
                 ))}
           </SimpleGrid>
-        </InfiniteScroll>
-      </Container>
+        </Container>
+      </InfiniteScroll>
     </>
   );
 }
