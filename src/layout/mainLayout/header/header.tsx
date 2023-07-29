@@ -142,7 +142,7 @@ export function HeaderMegaMenu() {
                   onClick={() => {
                     clearStoredRoadmap();
                     clearStoredGpt();
-                    // navigate('/roadmap/editor');
+                    navigate('/roadmap/editor');
                   }}
                 >
                   빈 로드맵 만들기
