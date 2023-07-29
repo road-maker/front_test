@@ -115,7 +115,7 @@ export function HeaderMegaMenu() {
               height={50}
               onClick={() => navigate('..')}
             />
-            <InputWithButton ml="5rem" />
+            <SearchButton ml="5rem" />
           </Group>
 
           <Group className={classes.hiddenMobile}>
@@ -159,6 +159,9 @@ export function HeaderMegaMenu() {
               <>
                 <NavLink to="/users/mypage">{user?.nickname}님</NavLink>
                 <Button onClick={() => signout()}>Sign out</Button>
+                <Button onClick={() => navigate('/users/mypage')}>
+                  마이페이지
+                </Button>
               </>
             ) : (
               <Button onClick={() => navigate('/users/signin')}>Sign in</Button>
@@ -170,7 +173,7 @@ export function HeaderMegaMenu() {
   );
 }
 
-export function InputWithButton(props: TextInputProps) {
+function InputWithButton(props: TextInputProps) {
   const theme = useMantineTheme();
   const [prompt, onPromptChange, setPrompt] = useInput('');
   const { getprompt } = usePrompt();
@@ -193,6 +196,35 @@ export function InputWithButton(props: TextInputProps) {
             clearGptAnswer();
             onRequestPrompt({ prompt });
           }}
+          radius="xl"
+          color={theme.primaryColor}
+          variant="filled"
+        >
+          {theme.dir === 'ltr' ? (
+            <IconArrowRight size="1.1rem" stroke={1.5} />
+          ) : (
+            <IconArrowLeft size="1.1rem" stroke={1.5} />
+          )}
+        </ActionIcon>
+      }
+      rightSectionWidth={42}
+      placeholder="키워드를 입력하세요"
+      {...props}
+    />
+  );
+}
+
+export function SearchButton(props: TextInputProps) {
+  const theme = useMantineTheme();
+
+  return (
+    <TextInput
+      icon={<IconSearch size="1.1rem" stroke={1.5} />}
+      radius="md"
+      w="600px"
+      rightSection={
+        <ActionIcon
+          size={32}
           radius="xl"
           color={theme.primaryColor}
           variant="filled"

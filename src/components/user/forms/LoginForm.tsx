@@ -16,7 +16,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { ReactElement } from 'react';
-import { Form, useNavigate } from 'react-router-dom';
+import { Form, redirect, useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../../auth/useAuth';
 import { useInput } from '../../common/hooks/useInput';

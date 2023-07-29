@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import axios, { AxiosResponse } from 'axios';
+
+import { useNavigate } from 'react-router-dom';
+import { setStoredUser } from 'storage/user-storage';
 import { useNavigate } from 'react-router-dom';
 import { NewUser } from 'types/types';
 
@@ -119,6 +122,7 @@ export function useAuth(): UseAuth {
           // updateUser({data.tokenInfo});
           // alert('로그인 성공');
           navigate('/');
+          window.location.reload();
         }
         // updateUser({ username, tokenInfo });
         // if ('accessToken' in data) {
@@ -156,6 +160,7 @@ export function useAuth(): UseAuth {
   function signout(): void {
     // clear user from stored user data
     clearUser();
+    navigate('/');
     // eslint-disable-next-line no-alert
     alert(`logged out!`);
   }

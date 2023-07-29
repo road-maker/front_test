@@ -29,15 +29,17 @@ export interface RoadmapMetaData {
   id?: number;
   thumbnailUrl?: string;
   title?: string;
+  text?: string;
   recommendedExecutionTimeValue?: number;
   recommendedExecutionTimeUnit?: string;
-  text?: string;
   flowkey?: string;
+  userClicked?: boolean;
 }
 
 export type UserRoadmap = RoadmapMetaData & Roadmap;
 
 // export type User = MemberInfo & NewUser;
+
 
 export interface GptNode {
   id: string;

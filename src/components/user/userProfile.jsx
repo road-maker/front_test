@@ -42,7 +42,6 @@ export function UserProfile() {
     <Paper withBorder radius="xs" p="xl" mx={500} my={50}>
       <Group position="center">
         <Avatar color="cyan" radius="xl">
-          {/* {user.nickname.substring(0, 1)} */}
           {user?.member?.nickname.substring(0, 1)}
         </Avatar>
         <Group>
