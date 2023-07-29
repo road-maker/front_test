@@ -4,17 +4,17 @@ import {
   Group,
   Paper,
   Text,
-  TextInput,
+  // TextInput,
   Title,
 } from '@mantine/core';
 import { IconSettings } from '@tabler/icons-react';
-import { ReactElement, useCallback, useEffect, useState } from 'react';
+// import { ReactElement, useCallback, useEffect, useState } from 'react';
+import { ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getStoredUser } from 'storage/user-storage';
 
+// import { getStoredUser } from 'storage/user-storage';
 import { HeaderMegaMenu } from '../../layout/mainLayout/header/header';
-import { User } from '../../types/types';
-import { UseUserInfo } from './hooks/useProfile';
+// import { User } from '../../types/types';
 import { useUser } from './hooks/useUser';
 import UserRoadmap from './userRoadmap';
 
@@ -28,7 +28,7 @@ const mockdata = {
 
 export function UserProfile(): ReactElement {
   const navigate = useNavigate();
-  const { myInfo } = UseUserInfo();
+  // const { myInfo } = UseUserInfo();
   const { user } = useUser();
 
   const myinfo = (

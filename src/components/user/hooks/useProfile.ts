@@ -1,9 +1,10 @@
 import axios, { AxiosResponse } from 'axios';
-import { useQuery } from 'react-query';
+// import { useQuery } from 'react-query';
 
 import { axiosInstance } from '../../../axiosInstance';
-import { queryKeys } from '../../../react-query/constants';
-import type { MemberInfo, NewUser, User } from '../../../types/types';
+// import { queryKeys } from '../../../react-query/constants';
+// import type { MemberInfo, NewUser, User } from '../../../types/types';
+import type { NewUser } from '../../../types/types';
 import { useUser } from './useUser';
 
 interface useUserInfo {

@@ -95,7 +95,7 @@ const initialNodes = [
     id: '1',
     data: { label: 'test' },
     position: { x: 100, y: 100 },
-    type: 'custom',
+    type: 'default',
     style: {
       background: '#fff',
       border: '1px solid black',
@@ -107,7 +107,7 @@ const initialNodes = [
     id: '2',
     data: { label: 'Node 2' },
     position: { x: 100, y: 200 },
-    type: 'custom',
+    type: 'default',
     style: {
       background: '#fff',
       border: '1px solid black',
@@ -201,7 +201,7 @@ function Roadmap({
             data: {
               label: v?.content,
             },
-            type: 'custom',
+            type: 'default',
             position,
             style: {
               background: '#fff',
@@ -390,7 +390,7 @@ function Roadmap({
           label: ``,
           // label: '',
         },
-        // type: 'custom',
+        type: 'default',
         position,
         style: {
           background: '#fff',
@@ -422,7 +422,10 @@ function Roadmap({
       roadmap: {
         title: roadMapTitle,
         // title: '',
-        description: roadmapDescription,
+        // description: roadmapDescription,
+        description: roadMapTitle
+          ? `${roadMapTitle}에 관한 로드맵입니다.`
+          : `로드맵에 대한 설명이 없습니다.`,
         thumbnailUrl: '',
         recommendedExecutionTimeValue: roadmapRecommendedTime,
         tag: roadmapTag,
