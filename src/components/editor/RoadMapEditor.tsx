@@ -80,7 +80,7 @@ const initialNodes = [
     id: '1',
     data: { label: 'test' },
     position: { x: 100, y: 100 },
-    // type: 'custom',
+    type: 'custom',
     style: {
       background: '#fff',
       border: '1px solid black',
@@ -92,7 +92,7 @@ const initialNodes = [
     id: '2',
     data: { label: 'Node 2' },
     position: { x: 100, y: 200 },
-    // type: 'custom',
+    type: 'custom',
     style: {
       background: '#fff',
       border: '1px solid black',
@@ -103,7 +103,7 @@ const initialNodes = [
 ];
 
 const initialEdges = [
-  { id: 'e11a', source: '1', target: '1a', type: edgeType },
+  { id: 'e11a', source: '1', target: '1a', type: edgeType, animated: true },
 ];
 const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
 
@@ -173,7 +173,7 @@ function Roadmap({
             data: {
               label: v?.content,
             },
-            // type: 'custom',
+            type: 'custom',
             position,
             style: {
               background: '#fff',
@@ -195,7 +195,7 @@ function Roadmap({
               source: `${parseInt(v?.id, 10)}`,
               target: v.id,
               type: edgeType,
-              // animated: true,
+              animated: true,
             });
           }
           edgeSet.add(`e${parseInt(v?.id, 10)}${v?.id}`);
