@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 import jsonpatch from 'fast-json-patch';
 import { UseMutateFunction, useMutation, useQueryClient } from 'react-query';
 

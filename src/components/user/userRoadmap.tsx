@@ -8,7 +8,6 @@ import {
   PaperProps,
   Progress,
   rem,
-  SimpleGrid,
   Text,
   useMantineTheme,
 } from '@mantine/core';
@@ -121,7 +120,7 @@ export default function UserRoadmap(props: PaperProps) {
         className={classes.title}
         mt={5}
         onClick={() => {
-          navigate('/roadmap/editor/view');
+          navigate(`/roadmap/post/${article.id}`);
         }}
       >
         {article.title}
@@ -161,7 +160,7 @@ export default function UserRoadmap(props: PaperProps) {
         className={classes.title}
         mt={5}
         onClick={() => {
-          navigate('/roadmap/editor/view');
+          navigate(`/roadmap/post/${article.id}`);
         }}
       >
         {article.title}
