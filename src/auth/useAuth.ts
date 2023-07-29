@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import axios, { AxiosResponse } from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { setStoredUser } from 'storage/user-storage';
 import { NewUser } from 'types/types';
 
 import { axiosInstance } from '../axiosInstance';
@@ -109,7 +109,7 @@ export function useAuth(): UseAuth {
         //   nickname,
         //   inProcessRoadmapDto: [],
         // });
-        console.log('useAuth ServiceCall', data);
+        // console.log('useAuth ServiceCall', data);
         // localStorage.setItem('accessToken', JSON.stringify(data));
         localStorage.setItem('user', JSON.stringify(data));
         // console.log('useAuth', data);
