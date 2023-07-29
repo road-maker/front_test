@@ -422,7 +422,8 @@ function Roadmap({
       roadmap: {
         title: roadMapTitle,
         // title: '',
-        description: roadmapDescription,
+        // description: roadmapDescription,
+        description: `${roadMapTitle}에 대한 로드맵입니다.`,
         thumbnailUrl: '',
         recommendedExecutionTimeValue: roadmapRecommendedTime,
         tag: roadmapTag,
