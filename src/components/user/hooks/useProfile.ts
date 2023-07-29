@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import { useQuery } from 'react-query';
-import { getStoredUser } from 'storage/user-storage';
+import { getStoredUser, setStoredUser } from 'storage/user-storage';
 
 import { axiosInstance } from '../../../axiosInstance';
 import { queryKeys } from '../../../react-query/constants';
@@ -9,7 +9,7 @@ import { useUser } from './useUser';
 
 interface useUserInfo {
   myInfo: (member: NewUser) => Promise<void>;
-  // updateInfo: (memberInfo: User) => Promise<void>;
+  updateInfo: (memberInfo: NewUser) => Promise<void>;
 }
 
 type UserResponse = { member: NewUser };
@@ -68,13 +68,64 @@ export function UseUserInfo(): useUserInfo {
       }
     }
   }
+
+  async function infoEditCall(
+    urlEndpoint: string,
+    memberInfo: NewUser,
+  ): Promise<void> {
+    try {
+      const { data, status }: AxiosResponse<InfoResponseType> =
+        await axiosInstance({
+          url: urlEndpoint,
+          method: 'POST',
+          data: { ...memberInfo },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization:
+              'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QGdtYWlsLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2OTExMzQ5NzZ9.vjjUDXsjiF2d2nj8H8dTmByWlDZbLKZ3WGOZjLjNRso',
+          },
+        });
+      if (status === 201 || status === 200) {
+        console.log('updateUser', data);
+        if ('member' in data) {
+          const { member } = data;
+          updateUser({
+            memberId: member.memberId,
+            avatarUrl: member.avatarUrl,
+            baekjoonId: member.baekjoonId,
+            bio: member.bio,
+            blogUrl: member.blogUrl,
+            email: member.email,
+            exp: member.exp,
+            githubUrl: member.githubUrl,
+            level: member.level,
+            nickname: member.nickname,
+            inProcessRoadmapDto: member.inProcessRoadmapDto,
+          });
+        }
+        // navigate('/');
+      }
+    } catch (errorResponse) {
+      const status =
+        axios.isAxiosError(errorResponse) && errorResponse?.response?.status
+          ? errorResponse?.response?.status
+          : SERVER_ERROR;
+      if (status) {
+        // eslint-disable-next-line no-alert
+        alert(`${status}`);
+      }
+    }
+  }
   async function myInfo(member: NewUser): Promise<void> {
     console.log('members', member);
     infoCall(`/members/${member?.nickname}`, member);
   }
-
+  async function updateInfo(member: NewUser): Promise<void> {
+    console.log('updatemembers', member);
+    await infoEditCall(`/members/save-profile`, member);
+  }
   return {
     myInfo,
-    // updateInfo,
+    updateInfo,
   };
 }

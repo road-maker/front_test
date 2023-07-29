@@ -117,7 +117,7 @@ export default function RoadmapRecommendation() {
             >
               {article?.title}
             </Text>
-            <Text
+            {/* <Text
               color="dimmed"
               size="xs"
               transform="uppercase"
@@ -125,7 +125,7 @@ export default function RoadmapRecommendation() {
               mt="md"
             >
               권장 수행 시간 : {`#${article.recommendedExecutionTimeValue}`}
-            </Text>
+            </Text> */}
             <Group spacing={5}>
               <ActionIcon>
                 <IconHeart

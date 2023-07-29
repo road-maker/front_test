@@ -26,10 +26,11 @@ export interface Roadmap {
   id?: number;
   thumbnailUrl?: string;
   title?: string;
+  text?: string;
   recommendedExecutionTimeValue?: number;
   recommendedExecutionTimeUnit?: string;
-  text?: string;
   flowkey?: string;
+  userClicked?: boolean;
 }
 
 export interface GptNode {

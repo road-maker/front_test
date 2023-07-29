@@ -32,5 +32,5 @@
     "node_modules/@types",
     "src/setProxy.js",
     "src/pages/main/roadmapRecommendation.jsx"
-, "src/components/user/userProfile.jsx"  ]
+, "src/components/user/userProfile.jsx", "src/components/user/editUserProfile.jsx"  ]
 }
