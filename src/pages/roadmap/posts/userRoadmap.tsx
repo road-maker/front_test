@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable simple-import-sort/imports */
 // import { modals } from '@mantine/modals';
 import { Button, Center, Modal } from '@mantine/core';
@@ -81,7 +83,7 @@ function Roadmap({
       setNodes(currentRoadmap.currentRoadmap.nodes);
       setEdges(currentRoadmap.currentRoadmap.edges);
     }
-    console.log('currentRoadmap', currentRoadmap.currentRoadmap);
+    // console.log('currentRoadmap', currentRoadmap.currentRoadmap);
   }, []);
 
   const proOptions = { hideAttribution: true };
