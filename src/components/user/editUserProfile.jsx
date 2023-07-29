@@ -2,7 +2,6 @@ import { Box, Button, Group, Paper, TextInput } from '@mantine/core';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { usePatchUser } from '../common/hooks/usePatchUser';
 import { UseUserInfo } from './hooks/useProfile';
 import { useUser } from './hooks/useUser';
 

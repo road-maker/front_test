@@ -62,13 +62,16 @@ export function UseUserInfo(): useUserInfo {
         axios.isAxiosError(errorResponse) && errorResponse?.response?.status
           ? errorResponse?.response?.status
           : SERVER_ERROR;
-      if (status) {
+      if (status === 406) {
         // eslint-disable-next-line no-alert
+        alert('이전과 다른 닉네임을 설정해주세요!');
+      } else if (status === 409) {
+        alert('이미 존재하는 닉네임입니다.');
+      } else {
         alert(`${status}`);
       }
     }
   }
-
   async function infoEditCall(
     urlEndpoint: string,
     memberInfo: NewUser,
