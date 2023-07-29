@@ -1,5 +1,5 @@
 export interface Id {
-  id: number;
+  id?: number;
 }
 
 export interface Position {

@@ -92,6 +92,7 @@ export default function RoadMapEditor(): ReactElement {
       console.log(e.editor?.getHTML());
       setToggle(e.editor?.getHTML());
       console.log('e.editor', e.editor);
+      // eslint-disable-next-line array-callback-return
       state.map((item, idx) => {
         if (item.id !== id) return;
         // console.log('state.map, item ,label', label);
@@ -195,6 +196,7 @@ export default function RoadMapEditor(): ReactElement {
         </button>
       </div>
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toggle, id]);
 
   return (

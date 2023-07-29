@@ -4,22 +4,18 @@
 import { AxiosResponse } from 'axios';
 import { axiosInstance } from 'axiosInstance';
 import { useNavigate } from 'react-router-dom';
-import { getStoredUser } from 'storage/user-storage';
 
-import { NewRoadmap, Roadmap } from '../../editor/types';
+import { NewRoadmap, Roadmap } from '../../../editor/types';
 
 interface UseRoadmap {
-  getRoadmap: (id: number) => Promise<void>;
+  getRoadmapById: (id: number) => Promise<void>;
   getAllRoadmap: () => Promise<void>;
   postRoadmap: (NewRoadmap: NewRoadmap) => Promise<void>;
 }
 
 type ErrorResponse = { message: string };
-// type GetResponse = { message: string };
-// type GetResponse = { message: number };
 type GetResponse = { message: number };
 type RoadMapResponse = { roadmap: Array<Roadmap> } | GetResponse;
-// 이거 쓰는 중
 export function useRoadmap(): UseRoadmap {
   const SERVER_ERROR = 'error contacting server';
   const navigate = useNavigate();
@@ -37,13 +33,10 @@ export function useRoadmap(): UseRoadmap {
           headers: { 'Content-Type': 'application/json' },
         });
       if (status === 200) {
-        localStorage.setItem(
-          'roadmaps',
-          JSON.stringify({ data }), // 검색어에 대한 data 저장하도록
-        );
-        console.log(data);
-        // console.log('roadmaps', data);
-        // navigate(`/roadmaps`);
+        !id
+          ? localStorage.setItem('roadmaps', JSON.stringify({ data })) // 모든 로드맵 가져오기
+          : localStorage.setItem('roadmapById', JSON.stringify({ data })); // 특정 id의 로드맵 가져오기
+        // console.log('useRoadmap', data);
       }
     } catch (errorResponse) {
       console.log(`${SERVER_ERROR}!: ${errorResponse}`);
@@ -66,13 +59,13 @@ export function useRoadmap(): UseRoadmap {
           },
         });
       if (status === 200) {
-        console.log(data);
+        console.log('roadmapPostSeverCall', data);
       }
     } catch (errorResponse) {
       console.log(`${SERVER_ERROR}!: ${errorResponse}`);
     }
   }
-  async function getRoadmap(id: number): Promise<void> {
+  async function getRoadmapById(id: number): Promise<void> {
     roadmapServerCall(`/roadmaps/load-roadmap/${id}`, id);
   }
   async function getAllRoadmap(): Promise<void> {
@@ -82,5 +75,5 @@ export function useRoadmap(): UseRoadmap {
   async function postRoadmap(newRoadmap: NewRoadmap): Promise<void> {
     roadmapPostSeverCall(`/roadmaps`, newRoadmap);
   }
-  return { postRoadmap, getRoadmap, getAllRoadmap };
+  return { postRoadmap, getRoadmapById, getAllRoadmap };
 }

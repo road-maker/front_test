@@ -1,26 +1,29 @@
-/* eslint-disable no-restricted-globals */
+/* eslint-disable array-callback-return */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // eslint-disable-next-line simple-import-sort/imports
 import 'reactflow/dist/style.css';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import dagre from '@dagrejs/dagre';
-import { useDisclosure } from '@mantine/hooks';
 import {
-  Modal,
   Button,
+  Center,
   Group,
+  Image,
+  Modal,
+  MultiSelect,
+  Select,
+  SimpleGrid,
   Text,
   TextInput,
   Textarea,
-  Center,
-  Select,
-  MultiSelect,
-  Image,
-  SimpleGrid,
 } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
-import { useRoadmap } from 'components/roadmaps/hooks/useRoadmap';
-import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
+// import { useRoadmap } from 'components/roadmaps/hooks/useRoadmap'; // origin : initialMerge
+import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import { useRoadmap } from 'components/roadmaps/posts/hooks/useRoadmap';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ReactFlow, {
   Background,
@@ -35,7 +38,6 @@ import ReactFlow, {
 } from 'reactflow';
 import { getStoredRoadmap, setStoredRoadmap } from 'storage/roadmap-storage';
 import { styled } from 'styled-components';
-import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from '@mantine/dropzone';
 
 import { useInput } from '../common/hooks/useInput';
 import { RoadmapEdge, RoadmapNode } from './types';
@@ -93,7 +95,7 @@ const initialNodes = [
     id: '1',
     data: { label: 'test' },
     position: { x: 100, y: 100 },
-    // type: 'custom',
+    type: 'custom',
     style: {
       background: '#fff',
       border: '1px solid black',
@@ -105,7 +107,7 @@ const initialNodes = [
     id: '2',
     data: { label: 'Node 2' },
     position: { x: 100, y: 200 },
-    // type: 'custom',
+    type: 'custom',
     style: {
       background: '#fff',
       border: '1px solid black',
@@ -116,7 +118,7 @@ const initialNodes = [
 ];
 
 const initialEdges = [
-  { id: 'e11a', source: '1', target: '1a', type: edgeType },
+  { id: 'e11a', source: '1', target: '1a', type: edgeType, animated: true },
 ];
 const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
 
@@ -148,7 +150,7 @@ function Roadmap({
   const [edgeState, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [title, onChangeTitle, setTitle] = useInput('');
   const [desc, onChangeDesc, setDesc] = useInput('');
-  const openRef = useRef<() => void>(null);
+  // const openRef = useRef<() => void>(null);
 
   const [nodeBg, setNodeBg] = useState('#eee');
   const [nodeHidden, setNodeHidden] = useState(false);
@@ -189,7 +191,7 @@ function Roadmap({
 
       const { data } = prompt;
       const dataCopy = [...data];
-      console.log(dataCopy);
+      // console.log(dataCopy);
 
       // eslint-disable-next-line array-callback-return
       dataCopy.map((v) => {
@@ -199,7 +201,7 @@ function Roadmap({
             data: {
               label: v?.content,
             },
-            // type: 'custom',
+            type: 'custom',
             position,
             style: {
               background: '#fff',
@@ -221,7 +223,7 @@ function Roadmap({
               source: `${parseInt(v?.id, 10)}`,
               target: v.id,
               type: edgeType,
-              // animated: true,
+              animated: true,
             });
           }
           edgeSet.add(`e${parseInt(v?.id, 10)}${v?.id}`);
@@ -272,7 +274,7 @@ function Roadmap({
             label,
           };
         }
-        console.log(node);
+        // console.log(node);
 
         return node;
       }),
@@ -300,7 +302,7 @@ function Roadmap({
   // }, [label, nodeName]);
 
   useMemo(() => {
-    console.log('roadmapeditor props', editor);
+    // console.log('roadmapeditor props', editor);
     setNodes([...nodeState]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);
@@ -409,7 +411,7 @@ function Roadmap({
     nodesCopy.map((v) => {
       state.map((item) => {
         if (v.id === item.id) {
-          console.log('onPublish', item.details);
+          // console.log('onPublish', item.details);
           // eslint-disable-next-line no-param-reassign
           v.detailedContent = item.details;
         }
@@ -477,8 +479,8 @@ function Roadmap({
         if (node.id === label) {
           // when you update a simple type you can just update the value
           // eslint-disable-next-line no-param-reassign
-          // node.data.label = label;
-          console.log(node.data.label);
+          node.data.label = label;
+          // console.log(node.data.label);
         }
         return node;
       }),

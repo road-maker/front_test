@@ -1,3 +1,5 @@
+import { Roadmap } from 'components/editor/types';
+
 export interface TokenInfo {
   accessToken?: string;
   grantType?: string;
@@ -20,8 +22,9 @@ export interface NewUser {
   inProcessRoadmapDto: [];
 }
 
+// export type User = MemberInfo & NewUser; // origin intialmerge
 export type User = NewUser;
-export interface Roadmap {
+export interface RoadmapMetaData {
   // data?: unknown;
   id?: number;
   thumbnailUrl?: string;
@@ -31,6 +34,10 @@ export interface Roadmap {
   text?: string;
   flowkey?: string;
 }
+
+export type UserRoadmap = RoadmapMetaData & Roadmap;
+
+export type User = MemberInfo & NewUser;
 
 export interface GptNode {
   id: string;
