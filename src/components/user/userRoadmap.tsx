@@ -229,6 +229,31 @@ export default function UserRoadmap(props: PaperProps) {
           {complete}
         </Carousel>
       </Paper>
+      <Group position="center" mt={30}>
+        <h2>내가 만든 로드맵</h2>
+      </Group>
+      <Paper
+        radius="md"
+        px={60}
+        py={30}
+        mt={40}
+        m="auto"
+        withBorder
+        {...props}
+        w={1000}
+        h={280}
+      >
+        <Carousel
+          slideSize="100%"
+          slideGap="33.3333%"
+          loop
+          // breakpoints={[{ maxWidth: 'xl', slideSize: '100%', slideGap: 10 }]
+          align="start"
+          slidesToScroll={mobile ? 1 : 2}
+        >
+          {cards}
+        </Carousel>
+      </Paper>
     </>
   );
 }

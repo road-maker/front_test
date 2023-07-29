@@ -9,8 +9,6 @@ export interface NewUser {
   text?: string;
   password?: string;
   email?: string;
-}
-export interface MemberInfo {
   memberId?: number;
   avatarUrl?: string | null;
   baekjoonId?: string | null;
@@ -22,7 +20,7 @@ export interface MemberInfo {
   inProcessRoadmapDto: [];
 }
 
-export type User = MemberInfo & NewUser;
+export type User = NewUser;
 export interface Roadmap {
   // data?: unknown;
   id?: number;
