@@ -34,5 +34,5 @@
     "src/pages/main/roadmapRecommendation.jsx",
     "src/components/editor/ResizableNodeSelected.jsx",
     "src/pages/roadmap/posts/postedRoadmap.tsx"
-  ]
+, "src/components/user/userProfile.jsx"  ]
 }

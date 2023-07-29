@@ -11,8 +11,6 @@ export interface NewUser {
   text?: string;
   password?: string;
   email?: string;
-}
-export interface MemberInfo {
   memberId?: number;
   avatarUrl?: string | null;
   baekjoonId?: string | null;
@@ -23,7 +21,9 @@ export interface MemberInfo {
   level?: 0;
   inProcessRoadmapDto: [];
 }
+
 // export type User = MemberInfo & NewUser; // origin intialmerge
+export type User = NewUser;
 export interface RoadmapMetaData {
   // data?: unknown;
   id?: number;
