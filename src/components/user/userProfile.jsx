@@ -9,12 +9,13 @@ import {
 } from '@mantine/core';
 import { IconSettings } from '@tabler/icons-react';
 // import { ReactElement, useCallback, useEffect, useState } from 'react';
-import { ReactElement } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // import { getStoredUser } from 'storage/user-storage';
 import { HeaderMegaMenu } from '../../layout/mainLayout/header/header';
 // import { User } from '../../types/types';
+import { UseUserInfo } from './hooks/useProfile';
 import { useUser } from './hooks/useUser';
 import UserRoadmap from './userRoadmap';
 
@@ -29,12 +30,12 @@ import UserRoadmap from './userRoadmap';
 export function UserProfile() {
   // export function UserProfile(): ReactElement {
   const navigate = useNavigate();
-  // const { myInfo } = UseUserInfo();
+  const { myInfo } = UseUserInfo();
   const { user } = useUser();
 
   useEffect(() => {
     myInfo(user?.member);
-    console.log('user', user?.member?.nickname);
+    // console.log('user', user?.member?.nickname);
   }, [myInfo, user]);
 
   const myinfo = (

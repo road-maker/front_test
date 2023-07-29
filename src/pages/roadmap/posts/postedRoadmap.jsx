@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Avatar,
   Button,
@@ -27,11 +29,11 @@ import { Underline } from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useInput } from 'components/common/hooks/useInput';
-import { useRoadmap } from 'components/roadmaps/posts/hooks/useRoadmap';
+import { useRoadmap } from 'components/roadmaps/editor/hooks/useRoadmap';
 import { useRoadmapData } from 'components/roadmaps/posts/hooks/useRoadMapResponse';
-import MainLayout from 'layout/mainLayout';
+import { HeaderMegaMenu } from 'layout/mainLayout/header/header';
 import { useEffect, useMemo, useState } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import {
   Background,
   Controls,
@@ -90,6 +92,7 @@ const useStyles = createStyles((theme) => ({
 function PostedRoadmap() {
   const { classes, theme } = useStyles();
   const { pathname } = useLocation();
+  // eslint-disable-next-line no-unused-vars
   const [currentPage, setCurrentPage] = useState(
     pathname.slice(pathname.lastIndexOf('/') + 1),
   );
@@ -107,11 +110,13 @@ function PostedRoadmap() {
       );
     }
   }, []);
-
+  // eslint-disable-next-line no-unused-vars
   const [label, onChangeLabel, setLabel] = useInput('');
+  // eslint-disable-next-line no-unused-vars
   const [id, onChangeId, setId] = useInput('');
+  // eslint-disable-next-line no-unused-vars
   const [toggle, onChangeToggle, setToggle] = useInput('');
-  const [search] = useSearchParams();
+  // const [search] = useSearchParams();
   // const [state, setState] = useState([
   //   { id: '1', details: `<div>자바스크립트</div>` },
   //   { id: '2', details: `<div>'함수 개념과 활용법'</div>` },
@@ -120,7 +125,7 @@ function PostedRoadmap() {
   // ]);
   const [state, setState] = useState([]);
 
-  const [details, setDetails] = useState([]);
+  // const [details, setDetails] = useState([]);
 
   const editor = useEditor({
     extensions: [
@@ -149,9 +154,9 @@ function PostedRoadmap() {
     },
   });
 
-  useEffect(() => {
-    console.log('currentRoadmap', currentRoadmap);
-  }, []);
+  // useEffect(() => {
+  //   console.log('currentRoadmap', currentRoadmap);
+  // }, []);
 
   useMemo(() => {
     const filt = state.filter((v) => v.id === id);
@@ -160,10 +165,11 @@ function PostedRoadmap() {
       editor.commands.setContent(filt[0]?.details || '');
     }
   }, [state, id, setToggle, label, editor]);
-
+  // eslint-disable-next-line no-unused-vars
   const [nodeState, setNodes, onNodesChange] = useNodesState(
     currentRoadmap?.nodes,
   );
+  // eslint-disable-next-line no-unused-vars
   const [edgeState, setEdges, onEdgesChange] = useEdgesState(
     currentRoadmap?.edges,
   );
@@ -178,7 +184,8 @@ function PostedRoadmap() {
 
   const proOptions = { hideAttribution: true };
   return (
-    <MainLayout>
+    <>
+      <HeaderMegaMenu />
       <Container px="xs" maw={1000}>
         <Title className={classes.title} mt="sm">
           {currentRoadmap?.title}
@@ -189,7 +196,8 @@ function PostedRoadmap() {
           </Avatar>
           {currentRoadmap?.ownerNickname || 'no nickname'}
         </Group>
-        <Button ml={800} onClick={() => joinRoadmap(10)}>
+        {/* <Button ml={800} onClick={() => joinRoadmap(parseInt(currentPage, 10))}> */}
+        <Button ml={800} onClick={() => joinRoadmap(2)}>
           참여하기
         </Button>
         <Text c="dimmed" className={classes.description} mt="md">
@@ -346,7 +354,7 @@ function PostedRoadmap() {
         </EditorWrap>
         <CommentPage />
       </Container>
-    </MainLayout>
+    </>
   );
 }
 const Wrap = styled.div`

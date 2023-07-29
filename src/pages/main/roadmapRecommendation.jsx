@@ -54,6 +54,13 @@ export default function RoadmapRecommendation() {
   // const mobile = useMediaQuery(`(max-width: ${themes.breakpoints.sm})`);
   const { getRoadmapById, getAllRoadmap } = useRoadmap();
   const { roadmaps } = useRoadmapData();
+  // const { myInfo } = UseUserInfo();
+  // const { user } = useUser();
+
+  // useEffect(() => {
+  //   myInfo(user?.member);
+  //   // console.log('user', user?.member?.nickname);
+  // }, [myInfo, user]);
 
   useEffect(() => {
     if (currentPage) {
@@ -61,6 +68,8 @@ export default function RoadmapRecommendation() {
         getRoadmapById(currentPage),
       );
     }
+    // }, [currentPage, queryClient]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, queryClient]);
 
   useEffect(() => {
