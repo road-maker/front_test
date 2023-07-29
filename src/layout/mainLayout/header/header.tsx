@@ -154,6 +154,11 @@ export function HeaderMegaMenu() {
                 로드맵 생성하기
               </Button>
             </Group>
+            <Group position="center">
+              <Button onClick={open} variant="light" color="indigo">
+                로드맵 생성하기
+              </Button>
+            </Group>
             {/* {user && 'accessToken' in user ? ( */}
             {user && 'tokenInfo' in user ? (
               <>

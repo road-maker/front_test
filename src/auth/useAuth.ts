@@ -38,6 +38,7 @@ export function useAuth(): UseAuth {
         });
       if (status === 201 || status === 200) {
         updateUser({
+          memberId: 0,
           avatarUrl: '',
           baekjoonId: '',
           bio: '',
@@ -47,6 +48,7 @@ export function useAuth(): UseAuth {
           githubUrl: '',
           level: 0,
           nickname,
+          inProcessRoadmapDto: [],
         });
         // console.log('useAuth ServiceCall', data);
         // navigate('/');
@@ -60,10 +62,10 @@ export function useAuth(): UseAuth {
       // update stored user data
       // updateUser(data.user);
 
-      if ('user' in data) {
-        // update stored user data
-        updateUser(data.user);
-      }
+      // if ('user' in data) {
+      //   // update stored user data
+      //   updateUser(data.user);
+      // }
     } catch (errorResponse) {
       const status =
         axios.isAxiosError(errorResponse) && errorResponse?.response?.status

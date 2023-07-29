@@ -16,35 +16,35 @@ import { useNavigate } from 'react-router-dom';
 
 const mockdata = [
   {
-    id: 22,
+    id: 21,
     title: 'Javascript 정복하기',
     image: 'https://t1.daumcdn.net/cfile/tistory/21221F4258E793521D',
     date: '마지막 달성: 8일 전',
     process: 78,
   },
   {
-    id: 23,
+    id: 25,
     title: 'Javascript 정복하기',
     image: 'https://t1.daumcdn.net/cfile/tistory/21221F4258E793521D',
     date: '마지막 달성: 8일 전',
     process: 78,
   },
   {
-    id: 24,
+    id: 26,
     title: 'Javascript 정복하기',
     image: 'https://t1.daumcdn.net/cfile/tistory/21221F4258E793521D',
     date: '마지막 달성: 8일 전',
     process: 78,
   },
   {
-    id: 24,
+    id: 27,
     title: 'Javascript 정복하기',
     image: 'https://t1.daumcdn.net/cfile/tistory/21221F4258E793521D',
     date: '마지막 달성: 8일 전',
     process: 78,
   },
   {
-    id: 24,
+    id: 28,
     title: 'Javascript 정복하기',
     image: 'https://t1.daumcdn.net/cfile/tistory/21221F4258E793521D',
     date: '마지막 달성: 8일 전',

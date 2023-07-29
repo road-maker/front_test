@@ -31,6 +31,12 @@ export default function RoadMapEditor(): ReactElement {
     { id: '1', details: '' },
     { id: '2', details: '' },
   ]);
+  const [roadmapDescription] = useState('');
+  const [roadmapDifficulty] = useState('');
+  const [roadmapRecommendedTime] = useState('');
+  const [roadmapImage] = useState('');
+  const [roadmapTag] = useState('');
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [roadMapTitle, onRoadMapTitleChange, setRoadMapTitle] = useInput(
     // search.get('title') || '',
@@ -223,6 +229,11 @@ export default function RoadMapEditor(): ReactElement {
               onChangeLabel={onChangeLabel}
               setLabel={setLabel}
               setState={setState}
+              roadmapImage={roadmapImage}
+              roadmapDescription={roadmapDescription}
+              roadmapRecommendedTime={roadmapRecommendedTime}
+              roadmapTag={roadmapTag}
+              roadmapDifficulty={roadmapDifficulty}
               // onChange={onChangeHandler}
               // ydoc={ydoc}
               // ytext={ytext}

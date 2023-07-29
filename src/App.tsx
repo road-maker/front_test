@@ -33,6 +33,7 @@ function App(): ReactElement {
           path: 'roadmap/editor',
           element: <RoadMapEditor />,
         },
+        // { path: '/roadmap/post/:id', element: <PostedRoadmap /> }, // origin initialMerge
         { path: '/roadmap/post/:Id', element: <PostedRoadmap /> },
         {
           path: 'users/mypage',
