@@ -33,10 +33,9 @@ export function useRoadmap(): UseRoadmap {
           headers: { 'Content-Type': 'application/json' },
         });
       if (status === 200) {
-        localStorage.setItem(
-          'roadmaps',
-          JSON.stringify({ data }), // 검색어에 대한 data 저장하도록
-        );
+        !id
+          ? localStorage.setItem('roadmaps', JSON.stringify({ data })) // 모든 로드맵 가져오기
+          : localStorage.setItem('roadmapById', JSON.stringify({ data })); // 특정 id의 로드맵 가져오기
         // console.log('useRoadmap', data);
       }
     } catch (errorResponse) {
@@ -60,7 +59,7 @@ export function useRoadmap(): UseRoadmap {
           },
         });
       if (status === 200) {
-        console.log(data);
+        console.log('roadmapPostSeverCall', data);
       }
     } catch (errorResponse) {
       console.log(`${SERVER_ERROR}!: ${errorResponse}`);

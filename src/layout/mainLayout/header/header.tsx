@@ -142,7 +142,7 @@ export function HeaderMegaMenu() {
                   onClick={() => {
                     clearStoredRoadmap();
                     clearStoredGpt();
-                    // navigate('/roadmap/editor');
+                    navigate('/roadmap/editor');
                   }}
                 >
                   빈 로드맵 만들기
@@ -157,7 +157,7 @@ export function HeaderMegaMenu() {
             {/* {user && 'accessToken' in user ? ( */}
             {user && 'tokenInfo' in user ? (
               <>
-                <NavLink to="/">{user.email}</NavLink>
+                <NavLink to="/users/mypage">{user?.nickname}님</NavLink>
                 <Button onClick={() => signout()}>Sign out</Button>
               </>
             ) : (

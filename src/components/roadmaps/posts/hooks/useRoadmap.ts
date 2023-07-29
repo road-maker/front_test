@@ -11,6 +11,8 @@ interface UseRoadmap {
   getRoadmapById: (id: number) => Promise<void>;
   getAllRoadmap: () => Promise<void>;
   postRoadmap: (NewRoadmap: NewRoadmap) => Promise<void>;
+  joinRoadmap: (id: number) => Promise<void>;
+  updateRoadmapProgress: (id: number) => Promise<void>;
 }
 
 type ErrorResponse = { message: string };
@@ -33,10 +35,15 @@ export function useRoadmap(): UseRoadmap {
           headers: { 'Content-Type': 'application/json' },
         });
       if (status === 200) {
-        localStorage.setItem(
-          'roadmaps',
-          JSON.stringify({ data }), // 검색어에 대한 data 저장하도록
-        );
+        !id
+          ? localStorage.setItem(
+              'roadmaps',
+              JSON.stringify({ data }), // 전체 로드맵 list 저장
+            )
+          : localStorage.setItem(
+              'roadmapById',
+              JSON.stringify({ data }), // id에 대한 roadmap 저장
+            );
       }
     } catch (errorResponse) {
       console.log(`${SERVER_ERROR}!: ${errorResponse}`);
@@ -65,6 +72,53 @@ export function useRoadmap(): UseRoadmap {
       console.log(`${SERVER_ERROR}!: ${errorResponse}`);
     }
   }
+  async function roadmapJoinSeverCall(
+    urlEndpoint: string,
+    id: number,
+  ): Promise<void> {
+    try {
+      const { data, status }: AxiosResponse<RoadMapResponse> =
+        await axiosInstance({
+          url: urlEndpoint,
+          method: 'POST',
+          data: { id },
+          headers: {
+            'Content-Type': 'application/json',
+            // Authorization: `Bearer ${getStoredUser()}`,
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaWdudXBAbmF2ZXIuY29tIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTY5MDk3Nzk2Mn0.5XZmXtA2arG_VsEJN5SwQzBj5P2LHFMvdw4Ha8JZVTY`,
+          },
+        });
+      if (status === 200) {
+        console.log(data);
+      }
+    } catch (errorResponse) {
+      console.log(`${SERVER_ERROR}!: ${errorResponse}`);
+    }
+  }
+  async function roadmapProgressSeverCall(
+    urlEndpoint: string,
+    id: number,
+  ): Promise<void> {
+    try {
+      const { status }: AxiosResponse<RoadMapResponse> = await axiosInstance({
+        url: urlEndpoint,
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          // Authorization: `Bearer ${getStoredUser()}`,
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaWdudXBAbmF2ZXIuY29tIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTY5MDk3Nzk2Mn0.5XZmXtA2arG_VsEJN5SwQzBj5P2LHFMvdw4Ha8JZVTY`,
+        },
+      });
+      if (status === 200) {
+        console.log('성고적으로 업뎃');
+      }
+      if (status === 403) {
+        console.log('권한이 없습니다.');
+      }
+    } catch (errorResponse) {
+      console.log(`${SERVER_ERROR}!: ${errorResponse}`);
+    }
+  }
   async function getRoadmapById(id: number): Promise<void> {
     roadmapServerCall(`/roadmaps/load-roadmap/${id}`, id);
   }
@@ -75,5 +129,18 @@ export function useRoadmap(): UseRoadmap {
   async function postRoadmap(newRoadmap: NewRoadmap): Promise<void> {
     roadmapPostSeverCall(`/roadmaps`, newRoadmap);
   }
-  return { postRoadmap, getRoadmapById, getAllRoadmap };
+
+  async function joinRoadmap(id: number): Promise<void> {
+    roadmapJoinSeverCall(`/roadmaps/${id}/join`, id);
+  }
+  async function updateRoadmapProgress(id: number): Promise<void> {
+    roadmapJoinSeverCall(`/roadmaps/in-progress-nodes/${id}/done`, id);
+  }
+  return {
+    postRoadmap,
+    getRoadmapById,
+    getAllRoadmap,
+    joinRoadmap,
+    updateRoadmapProgress,
+  };
 }

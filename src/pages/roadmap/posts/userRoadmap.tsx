@@ -1,14 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable simple-import-sort/imports */
 // import { modals } from '@mantine/modals';
 import { Button, Center, Modal } from '@mantine/core';
 import { EditorContent } from '@tiptap/react';
-import { useCallback, useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReactFlow, {
   Background,
   Controls,
   MiniMap,
   ReactFlowProvider,
-  addEdge,
   useEdgesState,
   useNodesState,
 } from 'reactflow';
@@ -60,9 +61,13 @@ function Roadmap({
   state,
   onChangeId,
   setId,
+  currentRoadmap,
 }) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [nodeState, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [nodeState, setNodes, onNodesChange] = useNodesState(
+    // currentRoadmap.nodes,
+    [],
+  );
   const [edgeState, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [isSelectable] = useState(true);
   const [isDraggable] = useState(false);
@@ -73,17 +78,18 @@ function Roadmap({
   const [panOnDrag] = useState(true); // 마우스로 이동
   const [isOpen, setIsOpen] = useState(false);
 
-  const onConnect = useCallback(
-    (params) => {
-      setEdges((els) => addEdge(params, els));
-    },
-    [setEdges],
-  );
+  useEffect(() => {
+    if ('currentRoadmap' in currentRoadmap) {
+      setNodes(currentRoadmap.currentRoadmap.nodes);
+      setEdges(currentRoadmap.currentRoadmap.edges);
+    }
+    // console.log('currentRoadmap', currentRoadmap.currentRoadmap);
+  }, []);
+
   const proOptions = { hideAttribution: true };
-  // const [opened, { open, close }] = useDisclosure(false);
 
   return (
-    <Wrap style={{ height: '60vh' }}>
+    <Wrap style={{ height: '70vh' }}>
       <ReactFlow
         nodes={nodeState}
         edges={edgeState}
@@ -96,7 +102,6 @@ function Roadmap({
         zoomOnScroll={zoomOnScroll}
         panOnScroll={panOnScroll}
         zoomOnDoubleClick={zoomOnDoubleClick}
-        onConnect={onConnect}
         panOnDrag={panOnDrag}
         attributionPosition="top-right"
         minZoom={0.2}
@@ -156,6 +161,7 @@ const Wrap = styled.div`
 export default function InteractionFlow({
   editor,
   label,
+  currentRoadmap,
   onChangeLabel,
   setLabel,
   id,
@@ -176,6 +182,7 @@ export default function InteractionFlow({
         onChangeId={onChangeId}
         id={id}
         setId={setId}
+        currentRoadmap={currentRoadmap}
       />
     </ReactFlowProvider>
   );

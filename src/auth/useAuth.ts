@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { setStoredUser } from 'storage/user-storage';
 import { NewUser } from 'types/types';
 
 import { axiosInstance } from '../axiosInstance';
@@ -24,7 +25,7 @@ export function useAuth(): UseAuth {
     urlEndpoint: string,
     email: string,
     password: string,
-    nickname?: string,
+    nickname: string,
   ): Promise<void> {
     try {
       const { data, status }: AxiosResponse<AuthResponseType> =
@@ -38,6 +39,7 @@ export function useAuth(): UseAuth {
         });
       if (status === 201 || status === 200) {
         updateUser({
+          memberId: 0,
           avatarUrl: '',
           baekjoonId: '',
           bio: '',
@@ -47,6 +49,7 @@ export function useAuth(): UseAuth {
           githubUrl: '',
           level: 0,
           nickname,
+          inProcessRoadmapDto: [],
         });
         // console.log('useAuth ServiceCall', data);
         // navigate('/');
@@ -60,10 +63,10 @@ export function useAuth(): UseAuth {
       // update stored user data
       // updateUser(data.user);
 
-      if ('user' in data) {
-        // update stored user data
-        updateUser(data.user);
-      }
+      // if ('user' in data) {
+      //   // update stored user data
+      //   updateUser(data.user);
+      // }
     } catch (errorResponse) {
       const status =
         axios.isAxiosError(errorResponse) && errorResponse?.response?.status
@@ -93,9 +96,22 @@ export function useAuth(): UseAuth {
       if (status === 201 || status === 200) {
         // const { accessToken } = data.user;
         // updateUser(data); // 이 부분 타입 맞추기
-
+        // updateUser({
+        //   memberId: 0,
+        //   avatarUrl: '',
+        //   baekjoonId: '',
+        //   bio: '',
+        //   blogUrl: '',
+        //   email,
+        //   exp: 0,
+        //   githubUrl: '',
+        //   level: 0,
+        //   nickname,
+        //   inProcessRoadmapDto: [],
+        // });
+        console.log('useAuth ServiceCall', data);
         // localStorage.setItem('accessToken', JSON.stringify(data));
-        // localStorage.setItem('user', JSON.stringify(data));
+        localStorage.setItem('user', JSON.stringify(data));
         // console.log('useAuth', data);
         // navigate('/');
         if ('tokenInfo' in data) {
