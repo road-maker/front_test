@@ -18,6 +18,7 @@ import { IconArrowLeft, IconArrowRight, IconSearch } from '@tabler/icons-react';
 import { useInput } from 'components/common/hooks/useInput';
 import { usePrompt } from 'components/prompts/hooks/usePrompt';
 import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
+import { queryClient } from 'react-query/queryClient';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { clearStoredGpt } from 'storage/gpt-storage';
 import { clearStoredRoadmap } from 'storage/roadmap-storage';
@@ -154,11 +155,6 @@ export function HeaderMegaMenu() {
                 로드맵 생성하기
               </Button>
             </Group>
-            <Group position="center">
-              <Button onClick={open} variant="light" color="indigo">
-                로드맵 생성하기
-              </Button>
-            </Group>
             {/* {user && 'accessToken' in user ? ( */}
             {user && 'tokenInfo' in user ? (
               <>
@@ -179,10 +175,31 @@ export function InputWithButton(props: TextInputProps) {
   const theme = useMantineTheme();
   const [prompt, onPromptChange, setPrompt] = useInput('');
   const { getprompt } = usePrompt();
-  const { clearGptAnswer } = usePromptAnswer();
+  const { clearGptAnswer, updateGptAnswer } = usePromptAnswer();
   const onRequestPrompt = (p) => {
-    getprompt(p.prompt);
+    // getprompt(p.prompt);
+    // queryClient.prefetchQuery(['roadmapById', currentPage], () =>
+    // queryClient.prefetchQuery(['recent_gpt_search', p.prompt], () =>
+    // queryClient.prefetchQuery('recent_gpt_search', () => getprompt(p.prompt));
+    // queryClient.prefetchQuery('prompts', () => getprompt(p.prompt));
+    queryClient.prefetchQuery(['prompts', p.prompt], () => {
+      getprompt(p.prompt);
+      updateGptAnswer(JSON.parse(localStorage.getItem('recent_gpt_search')));
+    });
+    // JSON.parse(localStorage.getItem(`['prompts', ${p.prompt}]`)),
+    // updateGptAnswer(JSON.parse(localStorage.getItem('recent_gpt_search')));
+    // ['prompts', p.prompt],
+    // localStorage.getItem(`['prompts', ${p.prompt}]`),
+    // localStorage.getItem(`prompts`),
   };
+
+  // useEffect(() => {
+  //   if (currentPage) {
+  //     queryClient.prefetchQuery(['roadmapById', currentPage], () =>
+  //       getRoadmapById(currentPage),
+  //     );
+  //   }
+  // }, [currentPage, queryClient]);
   return (
     <TextInput
       value={prompt}
@@ -195,7 +212,7 @@ export function InputWithButton(props: TextInputProps) {
           size={32}
           onClick={() => {
             setPrompt(prompt);
-            clearGptAnswer();
+            // clearGptAnswer();
             onRequestPrompt({ prompt });
           }}
           radius="xl"

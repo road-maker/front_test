@@ -66,7 +66,7 @@ export default function RoadmapRecommendation() {
   useEffect(() => {
     getAllRoadmap();
 
-    // if (roadmaps !== undefined) { // origin intialmerge
+    // if (roadmaps !== undefined) { // @Seo1n origin intialmerge
     if (roadmaps && 'data' in roadmaps) {
       setAllRoadmapData(roadmaps?.data);
     }
