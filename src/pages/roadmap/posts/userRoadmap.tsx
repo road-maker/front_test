@@ -81,29 +81,10 @@ function Roadmap({
       setNodes(currentRoadmap.currentRoadmap.nodes);
       setEdges(currentRoadmap.currentRoadmap.edges);
     }
-    console.log(currentRoadmap.currentRoadmap);
-    console.log(nodeState);
-    console.log(edgeState);
+    console.log('currentRoadmap', currentRoadmap.currentRoadmap);
   }, []);
 
-  // const onConnect = useCallback(
-  //   (params) => {
-  //     setEdges((els) => addEdge(params, els));
-  //   },
-  //   [setEdges],
-  // );
   const proOptions = { hideAttribution: true };
-  // const [opened, { open, close }] = useDisclosure(false);
-
-  // useEffect(() => {
-  //   console.log('postNodes', postNodes);
-  //   if ('postNodes' in postNodes) {
-  //     setNodes(postNodes.postNodes);
-  //   }
-  //   if ('postEdges' in postNodes) {
-  //     setEdges(postNodes.postEdges);
-  //   }
-  // }, [postNodes]);
 
   return (
     <Wrap style={{ height: '70vh' }}>
@@ -119,7 +100,6 @@ function Roadmap({
         zoomOnScroll={zoomOnScroll}
         panOnScroll={panOnScroll}
         zoomOnDoubleClick={zoomOnDoubleClick}
-        // onConnect={onConnect}
         panOnDrag={panOnDrag}
         attributionPosition="top-right"
         minZoom={0.2}
@@ -201,9 +181,6 @@ export default function InteractionFlow({
         id={id}
         setId={setId}
         currentRoadmap={currentRoadmap}
-        // postNodes={postNodes}
-        // postEdges={postEdges}
-        // postViewport={postViewport}
       />
     </ReactFlowProvider>
   );

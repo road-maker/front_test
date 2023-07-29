@@ -2,9 +2,11 @@ import {
   Avatar,
   Button,
   Card,
+  Center,
   Container,
   createStyles,
   Group,
+  Modal,
   rem,
   SimpleGrid,
   Text,
@@ -16,13 +18,32 @@ import {
   IconStars,
   IconUser,
 } from '@tabler/icons-react';
+import { Highlight } from '@tiptap/extension-highlight';
+import { Link } from '@tiptap/extension-link';
+import { Subscript } from '@tiptap/extension-subscript';
+import { Superscript } from '@tiptap/extension-superscript';
+import { TextAlign } from '@tiptap/extension-text-align';
+import { Underline } from '@tiptap/extension-underline';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import { useInput } from 'components/common/hooks/useInput';
+import { useRoadmap } from 'components/roadmaps/posts/hooks/useRoadmap';
 import { useRoadmapData } from 'components/roadmaps/posts/hooks/useRoadMapResponse';
 import MainLayout from 'layout/mainLayout';
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { useLocation, useSearchParams } from 'react-router-dom';
+import {
+  Background,
+  Controls,
+  MiniMap,
+  ReactFlow,
+  ReactFlowProvider,
+  useEdgesState,
+  useNodesState,
+} from 'reactflow';
+import { styled } from 'styled-components';
 
 import CommentPage from '../../main/commentPage';
-import CompleteRoadmap from './completeRoadmap';
 
 const useStyles = createStyles((theme) => ({
   title: {
@@ -76,56 +97,86 @@ function PostedRoadmap() {
   const { roadmapById } = useRoadmapData(
     pathname.slice(pathname.lastIndexOf('/') + 1),
   );
+  const { joinRoadmap } = useRoadmap();
   const [currentRoadmap, setCurrentRoadmap] = useState(roadmapById?.data || []);
-  // const [currentNodes, setCurrentNodes] = useState(
-  //   roadmapById?.data?.edges || [],
-  // );
-  // const [currentEdges, setCurrentEdges] = useState(
-  //   roadmapById?.data?.nodes || [],
-  // );
-  // const [currentViewport, setCurrentViewport] = useState(
-  //   roadmapById?.data?.viewport || [],
-  // );
 
   useEffect(() => {
     if (currentPage !== roadmapById?.data?.roadmap?.id) {
       setCurrentRoadmap(
         JSON.parse(localStorage.getItem('roadmapById'))?.data?.roadmap,
       );
-
-      // setCurrentNodes(
-      //   JSON.parse(localStorage.getItem('roadmapById'))?.data?.roadmap?.nodes,
-      // );
-      // setCurrentEdges(
-      //   JSON.parse(localStorage.getItem('roadmapById'))?.data?.roadmap?.edges,
-      // );
-      // setCurrentViewport(
-      //   JSON.parse(localStorage.getItem('roadmapById'))?.data?.roadmap
-      //     ?.viewport,
-      // );
-      // console.log('currentRoadmap', currentRoadmap);
     }
   }, []);
 
-  // const features = data.map((feature) => (
-  //   <Card
-  //     key={feature.title}
-  //     mb={30}
-  //     shadow="md"
-  //     radius="md"
-  //     className={classes.card}
-  //     padding="xl"
-  //   >
-  //     <feature.icon size={rem(50)} stroke={2} color={theme.fn.primaryColor()} />
-  //     <Text fz="lg" fw={500} className={classes.cardTitle} mt="md" c="dimmed">
-  //       {feature.title}
-  //     </Text>
-  //     <Text fz="sm" c="dimmed" mt="sm">
-  //       {feature.description}
-  //     </Text>
-  //   </Card>
-  // ));
+  const [label, onChangeLabel, setLabel] = useInput('');
+  const [id, onChangeId, setId] = useInput('');
+  const [toggle, onChangeToggle, setToggle] = useInput('');
+  const [search] = useSearchParams();
+  // const [state, setState] = useState([
+  //   { id: '1', details: `<div>자바스크립트</div>` },
+  //   { id: '2', details: `<div>'함수 개념과 활용법'</div>` },
+  //   { id: '2b', details: `<div>'자바스크립트 상세'</div>` },
+  //   { id: '2c', details: `<div>'조건문과 반복문 상세'</div>` },
+  // ]);
+  const [state, setState] = useState([]);
 
+  const [details, setDetails] = useState([]);
+
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Underline,
+      Link,
+      Superscript,
+      Subscript,
+      Highlight,
+      TextAlign.configure({ types: ['heading', 'paragraph'] }),
+    ],
+    content: state.filter((v) => v.id === id)[0]?.details || '',
+    onUpdate(e) {
+      setToggle(e.editor?.getHTML());
+      // eslint-disable-next-line array-callback-return
+      state.map((item, idx) => {
+        if (item.id !== id) return;
+
+        const copyState = [...state];
+        copyState.splice(idx, 1, {
+          id: item.id,
+          details: e.editor?.getHTML(),
+        });
+        setState(copyState);
+      });
+    },
+  });
+
+  useEffect(() => {
+    console.log('currentRoadmap', currentRoadmap);
+  }, []);
+
+  useMemo(() => {
+    const filt = state.filter((v) => v.id === id);
+    setToggle(filt);
+    if (editor) {
+      editor.commands.setContent(filt[0]?.details || '');
+    }
+  }, [state, id, setToggle, label, editor]);
+
+  const [nodeState, setNodes, onNodesChange] = useNodesState(
+    currentRoadmap?.nodes,
+  );
+  const [edgeState, setEdges, onEdgesChange] = useEdgesState(
+    currentRoadmap?.edges,
+  );
+  const [isSelectable] = useState(true);
+  const [isDraggable] = useState(false);
+  const [isConnectable] = useState(false);
+  const [zoomOnScroll] = useState(true); // zoom in zoom out
+  const [panOnScroll] = useState(false); // 위아래 스크롤
+  const [zoomOnDoubleClick] = useState(false);
+  const [panOnDrag] = useState(true); // 마우스로 이동
+  const [isOpen, setIsOpen] = useState(false);
+
+  const proOptions = { hideAttribution: true };
   return (
     <MainLayout>
       <Container px="xs" maw={1000}>
@@ -138,7 +189,9 @@ function PostedRoadmap() {
           </Avatar>
           {currentRoadmap?.ownerNickname || 'no nickname'}
         </Group>
-        <Button ml={800}>참여하기</Button>
+        <Button ml={800} onClick={() => joinRoadmap(10)}>
+          참여하기
+        </Button>
         <Text c="dimmed" className={classes.description} mt="md">
           {currentRoadmap?.description || '없음'}
         </Text>
@@ -239,16 +292,97 @@ function PostedRoadmap() {
             </Text>
           </Card>
         </SimpleGrid>
-        <CompleteRoadmap
-          currentRoadmap={currentRoadmap}
-          // postNodes={currentNodes}
-          // postEdges={currentEdges}
-          // postViewport={currentViewport}
-        />
+        <EditorWrap>
+          <div className="roadMapWrap">
+            <ReactFlowProvider>
+              <Wrap style={{ height: '70vh' }}>
+                <ReactFlow
+                  nodes={nodeState}
+                  edges={edgeState}
+                  proOptions={proOptions}
+                  onNodesChange={onNodesChange}
+                  onEdgesChange={onEdgesChange}
+                  elementsSelectable={isSelectable}
+                  nodesConnectable={isConnectable}
+                  nodesDraggable={isDraggable}
+                  zoomOnScroll={zoomOnScroll}
+                  panOnScroll={panOnScroll}
+                  zoomOnDoubleClick={zoomOnDoubleClick}
+                  panOnDrag={panOnDrag}
+                  attributionPosition="top-right"
+                  minZoom={0.2}
+                  maxZoom={4}
+                  onNodeClick={(e, n) => {
+                    setLabel(`${n?.data?.label}`);
+                    setId(`${n?.id}`);
+                    setIsOpen(!isOpen);
+                  }}
+                  fitView
+                  style={{
+                    backgroundColor: '#ebf6fc',
+                  }}
+                >
+                  <Background gap={16} />
+                  <Controls />
+                  <MiniMap zoomable pannable />
+                </ReactFlow>
+                <Modal opened={isOpen} onClose={() => setIsOpen(!isOpen)}>
+                  <Center>
+                    <EditorContent editor={editor} readOnly />
+                  </Center>
+                  <Center>
+                    <Button
+                      mt={30}
+                      onClick={() => setIsOpen(!isOpen)}
+                      variant="light"
+                    >
+                      닫기
+                    </Button>
+                  </Center>
+                </Modal>
+              </Wrap>
+            </ReactFlowProvider>
+          </div>
+        </EditorWrap>
         <CommentPage />
       </Container>
     </MainLayout>
   );
 }
+const Wrap = styled.div`
+  width: 100%;
+  height: 60vh;
+  & .updatenode__controls {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    z-index: 4;
+    font-size: 12px;
+  }
 
+  & .updatenode__controls label {
+    display: block;
+  }
+
+  & .updatenode__bglabel {
+    margin-top: 10px;
+  }
+
+  & .updatenode__checkboxwrapper {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+  }
+`;
 export default PostedRoadmap;
+const EditorWrap = styled.div`
+  & .editor {
+    & > .content {
+      width: 100%;
+    }
+  }
+
+  & .roadMapWrap {
+    overflow-x: hidden;
+  }
+`;
