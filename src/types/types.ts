@@ -21,7 +21,7 @@ export interface MemberInfo {
   exp?: number;
   githubUrl?: string | null;
   level?: 0;
-  inProcessRoadmapDto: [];
+  inProcessRoadmapDto?: [];
 }
 // export type User = MemberInfo & NewUser; // origin intialmerge
 export interface RoadmapMetaData {

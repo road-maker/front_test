@@ -8,23 +8,20 @@ import dagre from '@dagrejs/dagre';
 import {
   Button,
   Center,
-  Group,
   Image,
   Modal,
   MultiSelect,
-  Select,
   SimpleGrid,
   Text,
   TextInput,
   Textarea,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
 // import { useRoadmap } from 'components/roadmaps/hooks/useRoadmap'; // origin : initialMerge
 import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { useRoadmap } from 'components/roadmaps/posts/hooks/useRoadmap';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import ReactFlow, {
   Background,
   Controls,
@@ -39,6 +36,9 @@ import ReactFlow, {
 import { getStoredRoadmap, setStoredRoadmap } from 'storage/roadmap-storage';
 import { styled } from 'styled-components';
 
+import axios from 'axios';
+import { baseUrl } from 'axiosInstance/constants';
+import { useUser } from 'components/user/hooks/useUser';
 import { useInput } from '../common/hooks/useInput';
 import { RoadmapEdge, RoadmapNode } from './types';
 
@@ -95,7 +95,7 @@ const initialNodes = [
     id: '1',
     data: { label: 'test' },
     position: { x: 100, y: 100 },
-    type: 'custom',
+    type: 'default',
     style: {
       background: '#fff',
       border: '1px solid black',
@@ -107,7 +107,7 @@ const initialNodes = [
     id: '2',
     data: { label: 'Node 2' },
     position: { x: 100, y: 200 },
-    type: 'custom',
+    type: 'default',
     style: {
       background: '#fff',
       border: '1px solid black',
@@ -141,7 +141,7 @@ function Roadmap({
   onChangeId,
   setId,
 }) {
-  const { prompt } = usePromptAnswer();
+  // const { prompt } = usePromptAnswer();
   const [search] = useSearchParams();
 
   const edgeSet = new Set<RoadmapEdge['id']>();
@@ -150,7 +150,7 @@ function Roadmap({
   const [edgeState, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [title, onChangeTitle, setTitle] = useInput('');
   const [desc, onChangeDesc, setDesc] = useInput('');
-  // const openRef = useRef<() => void>(null);
+  const [gptRes, setGptRes] = useState([]);
 
   const [nodeBg, setNodeBg] = useState('#eee');
   const [nodeHidden, setNodeHidden] = useState(false);
@@ -162,125 +162,104 @@ function Roadmap({
     { value: 'react', label: 'React' },
     { value: 'ng', label: 'Angular' },
   ]);
+  const { user } = useUser();
   const [files, setFiles] = useState<FileWithPath[]>([]);
-
+  const navigate = useNavigate();
+  // eslint-disable-next-line consistent-return
   useEffect(() => {
-    const getRecentGpt = localStorage.getItem('recent_gpt_search');
-    if (getRecentGpt) {
-      setUseGpt(true);
+    if (!user) {
+      return navigate('/users/signin');
     }
+    const getRecentGpt = localStorage.getItem('recent_gpt_search');
   }, []);
 
   const proOptions = { hideAttribution: true };
 
-  // useMemo(() => {
   useEffect(() => {
-    // if (getStoredRoadmap()) {
-    // const { edges, nodes, viewport } = getStoredRoadmap();
-    // setNodes(nodes);
-    //   setEdges(edges);
-    //   setViewport(viewport);
+    if (search.size > 0) {
+      axios
+        .post(`${baseUrl}/chat?prompt=${search.get('title')}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        })
+        .then((res) => {
+          setGptRes(res.data);
+          // const { data } = prompt;
+          // const dataCopy = [...data];
+          // console.log(dataCopy);
+          console.log(gptRes);
 
-    //   return;
-    // }
-    // console.log(search.get('title'));
-
-    if (prompt && search.size > 0 && prompt.keyword === search.get('title')) {
-      // if (useGpt && search.size > 0) {
-      // gpt 자동생성
-
-      const { data } = prompt;
-      const dataCopy = [...data];
-      // console.log(dataCopy);
-
-      // eslint-disable-next-line array-callback-return
-      dataCopy.map((v) => {
-        if (!nodeSet.has(v?.id)) {
-          initialNodes.push({
-            id: v?.id,
-            data: {
-              label: v?.content,
-            },
-            type: 'custom',
-            position,
-            style: {
-              background: '#fff',
-              border: '1px solid black',
-              borderRadius: 15,
-              fontSize: 12,
-            },
-          });
-          nodeSet.add(`${v?.id}`);
-        }
-
-        // source랑 target 구해서 간선id 만들고 이어주기
-        // parseInt는 오로지 숫자인 부분만 parse해줬음
-
-        if (v.id !== `${parseInt(v?.id, 10)}`) {
-          if (!edgeSet.has(`e${parseInt(v?.id, 10)}${v?.id}`)) {
-            initialEdges.push({
-              id: `e${parseInt(v?.id, 10)}${v?.id}`,
-              source: `${parseInt(v?.id, 10)}`,
-              target: v.id,
-              type: edgeType,
-              animated: true,
-            });
-          }
-          edgeSet.add(`e${parseInt(v?.id, 10)}${v?.id}`);
-        }
-      });
-      setNodes(initialNodes);
-      setEdges(initialEdges);
-      // search.size !== 0 ? setNodes(initialNodes) : setNodes([]);
-      // search.size !== 0 ? setEdges(initialEdges) : setEdges([]);
-      if (search.size !== 0) {
-        // onLayout('TB');
-        onLayout('LR');
-      }
-
-      setNodes((nds) =>
-        nds.map((node) => {
-          // if (node.id === '1') {
-          if (node.id === id) {
-            // it's important that you create a new object here
-            // in order to notify react flow about the change
-            // eslint-disable-next-line no-param-reassign
-            node.data = {
-              ...node.data,
-              // label: nodeName,
-              label,
-            };
-          }
-          // console.log('요놈이 무한 출력?', node); // 요놈이 무한 출력?
-
-          return node;
-        }),
-      );
+          // eslint-disable-next-line array-callback-return
+        });
     }
-  }, [prompt, search]);
-  // }, [edgeSet, id, label, nodeSet, prompt, search, setEdges, setNodes]);
-  // }, []);
+  }, []);
 
-  useMemo(() => {
-    setNodes((nds) =>
-      nds.map((node) => {
-        // if (node.id === '1') {
-        if (node.id === id) {
-          // it's important that you create a new object here
-          // in order to notify react flow about the change
-          // eslint-disable-next-line no-param-reassign
-          node.data = {
-            ...node.data,
-            label,
-          };
-        }
-        // console.log(node);
+  // useEffect(() => {
+  //   gptRes.map((v) => {
+  //     if (!nodeSet.has(v?.id)) {
+  //       initialNodes.push({
+  //         id: v?.id,
+  //         data: {
+  //           label: v?.content,
+  //         },
+  //         type: 'default',
+  //         position,
+  //         style: {
+  //           background: '#fff',
+  //           border: '1px solid black',
+  //           borderRadius: 15,
+  //           fontSize: 12,
+  //         },
+  //       });
+  //       nodeSet.add(`${v?.id}`);
+  //     }
 
-        return node;
-      }),
-    );
-    // }, [label, id]);
-  }, [label, id]);
+  //     // source랑 target 구해서 간선id 만들고 이어주기
+  //     // parseInt는 오로지 숫자인 부분만 parse해줬음
+
+  //     if (v.id !== `${parseInt(v?.id, 10)}`) {
+  //       if (!edgeSet.has(`e${parseInt(v?.id, 10)}${v?.id}`)) {
+  //         initialEdges.push({
+  //           id: `e${parseInt(v?.id, 10)}${v?.id}`,
+  //           source: `${parseInt(v?.id, 10)}`,
+  //           target: v.id,
+  //           type: edgeType,
+  //           animated: true,
+  //         });
+  //       }
+  //       edgeSet.add(`e${parseInt(v?.id, 10)}${v?.id}`);
+  //     }
+  //   });
+  //   setNodes(initialNodes);
+  //   setEdges(initialEdges);
+  //   if (search.size !== 0) {
+  //     // onLayout('TB');
+  //     onLayout('LR');
+  //   }
+  // }, [gptRes]);
+
+  // useMemo(() => {
+  //   setNodes((nds) =>
+  //     nds.map((node) => {
+  //       // if (node.id === '1') {
+  //       if (node.id === id) {
+  //         // it's important that you create a new object here
+  //         // in order to notify react flow about the change
+  //         // eslint-disable-next-line no-param-reassign
+  //         node.data = {
+  //           ...node.data,
+  //           label,
+  //         };
+  //       }
+  //       // console.log(node);
+
+  //       return node;
+  //     }),
+  //   );
+  // }, [label, id]);
+  // }, [label, id]);
   // useMemo(() => {
   //   setNodes((nds) =>
   //     nds.map((node) => {
@@ -390,7 +369,7 @@ function Roadmap({
           label: ``,
           // label: '',
         },
-        // type: 'custom',
+        type: 'default',
         position,
         style: {
           background: '#fff',
@@ -408,6 +387,7 @@ function Roadmap({
     const { edges, nodes, viewport } = getStoredRoadmap();
 
     const nodesCopy = [...nodes];
+    const edgesCopy = [...edges];
     nodesCopy.map((v) => {
       state.map((item) => {
         if (v.id === item.id) {
@@ -417,21 +397,29 @@ function Roadmap({
         }
       });
     });
+    edgesCopy.map((v) => {
+      // eslint-disable-next-line no-param-reassign
+      v.animated = true;
+      // eslint-disable-next-line no-param-reassign
+      v.type = edgeType;
+    });
 
     const data = {
       roadmap: {
         title: roadMapTitle,
         // title: '',
-        description: roadmapDescription,
+        // description: roadmapDescription,
+        description: desc,
         thumbnailUrl: '',
         recommendedExecutionTimeValue: roadmapRecommendedTime,
         tag: roadmapTag,
       },
       nodes: nodesCopy,
-      edges,
+      edges: edgesCopy,
       viewport: defaultViewport,
     };
     postRoadmap(data);
+    navigate('/');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodeState]);
 
@@ -512,6 +500,11 @@ function Roadmap({
     );
   });
 
+  // search.size >0 && return (<Loading/>);
+  // if (search.size > 0) {
+  //   return <Loading />;
+  // }
+
   return (
     <Wrap>
       <Modal opened={opened} onClose={close} size="40rem">
@@ -522,9 +515,10 @@ function Roadmap({
           mt={50}
           placeholder="제목을 입력하세요"
           label="로드맵 이름"
+          value={title}
           onChange={onChangeTitle}
         />
-        <Group position="apart" mt={20}>
+        {/* <Group position="apart" mt={20}>
           <TextInput
             placeholder="기간을 입력하세요"
             label="권장 수행기간"
@@ -540,7 +534,7 @@ function Roadmap({
             ]}
             w={200}
           />
-        </Group>
+        </Group> */}
         <MultiSelect
           label="로드맵 태그 설정"
           mt={20}
@@ -571,6 +565,7 @@ function Roadmap({
           minRows={5}
           maxRows={10}
           mt={30}
+          value={desc}
           placeholder="내용을 입력하세요"
           onChange={onChangeDesc}
         />

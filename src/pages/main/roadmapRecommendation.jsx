@@ -10,8 +10,11 @@ import {
   Text,
 } from '@mantine/core';
 import { IconBookmark, IconHeart, IconShare } from '@tabler/icons-react';
+import axios from 'axios';
+import { baseUrl } from 'axiosInstance/constants';
 import { useRoadmap } from 'components/roadmaps/posts/hooks/useRoadmap';
 import { useRoadmapData } from 'components/roadmaps/posts/hooks/useRoadMapResponse';
+import { useUser } from 'components/user/hooks/useUser';
 import { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useInfiniteQuery } from 'react-query';
@@ -46,19 +49,35 @@ const fetchUrl = async (url) => {
 
 export default function RoadmapRecommendation() {
   const [allRoadmapData, setAllRoadmapData] = useState([]);
-
+  const { user } = useUser();
   const { classes, theme } = useStyles();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState('');
   // const themes = useMantineTheme();
   // const mobile = useMediaQuery(`(max-width: ${themes.breakpoints.sm})`);
-  const { getRoadmapById, getAllRoadmap } = useRoadmap();
+  const { getRoadmapById, getAllRoadmap, getRoadmapByIdAuth } = useRoadmap();
   const { roadmaps } = useRoadmapData();
+  useEffect(() => {
+    axios
+      .get(`${baseUrl}/roadmaps`)
+      .then((v) => {
+        console.log(v);
+        setAllRoadmapData(v.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, []);
 
   useEffect(() => {
     if (currentPage) {
+      if (!user) {
+        queryClient.prefetchQuery(['roadmapById', currentPage], () =>
+          getRoadmapById(currentPage),
+        );
+      }
       queryClient.prefetchQuery(['roadmapById', currentPage], () =>
-        getRoadmapById(currentPage),
+        getRoadmapByIdAuth(currentPage),
       );
     }
   }, [currentPage, queryClient]);
@@ -121,6 +140,10 @@ export default function RoadmapRecommendation() {
                             setCurrentPage(article.id);
                           }}
                           onClick={() => {
+                            // if(currentPage){
+                            //   user? navigate(`/roadmap/post/${currentPage}`)
+
+                            // }
                             currentPage &&
                               navigate(`/roadmap/post/${currentPage}`);
                           }}

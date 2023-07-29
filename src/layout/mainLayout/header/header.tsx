@@ -19,7 +19,7 @@ import { useInput } from 'components/common/hooks/useInput';
 import { usePrompt } from 'components/prompts/hooks/usePrompt';
 import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
 import { queryClient } from 'react-query/queryClient';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { clearStoredGpt } from 'storage/gpt-storage';
 import { clearStoredRoadmap } from 'storage/roadmap-storage';
 
@@ -100,7 +100,9 @@ export function HeaderMegaMenu() {
   const navigate = useNavigate();
   const { user } = useUser();
   const { signout } = useAuth();
+  const { pathname } = useLocation();
   const [opened, { open, close }] = useDisclosure(false);
+  console.log(pathname);
   return (
     <Box pb={30}>
       <Header height={60} px="md">
@@ -143,6 +145,10 @@ export function HeaderMegaMenu() {
                   onClick={() => {
                     clearStoredRoadmap();
                     clearStoredGpt();
+                    if (!user || !('accessToken' in user)) {
+                      alert('로그인 후 이용가능합니다.');
+                      navigate('/users/signin');
+                    }
                     navigate('/roadmap/editor');
                   }}
                 >
@@ -151,14 +157,16 @@ export function HeaderMegaMenu() {
               </Center>
             </Modal>
             <Group position="center">
-              <Button onClick={open} variant="light" color="indigo">
-                로드맵 생성하기
-              </Button>
+              {pathname !== '/roadmap/editor' && (
+                <Button onClick={open} variant="light" color="indigo">
+                  로드맵 생성하기
+                </Button>
+              )}
             </Group>
             {/* {user && 'accessToken' in user ? ( */}
-            {user && 'tokenInfo' in user ? (
+            {user && 'accessToken' in user ? (
               <>
-                <NavLink to="/">{user.email}</NavLink>
+                <NavLink to="/users/mypage">{user.nickname}님</NavLink>
                 <Button onClick={() => signout()}>Sign out</Button>
               </>
             ) : (
@@ -175,6 +183,8 @@ export function InputWithButton(props: TextInputProps) {
   const theme = useMantineTheme();
   const [prompt, onPromptChange, setPrompt] = useInput('');
   const { getprompt } = usePrompt();
+  const navigate = useNavigate();
+  const { user } = useUser();
   const { clearGptAnswer, updateGptAnswer } = usePromptAnswer();
   const onRequestPrompt = (p) => {
     // getprompt(p.prompt);
@@ -212,8 +222,13 @@ export function InputWithButton(props: TextInputProps) {
           size={32}
           onClick={() => {
             setPrompt(prompt);
+            if (!user) {
+              alert('로그인 후 이용가능합니다.');
+              navigate('/users/signin');
+            }
+            navigate(`/roadmap/editor?title=${prompt}`);
             // clearGptAnswer();
-            onRequestPrompt({ prompt });
+            // onRequestPrompt({ prompt });
           }}
           radius="xl"
           color={theme.primaryColor}

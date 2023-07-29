@@ -12,12 +12,7 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import {
-  Icon24Hours,
-  IconChecklist,
-  IconStars,
-  IconUser,
-} from '@tabler/icons-react';
+import { Icon24Hours, IconChecklist, IconUser } from '@tabler/icons-react';
 import { Highlight } from '@tiptap/extension-highlight';
 import { Link } from '@tiptap/extension-link';
 import { Subscript } from '@tiptap/extension-subscript';
@@ -26,12 +21,15 @@ import { TextAlign } from '@tiptap/extension-text-align';
 import { Underline } from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import axios from 'axios';
+import { baseUrl } from 'axiosInstance/constants';
 import { useInput } from 'components/common/hooks/useInput';
 import { useRoadmap } from 'components/roadmaps/posts/hooks/useRoadmap';
 import { useRoadmapData } from 'components/roadmaps/posts/hooks/useRoadMapResponse';
+import { useUser } from 'components/user/hooks/useUser';
 import MainLayout from 'layout/mainLayout';
 import { useEffect, useMemo, useState } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Background,
   Controls,
@@ -88,6 +86,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 function PostedRoadmap() {
+  const navigate = useNavigate();
   const { classes, theme } = useStyles();
   const { pathname } = useLocation();
   const [currentPage, setCurrentPage] = useState(
@@ -99,19 +98,11 @@ function PostedRoadmap() {
   );
   const { joinRoadmap } = useRoadmap();
   const [currentRoadmap, setCurrentRoadmap] = useState(roadmapById?.data || []);
-
-  useEffect(() => {
-    if (currentPage !== roadmapById?.data?.roadmap?.id) {
-      setCurrentRoadmap(
-        JSON.parse(localStorage.getItem('roadmapById'))?.data?.roadmap,
-      );
-    }
-  }, []);
-
   const [label, onChangeLabel, setLabel] = useInput('');
   const [id, onChangeId, setId] = useInput('');
   const [toggle, onChangeToggle, setToggle] = useInput('');
   const [search] = useSearchParams();
+  const { user } = useUser();
   // const [state, setState] = useState([
   //   { id: '1', details: `<div>자바스크립트</div>` },
   //   { id: '2', details: `<div>'함수 개념과 활용법'</div>` },
@@ -121,6 +112,53 @@ function PostedRoadmap() {
   const [state, setState] = useState([]);
 
   const [details, setDetails] = useState([]);
+  useEffect(() => {
+    const url = user
+      ? `${baseUrl}/roadmaps/${currentPage}/auth`
+      : `${baseUrl}/roadmaps/${currentPage}`;
+    axios
+      .get(url, {
+        headers: {
+          Authorization: `Bearer ${user.accessToken}`,
+        },
+      })
+      .catch((e) => {
+        // eslint-disable-next-line no-console
+        console.log(e);
+      })
+      .then((v) => {
+        console.log(v);
+        setNodes(v.data.nodes);
+        setCurrentRoadmap({
+          title: v.data.roadmap.title,
+          description: v.data.roadmap.description,
+          ownerAvatarUrl: v.data.roadmap.ownerAvatarUrl,
+          ownerNickname: v.data.roadmap.ownerNickname,
+          thumbnailUrl: v.data.roadmap.thumbnailUrl,
+        });
+        const detailState = [];
+        v.data.nodes.map((j) => {
+          detailState.push({ id: j.id, details: j.detailedContent });
+        });
+        setState(detailState);
+        const edgeSet = new Set();
+        const tempEdges = [];
+        // eslint-disable-next-line array-callback-return
+        v?.data?.edges.map((j) => {
+          if (!edgeSet.has(j?.id)) {
+            tempEdges.push(j);
+          }
+          edgeSet.add(j?.id);
+        });
+        setEdges(tempEdges);
+      });
+
+    // if (currentPage !== roadmapById?.data?.roadmap?.id) {
+    //   setCurrentRoadmap(
+    //     JSON.parse(localStorage.getItem('roadmapById'))?.data?.roadmap,
+    //   );
+    // }
+  }, []);
 
   const editor = useEditor({
     extensions: [
@@ -149,10 +187,6 @@ function PostedRoadmap() {
     },
   });
 
-  useEffect(() => {
-    console.log('currentRoadmap', currentRoadmap);
-  }, []);
-
   useMemo(() => {
     const filt = state.filter((v) => v.id === id);
     setToggle(filt);
@@ -161,12 +195,8 @@ function PostedRoadmap() {
     }
   }, [state, id, setToggle, label, editor]);
 
-  const [nodeState, setNodes, onNodesChange] = useNodesState(
-    currentRoadmap?.nodes,
-  );
-  const [edgeState, setEdges, onEdgesChange] = useEdgesState(
-    currentRoadmap?.edges,
-  );
+  const [nodeState, setNodes, onNodesChange] = useNodesState([]);
+  const [edgeState, setEdges, onEdgesChange] = useEdgesState([]);
   const [isSelectable] = useState(true);
   const [isDraggable] = useState(false);
   const [isConnectable] = useState(false);
@@ -189,7 +219,16 @@ function PostedRoadmap() {
           </Avatar>
           {currentRoadmap?.ownerNickname || 'no nickname'}
         </Group>
-        <Button ml={800} onClick={() => joinRoadmap(10)}>
+        <Button
+          ml={800}
+          onClick={() => {
+            if (!user) {
+              alert('로그인 후 이용 가능합니다.');
+              navigate('/users/signin');
+            }
+            joinRoadmap(parseInt(currentPage, 10));
+          }}
+        >
           참여하기
         </Button>
         <Text c="dimmed" className={classes.description} mt="md">
@@ -257,19 +296,8 @@ function PostedRoadmap() {
               stroke={2}
               color={theme.fn.primaryColor()}
             />
-            <Text
-              fz="lg"
-              fw={500}
-              className={classes.cardTitle}
-              mt="md"
-              c="dimmed"
-            >
-              권장 수행기간:{' '}
-              {currentRoadmap?.recommendedExecutionTimeValue || 'X'}{' '}
-              {currentRoadmap?.recommendedExecutionTimeUnit}
-            </Text>
           </Card>
-          <Card
+          {/* <Card
             mb={30}
             shadow="md"
             radius="md"
@@ -290,7 +318,7 @@ function PostedRoadmap() {
             >
               난이도: {currentRoadmap?.recommendedExecutionTimeUnit}
             </Text>
-          </Card>
+          </Card> */}
         </SimpleGrid>
         <EditorWrap>
           <div className="roadMapWrap">

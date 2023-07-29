@@ -1,9 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
-import { useQuery } from 'react-query';
 
 import { axiosInstance } from '../../../axiosInstance';
-import { queryKeys } from '../../../react-query/constants';
-import type { MemberInfo, NewUser, User } from '../../../types/types';
+import type { NewUser } from '../../../types/types';
 import { useUser } from './useUser';
 
 interface useUserInfo {
@@ -31,7 +29,8 @@ export function UseUserInfo(): useUserInfo {
           data: { ...memberInfo },
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QGdtYWlsLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2OTAyNTE4NzZ9.ME4EZINEOZ8jaBBFsWulSb2oOkpdqh8TFsRhmV7rut8`,
+            // Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QGdtYWlsLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2OTAyNTE4NzZ9.ME4EZINEOZ8jaBBFsWulSb2oOkpdqh8TFsRhmV7rut8`,
+            Authorization: `Bearer ${user.accessToken}`,
           },
         });
       if (status === 201 || status === 200) {
