@@ -321,7 +321,7 @@ function Roadmap({
   //           label,
   //         };
   //       }
-  //       // console.log(node);
+  //
 
   //       return node;
   //     }),
@@ -453,7 +453,7 @@ function Roadmap({
 
   const onPublishRoadmap = useCallback(() => {
     const { edges, nodes, viewport } = getStoredRoadmap();
-    console.log('nodes', nodes);
+    // console.log('nodes', nodes);
     const nodesCopy = [...nodes];
     const edgesCopy = [...edges];
     nodesCopy.map((v) => {

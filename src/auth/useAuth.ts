@@ -54,7 +54,7 @@ export function useAuth(): UseAuth {
         //   inProcessRoadmapDto: [],
         // });
         // updateUser(data);
-        console.log('useAuth ServiceCall', data);
+        // console.log('useAuth ServiceCall', data);
         // navigate('/');
       }
       // if ('accessToken' in data) {
@@ -97,15 +97,8 @@ export function useAuth(): UseAuth {
           },
         });
       if (status === 201 || status === 200) {
-        console.log('useAuth authLoginServerCall', data);
+        // console.log('useAuth authLoginServerCall', data);
 
-        if ('member' in data) {
-          console.log('member', data.member);
-          const loggedMember: NewUser = data.member;
-        }
-        if ('tokenInfo' in data) {
-          console.log('tokenInfo', data.tokenInfo);
-        }
         if ('member' in data && 'tokenInfo' in data) {
           const loggedMember: NewUser = data.member;
           const loggedMemberToken: TokenInfo = data.tokenInfo;

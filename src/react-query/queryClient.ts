@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 import { QueryClient } from 'react-query';
 
 // import { createStandaloneToast } from '@chakra-ui/react';

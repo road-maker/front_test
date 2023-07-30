@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable array-callback-return */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-alert */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Avatar,
   Button,
@@ -124,7 +129,7 @@ function PostedRoadmap() {
           console.log(e);
         })
         .then((v) => {
-          console.log(v);
+          // console.log(v);
           setNodes(v?.data.nodes);
           setCurrentRoadmap({
             title: v?.data?.roadmap.title,
