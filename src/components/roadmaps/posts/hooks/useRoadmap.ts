@@ -163,7 +163,7 @@ export function useRoadmap(): UseRoadmap {
     roadmapServerCall(`/roadmaps/load-roadmap/${id}`, id);
   }
   async function getRoadmapByIdAuth(id: number): Promise<void> {
-    roadmapAuthServerCall(`/api/roadmaps/${id}/auth`, id);
+    roadmapAuthServerCall(`/roadmaps/${id}/auth`, id);
   }
   async function getAllRoadmap(): Promise<void> {
     roadmapServerCall(`/roadmaps`);
