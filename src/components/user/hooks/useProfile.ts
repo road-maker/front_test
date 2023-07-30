@@ -1,15 +1,15 @@
+/* eslint-disable no-console */
+/* eslint-disable no-alert */
 import axios, { AxiosResponse } from 'axios';
-import { useQuery } from 'react-query';
 import { getStoredUser } from 'storage/user-storage';
 
 import { axiosInstance } from '../../../axiosInstance';
-import { queryKeys } from '../../../react-query/constants';
-import type { NewUser, User } from '../../../types/types';
+import type { NewUser } from '../../../types/types';
 import { useUser } from './useUser';
 
 interface useUserInfo {
   myInfo: (member: NewUser) => Promise<void>;
-  // updateInfo: (memberInfo: User) => Promise<void>;
+  updateInfo: (memberInfo: NewUser) => Promise<void>;
 }
 
 type UserResponse = { member: NewUser };
@@ -32,12 +32,11 @@ export function UseUserInfo(): useUserInfo {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            Authorization:
-              'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QGdtYWlsLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2OTAyNTE4NzZ9.ME4EZINEOZ8jaBBFsWulSb2oOkpdqh8TFsRhmV7rut8',
+            Authorization: `Bearer ${user?.accessToken}`,
           },
         });
       if (status === 201 || status === 200) {
-        console.log('useAuth ServiceCall', data);
+        // console.log('useAuth ServiceCall', data);
         getStoredUser();
         if ('member' in data) {
           const { member } = data;
@@ -68,13 +67,69 @@ export function UseUserInfo(): useUserInfo {
       }
     }
   }
+  async function infoEditCall(
+    urlEndpoint: string,
+    memberInfo: NewUser,
+  ): Promise<void> {
+    try {
+      const { data, status }: AxiosResponse<InfoResponseType> =
+        await axiosInstance({
+          url: urlEndpoint,
+          method: 'POST',
+          data: { ...memberInfo },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user?.accessToken}`,
+          },
+        });
+      if (status === 201 || status === 200) {
+        console.log('updateUser', data);
+        if ('member' in data) {
+          const { member } = data;
+          updateUser({
+            memberId: member.memberId,
+            avatarUrl: member.avatarUrl,
+            baekjoonId: member.baekjoonId,
+            bio: member.bio,
+            blogUrl: member.blogUrl,
+            email: member.email,
+            exp: member.exp,
+            githubUrl: member.githubUrl,
+            level: member.level,
+            nickname: member.nickname,
+            inProcessRoadmapDto: member.inProcessRoadmapDto,
+          });
+        }
+        alert('변경되었습니다!');
+        // navigate('/');
+      }
+    } catch (errorResponse) {
+      const status =
+        axios.isAxiosError(errorResponse) && errorResponse?.response?.status
+          ? errorResponse?.response?.status
+          : SERVER_ERROR;
+      if (status === 406) {
+        // eslint-disable-next-line no-alert
+        alert('이전과 다른 닉네임을 설정해주세요!');
+      }
+      if (status === 409) {
+        alert('이미 존재하는 닉네임입니다.');
+      }
+      // if (status=== 404) { // @Seo1n api 개발문서 보시면 어떤 response 나오는 지 확인가능합니당, 참고해주세용
+      //   alert(`${status}`);
+      // }
+    }
+  }
   async function myInfo(member: NewUser): Promise<void> {
-    console.log('members', member);
+    // console.log('members', member);
     infoCall(`/members/${member?.nickname}`, member);
   }
-
+  async function updateInfo(member: NewUser): Promise<void> {
+    console.log('updatemembers', member);
+    await infoEditCall(`/members/save-profile`, member);
+  }
   return {
     myInfo,
-    // updateInfo,
+    updateInfo,
   };
 }

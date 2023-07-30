@@ -19,7 +19,7 @@ export interface NewUser {
   exp?: number;
   githubUrl?: string | null;
   level?: 0;
-  inProcessRoadmapDto: [];
+  inProcessRoadmapDto?: [];
 }
 
 // export type User = MemberInfo & NewUser; // origin intialmerge
@@ -29,16 +29,27 @@ export interface RoadmapMetaData {
   id?: number;
   thumbnailUrl?: string;
   title?: string;
+  text?: string;
   recommendedExecutionTimeValue?: number;
   recommendedExecutionTimeUnit?: string;
-  text?: string;
   flowkey?: string;
+  userClicked?: boolean;
 }
 
 export type UserRoadmap = RoadmapMetaData & Roadmap;
 
 // export type User = MemberInfo & NewUser;
-
+export interface MemberInfo {
+  memberId?: number;
+  avatarUrl?: string | null;
+  baekjoonId?: string | null;
+  bio?: string | null;
+  blogUrl?: string | null;
+  exp?: number;
+  githubUrl?: string | null;
+  level?: 0;
+  inProcessRoadmapDto?: [];
+}
 export interface GptNode {
   id: string;
   content?: string;

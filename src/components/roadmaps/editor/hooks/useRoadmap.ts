@@ -3,6 +3,7 @@
 
 import { AxiosResponse } from 'axios';
 import { axiosInstance } from 'axiosInstance';
+import { useUser } from 'components/user/hooks/useUser';
 import { useNavigate } from 'react-router-dom';
 
 import { NewRoadmap, Roadmap } from '../../../editor/types';
@@ -19,6 +20,7 @@ type RoadMapResponse = { roadmap: Array<Roadmap> } | GetResponse;
 export function useRoadmap(): UseRoadmap {
   const SERVER_ERROR = 'error contacting server';
   const navigate = useNavigate();
+  const { user } = useUser();
 
   async function roadmapServerCall(
     urlEndpoint: string,
@@ -54,12 +56,12 @@ export function useRoadmap(): UseRoadmap {
           data: { ...newroadmap },
           headers: {
             'Content-Type': 'application/json',
-            // Authorization: `Bearer ${getStoredUser()}`,
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaWdudXBAbmF2ZXIuY29tIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTY5MDk3Nzk2Mn0.5XZmXtA2arG_VsEJN5SwQzBj5P2LHFMvdw4Ha8JZVTY`,
+            Authorization: `Bearer ${user?.accessToken}`,
           },
         });
       if (status === 200) {
         console.log('roadmapPostSeverCall', data);
+        alert(data);
       }
     } catch (errorResponse) {
       console.log(`${SERVER_ERROR}!: ${errorResponse}`);

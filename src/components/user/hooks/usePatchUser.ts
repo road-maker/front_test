@@ -22,7 +22,7 @@ async function patchUserOnServer(
     `/user/${originalData.nickname}`,
     { patch },
     {
-      headers: getJWTHeader(originalData.accessToken),
+      headers: getJWTHeader(originalData?.accessToken),
     },
   );
   return data.user;

@@ -1,7 +1,8 @@
+/* eslint-disable no-alert */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import axios, { AxiosResponse } from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { setStoredUser } from 'storage/user-storage';
-import { NewUser } from 'types/types';
+import { MemberInfo, NewUser, TokenInfo } from 'types/types';
 
 import { axiosInstance } from '../axiosInstance';
 import { useUser } from '../components/user/hooks/useUser';
@@ -12,7 +13,8 @@ interface UseAuth {
   signout: () => void;
 }
 
-type UserResponse = { data: NewUser };
+// type UserResponse = { data: NewUser };
+type UserResponse = { data: { member: MemberInfo; tokenInfo: TokenInfo } };
 type ErrorResponse = { message: string };
 type AuthResponseType = UserResponse | ErrorResponse;
 
@@ -38,20 +40,21 @@ export function useAuth(): UseAuth {
           },
         });
       if (status === 201 || status === 200) {
-        updateUser({
-          memberId: 0,
-          avatarUrl: '',
-          baekjoonId: '',
-          bio: '',
-          blogUrl: '',
-          email,
-          exp: 0,
-          githubUrl: '',
-          level: 0,
-          nickname,
-          inProcessRoadmapDto: [],
-        });
-        // console.log('useAuth ServiceCall', data);
+        // updateUser({
+        //   memberId: 0,
+        //   avatarUrl: '',
+        //   baekjoonId: '',
+        //   bio: '',
+        //   blogUrl: '',
+        //   email,
+        //   exp: 0,
+        //   githubUrl: '',
+        //   level: 0,
+        //   nickname,
+        //   inProcessRoadmapDto: [],
+        // });
+        // updateUser(data);
+        console.log('useAuth ServiceCall', data);
         // navigate('/');
       }
       // if ('accessToken' in data) {
@@ -94,39 +97,27 @@ export function useAuth(): UseAuth {
           },
         });
       if (status === 201 || status === 200) {
-        // const { accessToken } = data.user;
-        // updateUser(data); // 이 부분 타입 맞추기
-        // updateUser({
-        //   memberId: 0,
-        //   avatarUrl: '',
-        //   baekjoonId: '',
-        //   bio: '',
-        //   blogUrl: '',
-        //   email,
-        //   exp: 0,
-        //   githubUrl: '',
-        //   level: 0,
-        //   nickname,
-        //   inProcessRoadmapDto: [],
-        // });
-        console.log('useAuth ServiceCall', data);
-        // localStorage.setItem('accessToken', JSON.stringify(data));
-        localStorage.setItem('user', JSON.stringify(data));
-        // console.log('useAuth', data);
-        // navigate('/');
+        console.log('useAuth authLoginServerCall', data);
+
+        if ('member' in data) {
+          console.log('member', data.member);
+          const loggedMember: NewUser = data.member;
+        }
         if ('tokenInfo' in data) {
-          // if ('tokenInfo' in data ) {
-          // updateUser({data.tokenInfo});
-          // alert('로그인 성공');
+          console.log('tokenInfo', data.tokenInfo);
+        }
+        if ('member' in data && 'tokenInfo' in data) {
+          const loggedMember: NewUser = data.member;
+          const loggedMemberToken: TokenInfo = data.tokenInfo;
+          updateUser({
+            accessToken: loggedMemberToken?.accessToken,
+            nickname: loggedMember?.nickname,
+            email: loggedMember?.email,
+          });
+
+          alert('로그인 성공');
           navigate('/');
         }
-        // updateUser({ username, tokenInfo });
-        // if ('accessToken' in data) {
-        //   // update stored user data
-        //   // updateUser(data.accessToken);
-        //   updateUser(data.accessToken);
-        //   navigate('/');
-        // }
       }
     } catch (errorResponse) {
       const status =
@@ -156,8 +147,7 @@ export function useAuth(): UseAuth {
   function signout(): void {
     // clear user from stored user data
     clearUser();
-    // eslint-disable-next-line no-alert
-    alert(`logged out!`);
+    navigate('/');
   }
 
   return {
