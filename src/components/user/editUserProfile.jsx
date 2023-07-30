@@ -1,5 +1,6 @@
+/* eslint-disable no-console */
 import { Box, Button, Group, Paper, TextInput } from '@mantine/core';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { UseUserInfo } from './hooks/useProfile';

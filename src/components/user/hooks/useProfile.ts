@@ -1,7 +1,7 @@
+/* eslint-disable no-console */
+/* eslint-disable no-alert */
 import axios, { AxiosResponse } from 'axios';
-
-import { useQuery } from 'react-query';
-import { getStoredUser, setStoredUser } from 'storage/user-storage';
+import { getStoredUser } from 'storage/user-storage';
 
 import { axiosInstance } from '../../../axiosInstance';
 import type { NewUser } from '../../../types/types';
@@ -63,12 +63,8 @@ export function UseUserInfo(): useUserInfo {
         axios.isAxiosError(errorResponse) && errorResponse?.response?.status
           ? errorResponse?.response?.status
           : SERVER_ERROR;
-      if (status === 406) {
+      if (status) {
         // eslint-disable-next-line no-alert
-        alert('이전과 다른 닉네임을 설정해주세요!');
-      } else if (status === 409) {
-        alert('이미 존재하는 닉네임입니다.');
-      } else {
         alert(`${status}`);
       }
     }
@@ -107,6 +103,7 @@ export function UseUserInfo(): useUserInfo {
             inProcessRoadmapDto: member.inProcessRoadmapDto,
           });
         }
+        alert('변경되었습니다!');
         // navigate('/');
       }
     } catch (errorResponse) {
@@ -114,8 +111,12 @@ export function UseUserInfo(): useUserInfo {
         axios.isAxiosError(errorResponse) && errorResponse?.response?.status
           ? errorResponse?.response?.status
           : SERVER_ERROR;
-      if (status) {
+      if (status === 406) {
         // eslint-disable-next-line no-alert
+        alert('이전과 다른 닉네임을 설정해주세요!');
+      } else if (status === 409) {
+        alert('이미 존재하는 닉네임입니다.');
+      } else {
         alert(`${status}`);
       }
     }

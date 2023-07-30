@@ -19,14 +19,6 @@ import { UseUserInfo } from './hooks/useProfile';
 import { useUser } from './hooks/useUser';
 import UserRoadmap from './userRoadmap';
 
-// const mockdata = {
-//   // id: 1,
-//   // nickname: '박주영',
-//   // info: '나는 코딩마스터 박주영이다.',
-//   // bjid: '@aljlkdjakls',
-//   image: '주영',
-// };
-
 export function UserProfile() {
   // export function UserProfile(): ReactElement {
   const navigate = useNavigate();
@@ -55,6 +47,12 @@ export function UserProfile() {
           </ActionIcon>
         </Group>
       </Group>
+      <Text size="sm" ta="center" mt={20}>
+        {user?.member?.bio}
+      </Text>
+      <Text fz="sm" color="dimmed" lineClamp={4} mt={5} ta="center">
+        {user?.member?.baekjoonId}
+      </Text>
     </Paper>
   );
 
