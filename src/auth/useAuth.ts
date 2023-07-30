@@ -110,9 +110,9 @@ export function useAuth(): UseAuth {
           const loggedMemberToken: TokenInfo = data.tokenInfo;
           // updateUser(data.member);
           updateUser({
-            accessToken: loggedMemberToken.accessToken,
-            nickname: loggedMember.nickname,
-            email: loggedMember.email,
+            accessToken: loggedMemberToken?.accessToken,
+            nickname: loggedMember?.nickname,
+            email: loggedMember?.email,
           });
           // JSON.parse(
           //   JSON.stringify(data.tokenInfo) + JSON.stringify(data.member),

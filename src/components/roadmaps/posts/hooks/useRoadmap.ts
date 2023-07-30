@@ -35,7 +35,10 @@ export function useRoadmap(): UseRoadmap {
           url: urlEndpoint,
           method: 'GET',
           data: { id },
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user?.accessToken}`,
+          },
         });
       if (status === 200) {
         !id
@@ -64,7 +67,7 @@ export function useRoadmap(): UseRoadmap {
           data: { id },
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${user?.accessToken}`,
           },
         });
       if (status === 200) {
@@ -94,15 +97,12 @@ export function useRoadmap(): UseRoadmap {
           data: { ...newroadmap },
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${user?.accessToken}`,
             // Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaWdudXBAbmF2ZXIuY29tIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTY5MDk3Nzk2Mn0.5XZmXtA2arG_VsEJN5SwQzBj5P2LHFMvdw4Ha8JZVTY`,
           },
         });
       if (status === 200) {
         console.log(data);
-      }
-      if (status === 404) {
-        alert('로드맵을 찾지 못했습니다.');
       }
     } catch (errorResponse) {
       console.log(`${SERVER_ERROR}!: ${errorResponse}`);
@@ -120,7 +120,7 @@ export function useRoadmap(): UseRoadmap {
           data: { id },
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${user?.accessToken}`,
             // Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaWdudXBAbmF2ZXIuY29tIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTY5MDk3Nzk2Mn0.5XZmXtA2arG_VsEJN5SwQzBj5P2LHFMvdw4Ha8JZVTY`,
           },
         });
@@ -149,7 +149,7 @@ export function useRoadmap(): UseRoadmap {
         headers: {
           'Content-Type': 'application/json',
           // Authorization: `Bearer ${getStoredUser()}`,
-          Authorization: `Bearer ${user.accessToken}`,
+          Authorization: `Bearer ${user?.accessToken}`,
           // Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaWdudXBAbmF2ZXIuY29tIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTY5MDk3Nzk2Mn0.5XZmXtA2arG_VsEJN5SwQzBj5P2LHFMvdw4Ha8JZVTY`,
         },
       });

@@ -9,6 +9,7 @@ import {
   Button,
   Center,
   Image,
+  LoadingOverlay,
   Modal,
   MultiSelect,
   SimpleGrid,
@@ -171,25 +172,26 @@ function Roadmap({
       return navigate('/users/signin');
     }
     const getRecentGpt = localStorage.getItem('recent_gpt_search');
+    console.log(getRecentGpt);
   }, []);
 
   const proOptions = { hideAttribution: true };
 
   useEffect(() => {
-    if (search.size > 0) {
+    if (search.size > 0 && gptRes.length === 0) {
       axios
         .post(`${baseUrl}/chat?prompt=${search.get('title')}`, {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${user?.accessToken}`,
           },
         })
         .then((res) => {
-          setGptRes(res.data);
+          setGptRes(res?.data);
           // const { data } = prompt;
           // const dataCopy = [...data];
           // console.log(dataCopy);
-          console.log(gptRes);
+          console.log('res.data', res.data);
 
           // eslint-disable-next-line array-callback-return
         });
@@ -197,47 +199,50 @@ function Roadmap({
   }, []);
 
   // useEffect(() => {
-  //   gptRes.map((v) => {
-  //     if (!nodeSet.has(v?.id)) {
-  //       initialNodes.push({
-  //         id: v?.id,
-  //         data: {
-  //           label: v?.content,
-  //         },
-  //         type: 'default',
-  //         position,
-  //         style: {
-  //           background: '#fff',
-  //           border: '1px solid black',
-  //           borderRadius: 15,
-  //           fontSize: 12,
-  //         },
-  //       });
-  //       nodeSet.add(`${v?.id}`);
-  //     }
+  //   // console.log(gptRes);
 
-  //     // source랑 target 구해서 간선id 만들고 이어주기
-  //     // parseInt는 오로지 숫자인 부분만 parse해줬음
-
-  //     if (v.id !== `${parseInt(v?.id, 10)}`) {
-  //       if (!edgeSet.has(`e${parseInt(v?.id, 10)}${v?.id}`)) {
-  //         initialEdges.push({
-  //           id: `e${parseInt(v?.id, 10)}${v?.id}`,
-  //           source: `${parseInt(v?.id, 10)}`,
-  //           target: v.id,
-  //           type: edgeType,
-  //           animated: true,
-  //         });
-  //       }
-  //       edgeSet.add(`e${parseInt(v?.id, 10)}${v?.id}`);
-  //     }
-  //   });
-  //   setNodes(initialNodes);
-  //   setEdges(initialEdges);
-  //   if (search.size !== 0) {
-  //     // onLayout('TB');
-  //     onLayout('LR');
+  // }, []);
+  // gptRes.map((v) => {
+  //   if (!nodeSet.has(v?.id)) {
+  //     initialNodes.push({
+  //       id: v?.id,
+  //       data: {
+  //         label: v?.content,
+  //       },
+  //       type: 'default',
+  //       position,
+  //       style: {
+  //         background: '#fff',
+  //         border: '1px solid black',
+  //         borderRadius: 15,
+  //         fontSize: 12,
+  //       },
+  //     });
+  //     nodeSet.add(`${v?.id}`);
   //   }
+
+  //   // source랑 target 구해서 간선id 만들고 이어주기
+  //   // parseInt는 오로지 숫자인 부분만 parse해줬음
+
+  //   if (v.id !== `${parseInt(v?.id, 10)}`) {
+  //     if (!edgeSet.has(`e${parseInt(v?.id, 10)}${v?.id}`)) {
+  //       initialEdges.push({
+  //         id: `e${parseInt(v?.id, 10)}${v?.id}`,
+  //         source: `${parseInt(v?.id, 10)}`,
+  //         target: v.id,
+  //         type: edgeType,
+  //         animated: true,
+  //       });
+  //     }
+  //     edgeSet.add(`e${parseInt(v?.id, 10)}${v?.id}`);
+  //   }
+  // });
+  // setNodes(initialNodes);
+  // setEdges(initialEdges);
+  // if (search.size !== 0) {
+  //   // onLayout('TB');
+  //   onLayout('LR');
+  // }
   // }, [gptRes]);
 
   // useMemo(() => {
@@ -385,7 +390,7 @@ function Roadmap({
 
   const onPublishRoadmap = useCallback(() => {
     const { edges, nodes, viewport } = getStoredRoadmap();
-
+    console.log('nodes', nodes);
     const nodesCopy = [...nodes];
     const edgesCopy = [...edges];
     nodesCopy.map((v) => {
@@ -394,6 +399,10 @@ function Roadmap({
           // console.log('onPublish', item.details);
           // eslint-disable-next-line no-param-reassign
           v.detailedContent = item.details;
+          // eslint-disable-next-line no-param-reassign
+          // v.targetPosition = item.targetPosition;
+          // // eslint-disable-next-line no-param-reassign
+          // v.sourcePosition = item.sourcePosition;
         }
       });
     });
@@ -407,11 +416,8 @@ function Roadmap({
     const data = {
       roadmap: {
         title: roadMapTitle,
-        // title: '',
-        // description: roadmapDescription,
         description: desc,
         thumbnailUrl: '',
-        recommendedExecutionTimeValue: roadmapRecommendedTime,
         tag: roadmapTag,
       },
       nodes: nodesCopy,
@@ -419,7 +425,7 @@ function Roadmap({
       viewport: defaultViewport,
     };
     postRoadmap(data);
-    navigate('/');
+    // navigate('/');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodeState]);
 
@@ -501,9 +507,56 @@ function Roadmap({
   });
 
   // search.size >0 && return (<Loading/>);
-  // if (search.size > 0) {
-  //   return <Loading />;
-  // }
+  // eslint-disable-next-line consistent-return
+  useMemo(() => {
+    // useEffect(() => {
+    if (search.size > 0) {
+      return <LoadingOverlay visible />;
+    }
+    if (gptRes.length > 0) {
+      gptRes.map((v) => {
+        if (!nodeSet.has(v?.id)) {
+          initialNodes.push({
+            id: v?.id,
+            data: {
+              label: v?.content,
+            },
+            type: 'default',
+            position,
+            style: {
+              background: '#fff',
+              border: '1px solid black',
+              borderRadius: 15,
+              fontSize: 12,
+            },
+          });
+          nodeSet.add(`${v?.id}`);
+        }
+
+        // source랑 target 구해서 간선id 만들고 이어주기
+        // parseInt는 오로지 숫자인 부분만 parse해줬음
+
+        if (v.id !== `${parseInt(v?.id, 10)}`) {
+          if (!edgeSet.has(`e${parseInt(v?.id, 10)}${v?.id}`)) {
+            initialEdges.push({
+              id: `e${parseInt(v?.id, 10)}${v?.id}`,
+              source: `${parseInt(v?.id, 10)}`,
+              target: v.id,
+              type: edgeType,
+              animated: true,
+            });
+          }
+          edgeSet.add(`e${parseInt(v?.id, 10)}${v?.id}`);
+        }
+      });
+      setNodes(initialNodes);
+      setEdges(initialEdges);
+      if (search.size !== 0) {
+        // onLayout('TB');
+        onLayout('LR');
+      }
+    }
+  }, [gptRes]);
 
   return (
     <Wrap>

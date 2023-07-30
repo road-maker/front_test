@@ -62,7 +62,7 @@ export default function RoadmapRecommendation() {
       .get(`${baseUrl}/roadmaps`)
       .then((v) => {
         console.log(v);
-        setAllRoadmapData(v.data);
+        setAllRoadmapData(v?.data);
       })
       .catch((e) => {
         console.log(e);
@@ -185,10 +185,12 @@ export default function RoadmapRecommendation() {
                       weight={700}
                       mt="md"
                     >
-                      권장 수행 시간 :{' '}
-                      {`#${article.recommendedExecutionTimeValue}`}{' '}
-                      {`#${article.recommendedExecutionTimeValue}`}
+                      {article?.ownerNickname}
+                      {/* 권장 수행 시간 :{' '} */}
+                      {/* {`#${article.recommendedExecutionTimeValue}`}{' '} */}
+                      {/* {`#${article.recommendedExecutionTimeValue}`} */}
                     </Text>
+
                     <Group spacing={5}>
                       <ActionIcon>
                         <IconHeart

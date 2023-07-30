@@ -115,44 +115,80 @@ function PostedRoadmap() {
   useEffect(() => {
     const url = user
       ? `${baseUrl}/roadmaps/${currentPage}/auth`
-      : `${baseUrl}/roadmaps/${currentPage}`;
-    axios
-      .get(url, {
-        headers: {
-          Authorization: `Bearer ${user.accessToken}`,
-        },
-      })
-      .catch((e) => {
-        // eslint-disable-next-line no-console
-        console.log(e);
-      })
-      .then((v) => {
-        console.log(v);
-        setNodes(v.data.nodes);
-        setCurrentRoadmap({
-          title: v.data.roadmap.title,
-          description: v.data.roadmap.description,
-          ownerAvatarUrl: v.data.roadmap.ownerAvatarUrl,
-          ownerNickname: v.data.roadmap.ownerNickname,
-          thumbnailUrl: v.data.roadmap.thumbnailUrl,
+      : `${baseUrl}/roadmaps/load-roadmap/${currentPage}`;
+    if (!user) {
+      axios
+        .get(url)
+        .catch((e) => {
+          // eslint-disable-next-line no-console
+          console.log(e);
+        })
+        .then((v) => {
+          console.log(v);
+          setNodes(v?.data.nodes);
+          setCurrentRoadmap({
+            title: v?.data?.roadmap.title,
+            description: v?.data.roadmap.description,
+            ownerAvatarUrl: v?.data.roadmap.ownerAvatarUrl,
+            ownerNickname: v?.data.roadmap.ownerNickname,
+            thumbnailUrl: v?.data.roadmap.thumbnailUrl,
+          });
+          const detailState = [];
+          v?.data.nodes.map((j) => {
+            detailState.push({ id: j.id, details: j.detailedContent });
+          });
+          setState(detailState);
+          const edgeSet = new Set();
+          const tempEdges = [];
+          // eslint-disable-next-line array-callback-return
+          v?.data?.edges.map((j) => {
+            if (!edgeSet.has(j?.id)) {
+              tempEdges.push(j);
+            }
+            edgeSet.add(j?.id);
+          });
+          setEdges(tempEdges);
         });
-        const detailState = [];
-        v.data.nodes.map((j) => {
-          detailState.push({ id: j.id, details: j.detailedContent });
-        });
-        setState(detailState);
-        const edgeSet = new Set();
-        const tempEdges = [];
-        // eslint-disable-next-line array-callback-return
-        v?.data?.edges.map((j) => {
-          if (!edgeSet.has(j?.id)) {
-            tempEdges.push(j);
-          }
-          edgeSet.add(j?.id);
-        });
-        setEdges(tempEdges);
-      });
+    }
 
+    if (user && 'accessToken' in user) {
+      axios
+        .get(url, {
+          headers: {
+            Authorization: `Bearer ${user?.accessToken}`,
+          },
+        })
+        .catch((e) => {
+          // eslint-disable-next-line no-console
+          console.log(e);
+        })
+        .then((v) => {
+          console.log(v);
+          setNodes(v?.data.nodes);
+          setCurrentRoadmap({
+            title: v?.data?.roadmap.title,
+            description: v?.data.roadmap.description,
+            ownerAvatarUrl: v?.data.roadmap.ownerAvatarUrl,
+            ownerNickname: v?.data.roadmap.ownerNickname,
+            thumbnailUrl: v?.data.roadmap.thumbnailUrl,
+          });
+          const detailState = [];
+          v?.data.nodes.map((j) => {
+            detailState.push({ id: j.id, details: j.detailedContent });
+          });
+          setState(detailState);
+          const edgeSet = new Set();
+          const tempEdges = [];
+          // eslint-disable-next-line array-callback-return
+          v?.data?.edges.map((j) => {
+            if (!edgeSet.has(j?.id)) {
+              tempEdges.push(j);
+            }
+            edgeSet.add(j?.id);
+          });
+          setEdges(tempEdges);
+        });
+    }
     // if (currentPage !== roadmapById?.data?.roadmap?.id) {
     //   setCurrentRoadmap(
     //     JSON.parse(localStorage.getItem('roadmapById'))?.data?.roadmap,

@@ -77,7 +77,7 @@ async function getUser(
     `/user/${user.nickname}`,
     {
       signal, // abortSignal from React Query
-      headers: getJWTHeader(user.accessToken),
+      headers: getJWTHeader(user?.accessToken),
     },
   );
 
