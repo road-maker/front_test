@@ -152,6 +152,7 @@ function Roadmap({
   const [title, onChangeTitle, setTitle] = useInput('');
   const [desc, onChangeDesc, setDesc] = useInput('');
   const [gptRes, setGptRes] = useState([]);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const [nodeBg, setNodeBg] = useState('#eee');
   const [nodeHidden, setNodeHidden] = useState(false);
@@ -695,6 +696,32 @@ function Roadmap({
           </Button>
         </Center>
       </Modal>
+      <Modal
+        opened={confirmDelete}
+        size="70%"
+        onClose={() => setConfirmDelete(false)}
+      >
+        <Center>
+          <Center>
+            <h1>정말로 모든 노드를 지우겠습니까?</h1>
+            <h3>모두 지우기를 누를 시 작업 내용을 복구할 수 없습니다.</h3>
+          </Center>
+          <div className="confirm_btn_wrap">
+            <Button
+              onClick={() => {
+                setNodes([]);
+                setEdges([]);
+                setConfirmDelete(false);
+              }}
+            >
+              모두 지우기
+            </Button>
+            <Button variant="outline" onClick={() => setConfirmDelete(false)}>
+              취소
+            </Button>
+          </div>
+        </Center>
+      </Modal>
       <ReactFlow
         nodes={nodeState}
         edges={edgeState}
@@ -759,16 +786,28 @@ function Roadmap({
           <Button type="button" onClick={() => onAddNode()} mr={10}>
             노드 추가
           </Button>
-          <Button
-            type="button"
-            onClick={() => {
-              setNodes([]);
-              setEdges([]);
-            }}
-            mr={10}
-          >
-            노드 전체 삭제
-          </Button>
+          {nodeState.length === 0 ? (
+            <Button
+              type="button"
+              data-disabled
+              sx={{
+                '&[data-disabled]': { opacity: 0.8, pointerEvents: 'all' },
+              }}
+              onClick={() => setConfirmDelete(true)}
+              mr={10}
+            >
+              노드 전체 삭제
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              onClick={() => setConfirmDelete(true)}
+              mr={10}
+            >
+              노드 전체 삭제
+            </Button>
+          )}
+
           {/* <Button type="button" onClick={onSave} mr={10}>
             save
           </Button> */}
@@ -810,6 +849,11 @@ const Wrap = styled.div`
     margin-top: 10px;
     display: flex;
     align-items: center;
+  }
+
+  & .confirm_btn_wrap {
+    display: inline-flex;
+    width: 100%;
   }
 `;
 export default function RoadMapCanvas({
