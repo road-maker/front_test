@@ -18,12 +18,12 @@ import { IconArrowLeft, IconArrowRight, IconSearch } from '@tabler/icons-react';
 import { useInput } from 'components/common/hooks/useInput';
 import { usePrompt } from 'components/prompts/hooks/usePrompt';
 import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { clearStoredGpt } from 'storage/gpt-storage';
 import { clearStoredRoadmap } from 'storage/roadmap-storage';
 
 import { useAuth } from '../../../auth/useAuth';
-import { useUser } from '../../../components/user/hooks/useUser';
+// import { useUser } from '../../../components/user/hooks/useUser';
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -97,7 +97,7 @@ const useStyles = createStyles((theme) => ({
 export function HeaderMegaMenu() {
   const { classes } = useStyles();
   const navigate = useNavigate();
-  const { user } = useUser();
+  // const user = useUser();
   const { signout } = useAuth();
   const [opened, { open, close }] = useDisclosure(false);
   return (
@@ -155,17 +155,23 @@ export function HeaderMegaMenu() {
               </Button>
             </Group>
             {/* {user && 'accessToken' in user ? ( */}
-            {user && 'tokenInfo' in user ? (
+            {/* {user && 'tokenInfo' in user ? (
+              <Button onClick={() => signout()}>Sign out</Button>
+            ) : (
               <>
-                <NavLink to="/users/mypage">{user?.nickname}님</NavLink>
-                <Button onClick={() => signout()}>Sign out</Button>
                 <Button onClick={() => navigate('/users/mypage')}>
                   마이페이지
                 </Button>
+                <Button onClick={() => navigate('/users/signin')}>
+                  Sign in
+                </Button>
               </>
-            ) : (
-              <Button onClick={() => navigate('/users/signin')}>Sign in</Button>
-            )}
+            )} */}
+            <Button onClick={() => signout()}>Sign out</Button>
+            <Button onClick={() => navigate('/users/mypage')}>
+              마이페이지
+            </Button>
+            <Button onClick={() => navigate('/users/signin')}>Sign in</Button>
           </Group>
         </Group>
       </Header>

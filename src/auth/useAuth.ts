@@ -1,9 +1,8 @@
+/* eslint-disable no-alert */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import axios, { AxiosResponse } from 'axios';
-
 import { useNavigate } from 'react-router-dom';
 import { setStoredUser } from 'storage/user-storage';
-import { useNavigate } from 'react-router-dom';
 import { NewUser } from 'types/types';
 
 import { axiosInstance } from '../axiosInstance';
@@ -15,7 +14,7 @@ interface UseAuth {
   signout: () => void;
 }
 
-type UserResponse = { data: NewUser };
+type UserResponse = { user: NewUser };
 type ErrorResponse = { message: string };
 type AuthResponseType = UserResponse | ErrorResponse;
 
@@ -97,41 +96,36 @@ export function useAuth(): UseAuth {
           },
         });
       if (status === 201 || status === 200) {
-        // const { accessToken } = data.user;
-        // updateUser(data); // 이 부분 타입 맞추기
-        // updateUser({
-        //   memberId: 0,
-        //   avatarUrl: '',
-        //   baekjoonId: '',
-        //   bio: '',
-        //   blogUrl: '',
-        //   email,
-        //   exp: 0,
-        //   githubUrl: '',
-        //   level: 0,
-        //   nickname,
-        //   inProcessRoadmapDto: [],
-        // });
-        // console.log('useAuth ServiceCall', data);
-        // localStorage.setItem('accessToken', JSON.stringify(data));
         localStorage.setItem('user', JSON.stringify(data));
         // console.log('useAuth', data);
         // navigate('/');
-        if ('tokenInfo' in data) {
-          // if ('tokenInfo' in data ) {
-          // updateUser({data.tokenInfo});
-          // alert('로그인 성공');
-          navigate('/');
-          window.location.reload();
-        }
-        // updateUser({ username, tokenInfo });
-        // if ('accessToken' in data) {
-        //   // update stored user data
-        //   // updateUser(data.accessToken);
-        //   updateUser(data.accessToken);
-        //   navigate('/');
+        // if ('user' in data) {
+        //   const { user } = data;
+        //   updateUser({
+        //     memberId: user.memberId,
+        //     avatarUrl: user.avatarUrl,
+        //     baekjoonId: user.baekjoonId,
+        //     bio: user.bio,
+        //     blogUrl: user.blogUrl,
+        //     email: user.email,
+        //     exp: user.exp,
+        //     githubUrl: user.githubUrl,
+        //     level: user.level,
+        //     nickname: user.nickname,
+        //     inProcessRoadmapDto: user.inProcessRoadmapDto,
+        //   });
         // }
+        alert('로그인 성공');
+        navigate('/');
+        // window.location.reload();
       }
+      // updateUser({ username, tokenInfo });
+      // if ('accessToken' in data) {
+      //   // update stored user data
+      //   // updateUser(data.accessToken);
+      //   updateUser(data.accessToken);
+      //   navigate('/');
+      // }
     } catch (errorResponse) {
       const status =
         axios.isAxiosError(errorResponse) && errorResponse?.response?.status
