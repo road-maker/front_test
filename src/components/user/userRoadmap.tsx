@@ -12,11 +12,9 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { useRoadmap } from '../roadmaps/posts/hooks/useRoadmap';
-import { useRoadmapData } from '../roadmaps/posts/hooks/useRoadMapResponse';
+// import { useState } from 'react';
+// import { useRoadmapData } from '../roadmaps/posts/hooks/useRoadMapResponse';
 
 const mockdata = [
   {
@@ -94,10 +92,10 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function UserRoadmap(props: PaperProps) {
-  const [allRoadmapData, setAllRoadmapData] = useState([]);
+  // const [allRoadmapData, setAllRoadmapData] = useState([]);
 
   // const { getAllRoadmap, getRoadmap } = useRoadmap();
-  const { roadmaps } = useRoadmapData();
+  // const { roadmaps } = useRoadmapData();
   const { classes } = useStyles();
   const navigate = useNavigate();
 
