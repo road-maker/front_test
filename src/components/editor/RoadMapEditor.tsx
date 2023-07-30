@@ -308,45 +308,27 @@ function Roadmap({
   // }
   // }, [gptRes]);
 
-  // useMemo(() => {
-  //   setNodes((nds) =>
-  //     nds.map((node) => {
-  //       // if (node.id === '1') {
-  //       if (node.id === id) {
-  //         // it's important that you create a new object here
-  //         // in order to notify react flow about the change
-  //         // eslint-disable-next-line no-param-reassign
-  //         node.data = {
-  //           ...node.data,
-  //           label,
-  //         };
-  //       }
-  //       // console.log(node);
+  useMemo(() => {
+    // node content 수정
+    setNodes((nds) =>
+      nds.map((node) => {
+        if (node.id === id) {
+          // it's important that you create a new object here
+          // in order to notify react flow about the change
+          // eslint-disable-next-line no-param-reassign
+          node.data = {
+            ...node.data,
+            label,
+          };
 
-  //       return node;
-  //     }),
-  //   );
-  // }, [label, id]);
-  // }, [label, id]);
-  // useMemo(() => {
-  //   setNodes((nds) =>
-  //     nds.map((node) => {
-  //       // if (node.id === '1') {
-  //       if (node.id === id) {
-  //         // it's important that you create a new object here
-  //         // in order to notify react flow about the change
-  //         // eslint-disable-next-line no-param-reassign
-  //         node.data = {
-  //           ...node.data,
-  //           label: nodeName,
-  //         };
-  //       }
-  //       console.log(node);
+          console.log(node);
+          console.log(nds);
+        }
 
-  //       return node;
-  //     }),
-  //   );
-  // }, [label, nodeName]);
+        return node;
+      }),
+    );
+  }, [label, id]);
 
   useMemo(() => {
     // console.log('roadmapeditor props', editor);
@@ -360,14 +342,6 @@ function Roadmap({
     },
     [setEdges],
   );
-
-  // const onSave = useCallback(() => {
-  //   if (rfInstance) {
-  //     const flow = rfInstance.toObject();
-  //     localStorage.setItem(flowKey, JSON.stringify(flow));
-  //     console.log(flow);
-  //   }
-  // }, [rfInstance]);
 
   const onSave = useCallback(() => {
     if (rfInstance) {
@@ -464,7 +438,7 @@ function Roadmap({
           v.detailedContent = item.details;
           // eslint-disable-next-line no-param-reassign
           // v.targetPosition = item.targetPosition;
-          // // eslint-disable-next-line no-param-reassign
+          // eslint-disable-next-line no-param-reassign
           // v.sourcePosition = item.sourcePosition;
         }
       });
