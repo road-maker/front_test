@@ -1,3 +1,5 @@
+/* eslint-disable no-alert */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import axios, { AxiosResponse } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { MemberInfo, NewUser, TokenInfo } from 'types/types';
@@ -10,6 +12,7 @@ interface UseAuth {
   signup: (email: string, password: string, nickname: string) => Promise<void>;
   signout: () => void;
 }
+
 
 // type UserResponse = { data: NewUser };
 type UserResponse = { data: { member: MemberInfo; tokenInfo: TokenInfo } };
@@ -25,7 +28,7 @@ export function useAuth(): UseAuth {
     urlEndpoint: string,
     email: string,
     password: string,
-    nickname?: string,
+    nickname: string,
   ): Promise<void> {
     try {
       const { data, status }: AxiosResponse<AuthResponseType> =
@@ -94,10 +97,9 @@ export function useAuth(): UseAuth {
             'Content-Type': 'application/json',
           },
         });
-      if (status === 201 || status === 200) {
+        if (status === 201 || status === 200) {
         console.log('useAuth authLoginServerCall', data);
-        // const { accessToken } = data.user;
-        // const { member, tokenInfo } = data;
+
         if ('member' in data) {
           console.log('member', data.member);
           const loggedMember: NewUser = data.member;
@@ -108,37 +110,16 @@ export function useAuth(): UseAuth {
         if ('member' in data && 'tokenInfo' in data) {
           const loggedMember: NewUser = data.member;
           const loggedMemberToken: TokenInfo = data.tokenInfo;
-          // updateUser(data.member);
           updateUser({
             accessToken: loggedMemberToken?.accessToken,
             nickname: loggedMember?.nickname,
             email: loggedMember?.email,
           });
-          // JSON.parse(
-          //   JSON.stringify(data.tokenInfo) + JSON.stringify(data.member),
-          // ),
+
           alert('로그인 성공');
           navigate('/');
         }
-        // updateUser(data); // 이 부분 타입 맞추기
 
-        // localStorage.setItem('accessToken', JSON.stringify(data));
-        // localStorage.setItem('user', JSON.stringify(data));
-        // console.log('useAuth', data);
-        // navigate('/');
-        // if ('tokenInfo' in data) {
-        // if ('tokenInfo' in data ) {
-        // updateUser({data.tokenInfo});
-        // alert('로그인 성공');
-        // navigate('/');
-        // }
-        // updateUser({ username, tokenInfo });
-        // if ('accessToken' in data) {
-        //   // update stored user data
-        //   // updateUser(data.accessToken);
-        //   updateUser(data.accessToken);
-        //   navigate('/');
-        // }
       }
     } catch (errorResponse) {
       const status =
@@ -168,9 +149,6 @@ export function useAuth(): UseAuth {
   function signout(): void {
     // clear user from stored user data
     clearUser();
-
-    // eslint-disable-next-line no-alert
-    alert(`logged out!`);
     navigate('/');
   }
 

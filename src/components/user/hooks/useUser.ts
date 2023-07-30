@@ -71,7 +71,7 @@ async function getUser(
   user: User | null,
   signal: AbortSignal,
 ): Promise<User | null> {
-  if (!user) return null;
+  if (!user || !user.nickname) return null;
   const { data }: AxiosResponse<{ user: User }> = await axiosInstance.get(
     // `/user/${user.id}`,
     `/user/${user.nickname}`,

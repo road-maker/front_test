@@ -57,6 +57,7 @@ export default function RoadmapRecommendation() {
   // const mobile = useMediaQuery(`(max-width: ${themes.breakpoints.sm})`);
   const { getRoadmapById, getAllRoadmap, getRoadmapByIdAuth } = useRoadmap();
   const { roadmaps } = useRoadmapData();
+
   useEffect(() => {
     axios
       .get(`${baseUrl}/roadmaps`)
@@ -80,6 +81,8 @@ export default function RoadmapRecommendation() {
         getRoadmapByIdAuth(currentPage),
       );
     }
+    // }, [currentPage, queryClient]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, queryClient]);
 
   useEffect(() => {

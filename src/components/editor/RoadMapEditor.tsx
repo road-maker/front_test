@@ -191,12 +191,75 @@ function Roadmap({
           // const { data } = prompt;
           // const dataCopy = [...data];
           // console.log(dataCopy);
-          console.log('res.data', res.data);
+          // console.log('res.data', res.data);
 
           // eslint-disable-next-line array-callback-return
         });
     }
   }, []);
+    // if (getStoredRoadmap()) {
+    // const { edges, nodes, viewport } = getStoredRoadmap();
+    // setNodes(nodes);
+    //   setEdges(edges);
+    //   setViewport(viewport);
+
+    //   return;
+    // }
+    // console.log(search.get('title'));
+
+//     if (prompt && search.size > 0 && prompt.keyword === search.get('title')) {
+//       // if (useGpt && search.size > 0) {
+//       // gpt 자동생성
+
+//       const { data } = prompt;
+//       const dataCopy = [...data];
+//       // console.log(dataCopy);
+
+//       // eslint-disable-next-line array-callback-return
+//       dataCopy.map((v) => {
+//         if (!nodeSet.has(v?.id)) {
+//           initialNodes.push({
+//             id: v?.id,
+//             data: {
+//               label: v?.content,
+//             },
+//             type: 'default',
+//             position,
+//             style: {
+//               background: '#fff',
+//               border: '1px solid black',
+//               borderRadius: 15,
+//               fontSize: 12,
+//             },
+//           });
+//           nodeSet.add(`${v?.id}`);
+//         }
+
+//         // source랑 target 구해서 간선id 만들고 이어주기
+//         // parseInt는 오로지 숫자인 부분만 parse해줬음
+
+//         if (v.id !== `${parseInt(v?.id, 10)}`) {
+//           if (!edgeSet.has(`e${parseInt(v?.id, 10)}${v?.id}`)) {
+//             initialEdges.push({
+//               id: `e${parseInt(v?.id, 10)}${v?.id}`,
+//               source: `${parseInt(v?.id, 10)}`,
+//               target: v.id,
+//               type: edgeType,
+//               animated: true,
+//             });
+//           }
+//           edgeSet.add(`e${parseInt(v?.id, 10)}${v?.id}`);
+//         }
+//       });
+//       setNodes(initialNodes);
+//       setEdges(initialEdges);
+//       // search.size !== 0 ? setNodes(initialNodes) : setNodes([]);
+//       // search.size !== 0 ? setEdges(initialEdges) : setEdges([]);
+//       if (search.size !== 0) {
+//         // onLayout('TB');
+//         onLayout('LR');
+//       }
+// >>>>>>> initialmerge
 
   // useEffect(() => {
   //   // console.log(gptRes);
@@ -414,7 +477,7 @@ function Roadmap({
     });
 
     const data = {
-      roadmap: {
+     roadmap: {
         title: roadMapTitle,
         description: desc,
         thumbnailUrl: '',

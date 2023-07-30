@@ -20,13 +20,13 @@ import { Form, useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../../auth/useAuth';
 import { useInput } from '../../common/hooks/useInput';
-// import { useUser } from '../hooks/useUser';
 
 function LoginForm(props: PaperProps): ReactElement {
   const navigate = useNavigate();
   const [email, onChangeEmail, setEmail] = useInput('');
   const [password, onChangePassword, setPassword] = useInput('');
   const auth = useAuth();
+  // const { user } = useUser();
   // const { user } = useUser();
   // if (user) {
   // navigate('/');
