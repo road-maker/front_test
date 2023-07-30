@@ -72,8 +72,8 @@ export default function RoadMapEditor(): ReactElement {
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({ history: false }), // history handled by  yjs
-      // StarterKit, // history handled by  yjs
+      // StarterKit.configure({ history: false }), // history handled by  yjs
+      StarterKit, // history handled by  yjs
       Placeholder.configure({
         placeholder: '로드맵 상세 내용을 입력해주세요.',
       }),
