@@ -32,13 +32,11 @@ export function UseUserInfo(): useUserInfo {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            Authorization:
-              // 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QGdtYWlsLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2OTAyNTE4NzZ9.ME4EZINEOZ8jaBBFsWulSb2oOkpdqh8TFsRhmV7rut8',
-              `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${user?.accessToken}`,
           },
         });
       if (status === 201 || status === 200) {
-        console.log('useAuth ServiceCall', data);
+        // console.log('useAuth ServiceCall', data);
         getStoredUser();
         if ('member' in data) {
           const { member } = data;
@@ -81,8 +79,7 @@ export function UseUserInfo(): useUserInfo {
           data: { ...memberInfo },
           headers: {
             'Content-Type': 'application/json',
-            Authorization:
-              'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QGdtYWlsLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2OTExMzQ5NzZ9.vjjUDXsjiF2d2nj8H8dTmByWlDZbLKZ3WGOZjLjNRso',
+            Authorization: `Bearer ${user?.accessToken}`,
           },
         });
       if (status === 201 || status === 200) {
@@ -114,11 +111,13 @@ export function UseUserInfo(): useUserInfo {
       if (status === 406) {
         // eslint-disable-next-line no-alert
         alert('이전과 다른 닉네임을 설정해주세요!');
-      } else if (status === 409) {
-        alert('이미 존재하는 닉네임입니다.');
-      } else {
-        alert(`${status}`);
       }
+      if (status === 409) {
+        alert('이미 존재하는 닉네임입니다.');
+      }
+      // if (status=== 404) { // @Seo1n api 개발문서 보시면 어떤 response 나오는 지 확인가능합니당, 참고해주세용
+      //   alert(`${status}`);
+      // }
     }
   }
   async function myInfo(member: NewUser): Promise<void> {

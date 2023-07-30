@@ -2,7 +2,6 @@
 import { AxiosResponse } from 'axios';
 import { axiosInstance } from 'axiosInstance';
 import { useUser } from 'components/user/hooks/useUser';
-// import { useUser } from 'components/user/hooks/useUser';
 import { useNavigate } from 'react-router-dom';
 
 import { Prompt } from '../../../types/types';
@@ -31,8 +30,7 @@ export function usePrompt(): UsePrompt {
           // headers: { 'Content-Type': 'application/json' },
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${user.accessToken}`,
-            // Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaWdudXBAbmF2ZXIuY29tIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTY5MDk2Nzg5OH0.coqn_u9t7ir5Qw2Bk6jwD97zuqRYOML1XDv0uPp7TWk`,
+            Authorization: `Bearer ${user?.accessToken}`,
           },
         });
       if (status === 200) {
