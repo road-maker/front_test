@@ -769,9 +769,9 @@ function Roadmap({
           >
             노드 전체 삭제
           </Button>
-          <Button type="button" onClick={onSave} mr={10}>
+          {/* <Button type="button" onClick={onSave} mr={10}>
             save
-          </Button>
+          </Button> */}
 
           <Button type="button" onClick={onRestore} mr={10}>
             restore
