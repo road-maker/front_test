@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import {
   ActionIcon,
   Card,
@@ -62,7 +63,7 @@ export default function RoadmapRecommendation() {
     axios
       .get(`${baseUrl}/roadmaps`)
       .then((v) => {
-        console.log(v);
+        // console.log(v);
         setAllRoadmapData(v?.data);
       })
       .catch((e) => {

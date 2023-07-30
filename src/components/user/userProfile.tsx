@@ -4,7 +4,6 @@ import { ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { HeaderMegaMenu } from '../../layout/mainLayout/header/header';
-import { UseUserInfo } from './hooks/useProfile';
 import { useUser } from './hooks/useUser';
 import UserRoadmap from './userRoadmap';
 
@@ -18,7 +17,7 @@ const mockdata = {
 
 export function UserProfile(): ReactElement {
   const navigate = useNavigate();
-  const { myInfo } = UseUserInfo();
+  // const { myInfo } = UseUserInfo();
   const { user } = useUser();
 
   const myinfo = (
