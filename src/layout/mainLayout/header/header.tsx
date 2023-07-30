@@ -110,7 +110,7 @@ export function HeaderMegaMenu() {
 
   return (
     <HeaderWrap>
-      <Box pb={30}>
+      <Box>
         <Header height={60} px="md">
           <Group position="apart" sx={{ height: '100%' }}>
             <Group

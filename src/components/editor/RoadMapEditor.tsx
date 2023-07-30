@@ -1,7 +1,3 @@
-/* eslint-disable array-callback-return */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// eslint-disable-next-line simple-import-sort/imports
 import 'reactflow/dist/style.css';
 
 import dagre from '@dagrejs/dagre';
@@ -14,32 +10,33 @@ import {
   MultiSelect,
   SimpleGrid,
   Text,
-  TextInput,
   Textarea,
+  TextInput,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
 // import { useRoadmap } from 'components/roadmaps/hooks/useRoadmap'; // origin : initialMerge
 import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import { useDisclosure } from '@mantine/hooks';
+import axios from 'axios';
+import { baseUrl } from 'axiosInstance/constants';
 import { useRoadmap } from 'components/roadmaps/posts/hooks/useRoadmap';
+import { useUser } from 'components/user/hooks/useUser';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import ReactFlow, {
+  addEdge,
   Background,
   Controls,
   MiniMap,
   Panel,
   ReactFlowProvider,
-  addEdge,
   useEdgesState,
   useNodesState,
+  useOnSelectionChange,
   useReactFlow,
 } from 'reactflow';
 import { getStoredRoadmap, setStoredRoadmap } from 'storage/roadmap-storage';
 import { styled } from 'styled-components';
 
-import axios from 'axios';
-import { baseUrl } from 'axiosInstance/constants';
-import { useUser } from 'components/user/hooks/useUser';
 import { useInput } from '../common/hooks/useInput';
 import { RoadmapEdge, RoadmapNode } from './types';
 
@@ -56,17 +53,17 @@ const getLayoutedElements = (nodes, edges, direction = 'TB') => {
   dagreGraph.setGraph({ rankdir: direction });
 
   nodes.forEach((node) => {
-    dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
+    dagreGraph.setNode(node?.id, { width: nodeWidth, height: nodeHeight });
   });
 
   edges.forEach((edge) => {
-    dagreGraph.setEdge(edge.source, edge.target);
+    dagreGraph.setEdge(edge?.source, edge?.target);
   });
 
   dagre.layout(dagreGraph);
 
   nodes.forEach((node) => {
-    const nodeWithPosition = dagreGraph.node(node.id);
+    const nodeWithPosition = dagreGraph.node(node?.id);
     // eslint-disable-next-line no-param-reassign
     node.targetPosition = isHorizontal ? 'left' : 'top';
     // eslint-disable-next-line no-param-reassign
@@ -129,12 +126,11 @@ function Roadmap({
   roadMapTitle,
   roadmapImage,
   roadmapDescription,
-  roadmapRecommendedTime,
   roadmapTag,
-  roadmapDifficulty,
   onRoadMapTitleChange,
   setRoadMapTitle,
   setLabel,
+  toggleEditor,
   onChangeLabel,
   id,
   setState,
@@ -143,8 +139,8 @@ function Roadmap({
   setId,
 }) {
   // const { prompt } = usePromptAnswer();
-  const [search] = useSearchParams();
 
+  const [search] = useSearchParams();
   const edgeSet = new Set<RoadmapEdge['id']>();
   const nodeSet = new Set<RoadmapNode['id']>();
   const [nodeState, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -160,6 +156,8 @@ function Roadmap({
   const { setViewport } = useReactFlow();
   const [useGpt, setUseGpt] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
+  const [nodeModal, setNodeModal] = useState(false);
+
   const [selectedData, setSelectedData] = useState([
     { value: 'react', label: 'React' },
     { value: 'ng', label: 'Angular' },
@@ -178,6 +176,11 @@ function Roadmap({
 
   const proOptions = { hideAttribution: true };
 
+  // const { x, y, zoom } = useViewport();
+
+  // useEffect(() => {
+  //   console.log(x, y, zoom);
+  // }, [x, y, zoom]);
   useEffect(() => {
     if (search.size > 0 && gptRes.length === 0) {
       axios
@@ -370,7 +373,8 @@ function Roadmap({
   //   }
   // }, [rfInstance]);
 
-  const onSave = useCallback(() => {
+  // useCallback(() => {
+  useMemo(() => {
     if (rfInstance) {
       const flow = rfInstance.toObject();
       localStorage.setItem(flowKey, JSON.stringify(flow));
@@ -439,6 +443,7 @@ function Roadmap({
         },
         type: 'default',
         position,
+        // position: { x, y },
         style: {
           background: '#fff',
           border: '1px solid black',
@@ -458,10 +463,10 @@ function Roadmap({
     const edgesCopy = [...edges];
     nodesCopy.map((v) => {
       state.map((item) => {
-        if (v.id === item.id) {
+        if (v?.id === item?.id) {
           // console.log('onPublish', item.details);
           // eslint-disable-next-line no-param-reassign
-          v.detailedContent = item.details;
+          v.detailedContent = item?.details;
           // eslint-disable-next-line no-param-reassign
           // v.targetPosition = item.targetPosition;
           // // eslint-disable-next-line no-param-reassign
@@ -494,13 +499,13 @@ function Roadmap({
 
   // const { deleteElements } = useReactFlow();
   const useRemoveNode = useCallback(() => {
-    setNodes((nds) => nds.filter((node) => node.id !== label));
+    setNodes((nds) => nds.filter((node) => node?.id !== label));
   }, [label]);
 
   useEffect(() => {
     setNodes((nds) =>
       nds.map((node) => {
-        if (node.id === id) {
+        if (node?.id === id) {
           // eslint-disable-next-line no-param-reassign
           node.style = { ...node.style, backgroundColor: nodeBg };
         }
@@ -522,7 +527,7 @@ function Roadmap({
   useEffect(() => {
     setNodes((nds) =>
       nds.map((node) => {
-        if (node.id === id) {
+        if (node?.id === id) {
           // when you update a simple type you can just update the value
           // eslint-disable-next-line no-param-reassign
           node.hidden = nodeHidden;
@@ -533,7 +538,7 @@ function Roadmap({
     setNodes((nds) =>
       nds.map((node) => {
         // if (node.id === '1') {
-        if (node.id === label) {
+        if (node?.id === label) {
           // when you update a simple type you can just update the value
           // eslint-disable-next-line no-param-reassign
           node.data.label = label;
@@ -599,7 +604,7 @@ function Roadmap({
         // source랑 target 구해서 간선id 만들고 이어주기
         // parseInt는 오로지 숫자인 부분만 parse해줬음
 
-        if (v.id !== `${parseInt(v?.id, 10)}`) {
+        if (v?.id !== `${parseInt(v?.id, 10)}`) {
           if (!edgeSet.has(`e${parseInt(v?.id, 10)}${v?.id}`)) {
             initialEdges.push({
               id: `e${parseInt(v?.id, 10)}${v?.id}`,
@@ -621,8 +626,24 @@ function Roadmap({
     }
   }, [gptRes]);
 
+  const [selectedNode, setSelectedNode] = useState([]);
+  useOnSelectionChange({
+    onChange: ({ nodes, edges }) => {
+      // console.log('changed selection', nodes);
+      setSelectedNode(nodes);
+      // if (nodes.length > 0) {
+      setNodeModal(true);
+      // }
+    },
+    // console.log('changed selection', nodes, edges),
+    // console.log('changed selection', edges),
+  });
+
   return (
     <Wrap>
+      {/* <ActionIcon color="blue" >
+        <IconPencil size="1.2rem" />
+      </ActionIcon> */}
       <Modal opened={opened} onClose={close} size="40rem">
         <Center>
           <h2>로드맵 정보</h2>
@@ -709,7 +730,8 @@ function Roadmap({
           <div className="confirm_btn_wrap">
             <Button
               onClick={() => {
-                setNodes([]);
+                // setNodes([]);
+                setNodes(initialNodes);
                 setEdges([]);
                 setConfirmDelete(false);
               }}
@@ -722,6 +744,28 @@ function Roadmap({
           </div>
         </Center>
       </Modal>
+      <Panel position="top-center">
+        <Modal opened={nodeModal} onClose={() => setNodeModal(false)} size="xl">
+          <div>
+            <Center>
+              <h1>nodes</h1>
+              {JSON.stringify(selectedNode[0])}
+              <input
+                value={label}
+                onChange={(evt) => {
+                  setLabel(evt.target.value);
+                }}
+              />
+            </Center>
+          </div>
+
+          {selectedNode[0]?.id && toggleEditor}
+
+          <div className="confirm_btn_wrap">
+            <Button onClick={() => setNodeModal(false)}>닫기</Button>
+          </div>
+        </Modal>
+      </Panel>
       <ReactFlow
         nodes={nodeState}
         edges={edgeState}
@@ -750,22 +794,23 @@ function Roadmap({
           opacity: '80%',
         }}
       >
-        <Panel position="top-right">
+        {/* <Panel position="top-right">
           <div className="updatenode__controls">
-            <div>label:</div>
             <input
               value={label}
               onChange={(evt) => {
                 setLabel(evt.target.value);
               }}
             />
-
+            <ActionIcon color="blue">
+              <IconPencil size="1.2rem" />
+            </ActionIcon>
             <div className="updatenode__bglabel">background:</div>
             <input
               value={nodeBg}
               onChange={(evt) => setNodeBg(evt.target.value)}
             />
-            {/* 
+            
             <div className="updatenode__checkboxwrapper">
               <div>hidden:</div>
               <input
@@ -773,10 +818,10 @@ function Roadmap({
                 checked={nodeHidden}
                 onChange={(evt) => setNodeHidden(evt.target.checked)}
               />
-            </div> */}
+            </div>
           </div>
-        </Panel>
-        <Panel position="bottom-center">
+        </Panel> */}
+        <Panel position="top-right">
           <Button type="button" onClick={() => onLayout('TB')} mr={10}>
             vertical layout
           </Button>
@@ -807,11 +852,6 @@ function Roadmap({
               노드 전체 삭제
             </Button>
           )}
-
-          {/* <Button type="button" onClick={onSave} mr={10}>
-            save
-          </Button> */}
-
           <Button type="button" onClick={onRestore} mr={10}>
             restore
           </Button>
@@ -861,10 +901,9 @@ export default function RoadMapCanvas({
   label,
   roadMapTitle,
   roadmapImage,
+  toggleEditor,
   roadmapDescription,
-  roadmapRecommendedTime,
   roadmapTag,
-  roadmapDifficulty,
   setLabel,
   onRoadMapTitleChange,
   setRoadMapTitle,
@@ -883,11 +922,10 @@ export default function RoadMapCanvas({
         label={label}
         roadMapTitle={roadMapTitle}
         roadmapImage={roadmapImage}
+        toggleEditor={toggleEditor}
         roadmapDescription={roadmapDescription}
-        roadmapRecommendedTime={roadmapRecommendedTime}
         onRoadMapTitleChange={onRoadMapTitleChange}
         roadmapTag={roadmapTag}
-        roadmapDifficulty={roadmapDifficulty}
         setRoadMapTitle={setRoadMapTitle}
         setLabel={setLabel}
         state={state}
