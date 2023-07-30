@@ -9,6 +9,7 @@ import {
   Image,
   Modal,
   rem,
+  Text,
   TextInput,
   TextInputProps,
   useMantineTheme,
@@ -18,8 +19,9 @@ import { IconArrowLeft, IconArrowRight, IconSearch } from '@tabler/icons-react';
 import { useInput } from 'components/common/hooks/useInput';
 import { usePrompt } from 'components/prompts/hooks/usePrompt';
 import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
+import { useState } from 'react';
 import { queryClient } from 'react-query/queryClient';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { clearStoredGpt } from 'storage/gpt-storage';
 import { clearStoredRoadmap } from 'storage/roadmap-storage';
 import { styled } from 'styled-components';
@@ -103,7 +105,9 @@ export function HeaderMegaMenu() {
   const { signout } = useAuth();
   const { pathname } = useLocation();
   const [opened, { open, close }] = useDisclosure(false);
-  console.log(pathname);
+  const [isEditorPage, setIsEditorPage] = useState(false);
+  const [leaveEditorAction, setLeaveEditorAction] = useState('');
+
   return (
     <HeaderWrap>
       <Box pb={30}>
@@ -118,13 +122,54 @@ export function HeaderMegaMenu() {
                 src="/img/logo.png"
                 width={200}
                 height={50}
-                onClick={() => navigate('/')}
+                onClick={() => {
+                  setLeaveEditorAction('home');
+                  pathname === '/roadmap/editor'
+                    ? setIsEditorPage(true)
+                    : navigate('/');
+                }}
                 className="hoverItem"
               />
               <InputWithButton ml="5rem" />
             </Group>
 
             <Group className={classes.hiddenMobile}>
+              <Modal
+                opened={isEditorPage}
+                size="70%"
+                onClose={() => setIsEditorPage(false)}
+              >
+                <Center>
+                  <Center>
+                    <h1>로드맵을 아직 출간하지 않았습니다. </h1>
+                    <h3>변경사항이 저장되지 않을 수 있습니다. </h3>
+                  </Center>
+                  <div className="confirm_btn_wrap">
+                    <Button
+                      onClick={() => {
+                        if (leaveEditorAction === 'mypage') {
+                          navigate('/users/mypage');
+                        }
+                        if (leaveEditorAction === 'home') {
+                          navigate('/');
+                        }
+                        if (leaveEditorAction === 'signout') {
+                          signout();
+                        }
+                      }}
+                    >
+                      나가기
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsEditorPage(false)}
+                    >
+                      취소
+                    </Button>
+                  </div>
+                </Center>
+              </Modal>
               <Modal opened={opened} onClose={close} size="70%">
                 <Center>
                   <h1>새로운 로드맵 생성하기</h1>
@@ -168,11 +213,37 @@ export function HeaderMegaMenu() {
               </Group>
               {user && 'accessToken' in user ? (
                 <>
-                  <NavLink to="/users/mypage">{user.nickname}님</NavLink>
-                  <Button onClick={() => signout()}>Sign out</Button>
+                  <Text
+                    c="blue"
+                    className="hoverItem"
+                    onClick={() => {
+                      setLeaveEditorAction('mypage');
+                      pathname === '/roadmap/editor'
+                        ? setIsEditorPage(true)
+                        : navigate('/users/mypage');
+                    }}
+                  >
+                    {user.nickname}님
+                  </Text>
+                  <Button
+                    onClick={() => {
+                      setLeaveEditorAction('signout');
+                      pathname === '/roadmap/editor'
+                        ? setIsEditorPage(true)
+                        : signout();
+                    }}
+                  >
+                    Sign out
+                  </Button>
                 </>
               ) : (
-                <Button onClick={() => navigate('/users/signin')}>
+                <Button
+                  onClick={() => {
+                    pathname === '/roadmap/editor'
+                      ? setIsEditorPage(true)
+                      : navigate('/users/signin');
+                  }}
+                >
                   Sign in
                 </Button>
               )}
@@ -187,6 +258,9 @@ export function HeaderMegaMenu() {
 const HeaderWrap = styled.nav`
   & .hoverItem:hover {
     cursor: pointer;
+  }
+  & .confirm_btn_wrap {
+    display: inline-flex;
   }
 `;
 
