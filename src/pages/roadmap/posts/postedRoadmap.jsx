@@ -124,7 +124,6 @@ function PostedRoadmap() {
           console.log(e);
         })
         .then((v) => {
-          console.log(v);
           setNodes(v?.data.nodes);
           setCurrentRoadmap({
             title: v?.data?.roadmap.title,
@@ -240,6 +239,7 @@ function PostedRoadmap() {
   const [zoomOnDoubleClick] = useState(false);
   const [panOnDrag] = useState(true); // 마우스로 이동
   const [isOpen, setIsOpen] = useState(false);
+  const [modal, setModal] = useState(false);
 
   const proOptions = { hideAttribution: true };
   return (
@@ -254,14 +254,37 @@ function PostedRoadmap() {
           </Avatar>
           {currentRoadmap?.ownerNickname || 'no nickname'}
         </Group>
+
+        <Modal
+          opened={modal}
+          size="70%"
+          onClose={() => {
+            setModal(false);
+            // joinRoadmap(parseInt(currentPage, 10));
+          }}
+        >
+          {/* {!user && (<><Center>로그인 후 이용 가능합니다.</Center>
+            <Button onClick={()=>navigate('/users/signin')}}>
+            로그인 하기
+            </Button></>} */}
+          {!user && (
+            <div>
+              <Center>로그인 후 이용 가능합니다.</Center>
+              <Button onClick={() => navigate('/users/signin')}>
+                로그인하기
+              </Button>
+            </div>
+          )}
+        </Modal>
+
         <Button
           ml={800}
           onClick={() => {
             if (!user) {
-              alert('로그인 후 이용 가능합니다.');
-              navigate('/users/signin');
+              setModal(true);
             }
-            joinRoadmap(parseInt(currentPage, 10));
+
+            joinRoadmap(parseInt(currentPage, 10)); // 로드맵 참여하기
           }}
         >
           참여하기
