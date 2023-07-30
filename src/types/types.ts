@@ -39,7 +39,17 @@ export interface RoadmapMetaData {
 export type UserRoadmap = RoadmapMetaData & Roadmap;
 
 // export type User = MemberInfo & NewUser;
-
+export interface MemberInfo {
+  memberId?: number;
+  avatarUrl?: string | null;
+  baekjoonId?: string | null;
+  bio?: string | null;
+  blogUrl?: string | null;
+  exp?: number;
+  githubUrl?: string | null;
+  level?: 0;
+  inProcessRoadmapDto?: [];
+}
 export interface GptNode {
   id: string;
   content?: string;

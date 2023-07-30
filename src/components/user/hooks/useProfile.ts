@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 /* eslint-disable no-alert */
 import axios, { AxiosResponse } from 'axios';
+import { getStoredUser } from 'storage/user-storage';
+
 import { axiosInstance } from '../../../axiosInstance';
 import type { NewUser } from '../../../types/types';
 import { useUser } from './useUser';
@@ -34,7 +36,7 @@ export function UseUserInfo(): useUserInfo {
           },
         });
       if (status === 201 || status === 200) {
-        console.log('useAuth ServiceCall', data);
+        // console.log('useAuth ServiceCall', data);
         getStoredUser();
         if ('member' in data) {
           const { member } = data;
@@ -77,8 +79,7 @@ export function UseUserInfo(): useUserInfo {
           data: { ...memberInfo },
           headers: {
             'Content-Type': 'application/json',
-            Authorization:
-              'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QGdtYWlsLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2OTExMzQ5NzZ9.vjjUDXsjiF2d2nj8H8dTmByWlDZbLKZ3WGOZjLjNRso',
+            Authorization: `Bearer ${user?.accessToken}`,
           },
         });
       if (status === 201 || status === 200) {

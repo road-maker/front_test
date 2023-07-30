@@ -13,7 +13,6 @@ interface UseAuth {
   signout: () => void;
 }
 
-
 // type UserResponse = { data: NewUser };
 type UserResponse = { data: { member: MemberInfo; tokenInfo: TokenInfo } };
 type ErrorResponse = { message: string };
@@ -97,7 +96,7 @@ export function useAuth(): UseAuth {
             'Content-Type': 'application/json',
           },
         });
-        if (status === 201 || status === 200) {
+      if (status === 201 || status === 200) {
         console.log('useAuth authLoginServerCall', data);
 
         if ('member' in data) {
@@ -119,7 +118,6 @@ export function useAuth(): UseAuth {
           alert('로그인 성공');
           navigate('/');
         }
-
       }
     } catch (errorResponse) {
       const status =
