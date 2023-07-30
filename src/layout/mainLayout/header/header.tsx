@@ -18,12 +18,13 @@ import { IconArrowLeft, IconArrowRight, IconSearch } from '@tabler/icons-react';
 import { useInput } from 'components/common/hooks/useInput';
 import { usePrompt } from 'components/prompts/hooks/usePrompt';
 import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
-import { useNavigate } from 'react-router-dom';
+import { queryClient } from 'react-query/queryClient';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { clearStoredGpt } from 'storage/gpt-storage';
 import { clearStoredRoadmap } from 'storage/roadmap-storage';
 
 import { useAuth } from '../../../auth/useAuth';
-// import { useUser } from '../../../components/user/hooks/useUser';
+import { useUser } from '../../../components/user/hooks/useUser';
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -99,7 +100,9 @@ export function HeaderMegaMenu() {
   const navigate = useNavigate();
   // const user = useUser();
   const { signout } = useAuth();
+  const { pathname } = useLocation();
   const [opened, { open, close }] = useDisclosure(false);
+  console.log(pathname);
   return (
     <Box pb={30}>
       <Header height={60} px="md">
@@ -142,6 +145,10 @@ export function HeaderMegaMenu() {
                   onClick={() => {
                     clearStoredRoadmap();
                     clearStoredGpt();
+                    if (!user || !('accessToken' in user)) {
+                      alert('로그인 후 이용가능합니다.');
+                      navigate('/users/signin');
+                    }
                     navigate('/roadmap/editor');
                   }}
                 >
@@ -149,29 +156,22 @@ export function HeaderMegaMenu() {
                 </Button>
               </Center>
             </Modal>
-            <Group position="center">
-              <Button onClick={open} variant="light" color="indigo">
-                로드맵 생성하기
-              </Button>
+           <Group position="center">
+              {pathname !== '/roadmap/editor' && (
+                <Button onClick={open} variant="light" color="indigo">
+                  로드맵 생성하기
+                </Button>
+              )}
             </Group>
             {/* {user && 'accessToken' in user ? ( */}
-            {/* {user && 'tokenInfo' in user ? (
-              <Button onClick={() => signout()}>Sign out</Button>
-            ) : (
+            {user && 'accessToken' in user ? (
               <>
-                <Button onClick={() => navigate('/users/mypage')}>
-                  마이페이지
-                </Button>
-                <Button onClick={() => navigate('/users/signin')}>
-                  Sign in
-                </Button>
+                <NavLink to="/users/mypage">{user.nickname}님</NavLink>
+                <Button onClick={() => signout()}>Sign out</Button>
               </>
-            )} */}
-            <Button onClick={() => signout()}>Sign out</Button>
-            <Button onClick={() => navigate('/users/mypage')}>
-              마이페이지
-            </Button>
-            <Button onClick={() => navigate('/users/signin')}>Sign in</Button>
+            ) : (
+              <Button onClick={() => navigate('/users/signin')}>Sign in</Button>
+            )}
           </Group>
         </Group>
       </Header>
@@ -183,10 +183,33 @@ function InputWithButton(props: TextInputProps) {
   const theme = useMantineTheme();
   const [prompt, onPromptChange, setPrompt] = useInput('');
   const { getprompt } = usePrompt();
-  const { clearGptAnswer } = usePromptAnswer();
+  const navigate = useNavigate();
+  const { user } = useUser();
+  const { clearGptAnswer, updateGptAnswer } = usePromptAnswer();
   const onRequestPrompt = (p) => {
-    getprompt(p.prompt);
+    // getprompt(p.prompt);
+    // queryClient.prefetchQuery(['roadmapById', currentPage], () =>
+    // queryClient.prefetchQuery(['recent_gpt_search', p.prompt], () =>
+    // queryClient.prefetchQuery('recent_gpt_search', () => getprompt(p.prompt));
+    // queryClient.prefetchQuery('prompts', () => getprompt(p.prompt));
+    queryClient.prefetchQuery(['prompts', p.prompt], () => {
+      getprompt(p.prompt);
+      updateGptAnswer(JSON.parse(localStorage.getItem('recent_gpt_search')));
+    });
+    // JSON.parse(localStorage.getItem(`['prompts', ${p.prompt}]`)),
+    // updateGptAnswer(JSON.parse(localStorage.getItem('recent_gpt_search')));
+    // ['prompts', p.prompt],
+    // localStorage.getItem(`['prompts', ${p.prompt}]`),
+    // localStorage.getItem(`prompts`),
   };
+
+  // useEffect(() => {
+  //   if (currentPage) {
+  //     queryClient.prefetchQuery(['roadmapById', currentPage], () =>
+  //       getRoadmapById(currentPage),
+  //     );
+  //   }
+  // }, [currentPage, queryClient]);
   return (
     <TextInput
       value={prompt}
@@ -199,8 +222,13 @@ function InputWithButton(props: TextInputProps) {
           size={32}
           onClick={() => {
             setPrompt(prompt);
-            clearGptAnswer();
-            onRequestPrompt({ prompt });
+            if (!user) {
+              alert('로그인 후 이용가능합니다.');
+              navigate('/users/signin');
+            }
+            navigate(`/roadmap/editor?title=${prompt}`);
+            // clearGptAnswer();
+            // onRequestPrompt({ prompt });
           }}
           radius="xl"
           color={theme.primaryColor}

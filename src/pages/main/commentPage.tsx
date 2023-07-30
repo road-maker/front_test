@@ -16,6 +16,10 @@ import {
 } from '@mantine/core';
 import { useCounter, useDisclosure } from '@mantine/hooks';
 import { IconHeart } from '@tabler/icons-react';
+import axios from 'axios';
+import { baseUrl } from 'axiosInstance/constants';
+import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 // import { InputWithButton } from './header';
 // import { InputWithButton } from '../../layout/mainLayout/header';
@@ -61,6 +65,19 @@ function CommentPage() {
   const [opened, { open, close }] = useDisclosure(false);
   const { classes, theme } = useStyles();
   const [count, handlers] = useCounter(0, { min: 0, max: 1000 });
+  const [commentPage, setCommentPage] = useState(0);
+
+  const { pathname } = useLocation();
+
+  axios
+    .get(
+      `${baseUrl}/roadmaps/load-roadmap/${pathname.slice(
+        pathname.lastIndexOf('/') + 1,
+      )}/comments?page=${commentPage}&size=5`,
+    )
+    .then((v) => console.log(v))
+    .catch((e) => console.log(e));
+
   const values = dummy.map((v) => (
     <SimpleGrid
       key={v.id}
@@ -123,7 +140,9 @@ function CommentPage() {
           placeholder="내용을 입력하세요"
         />
         <Center>
-          <Button mt={30}>작성하기</Button>
+          <Button mt={30} onClick={() => alert('작성하기')}>
+            작성하기
+          </Button>
         </Center>
       </Modal>
       <Group position="right">

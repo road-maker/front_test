@@ -1,8 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable no-alert */
 import axios, { AxiosResponse } from 'axios';
-import { getStoredUser } from 'storage/user-storage';
-
 import { axiosInstance } from '../../../axiosInstance';
 import type { NewUser } from '../../../types/types';
 import { useUser } from './useUser';
@@ -32,9 +30,7 @@ export function UseUserInfo(): useUserInfo {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            Authorization:
-              // 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QGdtYWlsLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2OTAyNTE4NzZ9.ME4EZINEOZ8jaBBFsWulSb2oOkpdqh8TFsRhmV7rut8',
-              `Bearer ${user.accessToken}`,
+            Authorization: `Bearer ${user?.accessToken}`,
           },
         });
       if (status === 201 || status === 200) {

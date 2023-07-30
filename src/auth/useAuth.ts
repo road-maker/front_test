@@ -2,8 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import axios, { AxiosResponse } from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { setStoredUser } from 'storage/user-storage';
-import { NewUser } from 'types/types';
+import { MemberInfo, NewUser, TokenInfo } from 'types/types';
 
 import { axiosInstance } from '../axiosInstance';
 import { useUser } from '../components/user/hooks/useUser';
@@ -14,7 +13,9 @@ interface UseAuth {
   signout: () => void;
 }
 
-type UserResponse = { user: NewUser };
+
+// type UserResponse = { data: NewUser };
+type UserResponse = { data: { member: MemberInfo; tokenInfo: TokenInfo } };
 type ErrorResponse = { message: string };
 type AuthResponseType = UserResponse | ErrorResponse;
 
@@ -40,20 +41,21 @@ export function useAuth(): UseAuth {
           },
         });
       if (status === 201 || status === 200) {
-        updateUser({
-          memberId: 0,
-          avatarUrl: '',
-          baekjoonId: '',
-          bio: '',
-          blogUrl: '',
-          email,
-          exp: 0,
-          githubUrl: '',
-          level: 0,
-          nickname,
-          inProcessRoadmapDto: [],
-        });
-        // console.log('useAuth ServiceCall', data);
+        // updateUser({
+        //   memberId: 0,
+        //   avatarUrl: '',
+        //   baekjoonId: '',
+        //   bio: '',
+        //   blogUrl: '',
+        //   email,
+        //   exp: 0,
+        //   githubUrl: '',
+        //   level: 0,
+        //   nickname,
+        //   inProcessRoadmapDto: [],
+        // });
+        // updateUser(data);
+        console.log('useAuth ServiceCall', data);
         // navigate('/');
       }
       // if ('accessToken' in data) {
@@ -95,37 +97,30 @@ export function useAuth(): UseAuth {
             'Content-Type': 'application/json',
           },
         });
-      if (status === 201 || status === 200) {
-        localStorage.setItem('user', JSON.stringify(data));
-        // console.log('useAuth', data);
-        // navigate('/');
-        // if ('user' in data) {
-        //   const { user } = data;
-        //   updateUser({
-        //     memberId: user.memberId,
-        //     avatarUrl: user.avatarUrl,
-        //     baekjoonId: user.baekjoonId,
-        //     bio: user.bio,
-        //     blogUrl: user.blogUrl,
-        //     email: user.email,
-        //     exp: user.exp,
-        //     githubUrl: user.githubUrl,
-        //     level: user.level,
-        //     nickname: user.nickname,
-        //     inProcessRoadmapDto: user.inProcessRoadmapDto,
-        //   });
-        // }
-        alert('로그인 성공');
-        navigate('/');
-        // window.location.reload();
+        if (status === 201 || status === 200) {
+        console.log('useAuth authLoginServerCall', data);
+
+        if ('member' in data) {
+          console.log('member', data.member);
+          const loggedMember: NewUser = data.member;
+        }
+        if ('tokenInfo' in data) {
+          console.log('tokenInfo', data.tokenInfo);
+        }
+        if ('member' in data && 'tokenInfo' in data) {
+          const loggedMember: NewUser = data.member;
+          const loggedMemberToken: TokenInfo = data.tokenInfo;
+          updateUser({
+            accessToken: loggedMemberToken?.accessToken,
+            nickname: loggedMember?.nickname,
+            email: loggedMember?.email,
+          });
+
+          alert('로그인 성공');
+          navigate('/');
+        }
+
       }
-      // updateUser({ username, tokenInfo });
-      // if ('accessToken' in data) {
-      //   // update stored user data
-      //   // updateUser(data.accessToken);
-      //   updateUser(data.accessToken);
-      //   navigate('/');
-      // }
     } catch (errorResponse) {
       const status =
         axios.isAxiosError(errorResponse) && errorResponse?.response?.status
@@ -155,8 +150,6 @@ export function useAuth(): UseAuth {
     // clear user from stored user data
     clearUser();
     navigate('/');
-    // eslint-disable-next-line no-alert
-    alert(`logged out!`);
   }
 
   return {
