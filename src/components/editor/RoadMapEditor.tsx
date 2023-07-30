@@ -309,9 +309,10 @@ function Roadmap({
   // }, [gptRes]);
 
   useMemo(() => {
-    // node content 수정
+    // 노드 내용 수정
     setNodes((nds) =>
       nds.map((node) => {
+        // if (node.id === '1') {
         if (node.id === id) {
           // it's important that you create a new object here
           // in order to notify react flow about the change
@@ -320,15 +321,32 @@ function Roadmap({
             ...node.data,
             label,
           };
-
-          console.log(node);
-          console.log(nds);
         }
 
         return node;
       }),
     );
   }, [label, id]);
+  // }, [label, id]);
+  // useMemo(() => {
+  //   setNodes((nds) =>
+  //     nds.map((node) => {
+  //       // if (node.id === '1') {
+  //       if (node.id === id) {
+  //         // it's important that you create a new object here
+  //         // in order to notify react flow about the change
+  //         // eslint-disable-next-line no-param-reassign
+  //         node.data = {
+  //           ...node.data,
+  //           label: nodeName,
+  //         };
+  //       }
+  //       console.log(node);
+
+  //       return node;
+  //     }),
+  //   );
+  // }, [label, nodeName]);
 
   useMemo(() => {
     // console.log('roadmapeditor props', editor);
@@ -342,6 +360,14 @@ function Roadmap({
     },
     [setEdges],
   );
+
+  // const onSave = useCallback(() => {
+  //   if (rfInstance) {
+  //     const flow = rfInstance.toObject();
+  //     localStorage.setItem(flowKey, JSON.stringify(flow));
+  //     console.log(flow);
+  //   }
+  // }, [rfInstance]);
 
   const onSave = useCallback(() => {
     if (rfInstance) {
@@ -409,7 +435,6 @@ function Roadmap({
         id: (nodeCount + 1).toString(),
         data: {
           label: ``,
-          // label: '',
         },
         type: 'default',
         position,
@@ -438,7 +463,7 @@ function Roadmap({
           v.detailedContent = item.details;
           // eslint-disable-next-line no-param-reassign
           // v.targetPosition = item.targetPosition;
-          // eslint-disable-next-line no-param-reassign
+          // // eslint-disable-next-line no-param-reassign
           // v.sourcePosition = item.sourcePosition;
         }
       });
@@ -743,9 +768,6 @@ function Roadmap({
             mr={10}
           >
             노드 전체 삭제
-          </Button>
-          <Button type="button" onClick={useRemoveNode} mr={10}>
-            {id} 노드삭제
           </Button>
           <Button type="button" onClick={onSave} mr={10}>
             save
