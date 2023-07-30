@@ -163,7 +163,6 @@ function PostedRoadmap() {
           console.log(e);
         })
         .then((v) => {
-          console.log(v);
           setNodes(v?.data.nodes);
           setCurrentRoadmap({
             title: v?.data?.roadmap.title,

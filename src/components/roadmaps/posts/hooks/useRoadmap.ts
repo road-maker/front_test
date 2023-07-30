@@ -98,7 +98,6 @@ export function useRoadmap(): UseRoadmap {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${user?.accessToken}`,
-            // Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaWdudXBAbmF2ZXIuY29tIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTY5MDk3Nzk2Mn0.5XZmXtA2arG_VsEJN5SwQzBj5P2LHFMvdw4Ha8JZVTY`,
           },
         });
       if (status === 200) {
@@ -121,7 +120,6 @@ export function useRoadmap(): UseRoadmap {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${user?.accessToken}`,
-            // Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaWdudXBAbmF2ZXIuY29tIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTY5MDk3Nzk2Mn0.5XZmXtA2arG_VsEJN5SwQzBj5P2LHFMvdw4Ha8JZVTY`,
           },
         });
       if (status === 201) {
@@ -130,12 +128,12 @@ export function useRoadmap(): UseRoadmap {
       if (status === 404) {
         alert('로드맵을 찾지 못했습니다.');
       }
-      if (status === 409) {
+    } catch (errorResponse) {
+      if (errorResponse === 409) {
         alert('이미 참여중인 로드맵입니다.');
       }
-    } catch (errorResponse) {
-      console.log(`${SERVER_ERROR}!: ${errorResponse}`);
-      console.log('user', user);
+      // console.log(`${SERVER_ERROR}!: ${errorResponse}`);
+      // console.log('user', user);
     }
   }
   async function roadmapProgressSeverCall(
@@ -148,13 +146,11 @@ export function useRoadmap(): UseRoadmap {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          // Authorization: `Bearer ${getStoredUser()}`,
           Authorization: `Bearer ${user?.accessToken}`,
-          // Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaWdudXBAbmF2ZXIuY29tIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTY5MDk3Nzk2Mn0.5XZmXtA2arG_VsEJN5SwQzBj5P2LHFMvdw4Ha8JZVTY`,
         },
       });
       if (status === 200) {
-        console.log('성고적으로 업뎃');
+        console.log('성공적으로 업뎃');
       }
       if (status === 403) {
         console.log('권한이 없습니다.');
