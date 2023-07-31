@@ -12,7 +12,7 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { Icon24Hours, IconChecklist, IconUser } from '@tabler/icons-react';
+import { IconChecklist, IconUser } from '@tabler/icons-react';
 import { Highlight } from '@tiptap/extension-highlight';
 import { Link } from '@tiptap/extension-link';
 import { Subscript } from '@tiptap/extension-subscript';
@@ -24,7 +24,6 @@ import StarterKit from '@tiptap/starter-kit';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
 import { useInput } from 'components/common/hooks/useInput';
-import { useRoadmap } from 'components/roadmaps/posts/hooks/useRoadmap';
 import { useRoadmapData } from 'components/roadmaps/posts/hooks/useRoadMapResponse';
 import { useUser } from 'components/user/hooks/useUser';
 import MainLayout from 'layout/mainLayout';
@@ -89,14 +88,15 @@ function PostedRoadmap() {
   const navigate = useNavigate();
   const { classes, theme } = useStyles();
   const { pathname } = useLocation();
+  const [participation, setParticipation] = useState();
   const [currentPage, setCurrentPage] = useState(
     pathname.slice(pathname.lastIndexOf('/') + 1),
   );
-
+  const [isLoading, setLoading] = useState(true);
   const { roadmapById } = useRoadmapData(
     pathname.slice(pathname.lastIndexOf('/') + 1),
   );
-  const { joinRoadmap } = useRoadmap();
+  // const { joinRoadmap } = useRoadmap();
   const [currentRoadmap, setCurrentRoadmap] = useState(roadmapById?.data || []);
   const [label, onChangeLabel, setLabel] = useInput('');
   const [id, onChangeId, setId] = useInput('');
@@ -126,12 +126,14 @@ function PostedRoadmap() {
         .then((v) => {
           setNodes(v?.data.nodes);
           setCurrentRoadmap({
-            title: v?.data?.roadmap.title,
-            description: v?.data.roadmap.description,
-            ownerAvatarUrl: v?.data.roadmap.ownerAvatarUrl,
-            ownerNickname: v?.data.roadmap.ownerNickname,
-            thumbnailUrl: v?.data.roadmap.thumbnailUrl,
+            title: v?.data?.roadmap?.title,
+            description: v?.data?.roadmap?.description,
+            ownerAvatarUrl: v?.data?.roadmap?.ownerAvatarUrl,
+            ownerNickname: v?.data?.roadmap?.ownerNickname,
+            thumbnailUrl: v?.data?.roadmap?.thumbnailUrl,
+            isJoined: v?.data?.isJoined,
           });
+          setParticipation(v?.data.isJoined);
           const detailState = [];
           v?.data.nodes.map((j) => {
             detailState.push({ id: j.id, details: j.detailedContent });
@@ -172,9 +174,11 @@ function PostedRoadmap() {
             title: v?.data?.title,
             description: v?.data?.description,
             ownerAvatarUrl: v?.data?.member?.ownerAvatarUrl,
-            ownerNickname: v?.data?.member?.ownerNickname,
+            ownerNickname: v?.data?.member?.nickname,
+            isJoined: v?.data?.isJoined,
             thumbnailUrl: v?.data?.member?.thumbnailUrl,
           });
+          setLoading(false);
           const detailState = [];
           v?.data.nodes.map((j) => {
             detailState.push({ id: j.id, details: j.detailedContent });
@@ -247,6 +251,25 @@ function PostedRoadmap() {
   const [modal, setModal] = useState(false);
 
   const proOptions = { hideAttribution: true };
+
+  const joinRoadmap = () => {
+    axios
+      .post(
+        `${baseUrl}/roadmaps/${parseInt(currentPage, 10)}/join`,
+        { data: parseInt(currentPage, 10) },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user?.accessToken}`,
+          },
+        },
+      )
+      .then((v) => {
+        setParticipation(true);
+      })
+      .catch((e) => console.log(e));
+  };
+
   return (
     <MainLayout>
       <Container px="xs" maw={1000}>
@@ -254,10 +277,10 @@ function PostedRoadmap() {
           {currentRoadmap?.title}
         </Title>
         <Group mt={20}>
+          {currentRoadmap?.ownerNickname}
           <Avatar color="purple" radius="xl">
             {currentRoadmap?.ownerAvatarUrl || ''}
           </Avatar>
-          {currentRoadmap?.ownerNickname}
         </Group>
 
         <Modal
@@ -265,9 +288,10 @@ function PostedRoadmap() {
           size="70%"
           onClose={() => {
             setModal(false);
-            // joinRoadmap(parseInt(currentPage, 10));
           }}
         >
+          {/* {joinState} */}
+
           {/* {!user && (<><Center>로그인 후 이용 가능합니다.</Center>
             <Button onClick={()=>navigate('/users/signin')}}>
             로그인 하기
@@ -281,18 +305,26 @@ function PostedRoadmap() {
             </div>
           )}
         </Modal>
-
         <Button
           ml={800}
+          loading={isLoading}
+          disabled={participation || currentRoadmap.isJoined}
           onClick={() => {
-            if (!user) {
+            if (!user?.accessToken) {
               setModal(true);
             }
-
-            joinRoadmap(parseInt(currentPage, 10)); // 로드맵 참여하기
+            joinRoadmap();
+            // joinRoadmap(parseInt(currentPage, 10)); // 로드맵 참여하기
           }}
         >
-          참여하기
+          {/* {participation && '참여 중'}
+          {!participation && user.accessToken
+            ? '참여하기'
+            : '로그인 후 참여하기'} */}
+          {!isLoading && (participation || currentRoadmap.isJoined)
+            ? '참여 중'
+            : '참여하기'}
+          {isLoading && ' 로딩 중'}
         </Button>
         <Text c="dimmed" className={classes.description} mt="md">
           {currentRoadmap?.description || ''}
@@ -347,7 +379,7 @@ function PostedRoadmap() {
               완료인원: 명
             </Text>
           </Card>
-          <Card
+          {/* <Card
             mb={30}
             shadow="md"
             radius="md"
@@ -359,7 +391,7 @@ function PostedRoadmap() {
               stroke={2}
               color={theme.fn.primaryColor()}
             />
-          </Card>
+          </Card> */}
           {/* <Card
             mb={30}
             shadow="md"
