@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import {
   Avatar,
   Button,
@@ -295,7 +296,7 @@ function PostedRoadmap() {
         <Button
           ml={800}
           loading={isLoading}
-          disabled={participation || currentRoadmap.isJoined}
+          disabled={isLoading || !participation}
           onClick={() => {
             if (!user?.accessToken) {
               setModal(true);
@@ -304,9 +305,11 @@ function PostedRoadmap() {
           }}
         >
           {isLoading && ' 로딩 중'}
-
-          {!isLoading && participation && '참여 중'}
-          {!isLoading && !participation && '참여하기'}
+          {!isLoading && !participation
+            ? '참여 중'
+            : !isLoading && participation
+            ? '참여하기'
+            : ''}
         </Button>
         <Text c="dimmed" className={classes.description} mt="md">
           {currentRoadmap?.description || ''}
