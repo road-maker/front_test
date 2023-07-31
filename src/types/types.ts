@@ -29,7 +29,8 @@ export interface RoadmapMetaData {
   id?: number;
   thumbnailUrl?: string;
   title?: string;
-  text?: string;
+  commentTitle?: string;
+  commentContent?: string;
   recommendedExecutionTimeValue?: number;
   recommendedExecutionTimeUnit?: string;
   flowkey?: string;

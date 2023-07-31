@@ -38,7 +38,6 @@ export function UserProfile() {
 
   function myInfo() {
     if (!user?.id) {
-      // user 객체에 memberId가 없는 경우 처리
       console.error('User memberId is not available.');
       return;
     }

@@ -41,7 +41,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const initialUrl = '/roadmaps/load-roadmap/:roadmapId';
+const initialUrl = '/roadmaps/load-roadmap/:';
 const fetchUrl = async (url) => {
   const response = await fetch(url);
   return response.json();

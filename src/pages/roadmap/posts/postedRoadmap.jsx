@@ -165,11 +165,11 @@ function PostedRoadmap() {
         .then((v) => {
           setNodes(v?.data.nodes);
           setCurrentRoadmap({
-            title: v?.data?.roadmap.title,
-            description: v?.data.roadmap.description,
-            ownerAvatarUrl: v?.data.roadmap.ownerAvatarUrl,
-            ownerNickname: v?.data.roadmap.ownerNickname,
-            thumbnailUrl: v?.data.roadmap.thumbnailUrl,
+            title: v?.data?.roadmap?.title,
+            description: v?.data?.roadmap?.description,
+            ownerAvatarUrl: v?.data?.roadmap?.ownerAvatarUrl,
+            ownerNickname: v?.data?.roadmap?.ownerNickname,
+            thumbnailUrl: v?.data?.roadmap?.thumbnailUrl,
           });
           const detailState = [];
           v?.data.nodes.map((j) => {
