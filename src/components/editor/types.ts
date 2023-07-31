@@ -47,6 +47,7 @@ export interface nodeStyle {
 export interface RoadmapNode {
   id: string;
   type?: string;
+  isJoined?: boolean;
   position: XYPosition;
   data: { label: string };
   style?: nodeStyle;

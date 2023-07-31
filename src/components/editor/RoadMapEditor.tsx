@@ -34,11 +34,11 @@ import ReactFlow, {
   useOnSelectionChange,
   useReactFlow,
 } from 'reactflow';
-import { getStoredRoadmap, setStoredRoadmap } from 'storage/roadmap-storage';
+import { setStoredRoadmap } from 'storage/roadmap-storage';
 import { styled } from 'styled-components';
 
 import { useInput } from '../common/hooks/useInput';
-import { RoadmapEdge, RoadmapNode } from './types';
+import { RoadmapEdge, RoadmapNode, RoadmapNodes } from './types';
 
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
@@ -172,7 +172,7 @@ function Roadmap({
     }
     axios
       // .post(`${baseUrl}/chat?prompt=${search.get('title')}`, {
-      .post(`${baseUrl}/chat?prompt=python`, {
+      .post(`${baseUrl}/chat?prompt=javaspring`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${user?.accessToken}`,
@@ -183,6 +183,14 @@ function Roadmap({
         setUseGpt(res?.data);
       });
   }, []);
+
+  const onSave = useCallback(() => {
+    if (rfInstance) {
+      const flow = rfInstance.toObject();
+      localStorage.setItem(flowKey, JSON.stringify(flow));
+      console.log(flow);
+    }
+  }, [rfInstance]);
 
   useMemo(() => {
     const tmpNode = [];
@@ -286,7 +294,6 @@ function Roadmap({
         setNodes(restoredNodes || []);
         setEdges(restoredEdges || []);
         setViewport({ x, y, zoom });
-        // console.log(flowStr);
       }
     };
 
@@ -331,16 +338,19 @@ function Roadmap({
   const { postRoadmap } = useRoadmap();
 
   const onPublishRoadmap = useCallback(() => {
-    const { edges, nodes, viewport } = getStoredRoadmap();
+    // const { edges, nodes, viewport } = getStoredRoadmap();
     // console.log('nodes', nodes);
-    const nodesCopy = [...nodes];
-    const edgesCopy = [...edges];
+    const nodesCopy = [...nodeState] as RoadmapNodes;
+    const edgesCopy = [...edgeState];
     nodesCopy.map((v) => {
       state.map((item) => {
         if (v?.id === item?.id) {
           // eslint-disable-next-line no-param-reassign
           v.detailedContent = item?.details;
+          // v.details = item?.details;
         }
+        // eslint-disable-next-line no-param-reassign
+        v.positionAbsolute = v.position;
       });
     });
     edgesCopy.map((v) => {
@@ -350,18 +360,31 @@ function Roadmap({
       v.type = edgeType;
     });
 
-    const data = {
+    const roadmapData = {
       roadmap: {
-        title: roadMapTitle,
+        title,
         description: desc,
         thumbnailUrl: '',
-        tag: roadmapTag,
+        // tag: roadmapTag,
       },
       nodes: nodesCopy,
       edges: edgesCopy,
       viewport: defaultViewport,
     };
-    postRoadmap(data);
+
+    axios
+      .post(`${baseUrl}/roadmaps`, roadmapData, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user?.accessToken}`,
+        },
+      })
+      .then((e) => {
+        console.log(e);
+        alert('포스팅 성공!');
+        navigate('/');
+      })
+      .catch((err) => console.log(err));
     // navigate('/');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodeState]);
@@ -390,15 +413,8 @@ function Roadmap({
       return;
     }
     onLayout('TB');
-  }, [edgeState, nodeState, onLayout]);
-
-  // useMemo(() => {
-  //   if (edgeState && nodeState) {
-  //     return;
-  //   }
-  //   onLayout('TB');
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [edgeState, nodeState]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [edgeState, nodeState]);
 
   useEffect(() => {
     setNodes((nds) =>
@@ -513,6 +529,7 @@ function Roadmap({
           <Button
             mt={30}
             onClick={() => {
+              // onSave();
               onPublishRoadmap();
             }}
           >
@@ -550,16 +567,32 @@ function Roadmap({
       <Panel position="top-center">
         <Modal opened={nodeModal} onClose={() => setNodeModal(false)} size="xl">
           <div>
-            <Center>
-              <h1>nodes</h1>
-              {JSON.stringify(selectedNode[0])}
-              <input
-                value={label}
-                onChange={(evt) => {
-                  setLabel(evt.target.value);
-                }}
-              />
-            </Center>
+            {JSON.stringify(selectedNode[0])}
+            <input
+              // onInput={(evt) => {
+              onChange={(evt) => {
+                // selectedNode[0].data.label = evt.target.value;
+                selectedNode[0].data.label = evt?.target?.value;
+              }}
+            />
+            <input
+              value={selectedNode[0]?.style.background}
+              onChange={(evt) => {
+                selectedNode[0].style.background = evt.target.value;
+              }}
+            />
+            {/* <input
+              value={selectedNode[0]?.data.label}
+              onChange={(evt) => {
+                selectedNode[0].data.label = evt.target.value;
+              }}
+            />
+            <input
+              value={selectedNode[0]?.data.label}
+              onChange={(evt) => {
+                selectedNode[0].data.label = evt.target.value;
+              }}
+            /> */}
           </div>
 
           {selectedNode[0]?.id && toggleEditor}
@@ -631,7 +664,15 @@ function Roadmap({
           <Button type="button" onClick={onRestore} mr={10}>
             restore
           </Button>
-          <Button type="button" onClick={open} mr={10} mt={10}>
+          <Button
+            type="button"
+            onClick={() => {
+              // onSave();
+              open();
+            }}
+            mr={10}
+            mt={10}
+          >
             로드맵 발행
           </Button>
         </Panel>
@@ -644,7 +685,7 @@ function Roadmap({
 }
 const Wrap = styled.div`
   width: 100%;
-  height: 90vh;
+  height: 93.2vh;
   & .updatenode__controls {
     position: absolute;
     right: 10px;

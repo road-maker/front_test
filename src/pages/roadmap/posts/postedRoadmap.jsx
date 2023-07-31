@@ -164,11 +164,16 @@ function PostedRoadmap() {
         .then((v) => {
           setNodes(v?.data.nodes);
           setCurrentRoadmap({
-            title: v?.data?.roadmap.title,
-            description: v?.data.roadmap.description,
-            ownerAvatarUrl: v?.data.roadmap.ownerAvatarUrl,
-            ownerNickname: v?.data.roadmap.ownerNickname,
-            thumbnailUrl: v?.data.roadmap.thumbnailUrl,
+            // title: v?.data?.roadmap?.title,
+            // description: v?.data.roadmap?.description,
+            // ownerAvatarUrl: v?.data.roadmap?.ownerAvatarUrl,
+            // ownerNickname: v?.data.roadmap?.ownerNickname,
+            // thumbnailUrl: v?.data.roadmap?.thumbnailUrl,
+            title: v?.data?.title,
+            description: v?.data?.description,
+            ownerAvatarUrl: v?.data?.member?.ownerAvatarUrl,
+            ownerNickname: v?.data?.member?.ownerNickname,
+            thumbnailUrl: v?.data?.member?.thumbnailUrl,
           });
           const detailState = [];
           v?.data.nodes.map((j) => {
@@ -250,9 +255,9 @@ function PostedRoadmap() {
         </Title>
         <Group mt={20}>
           <Avatar color="purple" radius="xl">
-            {currentRoadmap?.ownerAvatarUrl || '없음'}
+            {currentRoadmap?.ownerAvatarUrl || ''}
           </Avatar>
-          {currentRoadmap?.ownerNickname || 'no nickname'}
+          {currentRoadmap?.ownerNickname}
         </Group>
 
         <Modal
@@ -290,7 +295,7 @@ function PostedRoadmap() {
           참여하기
         </Button>
         <Text c="dimmed" className={classes.description} mt="md">
-          {currentRoadmap?.description || '없음'}
+          {currentRoadmap?.description || ''}
         </Text>
         <SimpleGrid
           cols={4}
