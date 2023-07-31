@@ -25,7 +25,9 @@ export interface AddedNode {
   width: number;
   dragging?: boolean;
   selected?: boolean;
+  // type?: string | any;
   type?: string;
+  toolbarPosition?: string;
   data?: { label: string };
 
   positionAbsolute?: Position;

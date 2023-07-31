@@ -53,6 +53,18 @@ export default function RoadmapRecommendation() {
   const { classes, theme } = useStyles();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState('');
+  // const date = new Date(Date.UTC(2012, 11, 20, 3, 0, 0));
+  // options = {
+  //   year: 'numeric',
+  //   month: 'numeric',
+  //   day: 'numeric',
+  //   hour: 'numeric',
+  //   minute: 'numeric',
+  //   second: 'numeric',
+  //   hour12: false,
+  //   timeZone: '',
+  // };
+  // console.log(new Intl.DateTimeFormat(undefined, options).format(date));
   // const themes = useMantineTheme();
   // const mobile = useMediaQuery(`(max-width: ${themes.breakpoints.sm})`);
   const { getRoadmapById, getAllRoadmap, getRoadmapByIdAuth } = useRoadmap();
@@ -168,6 +180,12 @@ export default function RoadmapRecommendation() {
                         />
                       )}
                     </Card.Section>
+                    <Text className={classes.title} mt={10}>
+                      {/* {new Intl.DateTimeFormat('ko', {
+                        dateStyle: 'full',
+                      }).format(article?.createdAt)} */}
+                      {article?.createdAt}
+                    </Text>
                     <Text
                       className={classes.title}
                       mt={10}

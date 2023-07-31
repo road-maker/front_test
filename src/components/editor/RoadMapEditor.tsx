@@ -21,7 +21,7 @@ import { baseUrl } from 'axiosInstance/constants';
 import { useRoadmap } from 'components/roadmaps/posts/hooks/useRoadmap';
 import { useUser } from 'components/user/hooks/useUser';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import ReactFlow, {
   addEdge,
   Background,
@@ -140,21 +140,21 @@ function Roadmap({
 }) {
   // const { prompt } = usePromptAnswer();
 
-  const [search] = useSearchParams();
   const edgeSet = new Set<RoadmapEdge['id']>();
   const nodeSet = new Set<RoadmapNode['id']>();
+  // const [nodeState, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [nodeState, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edgeState, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [title, onChangeTitle, setTitle] = useInput('');
   const [desc, onChangeDesc, setDesc] = useInput('');
-  const [gptRes, setGptRes] = useState([]);
+  const [gptRes, setGptRes] = useState(true);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   const [nodeBg, setNodeBg] = useState('#eee');
   const [nodeHidden, setNodeHidden] = useState(false);
   const [rfInstance, setRfInstance] = useState(null);
   const { setViewport } = useReactFlow();
-  const [useGpt, setUseGpt] = useState(false);
+  const [useGpt, setUseGpt] = useState([]);
   const [opened, { open, close }] = useDisclosure(false);
   const [nodeModal, setNodeModal] = useState(false);
 
@@ -170,147 +170,66 @@ function Roadmap({
     if (!user) {
       return navigate('/users/signin');
     }
-    const getRecentGpt = localStorage.getItem('recent_gpt_search');
-    // console.log(getRecentGpt);
+    axios
+      // .post(`${baseUrl}/chat?prompt=${search.get('title')}`, {
+      .post(`${baseUrl}/chat?prompt=python`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user?.accessToken}`,
+        },
+      })
+      .then((res) => {
+        res?.data.length > 0 ? setGptRes(false) : setGptRes(true);
+        setUseGpt(res?.data);
+      });
   }, []);
+
+  useMemo(() => {
+    const tmpNode = [];
+    const tmpEdge = [];
+    console.log(useGpt);
+    useGpt.map((v) => {
+      if (!nodeSet.has(v?.id)) {
+        tmpNode.push({
+          id: v?.id,
+          data: {
+            label: v?.content,
+          },
+          type: 'default',
+          position,
+          style: {
+            background: '#fff',
+            border: '1px solid black',
+            borderRadius: 15,
+            fontSize: 12,
+          },
+        });
+        nodeSet.add(`${v?.id}`);
+      }
+
+      // source랑 target 구해서 간선id 만들고 이어주기
+      // parseInt는 오로지 숫자인 부분만 parse해줬음
+
+      if (v.id !== `${parseInt(v?.id, 10)}`) {
+        if (!edgeSet.has(`e${parseInt(v?.id, 10)}${v?.id}`)) {
+          tmpEdge.push({
+            id: `e${parseInt(v?.id, 10)}${v?.id}`,
+            source: `${parseInt(v?.id, 10)}`,
+            target: v.id,
+            type: edgeType,
+            animated: true,
+          });
+        }
+        edgeSet.add(`e${parseInt(v?.id, 10)}${v?.id}`);
+      }
+    });
+    setNodes(tmpNode);
+    setEdges(tmpEdge);
+  }, [useGpt]);
 
   const proOptions = { hideAttribution: true };
 
   // const { x, y, zoom } = useViewport();
-
-  // useEffect(() => {
-  //   console.log(x, y, zoom);
-  // }, [x, y, zoom]);
-  useEffect(() => {
-    if (search.size > 0 && gptRes.length === 0) {
-      axios
-        .post(`${baseUrl}/chat?prompt=${search.get('title')}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${user?.accessToken}`,
-          },
-        })
-        .then((res) => {
-          setGptRes(res?.data);
-          // const { data } = prompt;
-          // const dataCopy = [...data];
-          // console.log(dataCopy);
-          // console.log('res.data', res.data);
-
-          // eslint-disable-next-line array-callback-return
-        });
-    }
-  }, []);
-  // if (getStoredRoadmap()) {
-  // const { edges, nodes, viewport } = getStoredRoadmap();
-  // setNodes(nodes);
-  //   setEdges(edges);
-  //   setViewport(viewport);
-
-  //   return;
-  // }
-  // console.log(search.get('title'));
-
-  //     if (prompt && search.size > 0 && prompt.keyword === search.get('title')) {
-  //       // if (useGpt && search.size > 0) {
-  //       // gpt 자동생성
-
-  //       const { data } = prompt;
-  //       const dataCopy = [...data];
-  //       // console.log(dataCopy);
-
-  //       // eslint-disable-next-line array-callback-return
-  //       dataCopy.map((v) => {
-  //         if (!nodeSet.has(v?.id)) {
-  //           initialNodes.push({
-  //             id: v?.id,
-  //             data: {
-  //               label: v?.content,
-  //             },
-  //             type: 'default',
-  //             position,
-  //             style: {
-  //               background: '#fff',
-  //               border: '1px solid black',
-  //               borderRadius: 15,
-  //               fontSize: 12,
-  //             },
-  //           });
-  //           nodeSet.add(`${v?.id}`);
-  //         }
-
-  //         // source랑 target 구해서 간선id 만들고 이어주기
-  //         // parseInt는 오로지 숫자인 부분만 parse해줬음
-
-  //         if (v.id !== `${parseInt(v?.id, 10)}`) {
-  //           if (!edgeSet.has(`e${parseInt(v?.id, 10)}${v?.id}`)) {
-  //             initialEdges.push({
-  //               id: `e${parseInt(v?.id, 10)}${v?.id}`,
-  //               source: `${parseInt(v?.id, 10)}`,
-  //               target: v.id,
-  //               type: edgeType,
-  //               animated: true,
-  //             });
-  //           }
-  //           edgeSet.add(`e${parseInt(v?.id, 10)}${v?.id}`);
-  //         }
-  //       });
-  //       setNodes(initialNodes);
-  //       setEdges(initialEdges);
-  //       // search.size !== 0 ? setNodes(initialNodes) : setNodes([]);
-  //       // search.size !== 0 ? setEdges(initialEdges) : setEdges([]);
-  //       if (search.size !== 0) {
-  //         // onLayout('TB');
-  //         onLayout('LR');
-  //       }
-  // >>>>>>> initialmerge
-
-  // useEffect(() => {
-  //   // console.log(gptRes);
-
-  // }, []);
-  // gptRes.map((v) => {
-  //   if (!nodeSet.has(v?.id)) {
-  //     initialNodes.push({
-  //       id: v?.id,
-  //       data: {
-  //         label: v?.content,
-  //       },
-  //       type: 'default',
-  //       position,
-  //       style: {
-  //         background: '#fff',
-  //         border: '1px solid black',
-  //         borderRadius: 15,
-  //         fontSize: 12,
-  //       },
-  //     });
-  //     nodeSet.add(`${v?.id}`);
-  //   }
-
-  //   // source랑 target 구해서 간선id 만들고 이어주기
-  //   // parseInt는 오로지 숫자인 부분만 parse해줬음
-
-  //   if (v.id !== `${parseInt(v?.id, 10)}`) {
-  //     if (!edgeSet.has(`e${parseInt(v?.id, 10)}${v?.id}`)) {
-  //       initialEdges.push({
-  //         id: `e${parseInt(v?.id, 10)}${v?.id}`,
-  //         source: `${parseInt(v?.id, 10)}`,
-  //         target: v.id,
-  //         type: edgeType,
-  //         animated: true,
-  //       });
-  //     }
-  //     edgeSet.add(`e${parseInt(v?.id, 10)}${v?.id}`);
-  //   }
-  // });
-  // setNodes(initialNodes);
-  // setEdges(initialEdges);
-  // if (search.size !== 0) {
-  //   // onLayout('TB');
-  //   onLayout('LR');
-  // }
-  // }, [gptRes]);
 
   useMemo(() => {
     // 노드 내용 수정
@@ -331,29 +250,8 @@ function Roadmap({
       }),
     );
   }, [label, id]);
-  // }, [label, id]);
-  // useMemo(() => {
-  //   setNodes((nds) =>
-  //     nds.map((node) => {
-  //       // if (node.id === '1') {
-  //       if (node.id === id) {
-  //         // it's important that you create a new object here
-  //         // in order to notify react flow about the change
-  //         // eslint-disable-next-line no-param-reassign
-  //         node.data = {
-  //           ...node.data,
-  //           label: nodeName,
-  //         };
-  //       }
-  //       console.log(node);
-
-  //       return node;
-  //     }),
-  //   );
-  // }, [label, nodeName]);
 
   useMemo(() => {
-    // console.log('roadmapeditor props', editor);
     setNodes([...nodeState]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);
@@ -365,15 +263,6 @@ function Roadmap({
     [setEdges],
   );
 
-  // const onSave = useCallback(() => {
-  //   if (rfInstance) {
-  //     const flow = rfInstance.toObject();
-  //     localStorage.setItem(flowKey, JSON.stringify(flow));
-  //     console.log(flow);
-  //   }
-  // }, [rfInstance]);
-
-  // useCallback(() => {
   useMemo(() => {
     if (rfInstance) {
       const flow = rfInstance.toObject();
@@ -402,22 +291,7 @@ function Roadmap({
     };
 
     restoreFlow();
-    // roadmap.getRoadmap(title, desc, flowKey);
   }, [setNodes, setEdges, setViewport]);
-  // const onClickItem = useCallback((e) => {
-  //   console.log(e);
-  // }, []);
-
-  // const onLayout = useCallback(
-  //   (direction) => {
-  //     const { nodes: layoutedNodes, edges: layoutedEdges } =
-  //       getLayoutedElements(nodes, edges, direction);
-
-  //     setNodes([...layoutedNodes]);
-  //     setEdges([...layoutedEdges]);
-  //   },
-  //   [nodes, edges, setEdges, setNodes],
-  // );
 
   const onLayout = useCallback(
     (direction) => {
@@ -458,19 +332,14 @@ function Roadmap({
 
   const onPublishRoadmap = useCallback(() => {
     const { edges, nodes, viewport } = getStoredRoadmap();
-    console.log('nodes', nodes);
+    // console.log('nodes', nodes);
     const nodesCopy = [...nodes];
     const edgesCopy = [...edges];
     nodesCopy.map((v) => {
       state.map((item) => {
         if (v?.id === item?.id) {
-          // console.log('onPublish', item.details);
           // eslint-disable-next-line no-param-reassign
           v.detailedContent = item?.details;
-          // eslint-disable-next-line no-param-reassign
-          // v.targetPosition = item.targetPosition;
-          // // eslint-disable-next-line no-param-reassign
-          // v.sourcePosition = item.sourcePosition;
         }
       });
     });
@@ -521,8 +390,15 @@ function Roadmap({
       return;
     }
     onLayout('TB');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [edgeState, nodeState]);
+  }, [edgeState, nodeState, onLayout]);
+
+  // useMemo(() => {
+  //   if (edgeState && nodeState) {
+  //     return;
+  //   }
+  //   onLayout('TB');
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [edgeState, nodeState]);
 
   useEffect(() => {
     setNodes((nds) =>
@@ -548,20 +424,6 @@ function Roadmap({
       }),
     );
   }, [nodeState, edgeState]);
-  // }, [nodeState, edgeState, setNodes, id, nodeHidden, label]);
-  // setEdges((eds) =>
-  //   eds.map((edge) => {
-  //     // if (edge.id === 'e1-2') {
-  //     if (edge.id === 'e11a') {
-  //       // console.log(edge);
-  //       // if (parseInt(edge.id, 10) === label) {
-  //       // eslint-disable-next-line no-param-reassign
-  //       edge.hidden = nodeHidden;
-  //     }
-
-  //     return edge;
-  //   }),
-  // );
 
   const previews = files.map((file, index) => {
     const imageUrl = URL.createObjectURL(file);
@@ -574,76 +436,17 @@ function Roadmap({
     );
   });
 
-  // search.size >0 && return (<Loading/>);
-  // eslint-disable-next-line consistent-return
-  useMemo(() => {
-    // useEffect(() => {
-    if (search.size > 0) {
-      return <LoadingOverlay visible />;
-    }
-    if (gptRes.length > 0) {
-      gptRes.map((v) => {
-        if (!nodeSet.has(v?.id)) {
-          initialNodes.push({
-            id: v?.id,
-            data: {
-              label: v?.content,
-            },
-            type: 'default',
-            position,
-            style: {
-              background: '#fff',
-              border: '1px solid black',
-              borderRadius: 15,
-              fontSize: 12,
-            },
-          });
-          nodeSet.add(`${v?.id}`);
-        }
-
-        // source랑 target 구해서 간선id 만들고 이어주기
-        // parseInt는 오로지 숫자인 부분만 parse해줬음
-
-        if (v?.id !== `${parseInt(v?.id, 10)}`) {
-          if (!edgeSet.has(`e${parseInt(v?.id, 10)}${v?.id}`)) {
-            initialEdges.push({
-              id: `e${parseInt(v?.id, 10)}${v?.id}`,
-              source: `${parseInt(v?.id, 10)}`,
-              target: v.id,
-              type: edgeType,
-              animated: true,
-            });
-          }
-          edgeSet.add(`e${parseInt(v?.id, 10)}${v?.id}`);
-        }
-      });
-      setNodes(initialNodes);
-      setEdges(initialEdges);
-      if (search.size !== 0) {
-        // onLayout('TB');
-        onLayout('LR');
-      }
-    }
-  }, [gptRes]);
-
   const [selectedNode, setSelectedNode] = useState([]);
   useOnSelectionChange({
     onChange: ({ nodes, edges }) => {
-      // console.log('changed selection', nodes);
       setSelectedNode(nodes);
-      // if (nodes.length > 0) {
       setNodeModal(true);
-      // }
     },
-    // console.log('changed selection', nodes, edges),
-    // console.log('changed selection', edges),
   });
 
   return (
     <Wrap>
-      {/* <ActionIcon color="blue" >
-        <IconPencil size="1.2rem" />
-      </ActionIcon> */}
+      <LoadingOverlay visible={gptRes} />
       <Modal opened={opened} onClose={close} size="40rem">
         <Center>
           <h2>로드맵 정보</h2>
@@ -794,33 +597,6 @@ function Roadmap({
           opacity: '80%',
         }}
       >
-        {/* <Panel position="top-right">
-          <div className="updatenode__controls">
-            <input
-              value={label}
-              onChange={(evt) => {
-                setLabel(evt.target.value);
-              }}
-            />
-            <ActionIcon color="blue">
-              <IconPencil size="1.2rem" />
-            </ActionIcon>
-            <div className="updatenode__bglabel">background:</div>
-            <input
-              value={nodeBg}
-              onChange={(evt) => setNodeBg(evt.target.value)}
-            />
-            
-            <div className="updatenode__checkboxwrapper">
-              <div>hidden:</div>
-              <input
-                type="checkbox"
-                checked={nodeHidden}
-                onChange={(evt) => setNodeHidden(evt.target.checked)}
-              />
-            </div>
-          </div>
-        </Panel> */}
         <Panel position="top-right">
           <Button type="button" onClick={() => onLayout('TB')} mr={10}>
             vertical layout
