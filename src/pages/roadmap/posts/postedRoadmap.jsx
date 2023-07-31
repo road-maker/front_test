@@ -113,89 +113,82 @@ function PostedRoadmap() {
 
   const [details, setDetails] = useState([]);
   useEffect(() => {
-    const url = user
-      ? `${baseUrl}/roadmaps/${currentPage}/auth`
-      : `${baseUrl}/roadmaps/load-roadmap/${currentPage}`;
-    if (!user) {
-      axios
-        .get(url)
-        .catch((e) => {
-          // eslint-disable-next-line no-console
-          console.log(e);
-        })
-        .then((v) => {
-          setNodes(v?.data.nodes);
-          setCurrentRoadmap({
-            title: v?.data?.roadmap?.title,
-            description: v?.data?.roadmap?.description,
-            ownerAvatarUrl: v?.data?.roadmap?.ownerAvatarUrl,
-            ownerNickname: v?.data?.roadmap?.ownerNickname,
-            thumbnailUrl: v?.data?.roadmap?.thumbnailUrl,
-            isJoined: v?.data?.isJoined,
-          });
-          setParticipation(v?.data.isJoined);
-          const detailState = [];
-          v?.data.nodes.map((j) => {
-            detailState.push({ id: j.id, details: j.detailedContent });
-          });
-          setState(detailState);
-          const edgeSet = new Set();
-          const tempEdges = [];
-          // eslint-disable-next-line array-callback-return
-          v?.data?.edges.map((j) => {
-            if (!edgeSet.has(j?.id)) {
-              tempEdges.push(j);
-            }
-            edgeSet.add(j?.id);
-          });
-          setEdges(tempEdges);
+    // const url = user
+    //   ? `${baseUrl}/roadmaps/${currentPage}`
+    //   : `${baseUrl}/roadmaps/load-roadmap/${currentPage}`;
+    // if (!user) {
+    //   axios
+    //     .get(url)
+    //     .catch((e) => {
+    //       // eslint-disable-next-line no-console
+    //       console.log(e);
+    //     })
+    //     .then((v) => {
+    //       setNodes(v?.data.nodes);
+    //       setCurrentRoadmap({
+    //         title: v?.data?.roadmap?.title,
+    //         description: v?.data?.roadmap?.description,
+    //         ownerAvatarUrl: v?.data?.roadmap?.ownerAvatarUrl,
+    //         ownerNickname: v?.data?.roadmap?.ownerNickname,
+    //         thumbnailUrl: v?.data?.roadmap?.thumbnailUrl,
+    //         isJoined: v?.data?.isJoined,
+    //       });
+    //       setParticipation(v?.data.isJoined);
+    //       const detailState = [];
+    //       v?.data.nodes.map((j) => {
+    //         detailState.push({ id: j.id, details: j.detailedContent });
+    //       });
+    //       setState(detailState);
+    //       const edgeSet = new Set();
+    //       const tempEdges = [];
+    //       // eslint-disable-next-line array-callback-return
+    //       v?.data?.edges.map((j) => {
+    //         if (!edgeSet.has(j?.id)) {
+    //           tempEdges.push(j);
+    //         }
+    //         edgeSet.add(j?.id);
+    //       });
+    //       setEdges(tempEdges);
+    //     });
+    // }
+    axios
+      .get(`${baseUrl}/roadmaps/${currentPage}`, {
+        headers: {
+          Authorization: `Bearer ${user?.accessToken}`,
+        },
+      })
+      .catch((e) => {
+        // eslint-disable-next-line no-console
+        console.log(e);
+      })
+      .then((v) => {
+        setNodes(v?.data.nodes);
+        setCurrentRoadmap({
+          title: v?.data?.title,
+          description: v?.data?.description,
+          ownerAvatarUrl: v?.data?.member?.ownerAvatarUrl,
+          ownerNickname: v?.data?.member?.nickname,
+          isJoined: v?.data?.isJoined,
+          thumbnailUrl: v?.data?.member?.thumbnailUrl,
         });
-    }
+        setLoading(false);
+        const detailState = [];
+        v?.data.nodes.map((j) =>
+          detailState.push({ id: j.id, details: j.detailedContent }),
+        );
+        setState(detailState);
+        const edgeSet = new Set();
+        const tempEdges = [];
+        // eslint-disable-next-line array-callback-return
+        v?.data?.edges.map((j) => {
+          if (!edgeSet.has(j?.id)) {
+            tempEdges.push(j);
+          }
+          edgeSet.add(j?.id);
+        });
+        setEdges(tempEdges);
+      });
 
-    if (user && 'accessToken' in user) {
-      axios
-        .get(url, {
-          headers: {
-            Authorization: `Bearer ${user?.accessToken}`,
-          },
-        })
-        .catch((e) => {
-          // eslint-disable-next-line no-console
-          console.log(e);
-        })
-        .then((v) => {
-          setNodes(v?.data.nodes);
-          setCurrentRoadmap({
-            // title: v?.data?.roadmap?.title,
-            // description: v?.data.roadmap?.description,
-            // ownerAvatarUrl: v?.data.roadmap?.ownerAvatarUrl,
-            // ownerNickname: v?.data.roadmap?.ownerNickname,
-            // thumbnailUrl: v?.data.roadmap?.thumbnailUrl,
-            title: v?.data?.title,
-            description: v?.data?.description,
-            ownerAvatarUrl: v?.data?.member?.ownerAvatarUrl,
-            ownerNickname: v?.data?.member?.nickname,
-            isJoined: v?.data?.isJoined,
-            thumbnailUrl: v?.data?.member?.thumbnailUrl,
-          });
-          setLoading(false);
-          const detailState = [];
-          v?.data.nodes.map((j) => {
-            detailState.push({ id: j.id, details: j.detailedContent });
-          });
-          setState(detailState);
-          const edgeSet = new Set();
-          const tempEdges = [];
-          // eslint-disable-next-line array-callback-return
-          v?.data?.edges.map((j) => {
-            if (!edgeSet.has(j?.id)) {
-              tempEdges.push(j);
-            }
-            edgeSet.add(j?.id);
-          });
-          setEdges(tempEdges);
-        });
-    }
     // if (currentPage !== roadmapById?.data?.roadmap?.id) {
     //   setCurrentRoadmap(
     //     JSON.parse(localStorage.getItem('roadmapById'))?.data?.roadmap,
@@ -290,12 +283,6 @@ function PostedRoadmap() {
             setModal(false);
           }}
         >
-          {/* {joinState} */}
-
-          {/* {!user && (<><Center>로그인 후 이용 가능합니다.</Center>
-            <Button onClick={()=>navigate('/users/signin')}}>
-            로그인 하기
-            </Button></>} */}
           {!user && (
             <div>
               <Center>로그인 후 이용 가능합니다.</Center>
@@ -314,17 +301,12 @@ function PostedRoadmap() {
               setModal(true);
             }
             joinRoadmap();
-            // joinRoadmap(parseInt(currentPage, 10)); // 로드맵 참여하기
           }}
         >
-          {/* {participation && '참여 중'}
-          {!participation && user.accessToken
-            ? '참여하기'
-            : '로그인 후 참여하기'} */}
-          {!isLoading && (participation || currentRoadmap.isJoined)
-            ? '참여 중'
-            : '참여하기'}
           {isLoading && ' 로딩 중'}
+
+          {!isLoading && participation && '참여 중'}
+          {!isLoading && !participation && '참여하기'}
         </Button>
         <Text c="dimmed" className={classes.description} mt="md">
           {currentRoadmap?.description || ''}
