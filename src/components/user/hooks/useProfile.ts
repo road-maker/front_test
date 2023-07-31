@@ -4,7 +4,7 @@ import axios, { AxiosResponse } from 'axios';
 import { getStoredUser } from 'storage/user-storage';
 
 import { axiosInstance } from '../../../axiosInstance';
-import type { NewUser } from '../../../types/types';
+import type { MemberInfo, NewUser } from '../../../types/types';
 import { useUser } from './useUser';
 
 interface useUserInfo {
@@ -12,7 +12,7 @@ interface useUserInfo {
   updateInfo: (memberInfo: NewUser) => Promise<void>;
 }
 
-type UserResponse = { member: NewUser };
+type UserResponse = { data: { member: MemberInfo } };
 type ErrorResponse = { message: string };
 type InfoResponseType = UserResponse | ErrorResponse;
 
@@ -22,8 +22,6 @@ export function UseUserInfo(): useUserInfo {
   async function infoCall(
     urlEndpoint: string,
     memberInfo: NewUser,
-    email?: string,
-    nickname?: string,
   ): Promise<void> {
     try {
       const { data, status }: AxiosResponse<InfoResponseType> =
@@ -37,25 +35,20 @@ export function UseUserInfo(): useUserInfo {
         });
       if (status === 201 || status === 200) {
         // console.log('useAuth ServiceCall', data);
-        getStoredUser();
+        // getStoredUser();
         if ('member' in data) {
-          const { member } = data;
+          const updateMember: NewUser = data.member;
           updateUser({
-            memberId: member.memberId,
-            avatarUrl: member.avatarUrl || '',
-            baekjoonId: member.baekjoonId || '',
-            bio: member.bio || '',
-            blogUrl: member.blogUrl || '',
-            email: member.email || '',
-            exp: member.exp || 0,
-            githubUrl: member.githubUrl || '',
-            level: member.level || 0,
-            nickname: member.nickname || '',
-            inProcessRoadmapDto: member.inProcessRoadmapDto || [],
+            avatarUrl: updateMember.avatarUrl,
+            baekjoonId: updateMember.baekjoonId,
+            bio: updateMember.bio,
+            email: updateMember.email,
+            nickname: updateMember.nickname,
+            blogUrl: updateMember.blogUrl,
           });
         }
-        // navigate('/');
       }
+      // navigate('/');
     } catch (errorResponse) {
       const status =
         axios.isAxiosError(errorResponse) && errorResponse?.response?.status
@@ -82,42 +75,30 @@ export function UseUserInfo(): useUserInfo {
             Authorization: `Bearer ${user?.accessToken}`,
           },
         });
-      if (status === 201 || status === 200) {
+      if (status === 201) {
         console.log('updateUser', data);
         if ('member' in data) {
-          const { member } = data;
+          const updateMember: NewUser = data.member;
           updateUser({
-            memberId: member.memberId,
-            avatarUrl: member.avatarUrl,
-            baekjoonId: member.baekjoonId,
-            bio: member.bio,
-            blogUrl: member.blogUrl,
-            email: member.email,
-            exp: member.exp,
-            githubUrl: member.githubUrl,
-            level: member.level,
-            nickname: member.nickname,
-            inProcessRoadmapDto: member.inProcessRoadmapDto,
+            avatarUrl: updateMember.avatarUrl,
+            baekjoonId: updateMember.baekjoonId,
+            bio: updateMember.bio,
+            email: updateMember.email,
+            nickname: updateMember.nickname,
+            blogUrl: updateMember.blogUrl,
           });
         }
         alert('변경되었습니다!');
         // navigate('/');
+      }
+      if (status === 409) {
+        alert('이미 존재하는 닉네임입니다.');
       }
     } catch (errorResponse) {
       const status =
         axios.isAxiosError(errorResponse) && errorResponse?.response?.status
           ? errorResponse?.response?.status
           : SERVER_ERROR;
-      if (status === 406) {
-        // eslint-disable-next-line no-alert
-        alert('이전과 다른 닉네임을 설정해주세요!');
-      }
-      if (status === 409) {
-        alert('이미 존재하는 닉네임입니다.');
-      }
-      // if (status=== 404) { // @Seo1n api 개발문서 보시면 어떤 response 나오는 지 확인가능합니당, 참고해주세용
-      //   alert(`${status}`);
-      // }
     }
   }
   async function myInfo(member: NewUser): Promise<void> {

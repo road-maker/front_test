@@ -11,7 +11,7 @@ export interface NewUser {
   text?: string;
   password?: string;
   email?: string;
-  memberId?: number;
+  id?: number;
   avatarUrl?: string | null;
   baekjoonId?: string | null;
   bio?: string | null;

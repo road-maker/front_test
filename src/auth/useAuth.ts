@@ -113,6 +113,7 @@ export function useAuth(): UseAuth {
             accessToken: loggedMemberToken?.accessToken,
             nickname: loggedMember?.nickname,
             email: loggedMember?.email,
+            id: loggedMember.id,
           });
 
           alert('로그인 성공');

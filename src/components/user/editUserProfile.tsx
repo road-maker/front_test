@@ -1,8 +1,10 @@
 /* eslint-disable no-console */
 import { Box, Button, Group, Paper, TextInput } from '@mantine/core';
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { baseUrl } from '../../axiosInstance/constants';
 import { UseUserInfo } from './hooks/useProfile';
 import { useUser } from './hooks/useUser';
 
@@ -10,14 +12,18 @@ function EditUserProfile() {
   const { user, updateUser } = useUser();
   const navigate = useNavigate();
   const { updateInfo } = UseUserInfo();
-  const [inputs, setInputs] = useState({});
+  const [inputs, setInputs] = useState({
+    nickname: '',
+    bio: '',
+    baekjoonId: '',
+  });
 
   useEffect(() => {
-    if (user?.member) {
+    if (user) {
       setInputs({
-        nickname: user.member.nickname,
-        bio: user.member.bio,
-        baekjoonId: user.member.baekjoonId,
+        nickname: user.nickname,
+        bio: user.bio,
+        baekjoonId: user.baekjoonId,
       });
     }
   }, [user]);
@@ -30,17 +36,38 @@ function EditUserProfile() {
     }));
   };
 
-  const handleSubmit = async () => {
-    try {
-      await updateInfo(inputs);
-      updateUser({
-        ...user,
-        member: { ...user.member, ...inputs }, // user 객체의 member 속성 업데이트
+  // const handleSubmit = async () => {
+  //   try {
+  //     await updateInfo(inputs);
+  //     updateUser({
+  //       ...user,
+  //     });
+  //   } catch (error) {
+  //     console.error('Error updating user information:', error);
+  //   }
+  // };
+
+  const headers = {
+    Authorization:
+      'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzb3dlcjAzMUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNjkxMzM1NzkzfQ.785KQWBw090Dyhfhg7LGvSKeb3PcB6nKdW83DKLkLjE',
+  };
+  const handleSubmit = () => {
+    axios
+      .patch(
+        `${baseUrl}/members/save-profile`,
+        {
+          nickname: inputs.nickname,
+          bio: inputs.bio,
+          baekjoonId: inputs.baekjoonId,
+        },
+        { headers },
+      )
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
       });
-      console.log('User information updated successfully!');
-    } catch (error) {
-      console.error('Error updating user information:', error);
-    }
   };
 
   return (

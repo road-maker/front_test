@@ -21,6 +21,8 @@ import { baseUrl } from 'axiosInstance/constants';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
+import { useCommentInfo } from '../../components/user/hooks/useComment';
+import { useUser } from '../../components/user/hooks/useUser';
 // import { InputWithButton } from './header';
 // import { InputWithButton } from '../../layout/mainLayout/header';
 
@@ -66,9 +68,15 @@ function CommentPage() {
   const { classes, theme } = useStyles();
   const [count, handlers] = useCounter(0, { min: 0, max: 1000 });
   const [commentPage, setCommentPage] = useState(0);
+  const { writeComment } = useCommentInfo();
+
+  const [commentData, setCommentData] = useState('');
+  const [topic, setTopic] = useState('');
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
 
   const { pathname } = useLocation();
-
+  const { user } = useUser();
   axios
     .get(
       `${baseUrl}/roadmaps/load-roadmap/${pathname.slice(
@@ -77,6 +85,20 @@ function CommentPage() {
     )
     .then((v) => console.log(v))
     .catch((e) => console.log(e));
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    switch (name) {
+      case 'title':
+        setTitle(value);
+        break;
+      case 'content':
+        setContent(value);
+        break;
+      default:
+        break;
+    }
+  };
 
   const values = dummy.map((v) => (
     <SimpleGrid
@@ -121,7 +143,7 @@ function CommentPage() {
         <Center>
           <h2>코멘트 작성</h2>
         </Center>
-        <Select
+        {/* <Select
           label="코멘트 위치"
           placeholder="선택하세요"
           data={[
@@ -130,17 +152,34 @@ function CommentPage() {
             { value: 'react', label: '그래프위치' },
             { value: 'ng', label: '조건문과 반복문' },
           ]}
+          name="topic" // 폼 데이터의 location 필드와 연결
+          value={topic}
+          onChange={handleInputChange}
+        /> */}
+        <TextInput
+          mt={80}
+          placeholder="제목을 입력하세요"
+          onChange={handleInputChange}
+          name="title" // 폼 데이터의 title 필드와 연결
+          value={title}
         />
-        <TextInput mt={80} placeholder="제목을 입력하세요" />
         <Textarea
           autosize
           minRows={5}
           maxRows={10}
           mt={30}
           placeholder="내용을 입력하세요"
+          onChange={handleInputChange}
+          name="content" // 폼 데이터의 content 필드와 연결
+          value={content}
         />
         <Center>
-          <Button mt={30} onClick={() => alert('작성하기')}>
+          <Button
+            mt={30}
+            onClick={() => {
+              writeComment(title, content, user.nickname);
+            }}
+          >
             작성하기
           </Button>
         </Center>
