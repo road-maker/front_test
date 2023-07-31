@@ -16,8 +16,6 @@ import {
 } from '@mantine/core';
 import { useCounter, useDisclosure } from '@mantine/hooks';
 import { IconHeart } from '@tabler/icons-react';
-import axios from 'axios';
-import { baseUrl } from 'axiosInstance/constants';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -69,14 +67,14 @@ function CommentPage() {
 
   const { pathname } = useLocation();
 
-  axios
-    .get(
-      `${baseUrl}/roadmaps/load-roadmap/${pathname.slice(
-        pathname.lastIndexOf('/') + 1,
-      )}/comments?page=${commentPage}&size=5`,
-    )
-    .then((v) => console.log(v))
-    .catch((e) => console.log(e));
+  // axios
+  //   .get(
+  //     `${baseUrl}/roadmaps/load-roadmap/${pathname.slice(
+  //       pathname.lastIndexOf('/') + 1,
+  //     )}/comments?page=${commentPage}&size=5`,
+  //   )
+  //   .then((v) => console.log(v))
+  //   .catch((e) => console.log(e));
 
   const values = dummy.map((v) => (
     <SimpleGrid

@@ -173,6 +173,7 @@ function PostedRoadmap() {
           thumbnailUrl: v?.data?.member?.thumbnailUrl,
         });
         setLoading(false);
+        setParticipation(v?.data?.isJoined);
         const detailState = [];
         v?.data.nodes.map((j) =>
           detailState.push({ id: j.id, details: j.detailedContent }),
@@ -296,7 +297,7 @@ function PostedRoadmap() {
         <Button
           ml={800}
           loading={isLoading}
-          disabled={isLoading || !participation}
+          disabled={isLoading || (participation && user?.accessToken)}
           onClick={() => {
             if (!user?.accessToken) {
               setModal(true);
@@ -305,9 +306,9 @@ function PostedRoadmap() {
           }}
         >
           {isLoading && ' 로딩 중'}
-          {!isLoading && !participation
+          {!isLoading && participation && user?.accessToken
             ? '참여 중'
-            : !isLoading && participation
+            : !isLoading && (!participation || !user?.accessToken)
             ? '참여하기'
             : ''}
         </Button>
