@@ -9,21 +9,25 @@ import {
   Group,
   Header,
   Image,
+  LoadingOverlay,
   Modal,
   rem,
+  Text,
   TextInput,
   TextInputProps,
   useMantineTheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconArrowLeft, IconArrowRight, IconSearch } from '@tabler/icons-react';
+import { AxiosResponse } from 'axios';
 import { useInput } from 'components/common/hooks/useInput';
-import { usePrompt } from 'components/prompts/hooks/usePrompt';
+// import { usePrompt } from 'components/prompts/hooks/usePrompt';
 import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
-import { queryClient } from 'react-query/queryClient';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { clearStoredGpt } from 'storage/gpt-storage';
 import { clearStoredRoadmap } from 'storage/roadmap-storage';
+import { styled } from 'styled-components';
 
 import { useAuth } from '../../../auth/useAuth';
 import { useUser } from '../../../components/user/hooks/useUser';
@@ -104,149 +108,268 @@ export function HeaderMegaMenu() {
   const { signout } = useAuth();
   const { pathname } = useLocation();
   const [opened, { open, close }] = useDisclosure(false);
-  // console.log(pathname);
-  return (
-    <Box pb={30}>
-      <Header height={60} px="md">
-        <Group position="apart" sx={{ height: '100%' }}>
-          <Group
-            sx={{ height: '100%' }}
-            spacing={0}
-            className={classes.hiddenMobile}
-          >
-            <Image
-              src="/img/logo.png"
-              width={200}
-              height={50}
-              onClick={() => navigate('..')}
-            />
-            <InputWithButton ml="5rem" />
-          </Group>
+  const [isEditorPage, setIsEditorPage] = useState(false);
+  const [leaveEditorAction, setLeaveEditorAction] = useState('');
 
-          <Group className={classes.hiddenMobile}>
-            <Modal opened={opened} onClose={close} size="70%">
-              <Center>
-                <h1>새로운 로드맵 생성하기</h1>
-              </Center>
-              <Center>
-                <Image
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDEv4qC_L_0WLYmLRBtBd2sYGkjMzWvGqrOw&usqp=CAU"
-                  width={300}
-                  height={280}
-                />
-              </Center>
-              <Center>
-                <InputWithButton />
-              </Center>
-              <Center mt={50}>
-                <h5>오늘은 그냥 템플릿 없이 빈 로드맵 만들게요.</h5>
+  return (
+    <HeaderWrap>
+      <Box>
+        <Header height={60} px="md">
+          <Group position="apart" sx={{ height: '100%' }}>
+            <Group
+              sx={{ height: '100%' }}
+              spacing={0}
+              className={classes.hiddenMobile}
+            >
+              <Image
+                src="/img/logo.png"
+                width={200}
+                height={50}
+                onClick={() => {
+                  setLeaveEditorAction('home');
+                  pathname === '/roadmap/editor'
+                    ? setIsEditorPage(true)
+                    : navigate('/');
+                }}
+                className="hoverItem"
+              />
+              <InputWithButton ml="5rem" />
+            </Group>
+
+            <Group className={classes.hiddenMobile}>
+              <Modal
+                opened={isEditorPage}
+                size="70%"
+                onClose={() => setIsEditorPage(false)}
+              >
+                <Center>
+                  <Center>
+                    <h1>로드맵을 아직 출간하지 않았습니다. </h1>
+                    <h3>변경사항이 저장되지 않을 수 있습니다. </h3>
+                  </Center>
+                  <div className="confirm_btn_wrap">
+                    <Button
+                      onClick={() => {
+                        if (leaveEditorAction === 'mypage') {
+                          navigate('/users/mypage');
+                        }
+                        if (leaveEditorAction === 'home') {
+                          navigate('/');
+                        }
+                        if (leaveEditorAction === 'signout') {
+                          signout();
+                        }
+                      }}
+                    >
+                      나가기
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsEditorPage(false)}
+                    >
+                      취소
+                    </Button>
+                  </div>
+                </Center>
+              </Modal>
+              <Modal opened={opened} onClose={close} size="70%">
+                <Center>
+                  <h1>새로운 로드맵 생성하기</h1>
+                </Center>
+                <Center>
+                  <Image
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDEv4qC_L_0WLYmLRBtBd2sYGkjMzWvGqrOw&usqp=CAU"
+                    width={300}
+                    height={280}
+                  />
+                </Center>
+                <Center>
+                  <InputWithButton />
+                </Center>
+                <Center mt={50}>
+                  <h5>오늘은 그냥 템플릿 없이 빈 로드맵 만들게요.</h5>
+                  <Button
+                    size="xs"
+                    variant="light"
+                    color="blue"
+                    onClick={() => {
+                      clearStoredRoadmap();
+                      clearStoredGpt();
+                      if (!user || !('accessToken' in user)) {
+                        alert('로그인 후 이용가능합니다.');
+                        navigate('/users/signin');
+                      }
+                      // if(localStorage.getItem(''))
+                      navigate('/roadmap/editor');
+                    }}
+                  >
+                    빈 로드맵 만들기
+                  </Button>
+                </Center>
+              </Modal>
+              <Group position="center">
+                {pathname !== '/roadmap/editor' && (
+                  <Button onClick={open} variant="light" color="indigo">
+                    로드맵 생성하기
+                  </Button>
+                )}
+              </Group>
+              {user && 'accessToken' in user ? (
+                <>
+                  <Text
+                    c="blue"
+                    className="hoverItem"
+                    onClick={() => {
+                      setLeaveEditorAction('mypage');
+                      pathname === '/roadmap/editor'
+                        ? setIsEditorPage(true)
+                        : navigate('/users/mypage');
+                    }}
+                  >
+                    {user.nickname}님
+                  </Text>
+                  <Button
+                    onClick={() => {
+                      setLeaveEditorAction('signout');
+                      pathname === '/roadmap/editor'
+                        ? setIsEditorPage(true)
+                        : signout();
+                    }}
+                  >
+                    Sign out
+                  </Button>
+                </>
+              ) : (
                 <Button
-                  size="xs"
-                  variant="light"
-                  color="blue"
                   onClick={() => {
-                    clearStoredRoadmap();
-                    clearStoredGpt();
-                    if (!user || !('accessToken' in user)) {
-                      alert('로그인 후 이용가능합니다.');
-                      navigate('/users/signin');
-                    }
-                    navigate('/roadmap/editor');
+                    pathname === '/roadmap/editor'
+                      ? setIsEditorPage(true)
+                      : navigate('/users/signin');
                   }}
                 >
-                  빈 로드맵 만들기
-                </Button>
-              </Center>
-            </Modal>
-            <Group position="center">
-              {pathname !== '/roadmap/editor' && (
-                <Button onClick={open} variant="light" color="indigo">
-                  로드맵 생성하기
+                  Sign in
                 </Button>
               )}
             </Group>
-            {/* {user && 'accessToken' in user ? ( */}
-            {user && 'accessToken' in user ? (
-              <>
-                <NavLink to="/users/mypage">{user.nickname}님</NavLink>
-                <Button onClick={() => signout()}>Sign out</Button>
-              </>
-            ) : (
-              <Button onClick={() => navigate('/users/signin')}>Sign in</Button>
-            )}
           </Group>
-        </Group>
-      </Header>
-    </Box>
+        </Header>
+      </Box>
+    </HeaderWrap>
   );
 }
+
+const HeaderWrap = styled.nav`
+  & .hoverItem:hover {
+    cursor: pointer;
+  }
+  & .confirm_btn_wrap {
+    display: inline-flex;
+  }
+`;
 
 export function InputWithButton(props: TextInputProps) {
   const theme = useMantineTheme();
   const [prompt, onPromptChange, setPrompt] = useInput('');
-  const { getprompt } = usePrompt();
+  // const { getprompt } = usePrompt();
   const navigate = useNavigate();
   const { user } = useUser();
+  // const { pathname } = useLocation();
+  const [isLoading, setIsLoading] = useState(false);
   const { clearGptAnswer, updateGptAnswer } = usePromptAnswer();
+  // const [promptResponse, setPromptResponse] = useState();
+  const [promptResponse, setPromptResponse] =
+    useState<AxiosResponse | null | void>(null);
+  const onRequestPrompt = () => {
+    updateGptAnswer({ keyword: prompt });
+    setPromptResponse(prompt);
+    // setIsLoading(true);
+    // axios
+    //   .post(`${baseUrl}/chat?prompt=${prompt}`, {
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       Authorization: `Bearer ${user?.accessToken}`,
+    //     },
+    //   })
+    //   .then((result) => {
+    //     console.log(result);
+    //     setPromptResponse(result);
+    //     // navigate(`/roadmap/editor`);
+    //   })
+    //   .then(() => {
+    //     setIsLoading(false);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
 
-  const onRequestPrompt = (p) => {
-    // getprompt(p.prompt);
-    // queryClient.prefetchQuery(['roadmapById', currentPage], () =>
-    // queryClient.prefetchQuery(['recent_gpt_search', p.prompt], () =>
-    // queryClient.prefetchQuery('recent_gpt_search', () => getprompt(p.prompt));
-    // queryClient.prefetchQuery('prompts', () => getprompt(p.prompt));
-    queryClient.prefetchQuery(['prompts', p.prompt], () => {
-      getprompt(p.prompt);
-      updateGptAnswer(JSON.parse(localStorage.getItem('recent_gpt_search')));
-    });
-    // JSON.parse(localStorage.getItem(`['prompts', ${p.prompt}]`)),
-    // updateGptAnswer(JSON.parse(localStorage.getItem('recent_gpt_search')));
-    // ['prompts', p.prompt],
-    // localStorage.getItem(`['prompts', ${p.prompt}]`),
-    // localStorage.getItem(`prompts`),
+    // queryClient.prefetchQuery(['prompts', prompt], () => {
+    //   getprompt(prompt);
+    //   updateGptAnswer(promptResponse as unknown as Prompt);
+    // });
   };
 
-  // useEffect(() => {
-  //   if (currentPage) {
-  //     queryClient.prefetchQuery(['roadmapById', currentPage], () =>
-  //       getRoadmapById(currentPage),
-  //     );
-  //   }
-  // }, [currentPage, queryClient]);
+  // const onRequestPrompt = () => {
+
+  //   axios
+  //     .post(`${baseUrl}/chat?prompt=${prompt}`, {
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         Authorization: `Bearer ${user?.accessToken}`,
+  //       },
+  //     })
+  //     .then((result) => {
+  //       console.log(result);
+  //       navigate(`/roadmap/editor`);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
+
+  // const onRequestPrompt = useMemo(() => {}, []);
+
   return (
-    <TextInput
-      value={prompt}
-      onChange={onPromptChange}
-      icon={<IconSearch size="1.1rem" stroke={1.5} />}
-      radius="md"
-      w="600px"
-      rightSection={
-        <ActionIcon
-          size={32}
-          onClick={() => {
-            setPrompt(prompt);
-            if (!user) {
-              alert('로그인 후 이용가능합니다.');
-              navigate('/users/signin');
-            }
-            navigate(`/roadmap/editor?title=${prompt}`);
-            // clearGptAnswer();
-            // onRequestPrompt({ prompt });
-          }}
-          radius="xl"
-          color={theme.primaryColor}
-          variant="filled"
-        >
-          {theme.dir === 'ltr' ? (
-            <IconArrowRight size="1.1rem" stroke={1.5} />
-          ) : (
-            <IconArrowLeft size="1.1rem" stroke={1.5} />
-          )}
-        </ActionIcon>
-      }
-      rightSectionWidth={42}
-      placeholder="키워드를 입력하세요"
-      {...props}
-    />
+    <>
+      <LoadingOverlay visible={isLoading} />
+      <TextInput
+        value={prompt}
+        onChange={onPromptChange}
+        icon={<IconSearch size="1.1rem" stroke={1.5} />}
+        radius="md"
+        w="600px"
+        rightSection={
+          <ActionIcon
+            size={32}
+            onClick={() => {
+              setPrompt(prompt);
+              if (!user?.accessToken) {
+                alert('로그인 후 이용가능합니다.');
+                navigate('/users/signin');
+              }
+              onRequestPrompt();
+              if (promptResponse) {
+                navigate(`/roadmap/editor`);
+              }
+
+              // clearGptAnswer();
+              // onRequestPrompt({ prompt });
+            }}
+            radius="xl"
+            color={theme.primaryColor}
+            variant="filled"
+          >
+            {theme.dir === 'ltr' ? (
+              <IconArrowRight size="1.1rem" stroke={1.5} />
+            ) : (
+              <IconArrowLeft size="1.1rem" stroke={1.5} />
+            )}
+          </ActionIcon>
+        }
+        rightSectionWidth={42}
+        placeholder="키워드를 입력하세요"
+        {...props}
+      />
+    </>
   );
 }

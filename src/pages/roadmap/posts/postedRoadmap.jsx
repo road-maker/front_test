@@ -1,8 +1,8 @@
+/* eslint-disable no-console */
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable array-callback-return */
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-alert */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-nested-ternary */
 import {
   Avatar,
   Button,
@@ -17,7 +17,7 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { Icon24Hours, IconChecklist, IconUser } from '@tabler/icons-react';
+import { IconChecklist, IconUser } from '@tabler/icons-react';
 import { Highlight } from '@tiptap/extension-highlight';
 import { Link } from '@tiptap/extension-link';
 import { Subscript } from '@tiptap/extension-subscript';
@@ -29,7 +29,6 @@ import StarterKit from '@tiptap/starter-kit';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
 import { useInput } from 'components/common/hooks/useInput';
-import { useRoadmap } from 'components/roadmaps/posts/hooks/useRoadmap';
 import { useRoadmapData } from 'components/roadmaps/posts/hooks/useRoadMapResponse';
 import { useUser } from 'components/user/hooks/useUser';
 import MainLayout from 'layout/mainLayout';
@@ -94,14 +93,15 @@ function PostedRoadmap() {
   const navigate = useNavigate();
   const { classes, theme } = useStyles();
   const { pathname } = useLocation();
+  const [participation, setParticipation] = useState();
   const [currentPage, setCurrentPage] = useState(
     pathname.slice(pathname.lastIndexOf('/') + 1),
   );
-
+  const [isLoading, setLoading] = useState(true);
   const { roadmapById } = useRoadmapData(
     pathname.slice(pathname.lastIndexOf('/') + 1),
   );
-  const { joinRoadmap } = useRoadmap();
+  // const { joinRoadmap } = useRoadmap();
   const [currentRoadmap, setCurrentRoadmap] = useState(roadmapById?.data || []);
   const [label, onChangeLabel, setLabel] = useInput('');
   const [id, onChangeId, setId] = useInput('');
@@ -118,81 +118,83 @@ function PostedRoadmap() {
 
   const [details, setDetails] = useState([]);
   useEffect(() => {
-    const url = user
-      ? `${baseUrl}/roadmaps/${currentPage}/auth`
-      : `${baseUrl}/roadmaps/load-roadmap/${currentPage}`;
-    if (!user) {
-      axios
-        .get(url)
-        .catch((e) => {
-          // eslint-disable-next-line no-console
-          console.log(e);
-        })
-        .then((v) => {
-          // console.log(v);
-          setNodes(v?.data.nodes);
-          setCurrentRoadmap({
-            title: v?.data?.roadmap.title,
-            description: v?.data.roadmap.description,
-            ownerAvatarUrl: v?.data.roadmap.ownerAvatarUrl,
-            ownerNickname: v?.data.roadmap.ownerNickname,
-            thumbnailUrl: v?.data.roadmap.thumbnailUrl,
-          });
-          const detailState = [];
-          v?.data.nodes.map((j) => {
-            detailState.push({ id: j.id, details: j.detailedContent });
-          });
-          setState(detailState);
-          const edgeSet = new Set();
-          const tempEdges = [];
-          // eslint-disable-next-line array-callback-return
-          v?.data?.edges.map((j) => {
-            if (!edgeSet.has(j?.id)) {
-              tempEdges.push(j);
-            }
-            edgeSet.add(j?.id);
-          });
-          setEdges(tempEdges);
+    // const url = user
+    //   ? `${baseUrl}/roadmaps/${currentPage}`
+    //   : `${baseUrl}/roadmaps/load-roadmap/${currentPage}`;
+    // if (!user) {
+    //   axios
+    //     .get(url)
+    //     .catch((e) => {
+    //       // eslint-disable-next-line no-console
+    //       console.log(e);
+    //     })
+    //     .then((v) => {
+    //       setNodes(v?.data.nodes);
+    //       setCurrentRoadmap({
+    //         title: v?.data?.roadmap?.title,
+    //         description: v?.data?.roadmap?.description,
+    //         ownerAvatarUrl: v?.data?.roadmap?.ownerAvatarUrl,
+    //         ownerNickname: v?.data?.roadmap?.ownerNickname,
+    //         thumbnailUrl: v?.data?.roadmap?.thumbnailUrl,
+    //         isJoined: v?.data?.isJoined,
+    //       });
+    //       setParticipation(v?.data.isJoined);
+    //       const detailState = [];
+    //       v?.data.nodes.map((j) => {
+    //         detailState.push({ id: j.id, details: j.detailedContent });
+    //       });
+    //       setState(detailState);
+    //       const edgeSet = new Set();
+    //       const tempEdges = [];
+    //       // eslint-disable-next-line array-callback-return
+    //       v?.data?.edges.map((j) => {
+    //         if (!edgeSet.has(j?.id)) {
+    //           tempEdges.push(j);
+    //         }
+    //         edgeSet.add(j?.id);
+    //       });
+    //       setEdges(tempEdges);
+    //     });
+    // }
+    axios
+      .get(`${baseUrl}/roadmaps/${currentPage}`, {
+        headers: {
+          Authorization: `Bearer ${user?.accessToken}`,
+        },
+      })
+      .catch((e) => {
+        // eslint-disable-next-line no-console
+        console.log(e);
+      })
+      .then((v) => {
+        setNodes(v?.data.nodes);
+        setCurrentRoadmap({
+          title: v?.data?.title,
+          description: v?.data?.description,
+          ownerAvatarUrl: v?.data?.member?.ownerAvatarUrl,
+          ownerNickname: v?.data?.member?.nickname,
+          isJoined: v?.data?.isJoined,
+          thumbnailUrl: v?.data?.member?.thumbnailUrl,
         });
-    }
+        setLoading(false);
+        setParticipation(v?.data?.isJoined);
+        const detailState = [];
+        v?.data.nodes.map((j) =>
+          detailState.push({ id: j.id, details: j.detailedContent }),
+        );
+        setState(detailState);
+        const edgeSet = new Set();
+        const tempEdges = [];
+        // eslint-disable-next-line array-callback-return
+        v?.data?.edges.map((j) => {
+          if (!edgeSet.has(j?.id)) {
+            tempEdges.push(j);
+          }
+          edgeSet.add(j?.id);
+        });
+        setEdges(tempEdges);
+      });
 
-    if (user && 'accessToken' in user) {
-      axios
-        .get(url, {
-          headers: {
-            Authorization: `Bearer ${user?.accessToken}`,
-          },
-        })
-        .catch((e) => {
-          // eslint-disable-next-line no-console
-          console.log(e);
-        })
-        .then((v) => {
-          setNodes(v?.data.nodes);
-          setCurrentRoadmap({
-            title: v?.data?.roadmap.title,
-            description: v?.data.roadmap.description,
-            ownerAvatarUrl: v?.data.roadmap.ownerAvatarUrl,
-            ownerNickname: v?.data.roadmap.ownerNickname,
-            thumbnailUrl: v?.data.roadmap.thumbnailUrl,
-          });
-          const detailState = [];
-          v?.data.nodes.map((j) => {
-            detailState.push({ id: j.id, details: j.detailedContent });
-          });
-          setState(detailState);
-          const edgeSet = new Set();
-          const tempEdges = [];
-          // eslint-disable-next-line array-callback-return
-          v?.data?.edges.map((j) => {
-            if (!edgeSet.has(j?.id)) {
-              tempEdges.push(j);
-            }
-            edgeSet.add(j?.id);
-          });
-          setEdges(tempEdges);
-        });
-    }
     // if (currentPage !== roadmapById?.data?.roadmap?.id) {
     //   setCurrentRoadmap(
     //     JSON.parse(localStorage.getItem('roadmapById'))?.data?.roadmap,
@@ -245,8 +247,28 @@ function PostedRoadmap() {
   const [zoomOnDoubleClick] = useState(false);
   const [panOnDrag] = useState(true); // 마우스로 이동
   const [isOpen, setIsOpen] = useState(false);
+  const [modal, setModal] = useState(false);
 
   const proOptions = { hideAttribution: true };
+
+  const joinRoadmap = () => {
+    axios
+      .post(
+        `${baseUrl}/roadmaps/${parseInt(currentPage, 10)}/join`,
+        {},
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user?.accessToken}`,
+          },
+        },
+      )
+      .then((v) => {
+        setParticipation(true);
+      })
+      .catch((e) => console.log(e));
+  };
+
   return (
     <MainLayout>
       <Container px="xs" maw={1000}>
@@ -254,25 +276,48 @@ function PostedRoadmap() {
           {currentRoadmap?.title}
         </Title>
         <Group mt={20}>
+          {currentRoadmap?.ownerNickname}
           <Avatar color="purple" radius="xl">
-            {currentRoadmap?.ownerAvatarUrl || '없음'}
+            {currentRoadmap?.ownerAvatarUrl || ''}
           </Avatar>
-          {currentRoadmap?.ownerNickname || 'no nickname'}
         </Group>
-        <Button
-          ml={800}
-          onClick={() => {
-            if (!user) {
-              alert('로그인 후 이용 가능합니다.');
-              navigate('/users/signin');
-            }
-            joinRoadmap(parseInt(currentPage, 10));
+
+        <Modal
+          opened={modal}
+          size="70%"
+          onClose={() => {
+            setModal(false);
           }}
         >
-          참여하기
+          {!user && (
+            <div>
+              <Center>로그인 후 이용 가능합니다.</Center>
+              <Button onClick={() => navigate('/users/signin')}>
+                로그인하기
+              </Button>
+            </div>
+          )}
+        </Modal>
+        <Button
+          ml={800}
+          loading={isLoading}
+          disabled={isLoading || (participation && user?.accessToken)}
+          onClick={() => {
+            if (!user?.accessToken) {
+              setModal(true);
+            }
+            joinRoadmap();
+          }}
+        >
+          {isLoading && ' 로딩 중'}
+          {!isLoading && participation && user?.accessToken
+            ? '참여 중'
+            : !isLoading && (!participation || !user?.accessToken)
+            ? '참여하기'
+            : ''}
         </Button>
         <Text c="dimmed" className={classes.description} mt="md">
-          {currentRoadmap?.description || '없음'}
+          {currentRoadmap?.description || ''}
         </Text>
         <SimpleGrid
           cols={4}
@@ -324,7 +369,7 @@ function PostedRoadmap() {
               완료인원: 명
             </Text>
           </Card>
-          <Card
+          {/* <Card
             mb={30}
             shadow="md"
             radius="md"
@@ -336,7 +381,7 @@ function PostedRoadmap() {
               stroke={2}
               color={theme.fn.primaryColor()}
             />
-          </Card>
+          </Card> */}
           {/* <Card
             mb={30}
             shadow="md"

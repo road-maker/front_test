@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-console */
 /* eslint-disable no-alert */
@@ -61,6 +62,7 @@ export function useRoadmap(): UseRoadmap {
         });
       if (status === 200) {
         console.log('roadmapPostSeverCall', data);
+        // eslint-disable-next-line no-alert
         alert(data);
       }
     } catch (errorResponse) {
