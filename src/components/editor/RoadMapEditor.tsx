@@ -1,8 +1,4 @@
-/* eslint-disable no-console */
-/* eslint-disable no-alert */
 /* eslint-disable array-callback-return */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import 'reactflow/dist/style.css';
 
 import dagre from '@dagrejs/dagre';
@@ -18,7 +14,6 @@ import {
   Textarea,
   TextInput,
 } from '@mantine/core';
-// import { useRoadmap } from 'components/roadmaps/hooks/useRoadmap'; // origin : initialMerge
 import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { useDisclosure } from '@mantine/hooks';
 import axios from 'axios';
@@ -193,7 +188,6 @@ function Roadmap({
       // }
       // if (useGpt.length === 0) {
       axios
-        // .post(`${baseUrl}/chat?prompt=${search.get('title')}`, {
         .post(`${baseUrl}/chat?prompt=${localData.keyword}`, {
           headers: {
             'Content-Type': 'application/json',
@@ -383,6 +377,7 @@ function Roadmap({
         if (v?.id === item?.id) {
           // eslint-disable-next-line no-param-reassign
           v.detailedContent = item?.details;
+          console.log(item?.details);
           // v.details = item?.details;
         }
         // eslint-disable-next-line no-param-reassign
@@ -426,9 +421,9 @@ function Roadmap({
   }, [nodeState]);
 
   // const { deleteElements } = useReactFlow();
-  const useRemoveNode = useCallback(() => {
-    setNodes((nds) => nds.filter((node) => node?.id !== label));
-  }, [label]);
+  // const useRemoveNode = useCallback(() => {
+  //   setNodes((nds) => nds.filter((node) => node?.id !== label));
+  // }, [label]);
 
   useEffect(() => {
     setNodes((nds) =>
@@ -453,16 +448,16 @@ function Roadmap({
   }, [edgeState, nodeState]);
 
   useEffect(() => {
-    setNodes((nds) =>
-      nds.map((node) => {
-        if (node?.id === id) {
-          // when you update a simple type you can just update the value
-          // eslint-disable-next-line no-param-reassign
-          node.hidden = nodeHidden;
-        }
-        return node;
-      }),
-    );
+    // setNodes((nds) =>
+    //   nds.map((node) => {
+    //     if (node?.id === id) {
+    //       // when you update a simple type you can just update the value
+    //       // eslint-disable-next-line no-param-reassign
+    //       node.hidden = nodeHidden;
+    //     }
+    //     return node;
+    //   }),
+    // );
     setNodes((nds) =>
       nds.map((node) => {
         // if (node.id === '1') {
@@ -510,23 +505,6 @@ function Roadmap({
           value={title}
           onChange={onChangeTitle}
         />
-        {/* <Group position="apart" mt={20}>
-          <TextInput
-            placeholder="기간을 입력하세요"
-            label="권장 수행기간"
-            w={200}
-          />
-          <Select
-            label="난이도 설정"
-            placeholder="입문"
-            data={[
-              { value: '1', label: '입문' },
-              { value: '2', label: '초급' },
-              { value: '3', label: '중급 이상' },
-            ]}
-            w={200}
-          />
-        </Group> */}
         <MultiSelect
           label="로드맵 태그 설정"
           mt={20}
@@ -606,8 +584,8 @@ function Roadmap({
             {JSON.stringify(selectedNode[0])}
             <input
               // onInput={(evt) => {
+              // value={selectedNode[0]?.data.label} // 한국어 쓸 떄 버그
               onChange={(evt) => {
-                // selectedNode[0].data.label = evt.target.value;
                 selectedNode[0].data.label = evt?.target?.value;
               }}
             />
@@ -631,7 +609,8 @@ function Roadmap({
             /> */}
           </div>
 
-          {selectedNode[0]?.id && toggleEditor}
+          {/* {selectedNode[0]?.id === id && toggleEditor} */}
+          {toggleEditor}
 
           <div className="confirm_btn_wrap">
             <Button onClick={() => setNodeModal(false)}>닫기</Button>
@@ -649,7 +628,9 @@ function Roadmap({
         onConnect={onConnect}
         onNodeClick={(e, n) => {
           setLabel(`${n?.data?.label}`);
-          setId(`${n?.id}`);
+          setId(n?.id);
+          console.log('n', n);
+          setNodeModal(true);
         }}
         attributionPosition="bottom-left"
         fitView

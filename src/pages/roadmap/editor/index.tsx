@@ -20,13 +20,10 @@ import { useInput } from '../../../components/common/hooks/useInput';
 import RoadMapCanvas from '../../../components/editor/RoadMapEditor';
 
 export default function RoadMapEditor(): ReactElement {
-  // const { search } = useLocation();
   const [label, onChangeLabel, setLabel] = useInput('');
   const [id, onChangeId, setId] = useInput('');
-  // const [toggle, setToggle] = useState(null);
   const [toggle, onChangeToggle, setToggle] = useInput('');
   const [search] = useSearchParams();
-  // const [state, onChangeHandler, setState] = useInput('');
   const [state, setState] = useState([
     { id: '1', details: '' },
     { id: '2', details: '' },
@@ -36,10 +33,7 @@ export default function RoadMapEditor(): ReactElement {
   const [roadmapTag, setRoadmapTag] = useState('');
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [roadMapTitle, onRoadMapTitleChange, setRoadMapTitle] = useInput(
-    // search.get('title') || '',
-    '',
-  );
+  const [roadMapTitle, onRoadMapTitleChange, setRoadMapTitle] = useInput('');
 
   const editor = useEditor({
     extensions: [
@@ -57,18 +51,13 @@ export default function RoadMapEditor(): ReactElement {
     content: state.filter((v) => v?.id === id)[0]?.details || '',
 
     onUpdate(e) {
-      // console.log('ydoc', ydoc);
-      // console.log('ytext', ytext);
       console.log(e.editor?.getHTML());
       setToggle(e.editor?.getHTML());
       console.log('e.editor', e.editor);
       // eslint-disable-next-line array-callback-return
       state.map((item, idx) => {
         if (item?.id !== id) return;
-        // console.log('state.map, item ,label', label);
-
         const copyState = [...state];
-        // copyState.splice(idx, 1, {
         copyState.splice(idx, 1, {
           id: item?.id,
           details: e.editor?.getHTML(),
@@ -80,7 +69,7 @@ export default function RoadMapEditor(): ReactElement {
 
   useMemo(() => {
     const filt = state.filter((v) => v?.id === id);
-    console.log(filt);
+    // console.log('filt', filt);
     setToggle(filt);
     if (editor) {
       // mount 시 에러
@@ -92,78 +81,67 @@ export default function RoadMapEditor(): ReactElement {
     if (label !== '' && filt.length === 0) {
       setState([...state, { id, details: '' }]);
     }
-    // console.log('state', state);
-  }, [state, id, setToggle, label, editor]);
+  }, [state, id, label, editor]);
 
   const toggleEditor = useMemo(() => {
-    // if (toggle.length === 0) return <div />;
+    // const toggleEditor = useCallback(() => {
     return (
-      // id === toggle[0]?.id && (
-      // return (
-      <div>
+      id === toggle[0]?.id && (
         <div>
-          <RichTextEditor editor={editor}>
-            <RichTextEditor.Toolbar sticky stickyOffset={5}>
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Bold />
-                <RichTextEditor.Italic />
-                <RichTextEditor.Underline />
-                <RichTextEditor.Strikethrough />
-                <RichTextEditor.ClearFormatting />
-                <RichTextEditor.Highlight />
-                <RichTextEditor.Code />
-              </RichTextEditor.ControlsGroup>
+          <div>
+            <RichTextEditor editor={editor}>
+              <RichTextEditor.Toolbar sticky stickyOffset={5}>
+                <RichTextEditor.ControlsGroup>
+                  <RichTextEditor.Bold />
+                  <RichTextEditor.Italic />
+                  <RichTextEditor.Underline />
+                  <RichTextEditor.Strikethrough />
+                  <RichTextEditor.ClearFormatting />
+                  <RichTextEditor.Highlight />
+                  <RichTextEditor.Code />
+                </RichTextEditor.ControlsGroup>
 
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.H1 />
-                <RichTextEditor.H2 />
-                <RichTextEditor.H3 />
-                <RichTextEditor.H4 />
-              </RichTextEditor.ControlsGroup>
+                <RichTextEditor.ControlsGroup>
+                  <RichTextEditor.H1 />
+                  <RichTextEditor.H2 />
+                  <RichTextEditor.H3 />
+                  <RichTextEditor.H4 />
+                </RichTextEditor.ControlsGroup>
 
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Blockquote />
-                <RichTextEditor.Hr />
-                <RichTextEditor.BulletList />
-                <RichTextEditor.OrderedList />
-                <RichTextEditor.Subscript />
-                <RichTextEditor.Superscript />
-              </RichTextEditor.ControlsGroup>
+                <RichTextEditor.ControlsGroup>
+                  <RichTextEditor.Blockquote />
+                  <RichTextEditor.Hr />
+                  <RichTextEditor.BulletList />
+                  <RichTextEditor.OrderedList />
+                  <RichTextEditor.Subscript />
+                  <RichTextEditor.Superscript />
+                </RichTextEditor.ControlsGroup>
 
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Link />
-                <RichTextEditor.Unlink />
-              </RichTextEditor.ControlsGroup>
+                <RichTextEditor.ControlsGroup>
+                  <RichTextEditor.Link />
+                  <RichTextEditor.Unlink />
+                </RichTextEditor.ControlsGroup>
 
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.AlignLeft />
-                <RichTextEditor.AlignCenter />
-                <RichTextEditor.AlignJustify />
-                <RichTextEditor.AlignRight />
-              </RichTextEditor.ControlsGroup>
-            </RichTextEditor.Toolbar>
-            <div className="content">
-              <RichTextEditor.Content />
-            </div>
-          </RichTextEditor>
+                <RichTextEditor.ControlsGroup>
+                  <RichTextEditor.AlignLeft />
+                  <RichTextEditor.AlignCenter />
+                  <RichTextEditor.AlignJustify />
+                  <RichTextEditor.AlignRight />
+                </RichTextEditor.ControlsGroup>
+              </RichTextEditor.Toolbar>
+              <div className="content">
+                <RichTextEditor.Content />
+              </div>
+            </RichTextEditor>
+          </div>
         </div>
-      </div>
-      // )
+      )
     );
-  }, [toggle, id, editor]);
+  }, [id, toggle]);
 
   return (
     <MainLayout>
       <EditorWrap>
-        {/* <div>
-          로드맵 제목 :{' '}
-          <input
-            value={roadMapTitle}
-            onChange={onRoadMapTitleChange}
-            placeholder="로드맵 제목을 입력해주세요."
-          />
-        </div> */}
-
         <div className="roadMapWrap">
           <ReactFlowProvider>
             <RoadMapCanvas
