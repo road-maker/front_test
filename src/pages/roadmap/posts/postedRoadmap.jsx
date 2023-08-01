@@ -124,7 +124,6 @@ function PostedRoadmap() {
           console.log(e);
         })
         .then((v) => {
-          console.log(v);
           setNodes(v?.data.nodes);
           setCurrentRoadmap({
             title: v?.data?.roadmap.title,
@@ -171,6 +170,7 @@ function PostedRoadmap() {
             ownerNickname: v?.data?.roadmap?.ownerNickname,
             thumbnailUrl: v?.data?.roadmap?.thumbnailUrl,
           });
+          console.log('DATA', v);
           const detailState = [];
           v?.data.nodes.map((j) => {
             detailState.push({ id: j.id, details: j.detailedContent });

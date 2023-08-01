@@ -4,5 +4,4 @@ export const queryKeys = {
   prompt: 'prompts',
   roadmaps: 'roadmaps',
   roadmapById: 'roadmapById',
-  commentId: 'commentId',
 };

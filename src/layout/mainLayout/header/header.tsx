@@ -102,7 +102,7 @@ export function HeaderMegaMenu() {
   const { signout } = useAuth();
   const { pathname } = useLocation();
   const [opened, { open, close }] = useDisclosure(false);
-  console.log(pathname);
+
   return (
     <Box pb={30}>
       <Header height={60} px="md">

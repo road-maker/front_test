@@ -29,12 +29,9 @@ export interface RoadmapMetaData {
   id?: number;
   thumbnailUrl?: string;
   title?: string;
-  commentTitle?: string;
-  commentContent?: string;
   recommendedExecutionTimeValue?: number;
   recommendedExecutionTimeUnit?: string;
   flowkey?: string;
-  userClicked?: boolean;
 }
 
 export type UserRoadmap = RoadmapMetaData & Roadmap;
