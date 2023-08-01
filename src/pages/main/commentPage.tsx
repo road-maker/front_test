@@ -38,7 +38,7 @@ function CommentPage() {
   const [commentPage, setCommentPage] = useState(0);
   const { pathname } = useLocation();
   const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState([]);
   const { user } = useUser();
   useEffect(() => {
     axios
@@ -48,19 +48,21 @@ function CommentPage() {
         )}/comments?page=${commentPage}&size=5`,
         {
           headers: {
-            Authorization: `Bearer ${user?.accessToken}`,
             'Content-Type': 'application/json',
           },
         },
       )
       .then((v) => {
-        console.log(v);
         // setTitle(v?.data?.title);
-        setContent(v?.data?.content);
+        const comments = v?.data;
+        const commentContents = comments.map((comment) => comment.content);
+        setContent(commentContents);
+        console.log(comments);
         // setNickname(v?.data?.commentNickname);
       })
       .catch((e) => console.log(e));
   }, [commentPage, pathname, user?.accessToken]);
+
   const handleCommentTitleChange = (event) => {
     setTitle(event.target.value);
   };
@@ -151,7 +153,7 @@ function CommentPage() {
       <Center mt={20}>
         <Button onClick={open}>코멘트 작성하기</Button>
       </Center>
-      {content ? (
+      {content.length !== 0 ? (
         <SimpleGrid
           key={user.id}
           cols={1}
@@ -159,32 +161,34 @@ function CommentPage() {
           mt={20}
           breakpoints={[{ maxWidth: 'md', cols: 1 }]}
         >
-          <Paper withBorder shadow="md" radius="xs" p="xl">
-            <Group>
-              {/* <Avatar color="cyan" radius="xl">
+          {content.map((comment, index) => (
+            <Paper withBorder shadow="md" radius="xs" p="xl" key={index}>
+              <Group>
+                {/* <Avatar color="cyan" radius="xl">
               {user.nickname.substring(0, 1)}
             </Avatar> */}
-              <div>
-                {/* <Text size="sm">{nickname}</Text> */}
-                {/* <Text size="xs" color="dimmed">
+                <div>
+                  {/* <Text size="sm">{nickname}</Text> */}
+                  {/* <Text size="xs" color="dimmed">
                   {title}
                 </Text> */}
-              </div>
-            </Group>
-            <Text className={classes.body} size="sm">
-              {content}
-              <Group>
-                <ActionIcon onClick={handlers.increment}>
-                  <IconHeart
-                    size="1.5rem"
-                    color={theme.colors.red[6]}
-                    stroke={1.5}
-                  />
-                </ActionIcon>
-                {count}
+                </div>
               </Group>
-            </Text>
-          </Paper>
+              <Text className={classes.body} size="sm">
+                {comment}
+                <Group>
+                  <ActionIcon onClick={handlers.increment}>
+                    <IconHeart
+                      size="1.5rem"
+                      color={theme.colors.red[6]}
+                      stroke={1.5}
+                    />
+                  </ActionIcon>
+                  {count}
+                </Group>
+              </Text>
+            </Paper>
+          ))}
         </SimpleGrid>
       ) : (
         '댓글이 없습니다.'
