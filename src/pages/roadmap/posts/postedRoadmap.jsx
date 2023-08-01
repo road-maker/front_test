@@ -251,7 +251,7 @@ function PostedRoadmap() {
     axios
       .post(
         `${baseUrl}/roadmaps/${parseInt(currentPage, 10)}/join`,
-        { data: parseInt(currentPage, 10) },
+        {},
         {
           headers: {
             'Content-Type': 'application/json',

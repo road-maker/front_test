@@ -1,3 +1,8 @@
+/* eslint-disable no-console */
+/* eslint-disable no-alert */
+/* eslint-disable array-callback-return */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import 'reactflow/dist/style.css';
 
 import dagre from '@dagrejs/dagre';
@@ -174,6 +179,9 @@ function Roadmap({
     if (!user) {
       return navigate('/users/signin');
     }
+    if (!localStorage.getItem('recent_gpt_search')) {
+      setGptRes(false);
+    }
     if (localStorage.getItem('recent_gpt_search')) {
       const localData: NewPrompt = JSON.parse(
         localStorage.getItem('recent_gpt_search'),
@@ -199,22 +207,22 @@ function Roadmap({
         .then(() => {
           setGptRes(false);
         });
-      // }
     }
   }, []);
 
-  const onSave = useCallback(() => {
-    if (rfInstance) {
-      const flow = rfInstance.toObject();
-      localStorage.setItem(flowKey, JSON.stringify(flow));
-      console.log(flow);
-    }
-  }, [rfInstance]);
+  // const onSave = useCallback(() => { // 내부적으로 처리
+  //   if (rfInstance) {
+  //     const flow = rfInstance.toObject();
+  //     localStorage.setItem(flowKey, JSON.stringify(flow));
+  //     console.log(flow);
+  //   }
+  // }, [rfInstance]);
 
   useMemo(() => {
     const tmpNode = [];
     const tmpEdge = [];
-    console.log(useGpt);
+    // console.log(useGpt);
+    // eslint-disable-next-line array-callback-return
     useGpt.map((v) => {
       if (!nodeSet.has(v?.id)) {
         tmpNode.push({
@@ -253,6 +261,24 @@ function Roadmap({
     setNodes(tmpNode);
     setEdges(tmpEdge);
   }, [useGpt]);
+
+  const onLayout = useCallback(
+    (direction) => {
+      const { nodes: layoutedNodes, edges: layoutedEdges } =
+        getLayoutedElements(nodeState, edgeState, direction);
+
+      setNodes([...layoutedNodes]);
+      setEdges([...layoutedEdges]);
+    },
+    [nodeState, edgeState, setEdges, setNodes],
+  );
+
+  useEffect(() => {
+    // 자동 생성 후 formatting
+    if (nodeState && edgeState && useGpt.length > 0 && isLoading) {
+      onLayout('TB');
+    }
+  }, []);
 
   const proOptions = { hideAttribution: true };
 
@@ -319,17 +345,6 @@ function Roadmap({
     restoreFlow();
   }, [setNodes, setEdges, setViewport]);
 
-  const onLayout = useCallback(
-    (direction) => {
-      const { nodes: layoutedNodes, edges: layoutedEdges } =
-        getLayoutedElements(nodeState, edgeState, direction);
-
-      setNodes([...layoutedNodes]);
-      setEdges([...layoutedEdges]);
-    },
-    [nodeState, edgeState, setEdges, setNodes],
-  );
-
   const onAddNode = useCallback(() => {
     const nodeCount: number = [...nodeState]?.length;
     setNodes([
@@ -361,7 +376,9 @@ function Roadmap({
     // console.log('nodes', nodes);
     const nodesCopy = [...nodeState] as RoadmapNodes;
     const edgesCopy = [...edgeState];
+    // eslint-disable-next-line array-callback-return
     nodesCopy.map((v) => {
+      // eslint-disable-next-line array-callback-return
       state.map((item) => {
         if (v?.id === item?.id) {
           // eslint-disable-next-line no-param-reassign
@@ -399,7 +416,7 @@ function Roadmap({
         },
       })
       .then((e) => {
-        console.log(e);
+        // console.log(e);
         alert('포스팅 성공!');
         navigate('/');
       })
@@ -697,9 +714,9 @@ function Roadmap({
               노드 전체 삭제
             </Button>
           )}
-          <Button type="button" onClick={onRestore} mr={10}>
+          {/* <Button type="button" onClick={onRestore} mr={10}>
             restore
-          </Button>
+          </Button> */}
           <Button
             type="button"
             onClick={() => {

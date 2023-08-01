@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-alert */
 import {
   ActionIcon,
   Box,
@@ -19,7 +21,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconArrowLeft, IconArrowRight, IconSearch } from '@tabler/icons-react';
 import { AxiosResponse } from 'axios';
 import { useInput } from 'components/common/hooks/useInput';
-import { usePrompt } from 'components/prompts/hooks/usePrompt';
+// import { usePrompt } from 'components/prompts/hooks/usePrompt';
 import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -198,6 +200,7 @@ export function HeaderMegaMenu() {
                         alert('로그인 후 이용가능합니다.');
                         navigate('/users/signin');
                       }
+                      // if(localStorage.getItem(''))
                       navigate('/roadmap/editor');
                     }}
                   >
@@ -268,10 +271,10 @@ const HeaderWrap = styled.nav`
 export function InputWithButton(props: TextInputProps) {
   const theme = useMantineTheme();
   const [prompt, onPromptChange, setPrompt] = useInput('');
-  const { getprompt } = usePrompt();
+  // const { getprompt } = usePrompt();
   const navigate = useNavigate();
   const { user } = useUser();
-  const { pathname } = useLocation();
+  // const { pathname } = useLocation();
   const [isLoading, setIsLoading] = useState(false);
   const { clearGptAnswer, updateGptAnswer } = usePromptAnswer();
   // const [promptResponse, setPromptResponse] = useState();
