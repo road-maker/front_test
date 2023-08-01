@@ -19,6 +19,7 @@
     "@mantine/spotlight": "^6.0.16",
     "@mantine/tiptap": "^6.0.16",
     "@monaco-editor/react": "^4.5.1",
+    "@reactflow/node-toolbar": "^1.2.3",
     "@syncedstore/core": "^0.5.2",
     "@syncedstore/react": "^0.5.2",
     "@tabler/icons-react": "^2.25.0",

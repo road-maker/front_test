@@ -13,13 +13,10 @@ import {
 import { IconBookmark, IconHeart, IconShare } from '@tabler/icons-react';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
-import { useRoadmap } from 'components/roadmaps/posts/hooks/useRoadmap';
-import { useRoadmapData } from 'components/roadmaps/posts/hooks/useRoadMapResponse';
-import { useUser } from 'components/user/hooks/useUser';
+// import { useUser } from 'components/user/hooks/useUser';
 import { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useInfiniteQuery } from 'react-query';
-import { queryClient } from 'react-query/queryClient';
 import { useNavigate } from 'react-router-dom';
 
 const useStyles = createStyles((theme) => ({
@@ -50,14 +47,26 @@ const fetchUrl = async (url) => {
 
 export default function RoadmapRecommendation() {
   const [allRoadmapData, setAllRoadmapData] = useState([]);
-  const { user } = useUser();
+  // const { user } = useUser();
   const { classes, theme } = useStyles();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState('');
+  // const date = new Date(Date.UTC(2012, 11, 20, 3, 0, 0));
+  // options = {
+  //   year: 'numeric',
+  //   month: 'numeric',
+  //   day: 'numeric',
+  //   hour: 'numeric',
+  //   minute: 'numeric',
+  //   second: 'numeric',
+  //   hour12: false,
+  //   timeZone: '',
+  // };
+  // console.log(new Intl.DateTimeFormat(undefined, options).format(date));
   // const themes = useMantineTheme();
   // const mobile = useMediaQuery(`(max-width: ${themes.breakpoints.sm})`);
-  const { getRoadmapById, getAllRoadmap, getRoadmapByIdAuth } = useRoadmap();
-  const { roadmaps } = useRoadmapData();
+  // const { getRoadmapById, getAllRoadmap, getRoadmapByIdAuth } = useRoadmap();
+  // const { roadmaps } = useRoadmapData();
 
   useEffect(() => {
     axios
@@ -71,30 +80,30 @@ export default function RoadmapRecommendation() {
       });
   }, []);
 
-  useEffect(() => {
-    if (currentPage) {
-      if (!user) {
-        queryClient.prefetchQuery(['roadmapById', currentPage], () =>
-          getRoadmapById(currentPage),
-        );
-      }
-      queryClient.prefetchQuery(['roadmapById', currentPage], () =>
-        getRoadmapByIdAuth(currentPage),
-      );
-    }
-    // }, [currentPage, queryClient]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, queryClient]);
+  // useEffect(() => {
+  //   if (currentPage) {
+  //     if (!user) {
+  //       queryClient.prefetchQuery(['roadmapById', currentPage], () =>
+  //         getRoadmapById(currentPage),
+  //       );
+  //     }
+  //     queryClient.prefetchQuery(['roadmapById', currentPage], () =>
+  //       getRoadmapByIdAuth(currentPage),
+  //     );
+  //   }
+  //   // }, [currentPage, queryClient]);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [currentPage, queryClient]);
 
-  useEffect(() => {
-    getAllRoadmap();
+  // useEffect(() => {
+  //   // getAllRoadmap();
 
-    // if (roadmaps !== undefined) { // @Seo1n origin intialmerge
-    if (roadmaps && 'data' in roadmaps) {
-      setAllRoadmapData(roadmaps?.data);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  //   // if (roadmaps !== undefined) { // @Seo1n origin intialmerge
+  //   if (roadmaps && 'data' in roadmaps) {
+  //     setAllRoadmapData(roadmaps?.data);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   const { fetchNextPage, hasNextPage, isLoading, isError, error } =
     useInfiniteQuery(
@@ -169,6 +178,12 @@ export default function RoadmapRecommendation() {
                         />
                       )}
                     </Card.Section>
+                    <Text className={classes.title} mt={10}>
+                      {/* {new Intl.DateTimeFormat('ko', {
+                        dateStyle: 'full',
+                      }).format(article?.createdAt)} */}
+                      {article?.createdAt}
+                    </Text>
                     <Text
                       className={classes.title}
                       mt={10}

@@ -62,6 +62,7 @@ export function useRoadmap(): UseRoadmap {
         });
       if (status === 200) {
         console.log('roadmapPostSeverCall', data);
+        // eslint-disable-next-line no-alert
         alert(data);
       }
     } catch (errorResponse) {
