@@ -5,6 +5,7 @@ import dagre from '@dagrejs/dagre';
 import {
   Button,
   Center,
+  ColorInput,
   Image,
   LoadingOverlay,
   Modal,
@@ -585,25 +586,22 @@ function Roadmap({
       <Panel position="top-center">
         <Modal opened={nodeModal} onClose={() => setNodeModal(false)} size="xl">
           <div>
-            {/* {JSON.stringify(selectedNode[0])} */}
             <input
-              // onInput={(evt) => {
-              value={label} // 한국어 쓸 떄 버그
-              // value={selectedNode[0]?.data.label} // 한국어 쓸 떄 버그
+              value={label}
               onChange={(evt) => {
                 setLabel(evt?.target?.value);
-                // eslint-disable-next-line no-param-reassign
-                // selectedNode[0].data.label = evt?.target?.value;
-                // selectedNode[0].data.label = evt?.target?.value;
               }}
             />
-            <input
+            {/* <ColorInput value={} placeholder="Pick color" label="Your favorite color" />; */}
+            <ColorInput placeholder="Pick color" label="Your favorite color" />;
+            {/* <input
               // value={selectedNode[0]?.style.background}
               onChange={(evt) => {
                 // eslint-disable-next-line no-param-reassign
                 // selectedNode[0].style.background = evt.target.value;
               }}
             />
+             */}
             {/* <input
               value={selectedNode[0]?.data.label}
               onChange={(evt) => {

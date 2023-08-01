@@ -20,7 +20,8 @@ import { useInput } from '../../../components/common/hooks/useInput';
 import RoadMapCanvas from '../../../components/editor/RoadMapEditor';
 
 export default function RoadMapEditor(): ReactElement {
-  const [label, onChangeLabel, setLabel] = useInput('');
+  const [label, onChangeLabel, setLabel] = useInput(''); // 노드 내용
+  const [color, onChangeColor, setColor] = useInput(''); // 노드 색
   const [id, onChangeId, setId] = useInput('');
   const [toggle, onChangeToggle, setToggle] = useInput('');
   const [search] = useSearchParams();
