@@ -1,3 +1,6 @@
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
 import { ActionIcon } from '@mantine/core';
 import { IconPencil } from '@tabler/icons-react';
 import { Highlight } from '@tiptap/extension-highlight';
@@ -44,9 +47,9 @@ function CustomNode({
     onUpdate(e) {
       // console.log('ydoc', ydoc);
       // console.log('ytext', ytext);
-      console.log(e.editor?.getHTML());
+      // console.log(e.editor?.getHTML());
       setToggle(e.editor?.getHTML());
-      console.log('e.editor', e.editor);
+      // console.log('e.editor', e.editor);
       // eslint-disable-next-line array-callback-return
       state.map((item, idx) => {
         if (item?.id !== id) return;
@@ -64,7 +67,7 @@ function CustomNode({
   });
   useMemo(() => {
     const filt = state.filter((v) => v?.id === id);
-    console.log(filt);
+    // console.log(filt);
     setToggle(filt);
     if (editor) {
       // mount 시 에러
@@ -77,6 +80,7 @@ function CustomNode({
       setState([...state, { id, details: '' }]);
     }
     // console.log('state', state);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, id, setToggle, id, editor]);
 
   return (

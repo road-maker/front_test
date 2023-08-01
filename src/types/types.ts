@@ -11,7 +11,7 @@ export interface NewUser {
   text?: string;
   password?: string;
   email?: string;
-  memberId?: number;
+  id?: number;
   avatarUrl?: string | null;
   baekjoonId?: string | null;
   bio?: string | null;
@@ -29,11 +29,9 @@ export interface RoadmapMetaData {
   id?: number;
   thumbnailUrl?: string;
   title?: string;
-  text?: string;
   recommendedExecutionTimeValue?: number;
   recommendedExecutionTimeUnit?: string;
   flowkey?: string;
-  userClicked?: boolean;
 }
 
 export type UserRoadmap = RoadmapMetaData & Roadmap;

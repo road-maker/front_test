@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-console */
 
@@ -124,6 +125,7 @@ export function useRoadmap(): UseRoadmap {
         });
       if (status === 201) {
         alert('참여 성공');
+        console.log('data', data);
       }
       if (status === 404) {
         alert('로드맵을 찾지 못했습니다.');
@@ -132,6 +134,7 @@ export function useRoadmap(): UseRoadmap {
       if (errorResponse === 409) {
         alert('이미 참여중인 로드맵입니다.');
       }
+      console.log(`${SERVER_ERROR}!: ${errorResponse}`);
       // console.log(`${SERVER_ERROR}!: ${errorResponse}`);
       // console.log('user', user);
     }

@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-console */
 import {
   ActionIcon,
-  Avatar,
   Button,
   Center,
   createStyles,
@@ -16,41 +17,12 @@ import {
 } from '@mantine/core';
 import { useCounter, useDisclosure } from '@mantine/hooks';
 import { IconHeart } from '@tabler/icons-react';
-import { useState } from 'react';
+import axios from 'axios';
+import { baseUrl } from 'axiosInstance/constants';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-// import { InputWithButton } from './header';
-// import { InputWithButton } from '../../layout/mainLayout/header';
-
-const dummy = [
-  {
-    id: 31,
-    postedAt: '2023-07-24',
-    body: 'DNS의 Domain과 DDD 개발론에서 나오는 Domain은 어떤 차이가 있나요?',
-    author: {
-      name: '강원영',
-      image: 'Kw',
-    },
-  },
-  {
-    id: 32,
-    postedAt: '2023-07-24',
-    body: 'DNS의 Domain과 DDD 개발론에서 나오는 Domain은 어떤 차이가 있나요?',
-    author: {
-      name: '강원영',
-      image: 'Kw',
-    },
-  },
-  {
-    id: 33,
-    postedAt: '2023-07-24',
-    body: 'DNS의 Domain과 DDD 개발론에서 나오는 Domain은 어떤 차이가 있나요?',
-    author: {
-      name: '강원영',
-      image: 'Kw',
-    },
-  },
-];
+import { useUser } from '../../components/user/hooks/useUser';
 
 const useStyles = createStyles((theme) => ({
   body: {
@@ -64,54 +36,61 @@ function CommentPage() {
   const { classes, theme } = useStyles();
   const [count, handlers] = useCounter(0, { min: 0, max: 1000 });
   const [commentPage, setCommentPage] = useState(0);
-
   const { pathname } = useLocation();
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const { user } = useUser();
+  useEffect(() => {
+    axios
+      .get(
+        `${baseUrl}/roadmaps/load-roadmap/${pathname.slice(
+          pathname.lastIndexOf('/') + 1,
+        )}/comments?page=${commentPage}&size=5`,
+        {
+          headers: {
+            Authorization: `Bearer ${user?.accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+      .then((v) => {
+        console.log(v);
+        // setTitle(v?.data?.title);
+        setContent(v?.data?.content);
+        // setNickname(v?.data?.commentNickname);
+      })
+      .catch((e) => console.log(e));
+  }, [commentPage, pathname, user?.accessToken]);
+  const handleCommentTitleChange = (event) => {
+    setTitle(event.target.value);
+  };
 
-  // axios
-  //   .get(
-  //     `${baseUrl}/roadmaps/load-roadmap/${pathname.slice(
-  //       pathname.lastIndexOf('/') + 1,
-  //     )}/comments?page=${commentPage}&size=5`,
-  //   )
-  //   .then((v) => console.log(v))
-  //   .catch((e) => console.log(e));
+  const handleCommentContentChange = (event) => {
+    setContent(event.target.value);
+  };
 
-  const values = dummy.map((v) => (
-    <SimpleGrid
-      key={v.id}
-      cols={1}
-      spacing="xl"
-      mt={20}
-      breakpoints={[{ maxWidth: 'md', cols: 1 }]}
-    >
-      <Paper withBorder shadow="md" radius="xs" p="xl">
-        <Group>
-          <Avatar color="cyan" radius="xl">
-            {v.author.image}
-          </Avatar>
-          <div>
-            <Text size="sm">{v.author.name}</Text>
-            <Text size="xs" color="dimmed">
-              {v.postedAt}
-            </Text>
-          </div>
-        </Group>
-        <Text className={classes.body} size="sm">
-          {v.body}
-          <Group>
-            <ActionIcon onClick={handlers.increment}>
-              <IconHeart
-                size="1.5rem"
-                color={theme.colors.red[6]}
-                stroke={1.5}
-              />
-            </ActionIcon>
-            {count}
-          </Group>
-        </Text>
-      </Paper>
-    </SimpleGrid>
-  ));
+  function handleSubmit() {
+    axios
+      .post(
+        `${baseUrl}/comments/save-comment`,
+        {
+          // commentTitle: title,
+          content,
+          roadmapId: pathname.slice(pathname.lastIndexOf('/') + 1),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${user?.accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+      .then((v) => {
+        console.log(v);
+      })
+      .catch((e) => console.log('err', e));
+  }
+
   return (
     <>
       {' '}
@@ -119,7 +98,7 @@ function CommentPage() {
         <Center>
           <h2>코멘트 작성</h2>
         </Center>
-        <Select
+        {/* <Select
           label="코멘트 위치"
           placeholder="선택하세요"
           data={[
@@ -128,17 +107,32 @@ function CommentPage() {
             { value: 'react', label: '그래프위치' },
             { value: 'ng', label: '조건문과 반복문' },
           ]}
+          name="topic" 
+          value={topic}
+          onChange={handleInputChange}
+        /> */}
+        <TextInput
+          mt={80}
+          placeholder="제목을 입력하세요"
+          name="title"
+          onChange={handleCommentTitleChange}
         />
-        <TextInput mt={80} placeholder="제목을 입력하세요" />
         <Textarea
           autosize
           minRows={5}
           maxRows={10}
           mt={30}
           placeholder="내용을 입력하세요"
+          name="content"
+          onChange={handleCommentContentChange}
         />
         <Center>
-          <Button mt={30} onClick={() => alert('작성하기')}>
+          <Button
+            mt={30}
+            onClick={() => {
+              handleSubmit();
+            }}
+          >
             작성하기
           </Button>
         </Center>
@@ -157,7 +151,44 @@ function CommentPage() {
       <Center mt={20}>
         <Button onClick={open}>코멘트 작성하기</Button>
       </Center>
-      {values}
+      {content ? (
+        <SimpleGrid
+          key={user.id}
+          cols={1}
+          spacing="xl"
+          mt={20}
+          breakpoints={[{ maxWidth: 'md', cols: 1 }]}
+        >
+          <Paper withBorder shadow="md" radius="xs" p="xl">
+            <Group>
+              {/* <Avatar color="cyan" radius="xl">
+              {user.nickname.substring(0, 1)}
+            </Avatar> */}
+              <div>
+                {/* <Text size="sm">{nickname}</Text> */}
+                {/* <Text size="xs" color="dimmed">
+                  {title}
+                </Text> */}
+              </div>
+            </Group>
+            <Text className={classes.body} size="sm">
+              {content}
+              <Group>
+                <ActionIcon onClick={handlers.increment}>
+                  <IconHeart
+                    size="1.5rem"
+                    color={theme.colors.red[6]}
+                    stroke={1.5}
+                  />
+                </ActionIcon>
+                {count}
+              </Group>
+            </Text>
+          </Paper>
+        </SimpleGrid>
+      ) : (
+        '댓글이 없습니다.'
+      )}
     </>
   );
 }

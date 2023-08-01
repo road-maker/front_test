@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-alert */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import axios, { AxiosResponse } from 'axios';
@@ -106,13 +107,15 @@ export function useAuth(): UseAuth {
         if ('tokenInfo' in data) {
           console.log('tokenInfo', data.tokenInfo);
         }
-        if ('member' in data && 'tokenInfo' in data) {
+        if ('member' in data && 'tokenInfo' in data && 'id' in data) {
+          // ts에러
           const loggedMember: NewUser = data.member;
           const loggedMemberToken: TokenInfo = data.tokenInfo;
           updateUser({
             accessToken: loggedMemberToken?.accessToken,
             nickname: loggedMember?.nickname,
             email: loggedMember?.email,
+            id: loggedMember.id,
           });
 
           alert('로그인 성공');

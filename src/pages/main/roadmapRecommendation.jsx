@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import {
   ActionIcon,
   Card,
@@ -12,9 +13,7 @@ import {
 import { IconBookmark, IconHeart, IconShare } from '@tabler/icons-react';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
-import { useRoadmap } from 'components/roadmaps/posts/hooks/useRoadmap';
-import { useRoadmapData } from 'components/roadmaps/posts/hooks/useRoadMapResponse';
-import { useUser } from 'components/user/hooks/useUser';
+// import { useUser } from 'components/user/hooks/useUser';
 import { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useInfiniteQuery } from 'react-query';
@@ -40,7 +39,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const initialUrl = '/roadmaps/load-roadmap/:roadmapId';
+const initialUrl = `${baseUrl}/roadmaps`;
 const fetchUrl = async (url) => {
   const response = await fetch(url);
   return response.json();
@@ -48,7 +47,7 @@ const fetchUrl = async (url) => {
 
 export default function RoadmapRecommendation() {
   const [allRoadmapData, setAllRoadmapData] = useState([]);
-  const { user } = useUser();
+  // const { user } = useUser();
   const { classes, theme } = useStyles();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState('');
@@ -66,8 +65,8 @@ export default function RoadmapRecommendation() {
   // console.log(new Intl.DateTimeFormat(undefined, options).format(date));
   // const themes = useMantineTheme();
   // const mobile = useMediaQuery(`(max-width: ${themes.breakpoints.sm})`);
-  const { getRoadmapById, getAllRoadmap, getRoadmapByIdAuth } = useRoadmap();
-  const { roadmaps } = useRoadmapData();
+  // const { getRoadmapById, getAllRoadmap, getRoadmapByIdAuth } = useRoadmap();
+  // const { roadmaps } = useRoadmapData();
 
   useEffect(() => {
     axios
