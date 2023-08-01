@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-console */
 import {
   ActionIcon,
-  Avatar,
   Button,
   Center,
   createStyles,
@@ -18,15 +19,10 @@ import { useCounter, useDisclosure } from '@mantine/hooks';
 import { IconHeart } from '@tabler/icons-react';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
-import { useRoadmap } from 'components/roadmaps/posts/hooks/useRoadmap';
-import { useRoadmapData } from 'components/roadmaps/posts/hooks/useRoadMapResponse';
 import { useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
-import { useCommentInfo } from '../../components/user/hooks/useComment';
 import { useUser } from '../../components/user/hooks/useUser';
-// import { InputWithButton } from './header';
-// import { InputWithButton } from '../../layout/mainLayout/header';
 
 const useStyles = createStyles((theme) => ({
   body: {
@@ -43,7 +39,6 @@ function CommentPage() {
   const { pathname } = useLocation();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [nickname, setNickname] = useState('');
   const { user } = useUser();
   useEffect(() => {
     axios
@@ -65,7 +60,7 @@ function CommentPage() {
         // setNickname(v?.data?.commentNickname);
       })
       .catch((e) => console.log(e));
-  }, []);
+  }, [commentPage, pathname, user?.accessToken]);
   const handleCommentTitleChange = (event) => {
     setTitle(event.target.value);
   };
@@ -112,14 +107,14 @@ function CommentPage() {
             { value: 'react', label: '그래프위치' },
             { value: 'ng', label: '조건문과 반복문' },
           ]}
-          name="topic" // 폼 데이터의 location 필드와 연결
+          name="topic" 
           value={topic}
           onChange={handleInputChange}
         /> */}
         <TextInput
           mt={80}
           placeholder="제목을 입력하세요"
-          name="title" // 폼 데이터의 title 필드와 연결
+          name="title"
           onChange={handleCommentTitleChange}
         />
         <Textarea
@@ -128,7 +123,7 @@ function CommentPage() {
           maxRows={10}
           mt={30}
           placeholder="내용을 입력하세요"
-          name="content" // 폼 데이터의 content 필드와 연결
+          name="content"
           onChange={handleCommentContentChange}
         />
         <Center>

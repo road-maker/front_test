@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-alert */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import axios, { AxiosResponse } from 'axios';

@@ -1,3 +1,8 @@
+/* eslint-disable no-alert */
+/* eslint-disable no-console */
+/* eslint-disable array-callback-return */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
 import {
   Avatar,
   Button,
@@ -103,6 +108,18 @@ function PostedRoadmap() {
   const [toggle, onChangeToggle, setToggle] = useInput('');
   const [search] = useSearchParams();
   const { user } = useUser();
+
+  const [nodeState, setNodes, onNodesChange] = useNodesState([]);
+  const [edgeState, setEdges, onEdgesChange] = useEdgesState([]);
+  const [isSelectable] = useState(true);
+  const [isDraggable] = useState(false);
+  const [isConnectable] = useState(false);
+  const [zoomOnScroll] = useState(true); // zoom in zoom out
+  const [panOnScroll] = useState(false); // 위아래 스크롤
+  const [zoomOnDoubleClick] = useState(false);
+  const [panOnDrag] = useState(true); // 마우스로 이동
+  const [isOpen, setIsOpen] = useState(false);
+
   // const [state, setState] = useState([
   //   { id: '1', details: `<div>자바스크립트</div>` },
   //   { id: '2', details: `<div>'함수 개념과 활용법'</div>` },
@@ -193,7 +210,7 @@ function PostedRoadmap() {
     //     JSON.parse(localStorage.getItem('roadmapById'))?.data?.roadmap,
     //   );
     // }
-  }, []);
+  }, [currentPage, setEdges, setNodes, user]);
 
   const editor = useEditor({
     extensions: [
@@ -228,18 +245,7 @@ function PostedRoadmap() {
     if (editor) {
       editor.commands.setContent(filt[0]?.details || '');
     }
-  }, [state, id, setToggle, label, editor]);
-
-  const [nodeState, setNodes, onNodesChange] = useNodesState([]);
-  const [edgeState, setEdges, onEdgesChange] = useEdgesState([]);
-  const [isSelectable] = useState(true);
-  const [isDraggable] = useState(false);
-  const [isConnectable] = useState(false);
-  const [zoomOnScroll] = useState(true); // zoom in zoom out
-  const [panOnScroll] = useState(false); // 위아래 스크롤
-  const [zoomOnDoubleClick] = useState(false);
-  const [panOnDrag] = useState(true); // 마우스로 이동
-  const [isOpen, setIsOpen] = useState(false);
+  }, [state, id, setToggle, editor]);
 
   const proOptions = { hideAttribution: true };
   return (

@@ -5,13 +5,11 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { baseUrl } from '../../axiosInstance/constants';
-import { UseUserInfo } from './hooks/useProfile';
 import { useUser } from './hooks/useUser';
 
 function EditUserProfile() {
-  const { user, updateUser } = useUser();
+  const { user } = useUser();
   const navigate = useNavigate();
-  const { updateInfo } = UseUserInfo();
   const [inputs, setInputs] = useState({
     nickname: '',
     bio: '',
@@ -48,8 +46,7 @@ function EditUserProfile() {
   // };
 
   const headers = {
-    Authorization:
-      'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzb3dlcjAzMUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNjkxMzM1NzkzfQ.785KQWBw090Dyhfhg7LGvSKeb3PcB6nKdW83DKLkLjE',
+    Authorization: `Bearer ${user.accessToken}`,
   };
   const handleSubmit = () => {
     axios
