@@ -83,7 +83,7 @@ export default function RoadMapEditor(): ReactElement {
     if (label !== '' && filt.length === 0) {
       setState([...state, { id, details: '' }]);
     }
-  }, [state, id, label, editor]);
+  }, [state, setToggle, editor, label, id]);
 
   const toggleEditor = useMemo(() => {
     // const toggleEditor = useCallback(() => {
@@ -157,6 +157,9 @@ export default function RoadMapEditor(): ReactElement {
               setRoadMapTitle={setRoadMapTitle}
               setId={setId}
               label={label}
+              color={color}
+              onChangeColor={onChangeColor}
+              setColor={setColor}
               onChangeLabel={onChangeLabel}
               setLabel={setLabel}
               setState={setState}

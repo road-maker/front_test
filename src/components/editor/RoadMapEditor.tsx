@@ -12,6 +12,7 @@ import {
   LoadingOverlay,
   Modal,
   MultiSelect,
+  Popover,
   SimpleGrid,
   Text,
   Textarea,
@@ -127,6 +128,9 @@ const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
 function Roadmap({
   editor,
   label,
+  color,
+  onChangeColor,
+  setColor,
   roadMapTitle,
   roadmapImage,
   roadmapDescription,
@@ -151,7 +155,8 @@ function Roadmap({
   // const [nodeState, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [nodeState, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edgeState, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const [title, onChangeTitle, setTitle] = useInput('');
+  const [title, onChangeTitle, setTitle] = useInput(''); // 로드맵 제목
+  // const [thumbnail, onChangeThumbnail, setThumbnail] = useInput(''); // 썸네일
   const [desc, onChangeDesc, setDesc] = useInput('');
   const [gptRes, setGptRes] = useState(true);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -165,13 +170,14 @@ function Roadmap({
   const [nodeModal, setNodeModal] = useState(false);
   const [keyword, setKeyword] = useState('');
   const [currentFlow, setCurrentFlow] = useState('');
+  const [gptDisabled, setGptDisabled] = useState(false);
 
   const [selectedData, setSelectedData] = useState([
     { value: 'react', label: 'React' },
     { value: 'ng', label: 'Angular' },
   ]);
   const { user } = useUser();
-  const [files, setFiles] = useState<FileWithPath[]>([]);
+  const [files, setFiles] = useState<FileWithPath[]>([]); // 썸네일
   const navigate = useNavigate();
   // eslint-disable-next-line consistent-return
   useEffect(() => {
@@ -193,7 +199,7 @@ function Roadmap({
       // }
       // if (useGpt.length === 0) {
       axios
-        .post(`${baseUrl}/chat?prompt=${localData.keyword}`, {
+        .post(`${baseUrl}/gpt/roadmap?prompt=${localData.keyword}`, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${user?.accessToken}`,
@@ -402,8 +408,9 @@ function Roadmap({
       roadmap: {
         title,
         description: desc,
+        // thumbnailUrl: files,
         thumbnailUrl: '',
-        // tag: roadmapTag,
+        // tag: roadmapTag,b
       },
       nodes: nodesCopy,
       edges: edgesCopy,
@@ -414,6 +421,7 @@ function Roadmap({
       .post(`${baseUrl}/roadmaps`, roadmapData, {
         headers: {
           'Content-Type': 'application/json',
+          // 'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${user?.accessToken}`,
         },
       })
@@ -432,7 +440,50 @@ function Roadmap({
   //   setNodes((nds) => nds.filter((node) => node?.id !== label));
   // }, [label]);
 
-  const getGptExampleDetail = () => {
+  // const getGptExampleDetail = () => {
+  //   setGptDisabled(true);
+  //   axios
+  //     .post(
+  //       `${baseUrl}/gpt/detail?course=${label}`,
+  //       {},
+  //       {
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Authorization: `Bearer ${user?.accessToken}`,
+  //         },
+  //       },
+  //     )
+  //     .then((e) => {
+  //       // console.log(e);
+  //       // @ts-ignore
+  //       const resDetail: string = e?.content;
+  //       if (resDetail) {
+  //         const resArr: Array<string | null> = resDetail.split('.');
+  //         const copyState = [...state];
+  //         const temp = [];
+  //         copyState.map((v) => {
+  //           if (v.id === id) {
+  //             console.log('현재 content', v?.details);
+  //             resArr.map((k) => {
+  //               temp.push(`<p>${k}</p>`);
+  //             });
+  //             // eslint-disable-next-line no-param-reassign
+  //             v.details += temp;
+  //           }
+  //         });
+  //         console.log('현재 copyState', copyState);
+  //         // setState(copyState);
+  //         // setGptDisabled(false);
+  //       }
+  //       setGptDisabled(false);
+
+  //       // setState(e?.content);
+  //       // 상세 내용 에디터에 내용 넣어주기
+  //     })
+  //     .catch((err) => console.log(err));
+  // };
+  const getGptExampleDetail = useCallback(() => {
+    setGptDisabled(true);
     axios
       .post(
         `${baseUrl}/gpt/detail?course=${label}`,
@@ -445,11 +496,34 @@ function Roadmap({
         },
       )
       .then((e) => {
-        console.log(e);
+        // @ts-ignore
+        const resDetail: string = e?.data?.content;
+        if (resDetail) {
+          const resArr: Array<string | null> = resDetail.split('.\n');
+          const copyState = [...state];
+          console.log('state', state);
+          const temp = [];
+          copyState.map((v) => {
+            if (v.id === id) {
+              console.log('현재 content', v?.details);
+              resArr.map((k) => {
+                temp.push(`<p>${k}</p>`);
+              });
+              // eslint-disable-next-line no-param-reassign
+              v.details += temp;
+            }
+          });
+          console.log('현재 copyState', copyState);
+          setState(copyState);
+          setGptDisabled(false);
+        }
+        // setGptDisabled(false);
+
+        // setState(e?.content);
         // 상세 내용 에디터에 내용 넣어주기
       })
       .catch((err) => console.log(err));
-  };
+  }, [id, state]);
 
   useEffect(() => {
     setNodes((nds) =>
@@ -616,21 +690,37 @@ function Roadmap({
             <Center>
               <h1>상세내용</h1>
             </Center>
-            <div>
-              ChatGPT 자동생성
-              <ActionIcon
-                mt={10}
-                mb={10}
-                variant="outline"
-                onClick={() => {
-                  getGptExampleDetail();
-                }}
-                style={{ float: 'right' }}
-                loading={false}
-              >
-                <IconWand size="1rem" />
-              </ActionIcon>
-            </div>
+
+            <Popover
+              width={200}
+              position="bottom"
+              withArrow
+              shadow="md"
+              opened={opened}
+            >
+              {/* <div style={{ float: 'right' }}> */}
+              <div>
+                <Popover.Target>
+                  <ActionIcon
+                    mt={10}
+                    onMouseEnter={open}
+                    onMouseLeave={close}
+                    mb={10}
+                    variant="outline"
+                    onClick={() => {
+                      getGptExampleDetail();
+                    }}
+                    loading={gptDisabled}
+                  >
+                    <IconWand size="1rem" />
+                  </ActionIcon>
+                </Popover.Target>
+              </div>
+              <Popover.Dropdown sx={{ pointerEvents: 'none' }}>
+                <Text size="sm">ChatGpt로 자동 생성하기</Text>
+              </Popover.Dropdown>
+            </Popover>
+
             <Input
               // icon={<IconAt />}
               value={label}
@@ -834,6 +924,9 @@ export default function RoadMapCanvas({
   state,
   onChangeId,
   setId,
+  color,
+  onChangeColor,
+  setColor,
   // selectedNode,
   // setSelectedNode,
 }) {
@@ -843,6 +936,9 @@ export default function RoadMapCanvas({
         editor={editor}
         setState={setState}
         label={label}
+        color={color}
+        onChangeColor={onChangeColor}
+        setColor={setColor}
         // selectedNode={selectedNode}
         // setSelectedNode={setSelectedNode}
         roadMapTitle={roadMapTitle}
