@@ -36,6 +36,7 @@ import ReactFlow, {
 } from 'reactflow';
 import { setStoredRoadmap } from 'storage/roadmap-storage';
 import { styled } from 'styled-components';
+import { NewPrompt } from 'types/types';
 
 import { useInput } from '../common/hooks/useInput';
 import { RoadmapEdge, RoadmapNode, RoadmapNodes } from './types';
@@ -149,7 +150,7 @@ function Roadmap({
   const [desc, onChangeDesc, setDesc] = useInput('');
   const [gptRes, setGptRes] = useState(true);
   const [confirmDelete, setConfirmDelete] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   const [nodeBg, setNodeBg] = useState('#eee');
   const [nodeHidden, setNodeHidden] = useState(false);
   const [rfInstance, setRfInstance] = useState(null);
@@ -157,6 +158,8 @@ function Roadmap({
   const [useGpt, setUseGpt] = useState([]);
   const [opened, { open, close }] = useDisclosure(false);
   const [nodeModal, setNodeModal] = useState(false);
+  const [keyword, setKeyword] = useState('');
+  const [currentFlow, setCurrentFlow] = useState('');
 
   const [selectedData, setSelectedData] = useState([
     { value: 'react', label: 'React' },
@@ -167,21 +170,37 @@ function Roadmap({
   const navigate = useNavigate();
   // eslint-disable-next-line consistent-return
   useEffect(() => {
+    setGptRes(true);
     if (!user) {
       return navigate('/users/signin');
     }
-    axios
-      // .post(`${baseUrl}/chat?prompt=${search.get('title')}`, {
-      .post(`${baseUrl}/chat?prompt=javaspring`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${user?.accessToken}`,
-        },
-      })
-      .then((res) => {
-        res?.data.length > 0 ? setGptRes(false) : setGptRes(true);
-        setUseGpt(res?.data);
-      });
+    if (localStorage.getItem('recent_gpt_search')) {
+      const localData: NewPrompt = JSON.parse(
+        localStorage.getItem('recent_gpt_search'),
+      );
+      setKeyword(localData?.keyword);
+      // setUseGpt(localData?.data);
+      // if (useGpt.length > 0) {
+      //   return setGptRes(false);
+      // }
+      // if (useGpt.length === 0) {
+      axios
+        // .post(`${baseUrl}/chat?prompt=${search.get('title')}`, {
+        .post(`${baseUrl}/chat?prompt=${localData.keyword}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user?.accessToken}`,
+          },
+        })
+        .then((res) => {
+          res?.data.length > 0 ? setGptRes(false) : setGptRes(true);
+          setUseGpt(res?.data);
+        })
+        .then(() => {
+          setGptRes(false);
+        });
+      // }
+    }
   }, []);
 
   const onSave = useCallback(() => {
@@ -631,12 +650,29 @@ function Roadmap({
         }}
       >
         <Panel position="top-right">
-          <Button type="button" onClick={() => onLayout('TB')} mr={10}>
-            vertical layout
-          </Button>
-          <Button type="button" onClick={() => onLayout('LR')} mr={10}>
-            horizontal layout
-          </Button>
+          {currentFlow === 'LB' ? (
+            <Button
+              type="button"
+              onClick={() => {
+                onLayout('TB');
+                setCurrentFlow('TB');
+              }}
+              mr={10}
+            >
+              vertical layout
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              onClick={() => {
+                onLayout('LR');
+                setCurrentFlow('LB');
+              }}
+              mr={10}
+            >
+              horizontal layout
+            </Button>
+          )}
           <Button type="button" onClick={() => onAddNode()} mr={10}>
             노드 추가
           </Button>

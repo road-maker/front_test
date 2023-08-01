@@ -7,6 +7,7 @@ import {
   Group,
   Header,
   Image,
+  LoadingOverlay,
   Modal,
   rem,
   Text,
@@ -16,11 +17,11 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconArrowLeft, IconArrowRight, IconSearch } from '@tabler/icons-react';
+import { AxiosResponse } from 'axios';
 import { useInput } from 'components/common/hooks/useInput';
 import { usePrompt } from 'components/prompts/hooks/usePrompt';
 import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
 import { useState } from 'react';
-import { queryClient } from 'react-query/queryClient';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { clearStoredGpt } from 'storage/gpt-storage';
 import { clearStoredRoadmap } from 'storage/roadmap-storage';
@@ -270,66 +271,102 @@ export function InputWithButton(props: TextInputProps) {
   const { getprompt } = usePrompt();
   const navigate = useNavigate();
   const { user } = useUser();
+  const { pathname } = useLocation();
+  const [isLoading, setIsLoading] = useState(false);
   const { clearGptAnswer, updateGptAnswer } = usePromptAnswer();
-  const onRequestPrompt = (p) => {
-    // getprompt(p.prompt);
-    // queryClient.prefetchQuery(['roadmapById', currentPage], () =>
-    // queryClient.prefetchQuery(['recent_gpt_search', p.prompt], () =>
-    // queryClient.prefetchQuery('recent_gpt_search', () => getprompt(p.prompt));
-    // queryClient.prefetchQuery('prompts', () => getprompt(p.prompt));
-    queryClient.prefetchQuery(['prompts', p.prompt], () => {
-      getprompt(p.prompt);
-      updateGptAnswer(JSON.parse(localStorage.getItem('recent_gpt_search')));
-    });
-    // JSON.parse(localStorage.getItem(`['prompts', ${p.prompt}]`)),
-    // updateGptAnswer(JSON.parse(localStorage.getItem('recent_gpt_search')));
-    // ['prompts', p.prompt],
-    // localStorage.getItem(`['prompts', ${p.prompt}]`),
-    // localStorage.getItem(`prompts`),
+  // const [promptResponse, setPromptResponse] = useState();
+  const [promptResponse, setPromptResponse] =
+    useState<AxiosResponse | null | void>(null);
+  const onRequestPrompt = () => {
+    updateGptAnswer({ keyword: prompt });
+    setPromptResponse(prompt);
+    // setIsLoading(true);
+    // axios
+    //   .post(`${baseUrl}/chat?prompt=${prompt}`, {
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       Authorization: `Bearer ${user?.accessToken}`,
+    //     },
+    //   })
+    //   .then((result) => {
+    //     console.log(result);
+    //     setPromptResponse(result);
+    //     // navigate(`/roadmap/editor`);
+    //   })
+    //   .then(() => {
+    //     setIsLoading(false);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+
+    // queryClient.prefetchQuery(['prompts', prompt], () => {
+    //   getprompt(prompt);
+    //   updateGptAnswer(promptResponse as unknown as Prompt);
+    // });
   };
 
-  // useEffect(() => {
-  //   if (currentPage) {
-  //     queryClient.prefetchQuery(['roadmapById', currentPage], () =>
-  //       getRoadmapById(currentPage),
-  //     );
-  //   }
-  // }, [currentPage, queryClient]);
+  // const onRequestPrompt = () => {
+
+  //   axios
+  //     .post(`${baseUrl}/chat?prompt=${prompt}`, {
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         Authorization: `Bearer ${user?.accessToken}`,
+  //       },
+  //     })
+  //     .then((result) => {
+  //       console.log(result);
+  //       navigate(`/roadmap/editor`);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
+
+  // const onRequestPrompt = useMemo(() => {}, []);
+
   return (
-    <TextInput
-      value={prompt}
-      onChange={onPromptChange}
-      icon={<IconSearch size="1.1rem" stroke={1.5} />}
-      radius="md"
-      w="600px"
-      rightSection={
-        <ActionIcon
-          size={32}
-          onClick={() => {
-            setPrompt(prompt);
-            if (!user) {
-              alert('로그인 후 이용가능합니다.');
-              navigate('/users/signin');
-            }
-            // navigate(`/roadmap/editor?title=${prompt}`);
-            navigate(`/roadmap/editor`);
-            // clearGptAnswer();
-            // onRequestPrompt({ prompt });
-          }}
-          radius="xl"
-          color={theme.primaryColor}
-          variant="filled"
-        >
-          {theme.dir === 'ltr' ? (
-            <IconArrowRight size="1.1rem" stroke={1.5} />
-          ) : (
-            <IconArrowLeft size="1.1rem" stroke={1.5} />
-          )}
-        </ActionIcon>
-      }
-      rightSectionWidth={42}
-      placeholder="키워드를 입력하세요"
-      {...props}
-    />
+    <>
+      <LoadingOverlay visible={isLoading} />
+      <TextInput
+        value={prompt}
+        onChange={onPromptChange}
+        icon={<IconSearch size="1.1rem" stroke={1.5} />}
+        radius="md"
+        w="600px"
+        rightSection={
+          <ActionIcon
+            size={32}
+            onClick={() => {
+              setPrompt(prompt);
+              if (!user?.accessToken) {
+                alert('로그인 후 이용가능합니다.');
+                navigate('/users/signin');
+              }
+              onRequestPrompt();
+              if (promptResponse) {
+                navigate(`/roadmap/editor`);
+              }
+
+              // clearGptAnswer();
+              // onRequestPrompt({ prompt });
+            }}
+            radius="xl"
+            color={theme.primaryColor}
+            variant="filled"
+          >
+            {theme.dir === 'ltr' ? (
+              <IconArrowRight size="1.1rem" stroke={1.5} />
+            ) : (
+              <IconArrowLeft size="1.1rem" stroke={1.5} />
+            )}
+          </ActionIcon>
+        }
+        rightSectionWidth={42}
+        placeholder="키워드를 입력하세요"
+        {...props}
+      />
+    </>
   );
 }
