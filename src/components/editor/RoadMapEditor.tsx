@@ -31,7 +31,6 @@ import ReactFlow, {
   ReactFlowProvider,
   useEdgesState,
   useNodesState,
-  useOnSelectionChange,
   useReactFlow,
 } from 'reactflow';
 import { setStoredRoadmap } from 'storage/roadmap-storage';
@@ -138,6 +137,8 @@ function Roadmap({
   state,
   onChangeId,
   setId,
+  // selectedNode,
+  // setSelectedNode,
 }) {
   // const { prompt } = usePromptAnswer();
 
@@ -361,6 +362,8 @@ function Roadmap({
         },
       },
     ]);
+    console.log(state); // 노드 추가!
+    setState([...state, { id: (nodeCount + 1).toString(), details: '' }]);
   }, [nodeState, setNodes]);
 
   const { postRoadmap } = useRoadmap();
@@ -483,13 +486,14 @@ function Roadmap({
     );
   });
 
-  const [selectedNode, setSelectedNode] = useState([]);
-  useOnSelectionChange({
-    onChange: ({ nodes, edges }) => {
-      setSelectedNode(nodes);
-      setNodeModal(true);
-    },
-  });
+  // const [selectedNode, setSelectedNode] = useState([]);
+  // useOnSelectionChange({
+  //   onChange: ({ nodes, edges }) => {
+  //     // setSelectedNode(nodes);
+  //     console.log('selectedNode', selectedNode);
+  //     // setNodeModal(true);
+  //   },
+  // });
 
   return (
     <Wrap>
@@ -581,18 +585,23 @@ function Roadmap({
       <Panel position="top-center">
         <Modal opened={nodeModal} onClose={() => setNodeModal(false)} size="xl">
           <div>
-            {JSON.stringify(selectedNode[0])}
+            {/* {JSON.stringify(selectedNode[0])} */}
             <input
               // onInput={(evt) => {
+              value={label} // 한국어 쓸 떄 버그
               // value={selectedNode[0]?.data.label} // 한국어 쓸 떄 버그
               onChange={(evt) => {
-                selectedNode[0].data.label = evt?.target?.value;
+                setLabel(evt?.target?.value);
+                // eslint-disable-next-line no-param-reassign
+                // selectedNode[0].data.label = evt?.target?.value;
+                // selectedNode[0].data.label = evt?.target?.value;
               }}
             />
             <input
-              value={selectedNode[0]?.style.background}
+              // value={selectedNode[0]?.style.background}
               onChange={(evt) => {
-                selectedNode[0].style.background = evt.target.value;
+                // eslint-disable-next-line no-param-reassign
+                // selectedNode[0].style.background = evt.target.value;
               }}
             />
             {/* <input
@@ -613,7 +622,13 @@ function Roadmap({
           {toggleEditor}
 
           <div className="confirm_btn_wrap">
-            <Button onClick={() => setNodeModal(false)}>닫기</Button>
+            <Button
+              onClick={() => {
+                setNodeModal(false);
+              }}
+            >
+              닫기
+            </Button>
           </div>
         </Modal>
       </Panel>
@@ -629,8 +644,10 @@ function Roadmap({
         onNodeClick={(e, n) => {
           setLabel(`${n?.data?.label}`);
           setId(n?.id);
+          // setSelectedNode(n);
           console.log('n', n);
           setNodeModal(true);
+          // console.log('selectedNode', selectedNode);
         }}
         attributionPosition="bottom-left"
         fitView
@@ -764,6 +781,8 @@ export default function RoadMapCanvas({
   state,
   onChangeId,
   setId,
+  // selectedNode,
+  // setSelectedNode,
 }) {
   return (
     <ReactFlowProvider>
@@ -771,6 +790,8 @@ export default function RoadMapCanvas({
         editor={editor}
         setState={setState}
         label={label}
+        // selectedNode={selectedNode}
+        // setSelectedNode={setSelectedNode}
         roadMapTitle={roadMapTitle}
         roadmapImage={roadmapImage}
         toggleEditor={toggleEditor}

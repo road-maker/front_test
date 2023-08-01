@@ -51,9 +51,9 @@ export default function RoadMapEditor(): ReactElement {
     content: state.filter((v) => v?.id === id)[0]?.details || '',
 
     onUpdate(e) {
-      console.log(e.editor?.getHTML());
+      // console.log(e.editor?.getHTML());
       setToggle(e.editor?.getHTML());
-      console.log('e.editor', e.editor);
+      // console.log('e.editor', e.editor);
       // eslint-disable-next-line array-callback-return
       state.map((item, idx) => {
         if (item?.id !== id) return;
