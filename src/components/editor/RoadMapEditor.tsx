@@ -3,10 +3,12 @@ import 'reactflow/dist/style.css';
 
 import dagre from '@dagrejs/dagre';
 import {
+  ActionIcon,
   Button,
   Center,
   ColorInput,
   Image,
+  Input,
   LoadingOverlay,
   Modal,
   MultiSelect,
@@ -17,6 +19,7 @@ import {
 } from '@mantine/core';
 import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { useDisclosure } from '@mantine/hooks';
+import { IconWand } from '@tabler/icons-react';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
 import { useRoadmap } from 'components/roadmaps/posts/hooks/useRoadmap';
@@ -429,6 +432,25 @@ function Roadmap({
   //   setNodes((nds) => nds.filter((node) => node?.id !== label));
   // }, [label]);
 
+  const getGptExampleDetail = () => {
+    axios
+      .post(
+        `${baseUrl}/gpt/detail?course=${label}`,
+        {},
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user?.accessToken}`,
+          },
+        },
+      )
+      .then((e) => {
+        console.log(e);
+        // 상세 내용 에디터에 내용 넣어주기
+      })
+      .catch((err) => console.log(err));
+  };
+
   useEffect(() => {
     setNodes((nds) =>
       nds.map((node) => {
@@ -568,6 +590,7 @@ function Roadmap({
           </Center>
           <div className="confirm_btn_wrap">
             <Button
+              mt={30}
               onClick={() => {
                 // setNodes([]);
                 setNodes(initialNodes);
@@ -577,7 +600,11 @@ function Roadmap({
             >
               모두 지우기
             </Button>
-            <Button variant="outline" onClick={() => setConfirmDelete(false)}>
+            <Button
+              mt={30}
+              variant="outline"
+              onClick={() => setConfirmDelete(false)}
+            >
               취소
             </Button>
           </div>
@@ -585,15 +612,42 @@ function Roadmap({
       </Modal>
       <Panel position="top-center">
         <Modal opened={nodeModal} onClose={() => setNodeModal(false)} size="xl">
-          <div>
-            <input
+          <Wrap>
+            <Center>
+              <h1>상세내용</h1>
+            </Center>
+            <div>
+              ChatGPT 자동생성
+              <ActionIcon
+                mt={10}
+                mb={10}
+                variant="outline"
+                onClick={() => {
+                  getGptExampleDetail();
+                }}
+                style={{ float: 'right' }}
+                loading={false}
+              >
+                <IconWand size="1rem" />
+              </ActionIcon>
+            </div>
+            <Input
+              // icon={<IconAt />}
               value={label}
+              mt={10}
+              mb={10}
               onChange={(evt) => {
                 setLabel(evt?.target?.value);
               }}
+              placeholder="내용을 입력해주세요."
             />
             {/* <ColorInput value={} placeholder="Pick color" label="Your favorite color" />; */}
-            <ColorInput placeholder="Pick color" label="Your favorite color" />;
+            <ColorInput
+              mt={10}
+              mb={20}
+              placeholder="Pick color"
+              label="노드의 배경색을 골라주세요."
+            />
             {/* <input
               // value={selectedNode[0]?.style.background}
               onChange={(evt) => {
@@ -614,13 +668,14 @@ function Roadmap({
                 selectedNode[0].data.label = evt.target.value;
               }}
             /> */}
-          </div>
+            {toggleEditor}
+          </Wrap>
 
           {/* {selectedNode[0]?.id === id && toggleEditor} */}
-          {toggleEditor}
 
           <div className="confirm_btn_wrap">
             <Button
+              mt={10}
               onClick={() => {
                 setNodeModal(false);
               }}
