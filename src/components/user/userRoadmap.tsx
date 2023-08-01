@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Carousel } from '@mantine/carousel';
 import {
   Card,
@@ -6,7 +7,6 @@ import {
   Image,
   Paper,
   PaperProps,
-  Progress,
   rem,
   Text,
   useMantineTheme,
@@ -14,15 +14,10 @@ import {
 import { useMediaQuery } from '@mantine/hooks';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
-import { useRoadmap } from 'components/roadmaps/posts/hooks/useRoadmap';
-import { useRoadmapData } from 'components/roadmaps/posts/hooks/useRoadMapResponse';
 import { useEffect, useState } from 'react';
-import { queryClient } from 'react-query/queryClient';
 import { useNavigate } from 'react-router-dom';
 
 import { useUser } from './hooks/useUser';
-// import { useState } from 'react';
-// import { useRoadmapData } from '../roadmaps/posts/hooks/useRoadMapResponse';
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -67,7 +62,7 @@ export default function UserRoadmap(props: PaperProps) {
       .catch((e) => {
         console.log(e);
       });
-  }, []);
+  }, [user?.accessToken, user.nickname]);
 
   useEffect(() => {
     axios
@@ -84,7 +79,7 @@ export default function UserRoadmap(props: PaperProps) {
       .catch((e) => {
         console.log(e);
       });
-  }, []);
+  }, [user?.accessToken, user.nickname]);
 
   const theme = useMantineTheme();
   const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);

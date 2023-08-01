@@ -1,42 +1,23 @@
-import {
-  ActionIcon,
-  Avatar,
-  Group,
-  Paper,
-  Text,
-  // TextInput,
-  Title,
-} from '@mantine/core';
+/* eslint-disable no-console */
+import { ActionIcon, Avatar, Group, Paper, Text, Title } from '@mantine/core';
 import { IconSettings } from '@tabler/icons-react';
 import axios from 'axios';
-// import { ReactElement, useCallback, useEffect, useState } from 'react';
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { setStoredUser } from 'storage/user-storage';
+import { useNavigate } from 'react-router-dom';
 
 import { baseUrl } from '../../axiosInstance/constants';
-// import { getStoredUser } from 'storage/user-storage';
 import { HeaderMegaMenu } from '../../layout/mainLayout/header/header';
-// import { User } from '../../types/types';
-import { UseUserInfo } from './hooks/useProfile';
 import { useUser } from './hooks/useUser';
 import UserRoadmap from './userRoadmap';
 
 export function UserProfile() {
-  // export function UserProfile(): ReactElement {
   const navigate = useNavigate();
-  // const { myInfo } = UseUserInfo();
   const { user } = useUser();
   const [nickname, setNickname] = useState('');
   const [bio, setBio] = useState('');
   const [baekjoonId, setBaekjoonId] = useState('');
 
   useEffect(() => {
-    myInfo();
-    // console.log('user', user?.member?.nickname);
-  }, []);
-
-  function myInfo() {
     if (!user?.id) {
       console.error('User memberId is not available.');
       return;
@@ -50,7 +31,7 @@ export function UserProfile() {
         setBaekjoonId(response.data.baekjoonId);
       })
       .catch((e) => console.log(e));
-  }
+  }, [user.id, user.nickname]);
 
   const myinfo = (
     <Paper withBorder radius="xs" p="xl" mx={500} my={50}>

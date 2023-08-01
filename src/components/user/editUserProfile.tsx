@@ -46,8 +46,7 @@ function EditUserProfile() {
   // };
 
   const headers = {
-    Authorization:
-      'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzb3dlcjAzMUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNjkxMzM1NzkzfQ.785KQWBw090Dyhfhg7LGvSKeb3PcB6nKdW83DKLkLjE',
+    Authorization: `Bearer ${user.accessToken}`,
   };
   const handleSubmit = () => {
     axios
