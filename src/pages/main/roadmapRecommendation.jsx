@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-console */
 import {
   ActionIcon,
@@ -37,11 +38,11 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const initialUrl = `${baseUrl}/roadmaps`;
-const fetchUrl = async (url) => {
-  const response = await fetch(url);
-  return response.json();
-};
+// const initialUrl = `${baseUrl}/roadmaps`;
+// const fetchUrl = async (url) => {
+//   const response = await fetch(url);
+//   return response.json();
+// };
 
 export default function RoadmapRecommendation() {
   const [allRoadmapData, setAllRoadmapData] = useState([]);
@@ -49,6 +50,7 @@ export default function RoadmapRecommendation() {
   const { classes, theme } = useStyles();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState('');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [pageParam, setPageParam] = useState(0);
   const wrap = useRef();
   // const date = new Date(Date.UTC(2012, 11, 20, 3, 0, 0));
@@ -78,6 +80,7 @@ export default function RoadmapRecommendation() {
       .catch((e) => {
         console.log(e);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // useEffect(() => {
@@ -105,7 +108,6 @@ export default function RoadmapRecommendation() {
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, []);
 
-
   // const { fetchNextPage, hasNextPage, isLoading, isError, error } =
   //   useInfiniteQuery(
   //     'roadmaps',
@@ -118,14 +120,14 @@ export default function RoadmapRecommendation() {
   //   console.log(wrap.current?.offsetHeight);
   //   console.log(wrap.current?.offsetHeight);
   // }, [wrap.current?.offsetHeight]);
-//   const { data, fetchNextPage, hasNextPage, isLoading, isError, error } = // @ initialMerge
-//     useInfiniteQuery(
-//       'roadmaps',
-//       ({ pageParam = initialUrl }) => fetchUrl(pageParam),
-//       {
-//         getNextPageParam: (lastPage) => lastPage.next || undefined,
-//       },
-//     );
+  //   const { data, fetchNextPage, hasNextPage, isLoading, isError, error } = // @ initialMerge
+  //     useInfiniteQuery(
+  //       'roadmaps',
+  //       ({ pageParam = initialUrl }) => fetchUrl(pageParam),
+  //       {
+  //         getNextPageParam: (lastPage) => lastPage.next || undefined,
+  //       },
+  //     );
 
   // if (isLoading) return <div className="loading">Loading...</div>;
   // if (isError) return <div>Error! {error.toString()}</div>;
