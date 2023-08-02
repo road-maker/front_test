@@ -306,7 +306,6 @@ const HeaderWrap = styled.nav`
 export function InputWithButton(props: TextInputProps) {
   const theme = useMantineTheme();
   const [prompt, onPromptChange, setPrompt] = useInput('');
-  const [clicked, setClicked] = useState(0);
   // const { getprompt } = usePrompt();
   const navigate = useNavigate();
   const { user } = useUser();
@@ -389,8 +388,6 @@ export function InputWithButton(props: TextInputProps) {
           <ActionIcon
             size={32}
             onClick={() => {
-              // console.log(clicked);
-
               if (!user?.accessToken) {
                 alert('로그인 후 이용가능합니다.');
                 navigate('/users/signin');
