@@ -182,6 +182,18 @@ function Roadmap({
   const { user } = useUser();
   const [files, setFiles] = useState<FileWithPath[]>([]); // 썸네일
   const navigate = useNavigate();
+
+  const onLayout = useCallback(
+    (direction) => {
+      const { nodes: layoutedNodes, edges: layoutedEdges } =
+        getLayoutedElements(nodeState, edgeState, direction);
+
+      setNodes([...layoutedNodes]);
+      setEdges([...layoutedEdges]);
+    },
+    [nodeState, edgeState, setEdges, setNodes],
+  );
+
   // eslint-disable-next-line consistent-return
   useEffect(() => {
     setGptRes(true);
@@ -196,11 +208,6 @@ function Roadmap({
         localStorage.getItem('recent_gpt_search'),
       );
       setKeyword(localData?.keyword);
-      // setUseGpt(localData?.data);
-      // if (useGpt.length > 0) {
-      //   return setGptRes(false);
-      // }
-      // if (useGpt.length === 0) {
       axios
         .post(`${baseUrl}/gpt/roadmap?prompt=${localData.keyword}`, {
           headers: {
@@ -214,6 +221,7 @@ function Roadmap({
         })
         .then(() => {
           setGptRes(false);
+          // onLayout('TB');
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -271,23 +279,12 @@ function Roadmap({
     setEdges(tmpEdge);
   }, [useGpt]);
 
-  const onLayout = useCallback(
-    (direction) => {
-      const { nodes: layoutedNodes, edges: layoutedEdges } =
-        getLayoutedElements(nodeState, edgeState, direction);
-
-      setNodes([...layoutedNodes]);
-      setEdges([...layoutedEdges]);
-    },
-    [nodeState, edgeState, setEdges, setNodes],
-  );
-
-  useEffect(() => {
-    // 자동 생성 후 formatting
-    if (nodeState && edgeState && useGpt.length > 0 && isLoading) {
-      onLayout('TB');
-    }
-  }, []);
+  // useEffect(() => {
+  //   // 자동 생성 후 formatting
+  //   if (nodeState && edgeState && useGpt.length > 0) {
+  //     onLayout('TB');
+  //   }
+  // }, []);
 
   const proOptions = { hideAttribution: true };
 
@@ -307,11 +304,17 @@ function Roadmap({
             label,
           };
         }
-
         return node;
       }),
     );
   }, [label, id]);
+
+  useCallback(() => {
+    if (nodeState.length > 0 && edgeState.length > 0) {
+      onLayout('TB');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nodeState, edgeState]);
 
   useMemo(() => {
     setNodes([...nodeState]);

@@ -38,11 +38,11 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-// const initialUrl = `${baseUrl}/roadmaps`;
-// const fetchUrl = async (url) => {
-//   const response = await fetch(url);
-//   return response.json();
-// };
+const initialUrl = `${baseUrl}/roadmaps`;
+const fetchUrl = async (url) => {
+  const response = await fetch(url);
+  return response.json();
+};
 
 export default function RoadmapRecommendation() {
   const [allRoadmapData, setAllRoadmapData] = useState([]);
@@ -51,7 +51,7 @@ export default function RoadmapRecommendation() {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState('');
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [pageParam, setPageParam] = useState(0);
+  const [pageParam, setPageParam] = useState(1);
   const wrap = useRef();
   // const date = new Date(Date.UTC(2012, 11, 20, 3, 0, 0));
   // options = {
@@ -250,6 +250,7 @@ export default function RoadmapRecommendation() {
               ))}
         </SimpleGrid>
       </Container>
+      {/* <InfiniteRoadmapByKeyword /> */}
       {/* </InfiniteScroll> */}
     </>
   );

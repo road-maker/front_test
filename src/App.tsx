@@ -1,5 +1,6 @@
 // import InteractionFlow from './pages/main/userRoadmap';
 import { Notifications } from '@mantine/notifications';
+import KeywordSearchRoadmaps from 'pages/roadmap/posts/byKeyword';
 import { ReactElement } from 'react';
 import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
@@ -35,6 +36,10 @@ function App(): ReactElement {
         },
         // { path: '/roadmap/post/:id', element: <PostedRoadmap /> }, // origin initialMerge
         { path: '/roadmap/post/:Id', element: <PostedRoadmap /> },
+        {
+          path: '/roadmap/post/search/:keyword',
+          element: <KeywordSearchRoadmaps />,
+        },
         {
           path: 'users/mypage',
           element: <UserProfile />,
