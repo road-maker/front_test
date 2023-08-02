@@ -97,7 +97,6 @@ export function useAuth(): UseAuth {
           console.log('tokenInfo', data.tokenInfo);
         }
         if ('member' in data && 'tokenInfo' in data) {
-          // ts에러
           const loggedMember: NewUser = data.member;
           const loggedMemberToken: TokenInfo = data.tokenInfo;
           updateUser({

@@ -1,7 +1,7 @@
 /* eslint-disable no-alert */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-console */
-
+/* eslint-disable no-alert */
 import { AxiosResponse } from 'axios';
 import { axiosInstance } from 'axiosInstance';
 import { useUser } from 'components/user/hooks/useUser';
