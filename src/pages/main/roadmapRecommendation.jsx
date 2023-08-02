@@ -72,7 +72,7 @@ export default function RoadmapRecommendation() {
     axios
       .get(`${baseUrl}/roadmaps?page=${pageParam}&size=8`)
       .then((v) => {
-        console.log(v);
+        // console.log(v);
         setAllRoadmapData(v?.data);
       })
       .catch((e) => {
