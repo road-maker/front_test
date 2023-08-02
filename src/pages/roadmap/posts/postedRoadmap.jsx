@@ -257,7 +257,11 @@ function PostedRoadmap() {
         },
       )
       .then((v) => {
-        setCurrentRoadmap({ ...currentRoadmap, isLiked: v?.data });
+        setCurrentRoadmap({
+          ...currentRoadmap,
+          isLiked: v?.data.isLiked,
+          likeCount: v?.data.likeCount,
+        });
       })
       .catch((err) => console.log(err));
   };
@@ -331,7 +335,7 @@ function PostedRoadmap() {
                   />
                 </ActionIcon>
               ) : (
-                <ActionIcon color="red">
+                <ActionIcon>
                   <IconHeart
                     onClick={() => onClickLikes()}
                     size="2rem"
