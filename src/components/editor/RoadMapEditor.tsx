@@ -409,7 +409,7 @@ function Roadmap({
         title,
         description: desc,
         // thumbnailUrl: files,
-        thumbnailUrl: '',
+        // thumbnailUrl: '',
         // tag: roadmapTag,b
       },
       nodes: nodesCopy,
@@ -421,14 +421,31 @@ function Roadmap({
       .post(`${baseUrl}/roadmaps`, roadmapData, {
         headers: {
           'Content-Type': 'application/json',
-          // 'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${user?.accessToken}`,
         },
       })
       .then((e) => {
-        // console.log(e);
-        alert('포스팅 성공!');
-        navigate('/');
+        // console.log('e', e.data);
+        // const blob = new Blob([JSON.stringify(data)], {
+        //   type: 'multipart/form-data',
+        // });
+
+        const formData = new FormData();
+
+        formData.append('file', files[0]);
+        axios
+          .post(`${baseUrl}/roadmaps/${e.data}/thumbnails`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${user?.accessToken}`,
+            },
+          })
+          .then((v) => {
+            console.log(v);
+            alert('포스팅 성공!');
+            navigate(`/roadmap/post/${e.data}`);
+          })
+          .catch((err) => console.log(err));
       })
       .catch((err) => console.log(err));
     // navigate('/');
@@ -591,6 +608,10 @@ function Roadmap({
   //     // setNodeModal(true);
   //   },
   // });
+
+  useMemo(() => {
+    console.log('files[0]', files[0]);
+  }, [files]);
 
   return (
     <Wrap>

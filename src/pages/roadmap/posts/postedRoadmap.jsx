@@ -157,6 +157,10 @@ function PostedRoadmap() {
     //     });
     // }
     axios
+      .get(`${baseUrl}/likes/roadmap/${currentPage}/likeCount`)
+      .then((v) => console.log('likes', v));
+
+    axios
       .get(`${baseUrl}/roadmaps/${currentPage}`, {
         headers: {
           Authorization: `Bearer ${user?.accessToken}`,

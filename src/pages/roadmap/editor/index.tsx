@@ -22,7 +22,7 @@ import RoadMapCanvas from '../../../components/editor/RoadMapEditor';
 export default function RoadMapEditor(): ReactElement {
   const [label, onChangeLabel, setLabel] = useInput(''); // 노드 상세 내용
   const [color, onChangeColor, setColor] = useInput(''); // 노드 색
-  const [gptDetails, onChangeGptDetails, setGptDetails] = useInput(''); // 노드 색
+  // const [gptDetails, onChangeGptDetails, setGptDetails] = useInput(''); // 노드 색
   const [id, onChangeId, setId] = useInput('');
   const [toggle, onChangeToggle, setToggle] = useInput('');
   const [search] = useSearchParams();
@@ -32,6 +32,7 @@ export default function RoadMapEditor(): ReactElement {
   ]);
   const [roadmapDescription, setRoadmapDescription] = useState('');
   const [roadmapImage, setRoadmapImage] = useState('');
+
   const [roadmapTag, setRoadmapTag] = useState('');
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

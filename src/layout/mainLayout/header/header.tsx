@@ -19,11 +19,12 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconArrowLeft, IconArrowRight, IconSearch } from '@tabler/icons-react';
-import { AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from 'axios';
+import { baseUrl } from 'axiosInstance/constants';
 import { useInput } from 'components/common/hooks/useInput';
 // import { usePrompt } from 'components/prompts/hooks/usePrompt';
 import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { clearStoredGpt } from 'storage/gpt-storage';
 import { clearStoredRoadmap } from 'storage/roadmap-storage';
@@ -110,6 +111,15 @@ export function HeaderMegaMenu() {
   const [opened, { open, close }] = useDisclosure(false);
   const [isEditorPage, setIsEditorPage] = useState(false);
   const [leaveEditorAction, setLeaveEditorAction] = useState('');
+  const [search, onChangeSearch, setSearch] = useInput('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const searchByKeyword = useCallback(() => {
+    axios
+      .get(`${baseUrl}/roadmaps/search/${search}?page=${1}&size=5`)
+      .then((v) => console.log(v))
+      .catch((e) => console.log(e));
+  }, [search]);
 
   return (
     <HeaderWrap>
@@ -133,7 +143,28 @@ export function HeaderMegaMenu() {
                 }}
                 className="hoverItem"
               />
-              <InputWithButton ml="5rem" />
+              {/* <InputWithButton ml="5rem" /> */}
+              <TextInput
+                value={search}
+                onChange={onChangeSearch}
+                placeholder="검색어를 입력해주세요."
+                rightSection={
+                  // isLoading ? <Loader size="xs" /> : <IconSearch size="xs" />
+                  <ActionIcon
+                    variant="filled"
+                    color="blue"
+                    loading={isLoading}
+                    disabled={isLoading}
+                    sx={{
+                      borderRadius: '100%',
+                      '&[data-disabled]': { opacity: 0.4 },
+                      '&[data-loading]': { backgroundColor: 'red' },
+                    }}
+                  >
+                    <IconSearch size="1rem" onClick={() => searchByKeyword()} />
+                  </ActionIcon>
+                }
+              />
             </Group>
 
             <Group className={classes.hiddenMobile}>
@@ -271,6 +302,7 @@ const HeaderWrap = styled.nav`
 export function InputWithButton(props: TextInputProps) {
   const theme = useMantineTheme();
   const [prompt, onPromptChange, setPrompt] = useInput('');
+
   // const { getprompt } = usePrompt();
   const navigate = useNavigate();
   const { user } = useUser();
@@ -280,34 +312,39 @@ export function InputWithButton(props: TextInputProps) {
   // const [promptResponse, setPromptResponse] = useState();
   const [promptResponse, setPromptResponse] =
     useState<AxiosResponse | null | void>(null);
-  const onRequestPrompt = () => {
+
+  const onRequestPrompt = useCallback(() => {
     updateGptAnswer({ keyword: prompt });
     setPromptResponse(prompt);
-    // setIsLoading(true);
-    // axios
-    //   .post(`${baseUrl}/chat?prompt=${prompt}`, {
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       Authorization: `Bearer ${user?.accessToken}`,
-    //     },
-    //   })
-    //   .then((result) => {
-    //     console.log(result);
-    //     setPromptResponse(result);
-    //     // navigate(`/roadmap/editor`);
-    //   })
-    //   .then(() => {
-    //     setIsLoading(false);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+  }, [prompt]);
+  // const onRequestPrompt = () => {
+  //   updateGptAnswer({ keyword: prompt });
+  //   setPromptResponse(prompt);
+  //   // setIsLoading(true);
+  //   // axios
+  //   //   .post(`${baseUrl}/chat?prompt=${prompt}`, {
+  //   //     headers: {
+  //   //       'Content-Type': 'application/json',
+  //   //       Authorization: `Bearer ${user?.accessToken}`,
+  //   //     },
+  //   //   })
+  //   //   .then((result) => {
+  //   //     console.log(result);
+  //   //     setPromptResponse(result);
+  //   //     // navigate(`/roadmap/editor`);
+  //   //   })
+  //   //   .then(() => {
+  //   //     setIsLoading(false);
+  //   //   })
+  //   //   .catch((err) => {
+  //   //     console.log(err);
+  //   //   });
 
-    // queryClient.prefetchQuery(['prompts', prompt], () => {
-    //   getprompt(prompt);
-    //   updateGptAnswer(promptResponse as unknown as Prompt);
-    // });
-  };
+  //   // queryClient.prefetchQuery(['prompts', prompt], () => {
+  //   //   getprompt(prompt);
+  //   //   updateGptAnswer(promptResponse as unknown as Prompt);
+  //   // });
+  // };
 
   // const onRequestPrompt = () => {
 
@@ -342,7 +379,6 @@ export function InputWithButton(props: TextInputProps) {
           <ActionIcon
             size={32}
             onClick={() => {
-              setPrompt(prompt);
               if (!user?.accessToken) {
                 alert('로그인 후 이용가능합니다.');
                 navigate('/users/signin');
@@ -351,9 +387,6 @@ export function InputWithButton(props: TextInputProps) {
               if (promptResponse) {
                 navigate(`/roadmap/editor`);
               }
-
-              // clearGptAnswer();
-              // onRequestPrompt({ prompt });
             }}
             radius="xl"
             color={theme.primaryColor}

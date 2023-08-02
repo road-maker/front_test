@@ -4,12 +4,10 @@ import RoadmapRecommendation from './roadmapRecommendation';
 
 function MainPage() {
   return (
-    // <MainLayout>
     <>
       <HeaderMegaMenu />
       <RoadmapRecommendation />
     </>
-    // </MainLayout>
   );
 }
 export default MainPage;
