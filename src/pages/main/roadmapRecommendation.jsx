@@ -70,10 +70,10 @@ export default function RoadmapRecommendation() {
 
   useEffect(() => {
     axios
-      .get(`${baseUrl}/roadmaps?page=${pageParam}&size=8`)
+      .get(`${baseUrl}/roadmaps?page=1&size=8`)
       .then((v) => {
-        // console.log(v);
-        setAllRoadmapData(v?.data);
+        setAllRoadmapData(v?.data?.result);
+        console.log(v);
       })
       .catch((e) => {
         console.log(e);
@@ -105,7 +105,6 @@ export default function RoadmapRecommendation() {
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, []);
 
-
   // const { fetchNextPage, hasNextPage, isLoading, isError, error } =
   //   useInfiniteQuery(
   //     'roadmaps',
@@ -118,14 +117,14 @@ export default function RoadmapRecommendation() {
   //   console.log(wrap.current?.offsetHeight);
   //   console.log(wrap.current?.offsetHeight);
   // }, [wrap.current?.offsetHeight]);
-//   const { data, fetchNextPage, hasNextPage, isLoading, isError, error } = // @ initialMerge
-//     useInfiniteQuery(
-//       'roadmaps',
-//       ({ pageParam = initialUrl }) => fetchUrl(pageParam),
-//       {
-//         getNextPageParam: (lastPage) => lastPage.next || undefined,
-//       },
-//     );
+  //   const { data, fetchNextPage, hasNextPage, isLoading, isError, error } = // @ initialMerge
+  //     useInfiniteQuery(
+  //       'roadmaps',
+  //       ({ pageParam = initialUrl }) => fetchUrl(pageParam),
+  //       {
+  //         getNextPageParam: (lastPage) => lastPage.next || undefined,
+  //       },
+  //     );
 
   // if (isLoading) return <div className="loading">Loading...</div>;
   // if (isError) return <div>Error! {error.toString()}</div>;
