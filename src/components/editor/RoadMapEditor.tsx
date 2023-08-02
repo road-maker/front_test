@@ -1,3 +1,6 @@
+/* eslint-disable no-console */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable array-callback-return */
 import 'reactflow/dist/style.css';
 
@@ -213,6 +216,7 @@ function Roadmap({
           setGptRes(false);
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // const onSave = useCallback(() => { // 내부적으로 처리
@@ -372,7 +376,7 @@ function Roadmap({
         },
       },
     ]);
-    console.log(state); // 노드 추가!
+    // console.log(state); // 노드 추가!
     setState([...state, { id: (nodeCount + 1).toString(), details: '' }]);
   }, [nodeState, setNodes]);
 
@@ -390,7 +394,7 @@ function Roadmap({
         if (v?.id === item?.id) {
           // eslint-disable-next-line no-param-reassign
           v.detailedContent = item?.details;
-          console.log(item?.details);
+          // console.log(item?.details);
           // v.details = item?.details;
         }
         // eslint-disable-next-line no-param-reassign
@@ -441,7 +445,8 @@ function Roadmap({
             },
           })
           .then((v) => {
-            console.log(v);
+            // console.log(v);
+            // eslint-disable-next-line no-alert
             alert('포스팅 성공!');
             navigate(`/roadmap/post/${e.data}`);
           })
@@ -586,10 +591,11 @@ function Roadmap({
         if (node?.id === label) {
           // when you update a simple type you can just update the value
           // eslint-disable-next-line no-param-reassign
-          node.style.backgroundColor = color;
+          node.style.backgroundColor = color; // 노드 색 변경
           // eslint-disable-next-line no-param-reassign
-          node.data.label = label;
-          console.log('set node:', node);
+          node.data.label = label; // 노드 내용 변경
+          // eslint-disable-next-line no-param-reassign
+          node.style.borderRadius = '100%'; // 노드 내용 변경
         }
         return node;
       }),

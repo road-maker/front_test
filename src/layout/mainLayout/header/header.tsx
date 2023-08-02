@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-alert */
 import {
@@ -145,6 +146,7 @@ export function HeaderMegaMenu() {
               />
               {/* <InputWithButton ml="5rem" /> */}
               <TextInput
+                w="36em"
                 value={search}
                 onChange={onChangeSearch}
                 placeholder="검색어를 입력해주세요."
@@ -316,6 +318,7 @@ export function InputWithButton(props: TextInputProps) {
   const onRequestPrompt = useCallback(() => {
     updateGptAnswer({ keyword: prompt });
     setPromptResponse(prompt);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [prompt]);
   // const onRequestPrompt = () => {
   //   updateGptAnswer({ keyword: prompt });
@@ -374,7 +377,8 @@ export function InputWithButton(props: TextInputProps) {
         onChange={onPromptChange}
         icon={<IconSearch size="1.1rem" stroke={1.5} />}
         radius="md"
-        w="600px"
+        // w="600px"
+        w="36em"
         rightSection={
           <ActionIcon
             size={32}
