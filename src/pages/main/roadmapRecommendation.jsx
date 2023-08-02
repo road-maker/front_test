@@ -72,10 +72,11 @@ export default function RoadmapRecommendation() {
 
   useEffect(() => {
     axios
-      .get(`${baseUrl}/roadmaps?page=${pageParam}&size=8`)
+      // .get(`${baseUrl}/roadmaps?page=${pageParam}&size=8`)
+      .get(`${baseUrl}/roadmaps?page=1&size=8`)
       .then((v) => {
         // console.log(v);
-        setAllRoadmapData(v?.data);
+        setAllRoadmapData(v?.data?.result);
       })
       .catch((e) => {
         console.log(e);
