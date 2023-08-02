@@ -36,6 +36,7 @@
     "src/pages/roadmap/posts/postedRoadmap.jsx",
     "src/components/user/userProfile.jsx",
     "src/components/editor/RoadMapEditor.jsx",
-    "src/pages/main/commentPage.tsx"
+    "src/pages/main/commentPage.tsx",
+    "src/pages/main/searchByKeyword/Roadmap.jsx"
   ]
 }
