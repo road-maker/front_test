@@ -144,9 +144,7 @@ export default function RoadMapEditor(): ReactElement {
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, toggle]);
-
   // original }, [toggle, id, editor]);
-
 
   return (
     <MainLayout>
