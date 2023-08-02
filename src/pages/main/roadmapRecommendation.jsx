@@ -49,7 +49,7 @@ export default function RoadmapRecommendation() {
   const { classes, theme } = useStyles();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState('');
-  const [pageParam, setPageParam] = useState(0);
+  const [pageParam, setPageParam] = useState(1);
   const wrap = useRef();
   // const date = new Date(Date.UTC(2012, 11, 20, 3, 0, 0));
   // options = {
@@ -70,10 +70,10 @@ export default function RoadmapRecommendation() {
 
   useEffect(() => {
     axios
-      .get(`${baseUrl}/roadmaps?page=${pageParam}&size=8`)
+      .get(`${baseUrl}/roadmaps?page=1&size=8`)
       .then((v) => {
-        // console.log(v);
-        setAllRoadmapData(v?.data);
+        console.log(v);
+        setAllRoadmapData(v?.data?.result);
       })
       .catch((e) => {
         console.log(e);
