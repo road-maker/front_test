@@ -195,9 +195,6 @@ export default function RoadmapRecommendation() {
                     )}
                   </Card.Section>
                   <Text className={classes.title} mt={10}>
-                    {/* {new Intl.DateTimeFormat('ko', {
-                        dateStyle: 'full',
-                      }).format(article?.createdAt)} */}
                     {article?.createdAt}
                   </Text>
                   <Text
