@@ -116,8 +116,8 @@ export default function UserRoadmap(props: PaperProps) {
                         <Image
                           src={article.thumbnailUrl}
                           alt={`${article.title}.img`}
-                          // height={160}
-                          // width={260}
+                          height={160}
+                          width={260}
                           style={{ cursor: 'pointer' }}
                           onMouseOver={() => {
                             setCurrentPage(article.id);

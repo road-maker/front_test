@@ -1,22 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-console */
 import {
-  ActionIcon,
   Button,
   Center,
   createStyles,
   Group,
   Modal,
-  Paper,
   rem,
   Select,
-  SimpleGrid,
-  Text,
   Textarea,
   TextInput,
 } from '@mantine/core';
 import { useCounter, useDisclosure } from '@mantine/hooks';
-import { IconHeart } from '@tabler/icons-react';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
 import { useEffect, useState } from 'react';
@@ -60,7 +55,9 @@ function CommentPage() {
         // setNickname(v?.data?.commentNickname);
       })
       .catch((e) => console.log(e));
-  }, [commentPage, pathname, user?.accessToken]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleCommentTitleChange = (event) => {
     setTitle(event.target.value);
   };
@@ -151,44 +148,6 @@ function CommentPage() {
       <Center mt={20}>
         <Button onClick={open}>코멘트 작성하기</Button>
       </Center>
-      {content ? (
-        <SimpleGrid
-          key={user.id}
-          cols={1}
-          spacing="xl"
-          mt={20}
-          breakpoints={[{ maxWidth: 'md', cols: 1 }]}
-        >
-          <Paper withBorder shadow="md" radius="xs" p="xl">
-            <Group>
-              {/* <Avatar color="cyan" radius="xl">
-              {user.nickname.substring(0, 1)}
-            </Avatar> */}
-              <div>
-                {/* <Text size="sm">{nickname}</Text> */}
-                {/* <Text size="xs" color="dimmed">
-                  {title}
-                </Text> */}
-              </div>
-            </Group>
-            <Text className={classes.body} size="sm">
-              {content}
-              <Group>
-                <ActionIcon onClick={handlers.increment}>
-                  <IconHeart
-                    size="1.5rem"
-                    color={theme.colors.red[6]}
-                    stroke={1.5}
-                  />
-                </ActionIcon>
-                {count}
-              </Group>
-            </Text>
-          </Paper>
-        </SimpleGrid>
-      ) : (
-        '댓글이 없습니다.'
-      )}
     </>
   );
 }
