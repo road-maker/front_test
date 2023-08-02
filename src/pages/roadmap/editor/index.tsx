@@ -27,6 +27,7 @@ export default function RoadMapEditor(): ReactElement {
   const [toggle, onChangeToggle, setToggle] = useInput('');
   const [search] = useSearchParams();
   const [state, setState] = useState([
+    // tiptap 에디터 내용
     { id: '1', details: '' },
     { id: '2', details: '' },
   ]);

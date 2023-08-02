@@ -410,7 +410,7 @@ function Roadmap({
         description: desc,
         // thumbnailUrl: files,
         // thumbnailUrl: '',
-        // tag: roadmapTag,b
+        // tag: roadmapTag,
       },
       nodes: nodesCopy,
       edges: edgesCopy,
@@ -546,15 +546,20 @@ function Roadmap({
     setNodes((nds) =>
       nds.map((node) => {
         if (node?.id === id) {
+          // node.style = { ...node.style, backgroundColor: nodeBg };
           // eslint-disable-next-line no-param-reassign
-          node.style = { ...node.style, backgroundColor: nodeBg };
+          node.style = {
+            ...node.style,
+            // backgroundColor: color,
+            background: color,
+          };
         }
 
         return node;
       }),
     );
     // };
-  }, [nodeState, nodeBg, id]);
+  }, [nodeState, color, id]);
 
   useMemo(() => {
     if (edgeState && nodeState) {
@@ -581,8 +586,10 @@ function Roadmap({
         if (node?.id === label) {
           // when you update a simple type you can just update the value
           // eslint-disable-next-line no-param-reassign
+          node.style.backgroundColor = color;
+          // eslint-disable-next-line no-param-reassign
           node.data.label = label;
-          // console.log(node.data.label);
+          console.log('set node:', node);
         }
         return node;
       }),
@@ -608,10 +615,6 @@ function Roadmap({
   //     // setNodeModal(true);
   //   },
   // });
-
-  useMemo(() => {
-    console.log('files[0]', files[0]);
-  }, [files]);
 
   return (
     <Wrap>
@@ -754,8 +757,12 @@ function Roadmap({
             />
             {/* <ColorInput value={} placeholder="Pick color" label="Your favorite color" />; */}
             <ColorInput
+              value={color}
               mt={10}
               mb={20}
+              onChange={(evt) => {
+                setColor(evt);
+              }}
               placeholder="Pick color"
               label="노드의 배경색을 골라주세요."
             />
@@ -808,6 +815,7 @@ function Roadmap({
         onNodeClick={(e, n) => {
           setLabel(`${n?.data?.label}`);
           setId(n?.id);
+          setColor(n?.style?.backgroundColor);
           // setSelectedNode(n);
           console.log('n', n);
           setNodeModal(true);

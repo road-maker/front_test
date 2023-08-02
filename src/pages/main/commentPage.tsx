@@ -35,7 +35,7 @@ function CommentPage() {
   const [opened, { open, close }] = useDisclosure(false);
   const { classes, theme } = useStyles();
   const [count, handlers] = useCounter(0, { min: 0, max: 1000 });
-  const [commentPage, setCommentPage] = useState(0);
+  const [commentPage, setCommentPage] = useState(1);
   const { pathname } = useLocation();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
