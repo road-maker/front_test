@@ -273,7 +273,7 @@ function PostedRoadmap() {
   return (
     <MainLayout>
       <Container px="xs" maw={1000}>
-        <Title className={classes.title} mt="sm">
+        <Title className={classes.title} mt={80}>
           {currentRoadmap?.title}
         </Title>
         <Group mt={20}>
@@ -323,7 +323,7 @@ function PostedRoadmap() {
         <SimpleGrid
           cols={4}
           spacing="xl"
-          mt={50}
+          my={50}
           breakpoints={[{ maxWidth: 'md', cols: 1 }]}
         >
           <Card

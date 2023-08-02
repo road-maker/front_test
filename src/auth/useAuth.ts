@@ -2,6 +2,7 @@
 /* eslint-disable no-alert */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import axios, { AxiosResponse } from 'axios';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MemberInfo, NewUser, TokenInfo } from 'types/types';
 
@@ -23,6 +24,7 @@ export function useAuth(): UseAuth {
   const SERVER_ERROR = 'There was an error contacting the server.';
   const { clearUser, updateUser } = useUser();
   const navigate = useNavigate();
+  // const [isUserModalOpen, setUserModalOpen] = useState(false);
 
   async function authServerCall(
     urlEndpoint: string,
@@ -41,21 +43,8 @@ export function useAuth(): UseAuth {
           },
         });
       if (status === 201 || status === 200) {
-        // updateUser({
-        //   memberId: 0,
-        //   avatarUrl: '',
-        //   baekjoonId: '',
-        //   bio: '',
-        //   blogUrl: '',
-        //   email,
-        //   exp: 0,
-        //   githubUrl: '',
-        //   level: 0,
-        //   nickname,
-        //   inProcessRoadmapDto: [],
-        // });
-        // updateUser(data);
         console.log('useAuth ServiceCall', data);
+        // setUserModalOpen(true);
         // navigate('/');
       }
       // if ('accessToken' in data) {
@@ -107,7 +96,7 @@ export function useAuth(): UseAuth {
         if ('tokenInfo' in data) {
           console.log('tokenInfo', data.tokenInfo);
         }
-        if ('member' in data && 'tokenInfo' in data && 'id' in data) {
+        if ('member' in data && 'tokenInfo' in data) {
           // ts에러
           const loggedMember: NewUser = data.member;
           const loggedMemberToken: TokenInfo = data.tokenInfo;
@@ -157,5 +146,7 @@ export function useAuth(): UseAuth {
     signin,
     signup,
     signout,
+    // isUserModalOpen,
+    // setUserModalOpen,
   };
 }

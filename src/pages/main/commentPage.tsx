@@ -19,7 +19,9 @@ import { useCounter, useDisclosure } from '@mantine/hooks';
 import { IconHeart } from '@tabler/icons-react';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroller';
+import { useInfiniteQuery } from 'react-query';
 import { useLocation } from 'react-router-dom';
 
 import { useUser } from '../../components/user/hooks/useUser';
@@ -38,9 +40,11 @@ function CommentPage() {
   const [commentPage, setCommentPage] = useState(1);
   const { pathname } = useLocation();
   const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState([]);
+  const [commentInput, setCommentInput] = useState('');
   const { user } = useUser();
-  useEffect(() => {
+  const [counts, setCounts] = useState([]);
+  const fetchComments = useCallback(() => {
     axios
       .get(
         `${baseUrl}/roadmaps/load-roadmap/${pathname.slice(
@@ -48,25 +52,65 @@ function CommentPage() {
         )}/comments?page=${commentPage}&size=5`,
         {
           headers: {
-            Authorization: `Bearer ${user?.accessToken}`,
             'Content-Type': 'application/json',
           },
         },
       )
       .then((v) => {
-        console.log(v);
-        // setTitle(v?.data?.title);
-        setContent(v?.data?.content);
+        setContent(v?.data);
+        // setCounts(new Array(commentContents.length).fill(0));
         // setNickname(v?.data?.commentNickname);
       })
       .catch((e) => console.log(e));
-  }, [commentPage, pathname, user?.accessToken]);
+  }, [commentPage, pathname]);
+
+  useEffect(() => {
+    fetchComments();
+  }, [commentPage, fetchComments, pathname, user.accessToken]);
+
+  const initialUrl = `${baseUrl}/roadmaps/load-roadmap/${pathname.slice(
+    pathname.lastIndexOf('/') + 1,
+  )}/comments?page=${commentPage}&size=5`;
+
+  const fetchUrl = async (url) => {
+    const response = await fetch(url);
+    return response.json();
+  };
+
+  // const getNextPageParam = (lastPage) => {
+  //   if (lastPage) {
+  //     const nextPageUrl = lastPage[0]?.next;
+  //     return nextPageUrl || undefined;
+  //   }
+  //   return undefined;
+  // };
+
+  const { data, fetchNextPage, hasNextPage, isLoading, isError, error } =
+    useInfiniteQuery(
+      'comments',
+      ({ pageParam = initialUrl }) => fetchUrl(pageParam),
+      {
+        getNextPageParam: (lastPage) => {
+          console.log('lats', lastPage[lastPage.length - 1].numbering);
+          const nextCommentId = lastPage[0].numbering + 1;
+          if (nextCommentId <= lastPage[lastPage.length]) {
+            return `${baseUrl}/roadmaps/load-roadmap/${pathname.slice(
+              pathname.lastIndexOf('/') + 1,
+            )}/comments?page=${commentPage + 1}&size=5`;
+          }
+          return undefined;
+        },
+      },
+    );
+  if (isLoading) return <div className="loading">Loading...</div>;
+  if (isError) return <div>Error! {error.toString()}</div>;
+
   const handleCommentTitleChange = (event) => {
     setTitle(event.target.value);
   };
 
   const handleCommentContentChange = (event) => {
-    setContent(event.target.value);
+    setCommentInput(event.target.value);
   };
 
   function handleSubmit() {
@@ -75,8 +119,8 @@ function CommentPage() {
         `${baseUrl}/comments/save-comment`,
         {
           // commentTitle: title,
-          content,
-          roadmapId: pathname.slice(pathname.lastIndexOf('/') + 1),
+          content: commentInput,
+          roadmapId: Number(pathname.slice(pathname.lastIndexOf('/') + 1)),
         },
         {
           headers: {
@@ -85,8 +129,8 @@ function CommentPage() {
           },
         },
       )
-      .then((v) => {
-        console.log(v);
+      .then(() => {
+        fetchComments();
       })
       .catch((e) => console.log('err', e));
   }
@@ -151,29 +195,36 @@ function CommentPage() {
       <Center mt={20}>
         <Button onClick={open}>코멘트 작성하기</Button>
       </Center>
-      {content ? (
-        <SimpleGrid
-          key={user.id}
-          cols={1}
-          spacing="xl"
-          mt={20}
-          breakpoints={[{ maxWidth: 'md', cols: 1 }]}
-        >
-          <Paper withBorder shadow="md" radius="xs" p="xl">
-            <Group>
-              {/* <Avatar color="cyan" radius="xl">
-              {user.nickname.substring(0, 1)}
-            </Avatar> */}
-              <div>
-                {/* <Text size="sm">{nickname}</Text> */}
-                {/* <Text size="xs" color="dimmed">
-                  {title}
-                </Text> */}
-              </div>
-            </Group>
-            <Text className={classes.body} size="sm">
-              {content}
-              <Group>
+      {content.length === 0 ? (
+        <Paper withBorder shadow="md" radius="xs" p="xl" ta="center" mt={20}>
+          댓글이 없습니다.
+        </Paper>
+      ) : (
+        <InfiniteScroll loadMore={fetchNextPage} hasMore={hasNextPage}>
+          <SimpleGrid
+            key={user.id}
+            cols={1}
+            spacing="xl"
+            mt={70}
+            breakpoints={[{ maxWidth: 'md', cols: 1 }]}
+          >
+            {data.pages.map((pageData) => {
+              return pageData.map((comments, index) => (
+                <Paper withBorder radius="xs" p="xl" key={index}>
+                  <Group>
+                    {/* <Avatar color="cyan" radius="xl">
+            {user.nickname.substring(0, 1)}
+          </Avatar> */}
+                    <div>
+                      {/* <Text size="sm">{nickname}</Text> */}
+                      {/* <Text size="xs" color="dimmed">
+                {title}
+              </Text> */}
+                    </div>
+                  </Group>
+                  <Text className={classes.body} size="sm">
+                    {comments.content}
+                    {/* <Group>
                 <ActionIcon onClick={handlers.increment}>
                   <IconHeart
                     size="1.5rem"
@@ -182,12 +233,13 @@ function CommentPage() {
                   />
                 </ActionIcon>
                 {count}
-              </Group>
-            </Text>
-          </Paper>
-        </SimpleGrid>
-      ) : (
-        '댓글이 없습니다.'
+              </Group> */}
+                  </Text>
+                </Paper>
+              ));
+            })}
+          </SimpleGrid>
+        </InfiniteScroll>
       )}
     </>
   );
