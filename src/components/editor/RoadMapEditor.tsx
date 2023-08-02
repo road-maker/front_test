@@ -594,8 +594,6 @@ function Roadmap({
           node.style.backgroundColor = color; // 노드 색 변경
           // eslint-disable-next-line no-param-reassign
           node.data.label = label; // 노드 내용 변경
-          // eslint-disable-next-line no-param-reassign
-          node.style.borderRadius = '100%'; // 노드 내용 변경
         }
         return node;
       }),
