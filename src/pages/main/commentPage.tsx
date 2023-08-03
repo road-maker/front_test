@@ -128,6 +128,7 @@ function CommentPage() {
       )
       .then(() => {
         fetchComments();
+        refetch();
       })
       .catch((e) => console.log('err', e));
   }
@@ -171,6 +172,7 @@ function CommentPage() {
             mt={30}
             onClick={() => {
               handleSubmit();
+              close();
             }}
           >
             작성하기
