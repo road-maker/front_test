@@ -38,6 +38,8 @@ function SignUpForm(props: PaperProps): ReactElement {
       confirmPassword: '',
     },
 
+    validateInputOnChange: true,
+
     validate: {
       nickname: (value) =>
         value.length < 2 ? '닉네임은 2글자 이상이어야합니다' : null,
@@ -101,6 +103,7 @@ function SignUpForm(props: PaperProps): ReactElement {
             withAsterisk
             value={nickname}
             onChange={onChangeNickname}
+            {...form.getInputProps('nickname')}
           />
           <TextInput
             mt="xl"
@@ -109,6 +112,7 @@ function SignUpForm(props: PaperProps): ReactElement {
             withAsterisk
             value={email}
             onChange={onChangeEmail}
+            {...form.getInputProps('email')}
           />
           <PasswordInput
             mt="xl"
@@ -117,6 +121,7 @@ function SignUpForm(props: PaperProps): ReactElement {
             withAsterisk
             value={password}
             onChange={onChangePassword}
+            {...form.getInputProps('password')}
           />
           <PasswordInput
             mt="xl"
@@ -125,6 +130,7 @@ function SignUpForm(props: PaperProps): ReactElement {
             withAsterisk
             value={confirmPassword}
             onChange={onChangeConfirmPassword}
+            {...form.getInputProps('confirmPassword')}
           />
           <Center>
             <Button

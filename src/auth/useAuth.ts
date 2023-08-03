@@ -44,8 +44,9 @@ export function useAuth(): UseAuth {
         });
       if (status === 201 || status === 200) {
         console.log('useAuth ServiceCall', data);
+        alert('회원가입 성공');
         // setUserModalOpen(true);
-        // navigate('/');
+        navigate('/users/signin');
       }
       // if ('accessToken' in data) {
       //   updateUser(data.accessToken);
