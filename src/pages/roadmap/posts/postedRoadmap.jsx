@@ -4,6 +4,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-nested-ternary */
 import {
+  ActionIcon,
   Avatar,
   Button,
   Card,
@@ -17,7 +18,7 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { IconChecklist, IconUser } from '@tabler/icons-react';
+import { IconHeart, IconHeartFilled, IconUser } from '@tabler/icons-react';
 import { Highlight } from '@tiptap/extension-highlight';
 import { Link } from '@tiptap/extension-link';
 import { Subscript } from '@tiptap/extension-subscript';
@@ -170,11 +171,17 @@ function PostedRoadmap() {
       .then((v) => {
         setNodes(v?.data.nodes);
         setCurrentRoadmap({
+          id: v?.data?.id,
           title: v?.data?.title,
           description: v?.data?.description,
+          createdAt: v?.data?.createdAt,
+          updatedAt: v?.data?.updatedAt,
           ownerAvatarUrl: v?.data?.member?.ownerAvatarUrl,
           ownerNickname: v?.data?.member?.nickname,
           isJoined: v?.data?.isJoined,
+          joinCount: v?.data?.joinCount,
+          isLiked: v?.data?.isLiked,
+          likeCount: v?.data?.likeCount,
           thumbnailUrl: v?.data?.member?.thumbnailUrl,
         });
         setLoading(false);
@@ -238,6 +245,27 @@ function PostedRoadmap() {
     }
   }, [state, id, setToggle, label, editor]);
 
+  const onClickLikes = () => {
+    axios
+      .post(
+        `${baseUrl}/likes/like-roadmap/${currentRoadmap.id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${user?.accessToken}`,
+          },
+        },
+      )
+      .then((v) => {
+        setCurrentRoadmap({
+          ...currentRoadmap,
+          isLiked: v?.data.isLiked,
+          likeCount: v?.data.likeCount,
+        });
+      })
+      .catch((err) => console.log(err));
+  };
+
   const [nodeState, setNodes, onNodesChange] = useNodesState([]);
   const [edgeState, setEdges, onEdgesChange] = useEdgesState([]);
   const [isSelectable] = useState(true);
@@ -274,7 +302,50 @@ function PostedRoadmap() {
     <MainLayout>
       <Container px="xs" maw={1000}>
         <Title className={classes.title} mt={80}>
-          {currentRoadmap?.title}
+          <div
+            style={{
+              display: 'inline-flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '100%',
+            }}
+          >
+            {currentRoadmap?.title}
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+              }}
+            >
+              <Text fz="md" fw={700}>
+                {currentRoadmap?.likeCount > 1000000
+                  ? new Intl.NumberFormat('en-GB', {
+                      notation: 'compact',
+                      compactDisplay: 'short',
+                    }).format(currentRoadmap?.likeCount)
+                  : currentRoadmap?.likeCount}
+              </Text>
+              {currentRoadmap?.isLiked ? (
+                <ActionIcon color="red">
+                  <IconHeartFilled
+                    onClick={() => onClickLikes()}
+                    size="2rem"
+                    color={theme.colors.red[6]}
+                    stroke={1.5}
+                  />
+                </ActionIcon>
+              ) : (
+                <ActionIcon>
+                  <IconHeart
+                    onClick={() => onClickLikes()}
+                    size="2rem"
+                    color={theme.colors.red[6]}
+                    stroke={1.5}
+                  />
+                </ActionIcon>
+              )}
+            </div>
+          </div>
         </Title>
         <Group mt={20}>
           {currentRoadmap?.ownerNickname}
@@ -345,10 +416,10 @@ function PostedRoadmap() {
               mt="md"
               c="dimmed"
             >
-              참여인원: 명
+              참여인원: {currentRoadmap?.joinCount}명
             </Text>
           </Card>
-          <Card
+          {/* <Card
             mb={30}
             shadow="md"
             radius="md"
@@ -367,9 +438,9 @@ function PostedRoadmap() {
               mt="md"
               c="dimmed"
             >
-              완료인원: 명
+              완료인원: {}명
             </Text>
-          </Card>
+          </Card> */}
           {/* <Card
             mb={30}
             shadow="md"

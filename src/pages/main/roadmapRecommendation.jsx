@@ -51,7 +51,7 @@ export default function RoadmapRecommendation() {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState('');
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [pageParam, setPageParam] = useState(0);
+  const [pageParam, setPageParam] = useState(1);
   const wrap = useRef();
   // const date = new Date(Date.UTC(2012, 11, 20, 3, 0, 0));
   // options = {
@@ -195,9 +195,6 @@ export default function RoadmapRecommendation() {
                     )}
                   </Card.Section>
                   <Text className={classes.title} mt={10}>
-                    {/* {new Intl.DateTimeFormat('ko', {
-                        dateStyle: 'full',
-                      }).format(article?.createdAt)} */}
                     {article?.createdAt}
                   </Text>
                   <Text
@@ -253,6 +250,7 @@ export default function RoadmapRecommendation() {
               ))}
         </SimpleGrid>
       </Container>
+      {/* <InfiniteRoadmapByKeyword /> */}
       {/* </InfiniteScroll> */}
     </>
   );
