@@ -119,10 +119,11 @@ export function HeaderMegaMenu() {
       .get(`${baseUrl}/roadmaps/search/${search}?page=${1}&size=5`)
       .then((v) => {
         localStorage.setItem('roadmap_search_keyword', search);
-        console.log(v);
         navigate(`/roadmap/post/search/${search}`);
       })
+      // eslint-disable-next-line no-console
       .catch((e) => console.log(e));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
   return (
@@ -371,6 +372,7 @@ export function InputWithButton(props: TextInputProps) {
   // const onRequestPrompt = useMemo(() => {}, []);
 
   useMemo(() => {
+    // @Pyotato : 페이지 안넘어가던 문제 해결~
     if (promptResponse) {
       navigate(`/roadmap/editor`);
     }
