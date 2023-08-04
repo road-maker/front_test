@@ -32,6 +32,11 @@ export default function RoadMapEditor(): ReactElement {
     { id: '1', details: '' },
     { id: '2', details: '' },
   ]);
+  const [colorsState, setColorsState] = useState([
+    // tiptap 에디터 내용
+    { id: '1', color: '#fff' },
+    { id: '2', color: '#fff' },
+  ]);
   const [roadmapDescription, setRoadmapDescription] = useState('');
   const [roadmapImage, setRoadmapImage] = useState('');
 
@@ -147,6 +152,8 @@ export default function RoadMapEditor(): ReactElement {
         <div className="roadMapWrap">
           <ReactFlowProvider>
             <RoadMapCanvas
+              colorsState={colorsState}
+              setColorsState={setColorsState}
               state={state}
               editor={editor}
               id={id}

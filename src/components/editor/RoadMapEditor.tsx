@@ -129,6 +129,8 @@ const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
 
 function Roadmap({
   editor,
+  colorsState,
+  setColorsState,
   label,
   color,
   onChangeColor,
@@ -424,6 +426,10 @@ function Roadmap({
     ]);
     // console.log(state); // 노드 추가!
     setState([...state, { id: (nodeCount + 1).toString(), details: '' }]);
+    setColorsState([
+      ...state,
+      { id: (nodeCount + 1).toString(), color: '#fff' },
+    ]);
   }, [nodeState, setNodes]);
 
   const { postRoadmap } = useRoadmap();
@@ -870,9 +876,11 @@ function Roadmap({
         onNodeClick={(e, n) => {
           setLabel(`${n?.data?.label}`);
           setId(n?.id);
-          setColor(n?.style?.backgroundColor);
+          setColor(n?.style?.background);
+
           // setSelectedNode(n);
           console.log('n', n);
+          console.log('e', e);
           setNodeModal(true);
           // console.log('selectedNode', selectedNode);
         }}
@@ -1020,6 +1028,8 @@ export default function RoadMapCanvas({
   color,
   onChangeColor,
   setColor,
+  colorsState,
+  setColorsState,
   // selectedNode,
   // setSelectedNode,
 }) {
@@ -1027,6 +1037,8 @@ export default function RoadMapCanvas({
     <ReactFlowProvider>
       <Roadmap
         editor={editor}
+        colorsState={colorsState}
+        setColorsState={setColorsState}
         setState={setState}
         label={label}
         color={color}
