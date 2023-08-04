@@ -573,27 +573,19 @@ function Roadmap({
         // @ts-ignore
         const resDetail: string = e?.data?.content;
         if (resDetail) {
-          const resArr: Array<string | null> = resDetail.split('.\n');
           const copyState = [...state];
           console.log('state', state);
-          const temp = [];
           copyState.map((v) => {
             if (v.id === id) {
               console.log('현재 content', v?.details);
-              resArr.map((k) => {
-                temp.push(`<p>${k}</p>`);
-              });
               // eslint-disable-next-line no-param-reassign
-              v.details += temp;
+              v.details += resDetail;
             }
           });
           console.log('현재 copyState', copyState);
           setState(copyState);
           setGptDisabled(false);
         }
-        // setGptDisabled(false);
-
-        // setState(e?.content);
         // 상세 내용 에디터에 내용 넣어주기
       })
       .catch((err) => console.log(err));
@@ -778,7 +770,7 @@ function Roadmap({
 
             <Popover
               width={200}
-              position="bottom"
+              position="top"
               withArrow
               shadow="md"
               opened={opened}
@@ -793,6 +785,7 @@ function Roadmap({
                     mb={10}
                     variant="outline"
                     onClick={() => {
+                      setLabel(label);
                       getGptExampleDetail();
                     }}
                     loading={gptDisabled}

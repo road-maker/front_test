@@ -42,6 +42,7 @@ export default function RoadMapEditor(): ReactElement {
 
   const [roadmapTag, setRoadmapTag] = useState('');
 
+  const [cursorPosition, setCursorPosition] = useState(0);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [roadMapTitle, onRoadMapTitleChange, setRoadMapTitle] = useInput('');
 
@@ -60,11 +61,17 @@ export default function RoadMapEditor(): ReactElement {
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
     content: state.filter((v) => v?.id === id)[0]?.details || '',
+    autofocus: false,
 
     onUpdate(e) {
+      // e.editor.commands.focus(
+      //   // @ts-ignore
+      //   e?.transaction?.curSelection?.$anchor?.pos,
+      // );
       // console.log(e.editor?.getHTML());
       setToggle(e.editor?.getHTML());
       // console.log('e.editor', e.editor);
+      // console.log('e.editor isFocused', e.editor.getHTML());
       // eslint-disable-next-line array-callback-return
       state.map((item, idx) => {
         if (item?.id !== id) return;
@@ -75,7 +82,30 @@ export default function RoadMapEditor(): ReactElement {
         });
         setState(copyState);
       });
+      // e.editor
+      //   ?.chain()
+      //   .focus()
+      //   // @ts-ignore
+      //   .setTextSelection(e?.transaction?.curSelection?.$anchor?.pos)
+      //   .run();
+      // editor.commands.focus(
+      //   // @ts-ignore
+      //   e?.transaction?.curSelection?.$anchor?.pos,
+      // );
+      // @ts-ignore
+      setCursorPosition(e?.transaction?.curSelection?.$anchor?.pos);
+      // console.log(
+      //   'ontransaction',
+      //   // @ts-ignore
+      //   e?.transaction?.curSelection?.$anchor?.pos,
+      // );
+      // e.editor?.chain().focus().setTextSelection(10).run();
     },
+    // onTransaction: ({ transaction }) => {
+    //   // @ts-ignore
+    //   console.log('ontransaction', transaction?.curSelection?.$anchor?.pos);
+    //   e.editor?.chain().focus().setTextSelection(10).run();
+    // },
   });
 
   useMemo(() => {
@@ -83,11 +113,18 @@ export default function RoadMapEditor(): ReactElement {
     // console.log('filt', filt);
     setToggle(filt);
     if (editor) {
+      // editor.value?.chain().focus().setContent(JSON.parse(content)).run()
       // mount 시 에러
+      // editor.commands.setContent(filt[0]?.details, true, {
       editor.commands.setContent(filt[0]?.details, false, {
         preserveWhitespace: 'full', // 빈칸 인식 X 에러 해결
         // preserveWhitespace: true, // 빈칸 인식 X 에러 해결
       });
+      editor.commands.focus(
+        // @ts-ignore
+        editor?.transaction?.curSelection?.$anchor?.pos,
+      );
+      editor.chain().focus().setTextSelection(cursorPosition).run();
     }
     if (label !== '' && filt.length === 0) {
       setState([...state, { id, details: '' }]);
