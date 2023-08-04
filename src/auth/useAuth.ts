@@ -101,7 +101,6 @@ export function useAuth(): UseAuth {
             id: loggedMember.id,
           });
 
-          alert('로그인 성공');
           navigate('/');
         }
       }

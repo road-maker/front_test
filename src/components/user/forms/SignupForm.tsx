@@ -1,14 +1,10 @@
 /* eslint-disable no-console */
 import {
-  ActionIcon,
   Anchor,
   Box,
   Button,
   Center,
   createStyles,
-  em,
-  getBreakpointValue,
-  Group,
   Modal,
   Paper,
   PaperProps,
@@ -21,11 +17,7 @@ import {
 import { useForm } from '@mantine/form';
 import {
   IconAlertCircleFilled,
-  IconCheck,
-  IconChecks,
   IconCircleCheckFilled,
-  IconSelect,
-  IconSelector,
 } from '@tabler/icons-react';
 import { ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -106,32 +98,61 @@ function SignUpForm(props: PaperProps): ReactElement {
           onClose={() => auth.setIsUserModalOpen(false)}
           size="40%"
         >
-          <Center pt={80}>
-            <IconCircleCheckFilled size={150} style={{ color: '#38D9A9' }} />
-          </Center>
-          <Text ta="center" c="teal.4" fz={35} mt={20}>
-            회원가입 성공
-          </Text>
-          <Text ta="center" mt={10}>
-            로드메이커에 오신 것을 환영합니다!
-          </Text>
-          <Button
-            fullWidth
-            type="submit"
-            mt={50}
-            variant="light"
-            color="teal.4"
-            h={50}
-            onClick={() => {
-              navigate('/users/signin');
-            }}
-          >
-            로그인 하러 가기
-          </Button>
-
-          {/* <IconAlertCircleFilled color="red" /> */}
-
-          {/* <Text ta="center">{auth.modalText}</Text> */}
+          {auth.success ? (
+            <>
+              <Center pt={80}>
+                <IconCircleCheckFilled
+                  size={150}
+                  style={{ color: '#38D9A9' }}
+                />
+              </Center>
+              <Text ta="center" c="teal.4" fz={35} mt={20}>
+                회원가입 성공
+              </Text>
+              <Text ta="center" mt={10}>
+                로드메이커에 오신 것을 환영합니다!
+              </Text>
+              <Button
+                fullWidth
+                type="submit"
+                mt={50}
+                variant="light"
+                color="teal.4"
+                h={50}
+                onClick={() => {
+                  navigate('/users/signin');
+                }}
+              >
+                로그인 하러 가기
+              </Button>
+            </>
+          ) : (
+            <>
+              <Center pt={80}>
+                <IconAlertCircleFilled
+                  size={150}
+                  style={{ color: '#FA5252' }}
+                />
+              </Center>
+              <Text ta="center" c="#FA5252" fz={35} mt={20}>
+                회원가입 실패
+              </Text>
+              <Text ta="center" mt={10}>
+                {auth.modalText}
+              </Text>
+              <Button
+                fullWidth
+                type="submit"
+                mt={50}
+                variant="light"
+                color="red.6"
+                h={50}
+                onClick={() => auth.setIsUserModalOpen(false)}
+              >
+                확인
+              </Button>
+            </>
+          )}
         </Modal>
       )}
       <Paper radius="md" p="xl" withBorder {...props}>
@@ -222,6 +243,7 @@ function SignUpForm(props: PaperProps): ReactElement {
             <Button
               onClick={() => {
                 auth.setIsUserModalOpen(true);
+                auth.setSuccess(false);
               }}
             >
               Test
