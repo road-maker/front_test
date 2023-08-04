@@ -355,14 +355,13 @@ function Roadmap({
   }, [editor]);
 
   const onConnect = useCallback(
-    // (params) => {
-    //   setEdges((els) => addEdge(params, els));
-    // },
+    // 간선 스타일 통일
     ({ source, target }) => {
       setEdges((els) => {
         return [
           ...els,
           {
+            // id: `e${source}e${target}`, // 문제 : e122면 12랑 2인지 1이랑 22인지 구분이 안됨..
             id: `e${source}${target}`,
             source,
             target,
