@@ -1,26 +1,61 @@
 /* eslint-disable no-console */
 import {
+  ActionIcon,
   Anchor,
   Box,
   Button,
   Center,
-  // Divider,
-  // Group,
-  // Image,
+  createStyles,
+  em,
+  getBreakpointValue,
+  Group,
+  Modal,
   Paper,
   PaperProps,
   PasswordInput,
+  rem,
   Text,
   TextInput,
   Title,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import {
+  IconAlertCircleFilled,
+  IconCheck,
+  IconChecks,
+  IconCircleCheckFilled,
+  IconSelect,
+  IconSelector,
+} from '@tabler/icons-react';
 import { ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../../auth/useAuth';
 import { useInput } from '../../common/hooks/useInput';
 
+const useStyles = createStyles((theme) => ({
+  container: {
+    height: rem(300),
+    width: '100%',
+    backgroundColor: '#52EB9A',
+
+    // // Media query with value from theme
+    // [`@media (max-width: ${em(getBreakpointValue(theme.breakpoints.xl) - 1)})`]:
+    //   {
+    //     backgroundColor: theme.colors.pink[6],
+    //   },
+
+    // // Simplify media query writing with theme functions
+    // [theme.fn.smallerThan('lg')]: {
+    //   backgroundColor: theme.colors.yellow[6],
+    // },
+
+    // // Static media query
+    // [`@media (max-width: ${em(800)})`]: {
+    //   backgroundColor: theme.colors.orange[6],
+    // },
+  },
+}));
 function SignUpForm(props: PaperProps): ReactElement {
   const [email, onChangeEmail, setEmail] = useInput('');
   const [nickname, onChangeNickname, setNickname] = useInput('');
@@ -29,6 +64,7 @@ function SignUpForm(props: PaperProps): ReactElement {
     useInput('');
   const auth = useAuth();
   const navigate = useNavigate();
+  const { classes } = useStyles();
 
   const form = useForm({
     initialValues: {
@@ -64,6 +100,40 @@ function SignUpForm(props: PaperProps): ReactElement {
 
   return (
     <Box maw={400} mx="auto" m={200}>
+      {auth.isUserModalOpen && (
+        <Modal
+          opened={auth.isUserModalOpen}
+          onClose={() => auth.setIsUserModalOpen(false)}
+          size="40%"
+        >
+          <Center pt={80}>
+            <IconCircleCheckFilled size={150} style={{ color: '#38D9A9' }} />
+          </Center>
+          <Text ta="center" c="teal.4" fz={35} mt={20}>
+            회원가입 성공
+          </Text>
+          <Text ta="center" mt={10}>
+            로드메이커에 오신 것을 환영합니다!
+          </Text>
+          <Button
+            fullWidth
+            type="submit"
+            mt={50}
+            variant="light"
+            color="teal.4"
+            h={50}
+            onClick={() => {
+              navigate('/users/signin');
+            }}
+          >
+            로그인 하러 가기
+          </Button>
+
+          {/* <IconAlertCircleFilled color="red" /> */}
+
+          {/* <Text ta="center">{auth.modalText}</Text> */}
+        </Modal>
+      )}
       <Paper radius="md" p="xl" withBorder {...props}>
         <Title
           align="center"
@@ -89,11 +159,16 @@ function SignUpForm(props: PaperProps): ReactElement {
           </Anchor>
         </Text>
         <form
-          onSubmit={form.onSubmit((values) => {
-            setNickname(values.nickname);
-            setEmail(values.email);
-            setPassword(values.password);
+          onSubmit={form.onSubmit(async (values) => {
+            const enteredEmail = values.email;
+            const enteredPassword = values.password;
+            const enteredNickname = values.nickname;
+
+            setNickname(enteredNickname);
+            setEmail(enteredEmail);
+            setPassword(enteredPassword);
             setConfirmPassword(values.confirmPassword);
+            await auth.signup(enteredEmail, enteredPassword, enteredNickname);
           })}
         >
           <TextInput
@@ -138,9 +213,18 @@ function SignUpForm(props: PaperProps): ReactElement {
               type="submit"
               mt="xl"
               variant="light"
-              onClick={() => auth.signup(email, password, nickname)}
+              onClick={() => {
+                auth.setModalText('');
+              }}
             >
               회원가입
+            </Button>
+            <Button
+              onClick={() => {
+                auth.setIsUserModalOpen(true);
+              }}
+            >
+              Test
             </Button>
           </Center>
         </form>

@@ -34,17 +34,6 @@ function EditUserProfile() {
     }));
   };
 
-  // const handleSubmit = async () => {
-  //   try {
-  //     await updateInfo(inputs);
-  //     updateUser({
-  //       ...user,
-  //     });
-  //   } catch (error) {
-  //     console.error('Error updating user information:', error);
-  //   }
-  // };
-
   const headers = {
     Authorization: `Bearer ${user.accessToken}`,
   };

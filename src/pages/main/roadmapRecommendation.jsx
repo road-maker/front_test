@@ -13,7 +13,7 @@ import {
 import { IconHeart } from '@tabler/icons-react';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useInfiniteQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
@@ -45,6 +45,7 @@ export default function RoadmapRecommendation() {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState('');
   const [roadmapPage, setRoadmapPage] = useState(1);
+
   // const date = new Date(Date.UTC(2012, 11, 20, 3, 0, 0));
   // options = {
   //   year: 'numeric',
@@ -64,7 +65,7 @@ export default function RoadmapRecommendation() {
 
   const fetchRoadmaps = useCallback(() => {
     axios
-      .get(`${baseUrl}/roadmaps?page=${roadmapPage}&size=10`)
+      .get(`${baseUrl}/roadmaps?page=${roadmapPage}&order-type=most-liked`)
       .then((v) => {
         console.log('data', v?.data);
         setAllRoadmapData(v?.data);
@@ -74,7 +75,7 @@ export default function RoadmapRecommendation() {
       });
   }, [roadmapPage]);
 
-  const initialUrl = `${baseUrl}/roadmaps?page=${roadmapPage}&size=10`;
+  const initialUrl = `${baseUrl}/roadmaps?page=${roadmapPage}&order-type=most-liked`;
   const fetchUrl = async (url) => {
     console.log('url', url);
     const response = await fetch(url);

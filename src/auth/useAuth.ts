@@ -1,6 +1,4 @@
-/* eslint-disable no-console */
 /* eslint-disable no-alert */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import axios, { AxiosResponse } from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +11,14 @@ interface UseAuth {
   signin: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, nickname: string) => Promise<void>;
   signout: () => void;
+  isUserModalOpen: boolean;
+  setIsUserModalOpen: (isUserModalOpen: boolean) => void;
+  modalText: string; // 추가: 모달에 표시할 텍스트 상태
+  setModalText: (text: string) => void; // 추가: 모달 텍스트를 업데이트하는 함수
+  openModal: boolean;
+  setOpenModal: (openModal: boolean) => void;
+  success: boolean;
+  setSuccess: (success: boolean) => void;
 }
 
 // type UserResponse = { data: NewUser };
@@ -24,7 +30,10 @@ export function useAuth(): UseAuth {
   const SERVER_ERROR = 'There was an error contacting the server.';
   const { clearUser, updateUser } = useUser();
   const navigate = useNavigate();
-  // const [isUserModalOpen, setUserModalOpen] = useState(false);
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const [modalText, setModalText] = useState('');
+  const [openModal, setOpenModal] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   async function authServerCall(
     urlEndpoint: string,
@@ -33,42 +42,36 @@ export function useAuth(): UseAuth {
     nickname: string,
   ): Promise<void> {
     try {
-      const { data, status }: AxiosResponse<AuthResponseType> =
-        await axiosInstance({
-          url: urlEndpoint,
-          method: 'POST',
-          data: { email, password, nickname },
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+      const { status }: AxiosResponse<AuthResponseType> = await axiosInstance({
+        url: urlEndpoint,
+        method: 'POST',
+        data: { email, password, nickname },
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
       if (status === 201 || status === 200) {
-        console.log('useAuth ServiceCall', data);
-        alert('회원가입 성공');
-        // setUserModalOpen(true);
-        navigate('/users/signin');
+        setIsUserModalOpen(true);
+        setSuccess(true);
+        // navigate('/users/signin');
+      } else {
+        setIsUserModalOpen(false);
+        setSuccess(false);
       }
-      // if ('accessToken' in data) {
-      //   updateUser(data.accessToken);
-      // }
-
-      // eslint-disable-next-line no-console
-      // console.log('authServerCall', data);
-      // update stored user data
-      // updateUser(data.user);
-
-      // if ('user' in data) {
-      //   // update stored user data
-      //   updateUser(data.user);
-      // }
     } catch (errorResponse) {
       const status =
         axios.isAxiosError(errorResponse) && errorResponse?.response?.status
           ? errorResponse?.response?.status
           : SERVER_ERROR;
+
+      setSuccess(false);
+
       if (status === 409) {
-        // eslint-disable-next-line no-alert
-        alert('이미 등록된 회원입니다.');
+        setModalText('이미 등록된 회원입니다.');
+        setIsUserModalOpen(true);
+      } else {
+        setIsUserModalOpen(false);
       }
     }
   }
@@ -88,15 +91,6 @@ export function useAuth(): UseAuth {
           },
         });
       if (status === 201 || status === 200) {
-        console.log('useAuth authLoginServerCall', data);
-
-        if ('member' in data) {
-          console.log('member', data.member);
-          const loggedMember: NewUser = data.member;
-        }
-        if ('tokenInfo' in data) {
-          console.log('tokenInfo', data.tokenInfo);
-        }
         if ('member' in data && 'tokenInfo' in data) {
           const loggedMember: NewUser = data.member;
           const loggedMemberToken: TokenInfo = data.tokenInfo;
@@ -126,7 +120,6 @@ export function useAuth(): UseAuth {
 
   async function signin(email: string, password: string): Promise<void> {
     authLoginServerCall('/members/signin', email, password);
-    // authServerCall('/members/signin', email, password);
   }
   async function signup(
     email: string,
@@ -146,7 +139,13 @@ export function useAuth(): UseAuth {
     signin,
     signup,
     signout,
-    // isUserModalOpen,
-    // setUserModalOpen,
+    isUserModalOpen,
+    setIsUserModalOpen,
+    modalText,
+    setModalText,
+    openModal,
+    setOpenModal,
+    success,
+    setSuccess,
   };
 }

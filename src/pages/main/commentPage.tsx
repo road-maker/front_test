@@ -78,6 +78,7 @@ function CommentPage() {
     ({ pageParam = initialUrl }) => fetchUrl(pageParam),
     {
       getNextPageParam: (lastPage) => {
+        console.log(lastPage.result);
         if (lastPage.result.length !== 0) {
           return lastPage.next;
         }
