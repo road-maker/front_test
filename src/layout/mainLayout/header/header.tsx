@@ -149,27 +149,32 @@ export function HeaderMegaMenu() {
                 className="hoverItem"
               />
               {/* <InputWithButton ml="5rem" /> */}
-              <TextInput
-                value={search}
-                onChange={onChangeSearch}
-                placeholder="검색어를 입력해주세요."
-                rightSection={
-                  // isLoading ? <Loader size="xs" /> : <IconSearch size="xs" />
-                  <ActionIcon
-                    variant="filled"
-                    color="blue"
-                    loading={isLoading}
-                    disabled={isLoading}
-                    sx={{
-                      borderRadius: '100%',
-                      '&[data-disabled]': { opacity: 0.4 },
-                      '&[data-loading]': { backgroundColor: 'red' },
-                    }}
-                  >
-                    <IconSearch size="1rem" onClick={() => searchByKeyword()} />
-                  </ActionIcon>
-                }
-              />
+              {pathname !== '/roadmap/editor' && (
+                <TextInput
+                  value={search}
+                  onChange={onChangeSearch}
+                  placeholder="검색어를 입력해주세요."
+                  rightSection={
+                    // isLoading ? <Loader size="xs" /> : <IconSearch size="xs" />
+                    <ActionIcon
+                      variant="filled"
+                      color="blue"
+                      loading={isLoading}
+                      disabled={isLoading}
+                      sx={{
+                        borderRadius: '100%',
+                        '&[data-disabled]': { opacity: 0.4 },
+                        '&[data-loading]': { backgroundColor: 'red' },
+                      }}
+                    >
+                      <IconSearch
+                        size="1rem"
+                        onClick={() => searchByKeyword()}
+                      />
+                    </ActionIcon>
+                  }
+                />
+              )}
             </Group>
 
             <Group className={classes.hiddenMobile}>

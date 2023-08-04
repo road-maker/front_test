@@ -43,7 +43,6 @@ import ReactFlow, {
 } from 'reactflow';
 import { setStoredRoadmap } from 'storage/roadmap-storage';
 import { styled } from 'styled-components';
-import { NewPrompt } from 'types/types';
 
 import { useInput } from '../common/hooks/useInput';
 import { RoadmapEdge, RoadmapNode, RoadmapNodes } from './types';
@@ -200,33 +199,64 @@ function Roadmap({
     if (!user) {
       return navigate('/users/signin');
     }
+    // if (!localStorage.getItem('recent_gpt_search')) {
+    //   setGptRes(false);
+    // }
+    // if (localStorage.getItem('recent_gpt_search')) {
+    // const localData: NewPrompt = JSON.parse(
+    //   localStorage.getItem('recent_gpt_search'),
+    // );
+    //   setKeyword(localData?.keyword);
+    //   axios
+    //     .post(`${baseUrl}/gpt/roadmap?prompt=${localData.keyword}`, {
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //         Authorization: `Bearer ${user?.accessToken}`,
+    //       },
+    //     })
+    //     .then((res) => {
+    //       res?.data.length > 0 ? setGptRes(false) : setGptRes(true);
+    //       setUseGpt(res?.data);
+    //     })
+    //     .then(() => {
+    //       setGptRes(false);
+    //       // onLayout('TB');
+    //     });
+    // }
     if (!localStorage.getItem('recent_gpt_search')) {
       setGptRes(false);
     }
     if (localStorage.getItem('recent_gpt_search')) {
-      const localData: NewPrompt = JSON.parse(
-        localStorage.getItem('recent_gpt_search'),
-      );
-      setKeyword(localData?.keyword);
       axios
-        .post(`${baseUrl}/gpt/roadmap?prompt=${localData.keyword}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${user?.accessToken}`,
+        .post(
+          `${baseUrl}/gpt/roadmap?prompt=${JSON.parse(
+            localStorage.getItem('recent_gpt_search'),
+          )?.keyword}`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${user?.accessToken}`,
+            },
           },
-        })
+        )
         .then((res) => {
           res?.data.length > 0 ? setGptRes(false) : setGptRes(true);
           setUseGpt(res?.data);
+          // onLayout('TB');
         })
+        // .then(() => {
+        //   onLayout('TB');
+        // })
         .then(() => {
           setGptRes(false);
-          // onLayout('TB');
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    onLayout('LR');
+  }, [useGpt.length]);
   // const onSave = useCallback(() => { // 내부적으로 처리
   //   if (rfInstance) {
   //     const flow = rfInstance.toObject();
@@ -844,7 +874,7 @@ function Roadmap({
         }}
       >
         <Panel position="top-right">
-          {currentFlow === 'LB' ? (
+          {currentFlow === 'LR' ? (
             <Button
               type="button"
               onClick={() => {
@@ -860,7 +890,7 @@ function Roadmap({
               type="button"
               onClick={() => {
                 onLayout('LR');
-                setCurrentFlow('LB');
+                setCurrentFlow('LR');
               }}
               mr={10}
             >
