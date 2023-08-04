@@ -67,8 +67,14 @@ export function useAuth(): UseAuth {
 
       setSuccess(false);
 
-      if (status === 409) {
-        setModalText('이미 등록된 회원입니다.');
+      if (status === 422) {
+        setModalText('같은 닉네임과 이메일로 가입된 사용자가 있습니다.');
+        setIsUserModalOpen(true);
+      } else if (status === 400) {
+        setModalText('중복된 닉네임입니다. 다른 닉네임을 사용해주세요!');
+        setIsUserModalOpen(true);
+      } else if (status === 409) {
+        setModalText('이미 가입된 이메일입니다.');
         setIsUserModalOpen(true);
       } else {
         setIsUserModalOpen(false);

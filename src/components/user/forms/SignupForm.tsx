@@ -240,14 +240,14 @@ function SignUpForm(props: PaperProps): ReactElement {
             >
               회원가입
             </Button>
-            <Button
+            {/* <Button
               onClick={() => {
                 auth.setIsUserModalOpen(true);
                 auth.setSuccess(false);
               }}
             >
               Test
-            </Button>
+            </Button> */}
           </Center>
         </form>
       </Paper>
