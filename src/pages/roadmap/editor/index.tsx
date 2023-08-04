@@ -120,11 +120,13 @@ export default function RoadMapEditor(): ReactElement {
         preserveWhitespace: 'full', // 빈칸 인식 X 에러 해결
         // preserveWhitespace: true, // 빈칸 인식 X 에러 해결
       });
-      editor.commands.focus(
-        // @ts-ignore
-        editor?.transaction?.curSelection?.$anchor?.pos,
-      );
-      editor.chain().focus().setTextSelection(cursorPosition).run();
+      console.log('editor', editor);
+      // editor.commands.focus(
+      //   // @ts-ignore
+      //   editor?.transaction?.curSelection?.$anchor?.pos,
+      // );
+      editor.isFocused &&
+        editor.chain().focus().setTextSelection(cursorPosition).run();
     }
     if (label !== '' && filt.length === 0) {
       setState([...state, { id, details: '' }]);
