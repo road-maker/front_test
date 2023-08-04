@@ -220,6 +220,7 @@ function PostedRoadmap() {
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
+    editable: false,
     content: state.filter((v) => v.id === id)[0]?.details || '',
     onUpdate(e) {
       setToggle(e.editor?.getHTML());
