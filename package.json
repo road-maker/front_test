@@ -28,6 +28,7 @@
     "@tiptap/extension-collaboration-cursor": "^2.0.4",
     "@tiptap/extension-color": "^2.0.4",
     "@tiptap/extension-highlight": "^2.0.4",
+    "@tiptap/extension-history": "^2.0.4",
     "@tiptap/extension-link": "^2.0.4",
     "@tiptap/extension-list-item": "^2.0.4",
     "@tiptap/extension-placeholder": "^2.0.4",
@@ -71,7 +72,6 @@
     "y-leveldb": "^0.1.2",
     "y-monaco": "^0.1.4",
     "y-prosemirror": "^1.2.1",
-    "y-websocket": "^1.5.0",
     "yjs": "^13.6.7",
     "zustand": "^4.3.9"
   },

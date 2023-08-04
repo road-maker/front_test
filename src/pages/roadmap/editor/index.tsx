@@ -43,6 +43,7 @@ export default function RoadMapEditor(): ReactElement {
   const editor = useEditor({
     extensions: [
       StarterKit, // history handled by  yjs if set to true
+      // History,
       Placeholder.configure({
         placeholder: '로드맵 상세 내용을 입력해주세요.',
       }),
@@ -80,9 +81,9 @@ export default function RoadMapEditor(): ReactElement {
       // mount 시 에러
       editor.commands.setContent(filt[0]?.details, false, {
         preserveWhitespace: 'full', // 빈칸 인식 X 에러 해결
+        // preserveWhitespace: true, // 빈칸 인식 X 에러 해결
       });
     }
-
     if (label !== '' && filt.length === 0) {
       setState([...state, { id, details: '' }]);
     }
@@ -92,54 +93,48 @@ export default function RoadMapEditor(): ReactElement {
     // const toggleEditor = useCallback(() => {
     return (
       id === toggle[0]?.id && (
-        <div>
-          <div>
-            <RichTextEditor editor={editor}>
-              <RichTextEditor.Toolbar sticky stickyOffset={5}>
-                <RichTextEditor.ControlsGroup>
-                  <RichTextEditor.Bold />
-                  <RichTextEditor.Italic />
-                  <RichTextEditor.Underline />
-                  <RichTextEditor.Strikethrough />
-                  <RichTextEditor.ClearFormatting />
-                  <RichTextEditor.Highlight />
-                  <RichTextEditor.Code />
-                </RichTextEditor.ControlsGroup>
+        <RichTextEditor editor={editor}>
+          <RichTextEditor.Toolbar sticky stickyOffset={5}>
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.Bold />
+              <RichTextEditor.Italic />
+              <RichTextEditor.Underline />
+              <RichTextEditor.Strikethrough />
+              <RichTextEditor.ClearFormatting />
+              <RichTextEditor.Highlight />
+              <RichTextEditor.Code />
+            </RichTextEditor.ControlsGroup>
 
-                <RichTextEditor.ControlsGroup>
-                  <RichTextEditor.H1 />
-                  <RichTextEditor.H2 />
-                  <RichTextEditor.H3 />
-                  <RichTextEditor.H4 />
-                </RichTextEditor.ControlsGroup>
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.H1 />
+              <RichTextEditor.H2 />
+              <RichTextEditor.H3 />
+              <RichTextEditor.H4 />
+            </RichTextEditor.ControlsGroup>
 
-                <RichTextEditor.ControlsGroup>
-                  <RichTextEditor.Blockquote />
-                  <RichTextEditor.Hr />
-                  <RichTextEditor.BulletList />
-                  <RichTextEditor.OrderedList />
-                  <RichTextEditor.Subscript />
-                  <RichTextEditor.Superscript />
-                </RichTextEditor.ControlsGroup>
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.Blockquote />
+              <RichTextEditor.Hr />
+              <RichTextEditor.BulletList />
+              <RichTextEditor.OrderedList />
+              <RichTextEditor.Subscript />
+              <RichTextEditor.Superscript />
+            </RichTextEditor.ControlsGroup>
 
-                <RichTextEditor.ControlsGroup>
-                  <RichTextEditor.Link />
-                  <RichTextEditor.Unlink />
-                </RichTextEditor.ControlsGroup>
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.Link />
+              <RichTextEditor.Unlink />
+            </RichTextEditor.ControlsGroup>
 
-                <RichTextEditor.ControlsGroup>
-                  <RichTextEditor.AlignLeft />
-                  <RichTextEditor.AlignCenter />
-                  <RichTextEditor.AlignJustify />
-                  <RichTextEditor.AlignRight />
-                </RichTextEditor.ControlsGroup>
-              </RichTextEditor.Toolbar>
-              <div className="content">
-                <RichTextEditor.Content />
-              </div>
-            </RichTextEditor>
-          </div>
-        </div>
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.AlignLeft />
+              <RichTextEditor.AlignCenter />
+              <RichTextEditor.AlignJustify />
+              <RichTextEditor.AlignRight />
+            </RichTextEditor.ControlsGroup>
+          </RichTextEditor.Toolbar>
+          <RichTextEditor.Content style={{ minHeight: '20em' }} />
+        </RichTextEditor>
       )
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -182,13 +177,6 @@ export default function RoadMapEditor(): ReactElement {
 const EditorWrap = styled.div`
   display: inline-flex;
   width: 100vw;
-  /* height: 100vh; */
-  & .editor {
-    /* & > .content {
-      width: 100%;
-      overflow-y: scroll;
-    } */
-  }
 
   & .roadMapWrap {
     /* height: 100%; */

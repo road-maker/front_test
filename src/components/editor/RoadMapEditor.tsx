@@ -166,13 +166,15 @@ function Roadmap({
   const [nodeBg, setNodeBg] = useState('#eee');
   const [nodeHidden, setNodeHidden] = useState(false);
   const [rfInstance, setRfInstance] = useState(null);
-  const { setViewport } = useReactFlow();
+  const { setViewport, getViewport } = useReactFlow();
   const [useGpt, setUseGpt] = useState([]);
   const [opened, { open, close }] = useDisclosure(false);
+  const [submitModal, setSubmitModal] = useState(false);
   const [nodeModal, setNodeModal] = useState(false);
   const [keyword, setKeyword] = useState('');
   const [currentFlow, setCurrentFlow] = useState('');
   const [gptDisabled, setGptDisabled] = useState(false);
+  const [currentView, setCurrentView] = useState({ x: 0, y: 0 });
 
   const [selectedData, setSelectedData] = useState([
     { value: 'react', label: 'React' },
@@ -358,6 +360,14 @@ function Roadmap({
     [setEdges],
   );
 
+  // useMemo(() => {
+  //   const { x, y } = getViewport();
+  //   if (nodeState.length > 1) {
+  //     setCurrentView({ x, y });
+  //     alert(`${currentView.x}, ${currentView.y}`);
+  //   }
+  // }, [currentView, nodeState.length]);
+
   useMemo(() => {
     if (rfInstance) {
       const flow = rfInstance.toObject();
@@ -389,6 +399,9 @@ function Roadmap({
 
   const onAddNode = useCallback(() => {
     const nodeCount: number = [...nodeState]?.length;
+    const currentTargetPosition: string = currentFlow === 'LR' ? 'left' : 'top';
+    const currentSourcePosition: string =
+      currentFlow === 'LR' ? 'right' : 'bottom';
     setNodes([
       ...nodeState,
       {
@@ -399,8 +412,8 @@ function Roadmap({
           label: ``,
         },
         type: 'default',
-        position,
-        // position: { x, y },
+        // position,
+        position: { x: currentView.x, y: currentView.y },
         style: {
           background: '#fff',
           border: '1px solid black',
@@ -656,7 +669,12 @@ function Roadmap({
   return (
     <Wrap>
       <LoadingOverlay visible={gptRes} />
-      <Modal opened={opened} onClose={close} size="40rem">
+      {/* <Modal opened={opened} onClose={close} size="40rem"> */}
+      <Modal
+        opened={submitModal}
+        onClose={() => setSubmitModal(false)}
+        size="40rem"
+      >
         <Center>
           <h2>로드맵 정보</h2>
         </Center>
@@ -897,7 +915,15 @@ function Roadmap({
               horizontal layout
             </Button>
           )}
-          <Button type="button" onClick={() => onAddNode()} mr={10}>
+          <Button
+            type="button"
+            onClick={() => {
+              const { x, y } = getViewport();
+              setCurrentView({ x, y });
+              onAddNode();
+            }}
+            mr={10}
+          >
             노드 추가
           </Button>
           {nodeState.length === 0 ? (
@@ -928,7 +954,8 @@ function Roadmap({
             type="button"
             onClick={() => {
               // onSave();
-              open();
+              // open();
+              setSubmitModal(true);
             }}
             mr={10}
             mt={10}
