@@ -28,10 +28,9 @@ import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
 import { useRoadmap } from 'components/roadmaps/posts/hooks/useRoadmap';
 import { useUser } from 'components/user/hooks/useUser';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactFlow, {
-  addEdge,
   Background,
   Controls,
   MiniMap,
@@ -99,7 +98,7 @@ const initialNodes = [
   {
     id: '1',
     data: { label: 'test' },
-    position: { x: 100, y: 100 },
+    position: { x: 100, y: 100, zoom: 1 },
     type: 'default',
     style: {
       background: '#fff',
@@ -111,7 +110,7 @@ const initialNodes = [
   {
     id: '2',
     data: { label: 'Node 2' },
-    position: { x: 100, y: 200 },
+    position: { x: 100, y: 200, zoom: 1 },
     type: 'default',
     style: {
       background: '#fff',
@@ -176,8 +175,8 @@ function Roadmap({
   const [keyword, setKeyword] = useState('');
   const [currentFlow, setCurrentFlow] = useState('');
   const [gptDisabled, setGptDisabled] = useState(false);
-  const [currentView, setCurrentView] = useState({ x: 0, y: 0 });
-
+  const [currentView, setCurrentView] = useState({ x: 0, y: 0, zoom: 1 });
+  const yPos = useRef(currentView.y);
   const [selectedData, setSelectedData] = useState([
     { value: 'react', label: 'React' },
     { value: 'ng', label: 'Angular' },
@@ -356,8 +355,22 @@ function Roadmap({
   }, [editor]);
 
   const onConnect = useCallback(
-    (params) => {
-      setEdges((els) => addEdge(params, els));
+    // (params) => {
+    //   setEdges((els) => addEdge(params, els));
+    // },
+    ({ source, target }) => {
+      setEdges((els) => {
+        return [
+          ...els,
+          {
+            id: `e${source}${target}`,
+            source,
+            target,
+            type: edgeType,
+            animated: true,
+          },
+        ];
+      });
     },
     [setEdges],
   );
@@ -401,9 +414,8 @@ function Roadmap({
 
   const onAddNode = useCallback(() => {
     const nodeCount: number = [...nodeState]?.length;
-    const currentTargetPosition: string = currentFlow === 'LR' ? 'left' : 'top';
-    const currentSourcePosition: string =
-      currentFlow === 'LR' ? 'right' : 'bottom';
+    yPos.current += 50;
+    // setViewport(currentView);
     setNodes([
       ...nodeState,
       {
@@ -415,7 +427,7 @@ function Roadmap({
         },
         type: 'default',
         // position,
-        position: { x: currentView.x, y: currentView.y },
+        position: { x: currentView.x, y: yPos.current },
         style: {
           background: '#fff',
           border: '1px solid black',
@@ -919,8 +931,13 @@ function Roadmap({
           <Button
             type="button"
             onClick={() => {
-              const { x, y } = getViewport();
-              setCurrentView({ x, y });
+              const { x, y, zoom } = getViewport();
+              setCurrentView({
+                x: currentView.x,
+                y: nodeState.at(-1)?.position?.y,
+                zoom,
+              });
+              console.log(nodeState.at(-1)?.position);
               onAddNode();
             }}
             mr={10}

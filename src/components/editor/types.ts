@@ -5,6 +5,7 @@ export interface Id {
 export interface Position {
   x: number;
   y: number;
+  zoom?: number;
 }
 
 export interface DataProps {
@@ -36,6 +37,7 @@ export interface AddedNode {
 export interface XYPosition {
   x: number;
   y: number;
+  zoom?: number;
 }
 
 export interface nodeStyle {
