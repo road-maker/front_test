@@ -31,7 +31,7 @@
     "src/**/*.tsx",
     "node_modules/@types",
     "src/setProxy.js",
-    "src/pages/main/roadmapRecommendation.jsx",
+    "src/pages/main/roadmapRecommendation.tsx",
     "src/components/editor/ResizableNodeSelected.jsx",
     "src/pages/roadmap/posts/postedRoadmap.jsx",
     "src/components/user/userProfile.jsx",

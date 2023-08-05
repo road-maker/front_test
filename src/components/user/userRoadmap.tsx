@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-console */
 import { Carousel } from '@mantine/carousel';
 import {
@@ -81,8 +82,8 @@ export default function UserRoadmap(props: PaperProps) {
       });
   }, [user?.accessToken, user.nickname]);
 
-  const theme = useMantineTheme();
-  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
+  // const theme = useMantineTheme();
+  // const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
 
   return (
     <>
@@ -189,13 +190,7 @@ export default function UserRoadmap(props: PaperProps) {
         w={1000}
         h={280}
       >
-        <Carousel
-          slideSize="100%"
-          slideGap="33.3333%"
-          // breakpoints={[{ maxWidth: 'xl', slideSize: '100%', slideGap: 10 }]
-          align="start"
-          slidesToScroll={mobile ? 1 : 2}
-        >
+        <Carousel height={200} slideSize="33.3333%" slideGap="md" align="start">
           {savedRoadmap.length === 0
             ? '아직 만든 로드맵이 없습니다. 로드맵을 생성해보세요!'
             : savedRoadmap.map((article) => (
@@ -211,8 +206,8 @@ export default function UserRoadmap(props: PaperProps) {
                         <Image
                           src={article.thumbnailUrl}
                           alt={`${article.title}.img`}
-                          // height={160}
-                          // width={260}
+                          height={160}
+                          width={260}
                           style={{ cursor: 'pointer' }}
                           onMouseOver={() => {
                             setCurrentPage(article.id);
