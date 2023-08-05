@@ -11,6 +11,7 @@ import {
   Center,
   Container,
   createStyles,
+  Drawer,
   Group,
   Modal,
   rem,
@@ -512,7 +513,13 @@ function PostedRoadmap() {
                   <Controls />
                   <MiniMap zoomable pannable />
                 </ReactFlow>
-                <Modal opened={isOpen} onClose={() => setIsOpen(!isOpen)}>
+                <Drawer
+                  opened={isOpen}
+                  onClose={() => setIsOpen(!isOpen)}
+                  overlayProps={{ opacity: 0.5, blur: 4 }}
+                  position="right"
+                  size="35%"
+                >
                   <Center>
                     <EditorContent editor={editor} readOnly />
                   </Center>
@@ -525,7 +532,22 @@ function PostedRoadmap() {
                       닫기
                     </Button>
                   </Center>
-                </Modal>
+                </Drawer>
+
+                {/* <Modal opened={isOpen} onClose={() => setIsOpen(!isOpen)}>
+                  <Center>
+                    <EditorContent editor={editor} readOnly />
+                  </Center>
+                  <Center>
+                    <Button
+                      mt={30}
+                      onClick={() => setIsOpen(!isOpen)}
+                      variant="light"
+                    >
+                      닫기
+                    </Button>
+                  </Center>
+                </Modal> */}
               </Wrap>
             </ReactFlowProvider>
           </div>

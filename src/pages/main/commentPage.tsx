@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-console */
 import {
+  ActionIcon,
   Button,
   Center,
   createStyles,
@@ -14,10 +15,11 @@ import {
   Textarea,
   TextInput,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useCounter, useDisclosure } from '@mantine/hooks';
+import { IconHeart } from '@tabler/icons-react';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useInfiniteQuery } from 'react-query';
 import { useLocation } from 'react-router-dom';
@@ -76,6 +78,7 @@ function CommentPage() {
     ({ pageParam = initialUrl }) => fetchUrl(pageParam),
     {
       getNextPageParam: (lastPage) => {
+        console.log(lastPage.result);
         if (lastPage.result.length !== 0) {
           return lastPage.next;
         }
@@ -128,6 +131,7 @@ function CommentPage() {
       )
       .then(() => {
         fetchComments();
+        refetch();
       })
       .catch((e) => console.log('err', e));
   }
@@ -171,6 +175,7 @@ function CommentPage() {
             mt={30}
             onClick={() => {
               handleSubmit();
+              close();
             }}
           >
             작성하기
