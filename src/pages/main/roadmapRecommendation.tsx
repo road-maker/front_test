@@ -36,11 +36,40 @@ const useStyles = createStyles((theme) => ({
     }`,
     fontSize: '13px',
   },
+
+  section: {
+    borderBottom: `${rem(1)} solid ${
+      theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]
+    }`,
+    paddingLeft: theme.spacing.md,
+    paddingRight: theme.spacing.md,
+    paddingBottom: theme.spacing.md,
+  },
+
+  like: {
+    color: theme.colors.red[6],
+  },
+
+  label: {
+    textTransform: 'uppercase',
+    fontSize: theme.fontSizes.xs,
+    fontWeight: 700,
+  },
 }));
+
+// interface BadgeCardProps {
+//   image: string;
+//   title: string;
+//   country: string;
+//   description: string;
+//   badges: {
+//     emoji: string;
+//     label: string;
+//   }[];
+// }
 
 export default function RoadmapRecommendation() {
   const [allRoadmapData, setAllRoadmapData] = useState([]);
-  // const { user } = useUser();
   const { classes, theme } = useStyles();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState('');
@@ -111,6 +140,7 @@ export default function RoadmapRecommendation() {
 
   if (isLoading) return <div className="loading">Loading...</div>;
   if (isError) return <div>Error! {error.toString()}</div>;
+
   return (
     <>
       <Group position="center" mt={30} mb={50}>
@@ -135,6 +165,7 @@ export default function RoadmapRecommendation() {
                       key={index}
                       radius="md"
                       component="a"
+                      p="md"
                       className={classes.card}
                       ml={100}
                     >
@@ -143,7 +174,7 @@ export default function RoadmapRecommendation() {
                           <Image
                             src={article.thumbnailUrl}
                             alt={`${article.title}.img`}
-                            height={160}
+                            height={180}
                             width={260}
                             style={{ cursor: 'pointer' }}
                             onMouseOver={() => {
@@ -158,7 +189,7 @@ export default function RoadmapRecommendation() {
                           <Image
                             src="https://t1.daumcdn.net/cfile/tistory/21221F4258E793521D"
                             alt={`${article.title}.img`}
-                            height={160}
+                            height={180}
                             width={260}
                             style={{ cursor: 'pointer' }}
                             onMouseOver={() => {
@@ -180,6 +211,7 @@ export default function RoadmapRecommendation() {
                       <Text
                         className={classes.title}
                         mt={10}
+                        fz="xl"
                         onMouseOver={() => {
                           setCurrentPage(article.id);
                         }}
