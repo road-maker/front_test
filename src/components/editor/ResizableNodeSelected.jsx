@@ -1,7 +1,7 @@
-import { memo, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Handle, NodeResizer, Position } from 'reactflow';
 
-function ResizableNodeSelected({ data, selected }) {
+export function ResizableNodeSelected({ data, selected }) {
   // window.ResizeObserver = undefined;
   useEffect(() => {
     window.addEventListener('error', (e) => {
@@ -31,20 +31,15 @@ function ResizableNodeSelected({ data, selected }) {
         keepAspectRatio
       />
       <Handle type="target" position={Position.Left} />
-      {/* <div style={{ padding: 10 }}>{data.label}</div> */}
-      {/* <div style={{ padding: 10 }}>{data.label}</div> */}
-      {/* <div style={{ padding: 10 }}>{data?.label?.props?.dangerouslySetinnerHTML?.__html}</div> */}
-      <div style={{ padding: 10 }}>
-        {/* eslint-disable-next-line no-underscore-dangle */}
-        {/* {data?.label?.props?.dangerouslySetinnerHTML?.__html} */}
-        {data}
-      </div>
+      <Handle type="target" position={Position.Top} />
+      <div style={{ padding: 10 }}>{data.label}</div>
       <Handle type="source" position={Position.Right} />
+      <Handle type="source" position={Position.Bottom} />
     </>
   );
 }
 
-export default memo(ResizableNodeSelected);
+// export default memo(ResizableNodeSelected);
 // // export default ResizableNodeSelected;
 
 // function ResizableNodeSelected({ data, selected }) {

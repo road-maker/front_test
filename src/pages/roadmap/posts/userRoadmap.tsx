@@ -4,6 +4,7 @@
 // import { modals } from '@mantine/modals';
 import { Button, Center, Modal } from '@mantine/core';
 import { EditorContent } from '@tiptap/react';
+import { ResizableNodeSelected } from 'components/editor/ResizableNodeSelected';
 import { useEffect, useState } from 'react';
 import ReactFlow, {
   Background,
@@ -20,32 +21,38 @@ const edgeType = 'smoothstep';
 const initialNodes = [
   {
     id: '1',
-    type: 'input',
+    type: 'custom',
     data: { label: 'input' },
     position: { x: 0, y: 0 },
   },
   {
     id: '2',
+    type: 'custom',
     data: { label: 'node 2' },
     position: { x: 100, y: 100 },
   },
   {
     id: '2a',
+    type: 'custom',
     data: { label: 'node 2a' },
     position: { x: 200, y: 200 },
   },
   {
     id: '2b',
+    type: 'custom',
     data: { label: 'node 2b' },
     position: { x: 300, y: 300 },
   },
   {
     id: '2c',
+    type: 'custom',
     data: { label: 'node 2c' },
     position: { x: 400, y: 100 },
   },
 ];
-
+const nodeTypes = {
+  custom: ResizableNodeSelected,
+};
 const initialEdges = [
   { id: 'e12', source: '1', target: '2', type: edgeType, animated: true },
   { id: 'e13', source: '1', target: '3', type: edgeType, animated: true },
@@ -106,6 +113,7 @@ function Roadmap({
         attributionPosition="top-right"
         minZoom={0.2}
         maxZoom={4}
+        nodeTypes={nodeTypes}
         onNodeClick={(e, n) => {
           setLabel(`${n?.data?.label}`);
           setId(`${n?.id}`);

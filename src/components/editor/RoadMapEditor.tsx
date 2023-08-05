@@ -44,6 +44,7 @@ import { setStoredRoadmap } from 'storage/roadmap-storage';
 import { styled } from 'styled-components';
 
 import { useInput } from '../common/hooks/useInput';
+import { ResizableNodeSelected } from './ResizableNodeSelected';
 import { RoadmapEdge, RoadmapNode, RoadmapNodes } from './types';
 
 const dagreGraph = new dagre.graphlib.Graph();
@@ -89,17 +90,23 @@ const getLayoutedElements = (nodes, edges, direction = 'TB') => {
 
 const position = { x: 0, y: 0 };
 const edgeType = 'smoothstep';
-// const nodeTypes = {
-//  ResizableNodeSelected,
-//   custom: CustomNode,
+const nodeTypes = {
+  custom: ResizableNodeSelected,
+  // ResizableNodeSelected,
+  // custom: CustomNode,
+};
+// const onInit = (reactFlowInstance) => {
+//   reactFlowInstance.fitView();
 // };
-
 const initialNodes = [
   {
     id: '1',
     data: { label: 'test' },
     position: { x: 100, y: 100, zoom: 1 },
-    type: 'default',
+    type: 'custom',
+    // type: 'default',
+    // type: nodeTypes.custom,
+    // type: 'ResizableNodeSelected',
     style: {
       background: '#fff',
       border: '1px solid black',
@@ -111,7 +118,9 @@ const initialNodes = [
     id: '2',
     data: { label: 'Node 2' },
     position: { x: 100, y: 200, zoom: 1 },
-    type: 'default',
+    // type: 'default',
+    // type: nodeTypes.custom,
+    type: 'custom',
     style: {
       background: '#fff',
       border: '1px solid black',
@@ -280,7 +289,8 @@ function Roadmap({
           data: {
             label: v?.content,
           },
-          type: 'default',
+          // type: 'default',
+          type: 'custom',
           position,
           style: {
             background: '#fff',
@@ -415,6 +425,7 @@ function Roadmap({
     const nodeCount: number = [...nodeState]?.length;
     yPos.current += 50;
     // setViewport(currentView);
+    // @ts-ignore
     setNodes([
       ...nodeState,
       {
@@ -424,8 +435,10 @@ function Roadmap({
         data: {
           label: ``,
         },
-        type: 'default',
-        // position,
+        type: 'custom',
+        // type: 'default',
+        // targetPosition: Position.Top,
+        // sourcePosition: Position.Bottom,
         position: { x: currentView.x, y: yPos.current },
         style: {
           background: '#fff',
@@ -435,6 +448,13 @@ function Roadmap({
         },
       },
     ]);
+    nodeState.forEach((n) => {
+      // console.log(n);
+      // eslint-disable-next-line no-param-reassign
+      n.sourcePosition = nodeState[0].sourcePosition;
+      // eslint-disable-next-line no-param-reassign
+      n.targetPosition = nodeState[0].targetPosition;
+    });
     // console.log(state); // 노드 추가!
     setState([...state, { id: (nodeCount + 1).toString(), details: '' }]);
     setColorsState([
@@ -452,7 +472,6 @@ function Roadmap({
     const edgesCopy = [...edgeState];
     // eslint-disable-next-line array-callback-return
     nodesCopy.map((v) => {
-      // eslint-disable-next-line array-callback-return
       state.map((item) => {
         if (v?.id === item?.id) {
           // eslint-disable-next-line no-param-reassign
@@ -463,6 +482,8 @@ function Roadmap({
         // eslint-disable-next-line no-param-reassign
         v.positionAbsolute = v.position;
       });
+      // eslint-disable-next-line no-param-reassign
+      v.type = 'custom';
     });
     edgesCopy.map((v) => {
       // eslint-disable-next-line no-param-reassign
@@ -831,6 +852,18 @@ function Roadmap({
               placeholder="Pick color"
               label="노드의 배경색을 골라주세요."
             />
+            <Input.Wrapper label="블로그 인증 등록">
+              <Input
+                // icon={<IconAt />}
+                // value={label}
+                mt={10}
+                mb={10}
+                // onChange={(evt) => {
+                //   setLabel(evt?.target?.value);
+                // }}
+                placeholder="블로그 키워드를 입력해주세요."
+              />
+            </Input.Wrapper>
             {/* <input
               // value={selectedNode[0]?.style.background}
               onChange={(evt) => {
@@ -876,6 +909,7 @@ function Roadmap({
         defaultViewport={defaultViewport}
         minZoom={0.2}
         maxZoom={4}
+        // onInit={onInit}
         onConnect={onConnect}
         onNodeClick={(e, n) => {
           setLabel(`${n?.data?.label}`);
@@ -895,7 +929,7 @@ function Roadmap({
         snapToGrid
         proOptions={proOptions}
         onInit={setRfInstance}
-        // nodeTypes={nodeTypes}
+        nodeTypes={nodeTypes}
         style={{
           width: '100%',
           height: '100%',
