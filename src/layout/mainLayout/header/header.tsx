@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-alert */
 import {
@@ -25,7 +24,7 @@ import { baseUrl } from 'axiosInstance/constants';
 import { useInput } from 'components/common/hooks/useInput';
 // import { usePrompt } from 'components/prompts/hooks/usePrompt';
 import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { clearStoredGpt } from 'storage/gpt-storage';
 import { clearStoredRoadmap } from 'storage/roadmap-storage';
@@ -118,8 +117,13 @@ export function HeaderMegaMenu() {
   const searchByKeyword = useCallback(() => {
     axios
       .get(`${baseUrl}/roadmaps/search/${search}?page=${1}&size=5`)
-      .then((v) => console.log(v))
+      .then((v) => {
+        localStorage.setItem('roadmap_search_keyword', search);
+        navigate(`/roadmap/post/search/${search}`);
+      })
+      // eslint-disable-next-line no-console
       .catch((e) => console.log(e));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
   return (
@@ -145,28 +149,32 @@ export function HeaderMegaMenu() {
                 className="hoverItem"
               />
               {/* <InputWithButton ml="5rem" /> */}
-              <TextInput
-                w="36em"
-                value={search}
-                onChange={onChangeSearch}
-                placeholder="검색어를 입력해주세요."
-                rightSection={
-                  // isLoading ? <Loader size="xs" /> : <IconSearch size="xs" />
-                  <ActionIcon
-                    variant="filled"
-                    color="blue"
-                    loading={isLoading}
-                    disabled={isLoading}
-                    sx={{
-                      borderRadius: '100%',
-                      '&[data-disabled]': { opacity: 0.4 },
-                      '&[data-loading]': { backgroundColor: 'red' },
-                    }}
-                  >
-                    <IconSearch size="1rem" onClick={() => searchByKeyword()} />
-                  </ActionIcon>
-                }
-              />
+              {pathname !== '/roadmap/editor' && (
+                <TextInput
+                  value={search}
+                  onChange={onChangeSearch}
+                  placeholder="검색어를 입력해주세요."
+                  rightSection={
+                    // isLoading ? <Loader size="xs" /> : <IconSearch size="xs" />
+                    <ActionIcon
+                      variant="filled"
+                      color="blue"
+                      loading={isLoading}
+                      disabled={isLoading}
+                      sx={{
+                        borderRadius: '100%',
+                        '&[data-disabled]': { opacity: 0.4 },
+                        '&[data-loading]': { backgroundColor: 'red' },
+                      }}
+                    >
+                      <IconSearch
+                        size="1rem"
+                        onClick={() => searchByKeyword()}
+                      />
+                    </ActionIcon>
+                  }
+                />
+              )}
             </Group>
 
             <Group className={classes.hiddenMobile}>
@@ -304,7 +312,6 @@ const HeaderWrap = styled.nav`
 export function InputWithButton(props: TextInputProps) {
   const theme = useMantineTheme();
   const [prompt, onPromptChange, setPrompt] = useInput('');
-
   // const { getprompt } = usePrompt();
   const navigate = useNavigate();
   const { user } = useUser();
@@ -315,11 +322,11 @@ export function InputWithButton(props: TextInputProps) {
   const [promptResponse, setPromptResponse] =
     useState<AxiosResponse | null | void>(null);
 
-  const onRequestPrompt = useCallback(() => {
+  // const onRequestPrompt = useCallback(() => {
+  const onRequestPrompt = () => {
     updateGptAnswer({ keyword: prompt });
     setPromptResponse(prompt);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [prompt]);
+  };
   // const onRequestPrompt = () => {
   //   updateGptAnswer({ keyword: prompt });
   //   setPromptResponse(prompt);
@@ -369,6 +376,12 @@ export function InputWithButton(props: TextInputProps) {
 
   // const onRequestPrompt = useMemo(() => {}, []);
 
+  useMemo(() => {
+    // @Pyotato : 페이지 안넘어가던 문제 해결~
+    if (promptResponse) {
+      navigate(`/roadmap/editor`);
+    }
+  }, [promptResponse, navigate]);
   return (
     <>
       <LoadingOverlay visible={isLoading} />
@@ -377,8 +390,7 @@ export function InputWithButton(props: TextInputProps) {
         onChange={onPromptChange}
         icon={<IconSearch size="1.1rem" stroke={1.5} />}
         radius="md"
-        // w="600px"
-        w="36em"
+        w="600px"
         rightSection={
           <ActionIcon
             size={32}
@@ -387,10 +399,8 @@ export function InputWithButton(props: TextInputProps) {
                 alert('로그인 후 이용가능합니다.');
                 navigate('/users/signin');
               }
+              // onRequestPrompt();
               onRequestPrompt();
-              if (promptResponse) {
-                navigate(`/roadmap/editor`);
-              }
             }}
             radius="xl"
             color={theme.primaryColor}
