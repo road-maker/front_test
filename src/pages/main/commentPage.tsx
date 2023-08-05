@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-console */
 import {
-  ActionIcon,
   Button,
   Center,
   createStyles,
@@ -15,11 +14,10 @@ import {
   Textarea,
   TextInput,
 } from '@mantine/core';
-import { useCounter, useDisclosure } from '@mantine/hooks';
-import { IconHeart } from '@tabler/icons-react';
+import { useDisclosure } from '@mantine/hooks';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useInfiniteQuery } from 'react-query';
 import { useLocation } from 'react-router-dom';
