@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-alert */
+/* eslint-disable no-console */
 import {
   ActionIcon,
   Box,

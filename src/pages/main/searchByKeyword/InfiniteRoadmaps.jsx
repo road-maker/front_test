@@ -63,6 +63,7 @@
 //     </>
 //   );
 // }
+/* eslint-disable no-console */
 import { baseUrl } from 'axiosInstance/constants';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useInfiniteQuery } from 'react-query';
