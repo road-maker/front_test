@@ -75,7 +75,12 @@ const keyword = localStorage.getItem('roadmap_search_keyword');
 const initialUrl = `${baseUrl}/roadmaps/search/${keyword}/`;
 const fetchUrl = async (url) => {
   const response = await fetch(url);
-  return response.json();
+  console.log('response', response.status);
+  //   return response.json();
+  //   const response = await axios.get(url, {}).then((v) => {
+  //     return v;
+  //   });
+  return response;
 };
 
 export function InfiniteRoadmapByKeyword() {
@@ -93,7 +98,7 @@ export function InfiniteRoadmapByKeyword() {
       'search-keyword', // query key
       ({ pageParam = initialUrl }) => fetchUrl(pageParam), // default value will be the initial Url
       {
-        getNextPageParam: (lastPage) => lastPage.next || undefined,
+        getNextPageParam: (lastPage) => lastPage?.next || undefined,
       }, // undefined ===> hasNextPage false
     ); // destructure
   if (isLoading) {
@@ -109,20 +114,23 @@ export function InfiniteRoadmapByKeyword() {
     <>
       {isFetching && <div className="loading">loading...</div>}
       <InfiniteScroll loadMore={fetchNextPage} hasMore={hasNextPage}>
-        {data?.pages.map((pageData) => {
-          return pageData?.result.map((person) => {
-            // actual data
-            return (
-              <Roadmap
-                key={person.id}
-                thumbnailUrl={person.thumbnailUrl}
-                title={person.title}
-                ownerNickname={person.ownerNickname}
-                createdAt={person.createdAt}
-              />
-            );
-          });
-        })}
+        {data &&
+          data.pages &&
+          data?.pages?.map((pageData) => {
+            //   return pageData?.results.map((person) => {
+            return pageData?.result.map((person) => {
+              // actual data
+              return (
+                <Roadmap
+                  key={person.id}
+                  thumbnailUrl={person.thumbnailUrl}
+                  title={person.title}
+                  ownerNickname={person.ownerNickname}
+                  createdAt={person.createdAt}
+                />
+              );
+            });
+          })}
       </InfiniteScroll>
     </>
   );

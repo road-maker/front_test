@@ -2,40 +2,39 @@ export interface Id {
   id?: number;
 }
 
-export interface Position {
-  x: number;
-  y: number;
-}
+// enum Position {
+//   Left = 'left',
+//   Top = 'top',
+//   Right = 'right',
+//   Bottom = 'bottom',
+// }
 
 export interface DataProps {
   children?: string;
   ref?: string | unknown;
 }
-// export interface data {
-//   label?: string;
-//   // key?: string | undefined;
-//   // props?: DataProps;
-// }
-// export type label = string | unknown;
-// export type label = string;
-// export type data = label;
+
 export interface AddedNode {
   id: string;
   height: number;
   width: number;
   dragging?: boolean;
   selected?: boolean;
+  position: XYPosition;
+  targetPosition?: string;
+  sourcePosition?: string;
   // type?: string | any;
   type?: string;
   toolbarPosition?: string;
   data?: { label: string };
 
-  positionAbsolute?: Position;
+  positionAbsolute?: XYPosition;
 }
 
 export interface XYPosition {
   x: number;
   y: number;
+  zoom?: number;
 }
 
 export interface nodeStyle {
@@ -56,7 +55,7 @@ export interface RoadmapNode {
   sourcePosition?: string;
   selected?: boolean;
   detailedContent?: string;
-  positionAbsolute?: Position;
+  positionAbsolute?: XYPosition;
   dragging?: boolean;
 }
 

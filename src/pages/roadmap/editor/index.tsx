@@ -32,17 +32,24 @@ export default function RoadMapEditor(): ReactElement {
     { id: '1', details: '' },
     { id: '2', details: '' },
   ]);
+  const [colorsState, setColorsState] = useState([
+    // tiptap 에디터 내용
+    { id: '1', color: '#fff' },
+    { id: '2', color: '#fff' },
+  ]);
   const [roadmapDescription, setRoadmapDescription] = useState('');
   const [roadmapImage, setRoadmapImage] = useState('');
 
   const [roadmapTag, setRoadmapTag] = useState('');
 
+  const [cursorPosition, setCursorPosition] = useState(0);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [roadMapTitle, onRoadMapTitleChange, setRoadMapTitle] = useInput('');
 
   const editor = useEditor({
     extensions: [
       StarterKit, // history handled by  yjs if set to true
+      // History,
       Placeholder.configure({
         placeholder: '로드맵 상세 내용을 입력해주세요.',
       }),
@@ -54,11 +61,17 @@ export default function RoadMapEditor(): ReactElement {
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
     content: state.filter((v) => v?.id === id)[0]?.details || '',
+    autofocus: false,
 
     onUpdate(e) {
+      // e.editor.commands.focus(
+      //   // @ts-ignore
+      //   e?.transaction?.curSelection?.$anchor?.pos,
+      // );
       // console.log(e.editor?.getHTML());
       setToggle(e.editor?.getHTML());
       // console.log('e.editor', e.editor);
+      // console.log('e.editor isFocused', e.editor.getHTML());
       // eslint-disable-next-line array-callback-return
       state.map((item, idx) => {
         if (item?.id !== id) return;
@@ -69,7 +82,30 @@ export default function RoadMapEditor(): ReactElement {
         });
         setState(copyState);
       });
+      // e.editor
+      //   ?.chain()
+      //   .focus()
+      //   // @ts-ignore
+      //   .setTextSelection(e?.transaction?.curSelection?.$anchor?.pos)
+      //   .run();
+      // editor.commands.focus(
+      //   // @ts-ignore
+      //   e?.transaction?.curSelection?.$anchor?.pos,
+      // );
+      // @ts-ignore
+      setCursorPosition(e?.transaction?.curSelection?.$anchor?.pos);
+      // console.log(
+      //   'ontransaction',
+      //   // @ts-ignore
+      //   e?.transaction?.curSelection?.$anchor?.pos,
+      // );
+      // e.editor?.chain().focus().setTextSelection(10).run();
     },
+    // onTransaction: ({ transaction }) => {
+    //   // @ts-ignore
+    //   console.log('ontransaction', transaction?.curSelection?.$anchor?.pos);
+    //   e.editor?.chain().focus().setTextSelection(10).run();
+    // },
   });
 
   useMemo(() => {
@@ -77,12 +113,21 @@ export default function RoadMapEditor(): ReactElement {
     // console.log('filt', filt);
     setToggle(filt);
     if (editor) {
+      // editor.value?.chain().focus().setContent(JSON.parse(content)).run()
       // mount 시 에러
+      // editor.commands.setContent(filt[0]?.details, true, {
       editor.commands.setContent(filt[0]?.details, false, {
         preserveWhitespace: 'full', // 빈칸 인식 X 에러 해결
+        // preserveWhitespace: true, // 빈칸 인식 X 에러 해결
       });
+      console.log('editor', editor);
+      // editor.commands.focus(
+      //   // @ts-ignore
+      //   editor?.transaction?.curSelection?.$anchor?.pos,
+      // );
+      editor.isFocused &&
+        editor.chain().focus().setTextSelection(cursorPosition).run();
     }
-
     if (label !== '' && filt.length === 0) {
       setState([...state, { id, details: '' }]);
     }
@@ -92,54 +137,48 @@ export default function RoadMapEditor(): ReactElement {
     // const toggleEditor = useCallback(() => {
     return (
       id === toggle[0]?.id && (
-        <div>
-          <div>
-            <RichTextEditor editor={editor}>
-              <RichTextEditor.Toolbar sticky stickyOffset={5}>
-                <RichTextEditor.ControlsGroup>
-                  <RichTextEditor.Bold />
-                  <RichTextEditor.Italic />
-                  <RichTextEditor.Underline />
-                  <RichTextEditor.Strikethrough />
-                  <RichTextEditor.ClearFormatting />
-                  <RichTextEditor.Highlight />
-                  <RichTextEditor.Code />
-                </RichTextEditor.ControlsGroup>
+        <RichTextEditor editor={editor}>
+          <RichTextEditor.Toolbar sticky stickyOffset={5}>
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.Bold />
+              <RichTextEditor.Italic />
+              <RichTextEditor.Underline />
+              <RichTextEditor.Strikethrough />
+              <RichTextEditor.ClearFormatting />
+              <RichTextEditor.Highlight />
+              <RichTextEditor.Code />
+            </RichTextEditor.ControlsGroup>
 
-                <RichTextEditor.ControlsGroup>
-                  <RichTextEditor.H1 />
-                  <RichTextEditor.H2 />
-                  <RichTextEditor.H3 />
-                  <RichTextEditor.H4 />
-                </RichTextEditor.ControlsGroup>
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.H1 />
+              <RichTextEditor.H2 />
+              <RichTextEditor.H3 />
+              <RichTextEditor.H4 />
+            </RichTextEditor.ControlsGroup>
 
-                <RichTextEditor.ControlsGroup>
-                  <RichTextEditor.Blockquote />
-                  <RichTextEditor.Hr />
-                  <RichTextEditor.BulletList />
-                  <RichTextEditor.OrderedList />
-                  <RichTextEditor.Subscript />
-                  <RichTextEditor.Superscript />
-                </RichTextEditor.ControlsGroup>
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.Blockquote />
+              <RichTextEditor.Hr />
+              <RichTextEditor.BulletList />
+              <RichTextEditor.OrderedList />
+              <RichTextEditor.Subscript />
+              <RichTextEditor.Superscript />
+            </RichTextEditor.ControlsGroup>
 
-                <RichTextEditor.ControlsGroup>
-                  <RichTextEditor.Link />
-                  <RichTextEditor.Unlink />
-                </RichTextEditor.ControlsGroup>
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.Link />
+              <RichTextEditor.Unlink />
+            </RichTextEditor.ControlsGroup>
 
-                <RichTextEditor.ControlsGroup>
-                  <RichTextEditor.AlignLeft />
-                  <RichTextEditor.AlignCenter />
-                  <RichTextEditor.AlignJustify />
-                  <RichTextEditor.AlignRight />
-                </RichTextEditor.ControlsGroup>
-              </RichTextEditor.Toolbar>
-              <div className="content">
-                <RichTextEditor.Content />
-              </div>
-            </RichTextEditor>
-          </div>
-        </div>
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.AlignLeft />
+              <RichTextEditor.AlignCenter />
+              <RichTextEditor.AlignJustify />
+              <RichTextEditor.AlignRight />
+            </RichTextEditor.ControlsGroup>
+          </RichTextEditor.Toolbar>
+          <RichTextEditor.Content style={{ minHeight: '20em' }} />
+        </RichTextEditor>
       )
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -152,6 +191,8 @@ export default function RoadMapEditor(): ReactElement {
         <div className="roadMapWrap">
           <ReactFlowProvider>
             <RoadMapCanvas
+              colorsState={colorsState}
+              setColorsState={setColorsState}
               state={state}
               editor={editor}
               id={id}
@@ -182,13 +223,6 @@ export default function RoadMapEditor(): ReactElement {
 const EditorWrap = styled.div`
   display: inline-flex;
   width: 100vw;
-  /* height: 100vh; */
-  & .editor {
-    /* & > .content {
-      width: 100%;
-      overflow-y: scroll;
-    } */
-  }
 
   & .roadMapWrap {
     /* height: 100%; */
