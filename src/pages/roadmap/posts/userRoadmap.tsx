@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable simple-import-sort/imports */
+/* eslint-disable no-console */
 // import { modals } from '@mantine/modals';
 import { Button, Center, Modal } from '@mantine/core';
 import { EditorContent } from '@tiptap/react';
