@@ -1,11 +1,12 @@
-// import { HeaderMegaMenu } from 'pages/main/header';
-import { HeaderMegaMenu } from './header/header';
+import { Footer } from './footer/Footer';
+import { HeaderMegaMenu } from './header/Header';
 
 function MainLayout({ children }) {
   return (
     <>
       <HeaderMegaMenu />
       {children}
+      <Footer data={[]} />
     </>
   );
 }

@@ -538,7 +538,6 @@ function Roadmap({
       })
       .catch((err) => console.log(err));
     // navigate('/');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodeState]);
 
   // const { deleteElements } = useReactFlow();
@@ -889,7 +888,7 @@ function Roadmap({
 
           {/* {selectedNode[0]?.id === id && toggleEditor} */}
 
-          <div className="confirm_btn_wrap">
+          {/* <div className="confirm_btn_wrap">
             <Button
               mt={10}
               onClick={() => {
@@ -898,7 +897,7 @@ function Roadmap({
             >
               닫기
             </Button>
-          </div>
+          </div> */}
         </Modal>
       </Panel>
       <ReactFlow

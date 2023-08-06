@@ -2,7 +2,6 @@ import './index.css';
 
 import { Button, MantineProvider, Text } from '@mantine/core';
 import { ContextModalProps, ModalsProvider } from '@mantine/modals';
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 import App from './App';
@@ -36,29 +35,27 @@ declare module '@mantine/modals' {
   }
 }
 root.render(
-  <React.StrictMode>
-    <MantineProvider
-      theme={{
-        components: {
-          Containers: {
-            defaultProps: {
-              sizes: {
-                xs: 540,
-                sm: 720,
-                md: 960,
-                lg: 1140,
-                xl: 1320,
-              },
+  <MantineProvider
+    theme={{
+      components: {
+        Containers: {
+          defaultProps: {
+            sizes: {
+              xs: 540,
+              sm: 720,
+              md: 960,
+              lg: 1140,
+              xl: 1320,
             },
           },
         },
-      }}
-    >
-      <ModalsProvider modals={modals}>
-        <App />
-      </ModalsProvider>
-    </MantineProvider>
-  </React.StrictMode>,
+      },
+    }}
+  >
+    <ModalsProvider modals={modals}>
+      <App />
+    </ModalsProvider>
+  </MantineProvider>,
 );
 
 // If you want to start measuring performance in your app, pass a function
