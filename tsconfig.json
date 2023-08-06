@@ -10,11 +10,12 @@
     "experimentalDecorators": true,
     "removeComments": false,
     "noImplicitAny": false,
+    "noImplicitThis": false,
     "strictNullChecks": false,
     "jsx": "react-jsx",
     "typeRoots": ["node_modules/@types"],
     "types": ["node"],
-    "lib": ["dom", "dom.iterable", "esnext", "es2018"],
+    "lib": ["es6", "dom", "dom.iterable", "esnext", "es2018"],
     "allowJs": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
@@ -24,14 +25,17 @@
     "isolatedModules": true,
     "noEmit": true,
     "downlevelIteration": true,
-    "strict": true
+    "strict": true,
+    "paths": {
+      "@mui/styled-engine": ["./node_modules/@mui/styled-engine-sc"]
+    }
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
     "node_modules/@types",
     "src/setProxy.js",
-    "src/pages/main/roadmapRecommendation.tsx",
+    "src/pages/main/roadmapRecommendation.jsx",
     "src/components/editor/ResizableNodeSelected.jsx",
     "src/pages/roadmap/posts/postedRoadmap.jsx",
     "src/components/user/userProfile.jsx",
