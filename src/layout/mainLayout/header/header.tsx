@@ -136,10 +136,20 @@ export function HeaderMegaMenu() {
               spacing={0}
               className={classes.hiddenMobile}
             >
+              {/* <Logo
+                className="hoverItem"
+                style={{ width: '3em' }}
+                onClick={() => {
+                  setLeaveEditorAction('home');
+                  pathname === '/roadmap/editor'
+                    ? setIsEditorPage(true)
+                    : navigate('/');
+                }}
+              /> */}
               <Image
                 src="/img/logo.png"
                 width={200}
-                height={50}
+                height="3rem"
                 onClick={() => {
                   setLeaveEditorAction('home');
                   pathname === '/roadmap/editor'

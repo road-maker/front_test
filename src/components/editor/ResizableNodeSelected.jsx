@@ -1,8 +1,7 @@
-import { useEffect } from 'react';
+import { memo, useEffect } from 'react';
 import { Handle, NodeResizer, Position } from 'reactflow';
 
 export function ResizableNodeSelected({ data, selected }) {
-  // window.ResizeObserver = undefined;
   useEffect(() => {
     window.addEventListener('error', (e) => {
       if (e.message === 'ResizeObserver loop limit exceeded') {
@@ -39,7 +38,7 @@ export function ResizableNodeSelected({ data, selected }) {
   );
 }
 
-// export default memo(ResizableNodeSelected);
+export default memo(ResizableNodeSelected);
 // // export default ResizableNodeSelected;
 
 // function ResizableNodeSelected({ data, selected }) {

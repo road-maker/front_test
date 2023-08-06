@@ -14,6 +14,7 @@ import {
 } from '@mantine/core';
 import {
   IconBook2,
+  IconCalendarStats,
   IconHeart,
   IconHeartFilled,
   IconUser,
@@ -29,7 +30,6 @@ import StarterKit from '@tiptap/starter-kit';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
 import { useInput } from 'components/common/hooks/useInput';
-import { ResizableNodeSelected } from 'components/editor/ResizableNodeSelected';
 import { useUser } from 'components/user/hooks/useUser';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
@@ -41,6 +41,7 @@ import {
 } from 'reactflow';
 import { styled } from 'styled-components';
 
+import { DoneStatusNode } from '../../editor/DoneStatusNode';
 import { useRoadmapData } from './hooks/useRoadMapResponse';
 
 const useStyles = createStyles((theme) => ({
@@ -99,13 +100,14 @@ export default function RoadMapInfo() {
   // @ts-ignore
   const [currentRoadmap, setCurrentRoadmap] = useState(roadmapById?.data || []);
   const [label, onChangeLabel, setLabel] = useInput('');
+  const [blogKeyword, onChangeBlogKeyword, setBlogKeyword] = useInput('');
   const [id, onChangeId, setId] = useInput('');
   const [toggle, onChangeToggle, setToggle] = useInput('');
   const [search] = useSearchParams();
   const { user } = useUser();
   const [state, setState] = useState([]);
   const nodeTypes = {
-    custom: ResizableNodeSelected,
+    custom: DoneStatusNode,
     // ResizableNodeSelected,
     // custom: CustomNode,
   };
@@ -189,7 +191,7 @@ export default function RoadMapInfo() {
     const filt = state.filter((v) => v.id === id);
     setToggle(filt);
     if (editor) {
-      editor.commands.setContent(filt[0]?.details || '');
+      editor.commands.setContent(filt[0]?.details || '내용이 없습니다.');
     }
   }, [state, id, setToggle, label, editor]);
 
@@ -305,6 +307,14 @@ export default function RoadMapInfo() {
 
         <div>
           <Text c="dimmed" mt="md">
+            <IconCalendarStats
+              size={rem(20)}
+              stroke={2}
+              color={theme.fn.primaryColor()}
+            />{' '}
+            만든 날짜 : {currentRoadmap?.createdAt}
+          </Text>
+          <Text c="dimmed" mt="md">
             <IconBook2
               size={rem(20)}
               stroke={2}
@@ -313,32 +323,33 @@ export default function RoadMapInfo() {
             {currentRoadmap?.description || ''}
           </Text>
           <Text c="dimmed" mt="sm">
-            <IconUser
-              size={rem(20)}
-              stroke={2}
-              color={theme.fn.primaryColor()}
-            />{' '}
-            참여인원: {currentRoadmap?.joinCount}명
+            <div>
+              <IconUser
+                size={rem(20)}
+                stroke={2}
+                color={theme.fn.primaryColor()}
+              />{' '}
+              참여인원: {currentRoadmap?.joinCount}명
+              <Button
+                style={{ float: 'right' }}
+                loading={isLoading}
+                disabled={isLoading || (participation && user?.accessToken)}
+                onClick={() => {
+                  if (!user?.accessToken) {
+                    setModal(true);
+                  }
+                  joinRoadmap();
+                }}
+              >
+                {isLoading && ' 로딩 중'}
+                {!isLoading && participation && user?.accessToken && '참여 중'}
+                {!isLoading && (!participation || !user?.accessToken)
+                  ? '참여하기'
+                  : ''}
+              </Button>
+            </div>
           </Text>
         </div>
-
-        <Button
-          ml={800}
-          loading={isLoading}
-          disabled={isLoading || (participation && user?.accessToken)}
-          onClick={() => {
-            if (!user?.accessToken) {
-              setModal(true);
-            }
-            joinRoadmap();
-          }}
-        >
-          {isLoading && ' 로딩 중'}
-          {!isLoading && participation && user?.accessToken && '참여 중'}
-          {!isLoading && (!participation || !user?.accessToken)
-            ? '참여하기'
-            : ''}
-        </Button>
       </Card>
       <Modal
         opened={modal}
@@ -364,7 +375,8 @@ export default function RoadMapInfo() {
             <Wrap>
               <ReactFlow
                 nodes={nodeState}
-                nodeTypes="default"
+                // nodeTypes="default"
+                nodeTypes={nodeTypes}
                 edges={edgeState}
                 proOptions={proOptions}
                 onNodesChange={onNodesChange}
@@ -416,6 +428,11 @@ const Wrap = styled.div`
   background-color: '#ebf6fc';
   /* height: 96vh; */
   height: 100em;
+
+  & .react-flow__node {
+    cursor: pointer;
+  }
+
   & .updatenode__controls {
     position: absolute;
     right: 10px;

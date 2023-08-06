@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Button,
   Center,
   createStyles,
@@ -193,14 +194,14 @@ function CommentSection() {
               return pageData.result.map((comments, index) => (
                 <Paper withBorder radius="xs" p="xl" key={index}>
                   <Group>
-                    {/* <Avatar color="cyan" radius="xl">
-              {user.nickname.substring(0, 1)}
-            </Avatar> */}
+                    <Avatar color="cyan" radius="xl">
+                      {/* {user.nickname.substring(0, 1)} */}
+                    </Avatar>
                     <div>
                       {/* <Text size="sm">{nickname}</Text> */}
-                      {/* <Text size="xs" color="dimmed">
-                  {title}
-                </Text> */}
+                      <Text size="xs" color="dimmed">
+                        {comments.createdAt}
+                      </Text>
                     </div>
                   </Group>
                   <Text className={classes.body} size="sm">
