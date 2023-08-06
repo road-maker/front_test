@@ -6,7 +6,6 @@ import {
   Modal,
   Paper,
   rem,
-  Select,
   SimpleGrid,
   Text,
   Textarea,
@@ -165,14 +164,14 @@ function CommentSection() {
       </Modal>
       <Group position="right">
         {/* <InputWithButton /> */}
-        <Select
+        {/* <Select
           mt={20}
           defaultValue="최신순"
           data={[
             { value: 'svelte', label: '최신순' },
             { value: 'vue', label: '공감순' },
           ]}
-        />
+        /> */}
       </Group>
       <Center mt={20}>
         <Button onClick={open}>코멘트 작성하기</Button>

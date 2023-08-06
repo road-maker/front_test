@@ -24,7 +24,7 @@ import { baseUrl } from 'axiosInstance/constants';
 import { useInput } from 'components/common/hooks/useInput';
 // import { usePrompt } from 'components/prompts/hooks/usePrompt';
 import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { clearStoredGpt } from 'storage/gpt-storage';
 import { clearStoredRoadmap } from 'storage/roadmap-storage';
@@ -376,7 +376,8 @@ export function InputWithButton(props: TextInputProps) {
 
   // const onRequestPrompt = useMemo(() => {}, []);
 
-  useMemo(() => {
+  // useMemo(() => {
+  useEffect(() => {
     // @Pyotato : 페이지 안넘어가던 문제 해결~
     if (promptResponse) {
       navigate(`/roadmap/editor`);

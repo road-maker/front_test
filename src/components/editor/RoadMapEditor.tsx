@@ -14,16 +14,16 @@ import {
   Input,
   LoadingOverlay,
   Modal,
-  MultiSelect,
   Popover,
   SimpleGrid,
   Text,
   Textarea,
   TextInput,
+  Tooltip,
 } from '@mantine/core';
 import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { useDisclosure } from '@mantine/hooks';
-import { IconWand } from '@tabler/icons-react';
+import { IconAlertCircle, IconWand } from '@tabler/icons-react';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
 import { useRoadmap } from 'components/roadmaps/posts/hooks/useRoadmap';
@@ -92,12 +92,7 @@ const position = { x: 0, y: 0 };
 const edgeType = 'smoothstep';
 const nodeTypes = {
   custom: ResizableNodeSelected,
-  // ResizableNodeSelected,
-  // custom: CustomNode,
 };
-// const onInit = (reactFlowInstance) => {
-//   reactFlowInstance.fitView();
-// };
 const initialNodes = [
   {
     id: '1',
@@ -466,6 +461,11 @@ function Roadmap({
   const { postRoadmap } = useRoadmap();
 
   const onPublishRoadmap = useCallback(() => {
+    if (edgeState.length === 0) {
+      alert('노드들 간 연결을 해주세요.');
+      setSubmitModal(false);
+      return;
+    }
     // const { edges, nodes, viewport } = getStoredRoadmap();
     // console.log('nodes', nodes);
     const nodesCopy = [...nodeState] as RoadmapNodes;
@@ -483,8 +483,13 @@ function Roadmap({
         v.positionAbsolute = v.position;
       });
       // eslint-disable-next-line no-param-reassign
-      v.type = 'custom';
+      v.type = 'default';
+      // eslint-disable-next-line no-param-reassign
+      v.sourcePosition = currentFlow === 'LR' ? 'left' : 'top';
+      // eslint-disable-next-line no-param-reassign
+      v.targetPosition = currentFlow === 'LR' ? 'right' : 'bottom';
     });
+
     edgesCopy.map((v) => {
       // eslint-disable-next-line no-param-reassign
       v.animated = true;
@@ -713,31 +718,19 @@ function Roadmap({
           label="로드맵 이름"
           value={title}
           onChange={onChangeTitle}
+          rightSection={
+            !title && (
+              <Tooltip label="필수 항목입니다." position="top-end" withArrow>
+                <div>
+                  <IconAlertCircle
+                    size="1rem"
+                    style={{ display: 'block', opacity: 0.5, color: 'red' }}
+                  />
+                </div>
+              </Tooltip>
+            )
+          }
         />
-        <MultiSelect
-          label="로드맵 태그 설정"
-          mt={20}
-          data={selectedData}
-          placeholder="태그를 선택해주세요"
-          searchable
-          creatable
-          getCreateLabel={(query) => `+ Create ${query}`}
-          onCreate={(query) => {
-            const item = { value: query, label: query };
-            setSelectedData((current) => [...current, item]);
-            return item;
-          }}
-        />
-        <Dropzone accept={IMAGE_MIME_TYPE} onDrop={setFiles} mt={30}>
-          <Text align="center">Drop images here</Text>
-        </Dropzone>
-        <SimpleGrid
-          cols={4}
-          breakpoints={[{ maxWidth: 'sm', cols: 1 }]}
-          mt={previews.length > 0 ? 'xl' : 0}
-        >
-          {previews}
-        </SimpleGrid>
         <Textarea
           label="로드맵 설명"
           autosize
@@ -747,12 +740,71 @@ function Roadmap({
           value={desc}
           placeholder="내용을 입력하세요"
           onChange={onChangeDesc}
+          rightSection={
+            !desc && (
+              <Tooltip label="필수 항목입니다." position="top-end" withArrow>
+                <div>
+                  <IconAlertCircle
+                    size="1rem"
+                    style={{ display: 'block', opacity: 0.5, color: 'red' }}
+                  />
+                </div>
+              </Tooltip>
+            )
+          }
         />
+        <Text
+          mt={30}
+          style={{
+            display: 'inline-flex',
+            width: '100%',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div
+            style={{
+              display: 'inline-block',
+              fontSize: '0.875rem',
+              fontWeight: '500',
+              color: '#212529',
+              wordBreak: 'break-word',
+              cursor: 'default',
+            }}
+          >
+            로드맵 썸네일
+          </div>
+          {!files[0]?.name && (
+            <Tooltip label="필수 항목입니다." position="top-end" withArrow>
+              <div>
+                <IconAlertCircle
+                  size="1rem"
+                  style={{
+                    display: 'inline-block',
+                    opacity: 0.5,
+                    color: 'red',
+                  }}
+                />
+              </div>
+            </Tooltip>
+          )}
+        </Text>
+        <Dropzone accept={IMAGE_MIME_TYPE} onDrop={setFiles}>
+          <Text align="center">썸네일 등록 </Text>
+        </Dropzone>
+        <SimpleGrid
+          cols={4}
+          breakpoints={[{ maxWidth: 'sm', cols: 1 }]}
+          mt={previews.length > 0 ? 'xl' : 0}
+        >
+          {previews}
+        </SimpleGrid>
         <Center>
           <Button
             mt={30}
             onClick={() => {
               // onSave();
+              setEdges(edgeState);
+              setNodes(nodeState);
               onPublishRoadmap();
             }}
           >

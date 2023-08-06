@@ -2,6 +2,7 @@ import {
   ActionIcon,
   Avatar,
   Button,
+  Card,
   Center,
   createStyles,
   Drawer,
@@ -28,13 +29,11 @@ import StarterKit from '@tiptap/starter-kit';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
 import { useInput } from 'components/common/hooks/useInput';
+import { ResizableNodeSelected } from 'components/editor/ResizableNodeSelected';
 import { useUser } from 'components/user/hooks/useUser';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
-  Background,
-  Controls,
-  MiniMap,
   ReactFlow,
   ReactFlowProvider,
   useEdgesState,
@@ -105,8 +104,11 @@ export default function RoadMapInfo() {
   const [search] = useSearchParams();
   const { user } = useUser();
   const [state, setState] = useState([]);
-  const [details, setDetails] = useState([]);
-
+  const nodeTypes = {
+    custom: ResizableNodeSelected,
+    // ResizableNodeSelected,
+    // custom: CustomNode,
+  };
   useEffect(() => {
     axios
       .get(`${baseUrl}/roadmaps/${currentPage}`, {
@@ -217,10 +219,10 @@ export default function RoadMapInfo() {
   const [isSelectable] = useState(true);
   const [isDraggable] = useState(false);
   const [isConnectable] = useState(false);
-  const [zoomOnScroll] = useState(true); // zoom in zoom out
+  const [zoomOnScroll] = useState(false); // zoom in zoom out
   const [panOnScroll] = useState(false); // 위아래 스크롤
   const [zoomOnDoubleClick] = useState(false);
-  const [panOnDrag] = useState(true); // 마우스로 이동
+  const [panOnDrag] = useState(false); // 마우스로 이동
   const [isOpen, setIsOpen] = useState(false);
   const [modal, setModal] = useState(false);
 
@@ -249,88 +251,95 @@ export default function RoadMapInfo() {
   };
   return (
     <>
-      <div
-        style={{
-          display: 'inline-flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          width: '100%',
-        }}
-      >
-        <Group mt="2rem">
-          <Title className={classes.title}>{currentRoadmap?.title}</Title>
-          <Avatar color="purple" radius="xl" size="md">
-            {currentRoadmap?.ownerAvatarUrl || ''}
-          </Avatar>
-          {currentRoadmap?.ownerNickname}
-        </Group>
+      <Card mt="2rem">
         <div
           style={{
             display: 'inline-flex',
+            justifyContent: 'space-between',
             alignItems: 'center',
+            width: '100%',
           }}
         >
-          <Text fz="md" fw={700}>
-            {currentRoadmap?.likeCount > 1000000
-              ? new Intl.NumberFormat('en-GB', {
-                  notation: 'compact',
-                  compactDisplay: 'short',
-                }).format(currentRoadmap?.likeCount)
-              : currentRoadmap?.likeCount}
-          </Text>
-          {currentRoadmap?.isLiked ? (
-            <ActionIcon color="red">
-              <IconHeartFilled
-                onClick={() => onClickLikes()}
-                size="2rem"
-                color={theme.colors.red[6]}
-                stroke={1.5}
-              />
-            </ActionIcon>
-          ) : (
-            <ActionIcon>
-              <IconHeart
-                onClick={() => onClickLikes()}
-                size="2rem"
-                color={theme.colors.red[6]}
-                stroke={1.5}
-              />
-            </ActionIcon>
-          )}
+          <Group mt="1rem">
+            <Title className={classes.title}>{currentRoadmap?.title}</Title>
+            <Avatar color="purple" radius="xl" size="md">
+              {currentRoadmap?.ownerAvatarUrl || ''}
+            </Avatar>
+            {currentRoadmap?.ownerNickname}
+          </Group>
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+            }}
+          >
+            <Text fz="md" fw={700}>
+              {currentRoadmap?.likeCount > 1000000
+                ? new Intl.NumberFormat('en-GB', {
+                    notation: 'compact',
+                    compactDisplay: 'short',
+                  }).format(currentRoadmap?.likeCount)
+                : currentRoadmap?.likeCount}
+            </Text>
+            {currentRoadmap?.isLiked ? (
+              <ActionIcon color="red">
+                <IconHeartFilled
+                  onClick={() => onClickLikes()}
+                  size="2rem"
+                  color={theme.colors.red[6]}
+                  stroke={1.5}
+                />
+              </ActionIcon>
+            ) : (
+              <ActionIcon>
+                <IconHeart
+                  onClick={() => onClickLikes()}
+                  size="2rem"
+                  color={theme.colors.red[6]}
+                  stroke={1.5}
+                />
+              </ActionIcon>
+            )}
+          </div>
         </div>
-      </div>
 
-      <div className={classes.description}>
-        <Text c="dimmed" mt="md">
-          <IconBook2
-            size={rem(20)}
-            stroke={2}
-            color={theme.fn.primaryColor()}
-          />{' '}
-          {currentRoadmap?.description || ''}
-        </Text>
-        <Text c="dimmed" mt="sm">
-          <IconUser size={rem(20)} stroke={2} color={theme.fn.primaryColor()} />{' '}
-          참여인원: {currentRoadmap?.joinCount}명
-        </Text>
-      </div>
+        <div>
+          <Text c="dimmed" mt="md">
+            <IconBook2
+              size={rem(20)}
+              stroke={2}
+              color={theme.fn.primaryColor()}
+            />{' '}
+            {currentRoadmap?.description || ''}
+          </Text>
+          <Text c="dimmed" mt="sm">
+            <IconUser
+              size={rem(20)}
+              stroke={2}
+              color={theme.fn.primaryColor()}
+            />{' '}
+            참여인원: {currentRoadmap?.joinCount}명
+          </Text>
+        </div>
 
-      <Button
-        ml={800}
-        loading={isLoading}
-        disabled={isLoading || (participation && user?.accessToken)}
-        onClick={() => {
-          if (!user?.accessToken) {
-            setModal(true);
-          }
-          joinRoadmap();
-        }}
-      >
-        {isLoading && ' 로딩 중'}
-        {!isLoading && participation && user?.accessToken && '참여 중'}
-        {!isLoading && (!participation || !user?.accessToken) ? '참여하기' : ''}
-      </Button>
-
+        <Button
+          ml={800}
+          loading={isLoading}
+          disabled={isLoading || (participation && user?.accessToken)}
+          onClick={() => {
+            if (!user?.accessToken) {
+              setModal(true);
+            }
+            joinRoadmap();
+          }}
+        >
+          {isLoading && ' 로딩 중'}
+          {!isLoading && participation && user?.accessToken && '참여 중'}
+          {!isLoading && (!participation || !user?.accessToken)
+            ? '참여하기'
+            : ''}
+        </Button>
+      </Card>
       <Modal
         opened={modal}
         size="70%"
@@ -355,6 +364,7 @@ export default function RoadMapInfo() {
             <Wrap>
               <ReactFlow
                 nodes={nodeState}
+                nodeTypes="default"
                 edges={edgeState}
                 proOptions={proOptions}
                 onNodesChange={onNodesChange}
@@ -367,22 +377,13 @@ export default function RoadMapInfo() {
                 zoomOnDoubleClick={zoomOnDoubleClick}
                 panOnDrag={panOnDrag}
                 attributionPosition="top-right"
-                minZoom={0.2}
-                maxZoom={4}
                 onNodeClick={(e, n) => {
                   setLabel(`${n?.data?.label}`);
                   setId(`${n?.id}`);
                   setIsOpen(!isOpen);
                 }}
                 fitView
-                // style={{
-                //   backgroundColor: '#ebf6fc',
-                // }}
-              >
-                <Background gap={16} />
-                <Controls />
-                <MiniMap zoomable pannable />
-              </ReactFlow>
+              />
               <Drawer
                 opened={isOpen}
                 onClose={() => setIsOpen(!isOpen)}
@@ -390,17 +391,17 @@ export default function RoadMapInfo() {
                 position="right"
                 size="35%"
               >
-                <Center>
+                <Center pl="sm" pr="sm">
                   <EditorContent editor={editor} readOnly />
                 </Center>
                 <Center>
-                  <Button
+                  {/* <Button
                     mt={30}
                     onClick={() => setIsOpen(!isOpen)}
                     variant="light"
                   >
                     닫기
-                  </Button>
+                  </Button> */}
                 </Center>
               </Drawer>
             </Wrap>
@@ -412,7 +413,9 @@ export default function RoadMapInfo() {
 }
 const Wrap = styled.div`
   width: 100%;
-  height: 92vh;
+  background-color: '#ebf6fc';
+  /* height: 96vh; */
+  height: 100em;
   & .updatenode__controls {
     position: absolute;
     right: 10px;
