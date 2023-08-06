@@ -6,8 +6,6 @@
   "dependencies": {
     "@dagrejs/dagre": "^1.0.2",
     "@egjs/infinitegrid": "^4.10.1",
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^5.0.8",
     "@fristys/masonry": "^1.1.7",
     "@mantine/carousel": "^6.0.16",
@@ -23,10 +21,6 @@
     "@mantine/spotlight": "^6.0.16",
     "@mantine/tiptap": "^6.0.16",
     "@monaco-editor/react": "^4.5.1",
-    "@mui/icons-material": "^5.14.3",
-    "@mui/lab": "^5.0.0-alpha.138",
-    "@mui/material": "^5.14.3",
-    "@mui/styled-engine-sc": "^5.12.0",
     "@reactflow/node-toolbar": "^1.2.3",
     "@syncedstore/core": "^0.5.2",
     "@syncedstore/react": "^0.5.2",
@@ -60,7 +54,6 @@
     "http-proxy-middleware": "^2.0.6",
     "jsonpatch": "^3.1.0",
     "lowlight": "^2.9.0",
-    "masonic": "^3.7.0",
     "monaco-editor": "^0.40.0",
     "nanoid": "^4.0.2",
     "prosemirror-keymap": "^1.2.2",
@@ -84,10 +77,6 @@
     "y-prosemirror": "^1.2.1",
     "yjs": "^13.6.7",
     "zustand": "^4.3.9"
-  },
-  "peerDependencies": {
-    "react": "^17.0.0 || ^18.0.0",
-    "react-dom": "^17.0.0 || ^18.0.0"
   },
   "scripts": {
     "start": "react-scripts start",

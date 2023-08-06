@@ -130,7 +130,7 @@ export function HeaderMegaMenu() {
   return (
     <HeaderWrap>
       <Box>
-        <Header height={60} px="md">
+        <Header height={100} px="md">
           <Group position="apart" sx={{ height: '100%' }}>
             <Group
               sx={{ height: '100%' }}
@@ -139,8 +139,9 @@ export function HeaderMegaMenu() {
             >
               <Image
                 src="/img/logo.png"
-                width={200}
-                height={50}
+                width={300}
+                height={80}
+                ml={30}
                 onClick={() => {
                   setLeaveEditorAction('home');
                   pathname === '/roadmap/editor'
@@ -153,6 +154,9 @@ export function HeaderMegaMenu() {
               {pathname !== '/roadmap/editor' && (
                 <TextInput
                   value={search}
+                  size="lg"
+                  w={1000}
+                  ml={120}
                   onChange={onChangeSearch}
                   placeholder="검색어를 입력해주세요."
                   rightSection={
@@ -162,6 +166,7 @@ export function HeaderMegaMenu() {
                       color="blue"
                       loading={isLoading}
                       disabled={isLoading}
+                      size="lg"
                       sx={{
                         borderRadius: '100%',
                         '&[data-disabled]': { opacity: 0.4 },
@@ -169,7 +174,7 @@ export function HeaderMegaMenu() {
                       }}
                     >
                       <IconSearch
-                        size="1rem"
+                        size="1.5rem"
                         onClick={() => searchByKeyword()}
                       />
                     </ActionIcon>
@@ -252,7 +257,12 @@ export function HeaderMegaMenu() {
               </Modal>
               <Group position="center">
                 {pathname !== '/roadmap/editor' && (
-                  <Button onClick={open} variant="light" color="indigo">
+                  <Button
+                    size="lg"
+                    onClick={open}
+                    variant="light"
+                    color="indigo"
+                  >
                     로드맵 생성하기
                   </Button>
                 )}
@@ -261,6 +271,8 @@ export function HeaderMegaMenu() {
                 <>
                   <Text
                     c="blue"
+                    size="lg"
+                    mx={20}
                     className="hoverItem"
                     onClick={() => {
                       setLeaveEditorAction('mypage');
@@ -272,6 +284,7 @@ export function HeaderMegaMenu() {
                     {user.nickname}님
                   </Text>
                   <Button
+                    size="lg"
                     onClick={() => {
                       setLeaveEditorAction('signout');
                       pathname === '/roadmap/editor'
@@ -284,6 +297,7 @@ export function HeaderMegaMenu() {
                 </>
               ) : (
                 <Button
+                  size="lg"
                   onClick={() => {
                     pathname === '/roadmap/editor'
                       ? setIsEditorPage(true)
