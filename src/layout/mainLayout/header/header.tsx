@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-alert */
+/* eslint-disable no-console */
 import {
   ActionIcon,
   Box,
@@ -129,9 +130,14 @@ export function HeaderMegaMenu() {
   return (
     <HeaderWrap>
       <Box>
-        <Header height={60} px="md">
-          <Group position="apart" sx={{ height: '100%' }}>
+        <Header height={100} px="md">
+          <Group
+            position="apart"
+            sx={{ height: '100%' }}
+            style={{ flexWrap: 'nowrap' }}
+          >
             <Group
+              style={{ flexWrap: 'nowrap' }}
               sx={{ height: '100%' }}
               spacing={0}
               className={classes.hiddenMobile}
@@ -148,8 +154,11 @@ export function HeaderMegaMenu() {
               /> */}
               <Image
                 src="/img/logo.png"
-                width={200}
-                height="3rem"
+                width={100}
+                height="2rem"
+                // width={300}
+                // height={80}
+                ml={10}
                 onClick={() => {
                   setLeaveEditorAction('home');
                   pathname === '/roadmap/editor'
@@ -162,6 +171,9 @@ export function HeaderMegaMenu() {
               {pathname !== '/roadmap/editor' && (
                 <TextInput
                   value={search}
+                  size="lg"
+                  w={1000}
+                  ml={20}
                   onChange={onChangeSearch}
                   placeholder="검색어를 입력해주세요."
                   rightSection={
@@ -171,6 +183,7 @@ export function HeaderMegaMenu() {
                       color="blue"
                       loading={isLoading}
                       disabled={isLoading}
+                      size="lg"
                       sx={{
                         borderRadius: '100%',
                         '&[data-disabled]': { opacity: 0.4 },
@@ -178,15 +191,66 @@ export function HeaderMegaMenu() {
                       }}
                     >
                       <IconSearch
-                        size="1rem"
+                        size="1.5rem"
                         onClick={() => searchByKeyword()}
                       />
                     </ActionIcon>
                   }
                 />
               )}
+              <Group position="center">
+                {pathname !== '/roadmap/editor' && (
+                  <Button
+                    size="lg"
+                    onClick={open}
+                    variant="light"
+                    color="indigo"
+                  >
+                    로드맵 생성
+                  </Button>
+                )}
+              </Group>
+              {user && 'accessToken' in user ? (
+                <>
+                  <Text
+                    c="blue"
+                    size="lg"
+                    mx={20}
+                    className="hoverItem"
+                    onClick={() => {
+                      setLeaveEditorAction('mypage');
+                      pathname === '/roadmap/editor'
+                        ? setIsEditorPage(true)
+                        : navigate('/users/mypage');
+                    }}
+                  >
+                    {user.nickname.slice(0, 2)}님
+                  </Text>
+                  <Button
+                    size="lg"
+                    onClick={() => {
+                      setLeaveEditorAction('signout');
+                      pathname === '/roadmap/editor'
+                        ? setIsEditorPage(true)
+                        : signout();
+                    }}
+                  >
+                    Sign out
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  size="lg"
+                  onClick={() => {
+                    pathname === '/roadmap/editor'
+                      ? setIsEditorPage(true)
+                      : navigate('/users/signin');
+                  }}
+                >
+                  Sign in
+                </Button>
+              )}
             </Group>
-
             <Group className={classes.hiddenMobile}>
               <Modal
                 opened={isEditorPage}
@@ -259,49 +323,6 @@ export function HeaderMegaMenu() {
                   </Button>
                 </Center>
               </Modal>
-              <Group position="center">
-                {pathname !== '/roadmap/editor' && (
-                  <Button onClick={open} variant="light" color="indigo">
-                    로드맵 생성하기
-                  </Button>
-                )}
-              </Group>
-              {user && 'accessToken' in user ? (
-                <>
-                  <Text
-                    c="blue"
-                    className="hoverItem"
-                    onClick={() => {
-                      setLeaveEditorAction('mypage');
-                      pathname === '/roadmap/editor'
-                        ? setIsEditorPage(true)
-                        : navigate('/users/mypage');
-                    }}
-                  >
-                    {user.nickname}님
-                  </Text>
-                  <Button
-                    onClick={() => {
-                      setLeaveEditorAction('signout');
-                      pathname === '/roadmap/editor'
-                        ? setIsEditorPage(true)
-                        : signout();
-                    }}
-                  >
-                    Sign out
-                  </Button>
-                </>
-              ) : (
-                <Button
-                  onClick={() => {
-                    pathname === '/roadmap/editor'
-                      ? setIsEditorPage(true)
-                      : navigate('/users/signin');
-                  }}
-                >
-                  Sign in
-                </Button>
-              )}
             </Group>
           </Group>
         </Header>

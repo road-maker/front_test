@@ -10,11 +10,12 @@
     "experimentalDecorators": true,
     "removeComments": false,
     "noImplicitAny": false,
+    "noImplicitThis": false,
     "strictNullChecks": false,
     "jsx": "react-jsx",
     "typeRoots": ["node_modules/@types"],
     "types": ["node"],
-    "lib": ["dom", "dom.iterable", "esnext", "es2018"],
+    "lib": ["es6", "dom", "dom.iterable", "esnext", "es2018"],
     "allowJs": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
@@ -24,7 +25,10 @@
     "isolatedModules": true,
     "noEmit": true,
     "downlevelIteration": true,
-    "strict": true
+    "strict": true,
+    "paths": {
+      "@mui/styled-engine": ["./node_modules/@mui/styled-engine-sc"]
+    }
   },
   "include": [
     "src/**/*.ts",
