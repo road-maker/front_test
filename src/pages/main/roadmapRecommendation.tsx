@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import {
-  ActionIcon,
+  Avatar,
   Card,
   Container,
   createStyles,
@@ -76,6 +76,7 @@ const useStyles = createStyles((theme) => ({
 
   item: {
     maxWidth: '100%',
+    // minHeight: '300px',
   },
 
   hovered: {
@@ -96,7 +97,6 @@ export default function RoadmapRecommendation() {
     axios
       .get(`${baseUrl}/roadmaps?page=${roadmapPage}&order-type=recent`)
       .then((v) => {
-        console.log('data', v?.data);
         setAllRoadmapData(v?.data);
       })
       .catch((e) => {
@@ -106,7 +106,6 @@ export default function RoadmapRecommendation() {
 
   const initialUrl = `${baseUrl}/roadmaps?page=${roadmapPage}&order-type=recent`;
   const fetchUrl = async (url) => {
-    console.log('url', url);
     const response = await fetch(url);
     return response.json();
   };
@@ -163,7 +162,7 @@ export default function RoadmapRecommendation() {
                       : classes.item;
 
                     return (
-                      <div
+                      <Group
                         className={classes.itemWrapper}
                         onMouseOver={() => {
                           setCurrentPage(article.id);
@@ -177,36 +176,15 @@ export default function RoadmapRecommendation() {
                             prevIndexes.filter((i) => i !== cardIndex),
                           );
                         }}
-                        onFocus={() => {
-                          setCurrentPage(article.id);
-                          setHoveredIndexes((prevIndexes) => [
-                            ...prevIndexes,
-                            cardIndex,
-                          ]);
-                        }}
-                        onBlur={() => {
-                          setHoveredIndexes((prevIndexes) =>
-                            prevIndexes.filter((i) => i !== cardIndex),
-                          );
-                        }}
                         key={cardIndex}
                       >
                         <div className={cardClassName}>
                           <Image
                             src={article.thumbnailUrl}
                             alt={`${article.title}.img`}
-                            style={{
-                              cursor: 'pointer',
-                              zIndex: '5',
-                              maxWidth: '100%',
-                            }}
-                            onClick={() => {
-                              currentPage &&
-                                navigate(`/roadmap/post/${currentPage}`);
-                            }}
                           />
                           {isHovered && (
-                            <div
+                            <Group
                               style={{
                                 position: 'absolute',
                                 top: 0,
@@ -219,22 +197,40 @@ export default function RoadmapRecommendation() {
                                 alignItems: 'center',
                                 flexDirection: 'column',
                                 zIndex: 10,
+                                cursor: 'pointer',
+                              }}
+                              onClick={() => {
+                                currentPage &&
+                                  navigate(`/roadmap/post/${currentPage}`);
                               }}
                             >
                               <div
                                 style={{
                                   color: 'white',
                                   padding: '8px',
-                                  fontSize: '12px',
+                                  fontSize: '25px',
                                   textAlign: 'center',
                                 }}
                               >
-                                {article.title} 쀼쀼
+                                {article.title}
+                                <Group
+                                  position="center"
+                                  style={{ fontSize: '20px' }}
+                                  my={10}
+                                >
+                                  <Avatar color="cyan" radius="xl">
+                                    {article.member.nickname.substring(0, 1)}
+                                  </Avatar>
+                                  {article.member.nickname}
+                                </Group>
+                                <div style={{ fontSize: '18px' }}>
+                                  {article.description}
+                                </div>
                               </div>
-                            </div>
+                            </Group>
                           )}
                         </div>
-                      </div>
+                      </Group>
                     );
                   })}
                 </Card.Section>
