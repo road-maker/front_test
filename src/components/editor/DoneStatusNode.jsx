@@ -1,8 +1,9 @@
 import { ActionIcon } from '@mantine/core';
 import { IconCircleCheckFilled } from '@tabler/icons-react';
+import { memo } from 'react';
 import { Handle, Position } from 'reactflow';
 
-export function DoneStatusNode({ data, done, id }) {
+export function DoneStatusNode({ data, done }) {
   return (
     <div>
       {/* {nodes.id===id && nodes.sourcePosition==="right" ? } */}
@@ -34,3 +35,4 @@ export function DoneStatusNode({ data, done, id }) {
     </div>
   );
 }
+export default memo(DoneStatusNode);

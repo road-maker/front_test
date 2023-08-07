@@ -101,7 +101,7 @@ const nodeTypes = {
 const initialNodes = [
   {
     id: '1',
-    data: { label: 'test' },
+    data: { label: '내용을 입력해주세요.' },
     position: { x: 100, y: 100, zoom: 1 },
     type: 'custom',
     style: {
@@ -113,7 +113,7 @@ const initialNodes = [
   },
   {
     id: '2',
-    data: { label: 'Node 2' },
+    data: { label: '내용을 입력해주세요.' },
     position: { x: 100, y: 200, zoom: 1 },
     type: 'custom',
     style: {
@@ -128,7 +128,7 @@ const initialNodes = [
 const initialEdges = [
   { id: 'e11a', source: '1', target: '1a', type: edgeType, animated: true },
 ];
-const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
+const defaultViewport = { x: 0, y: 0, zoom: 1 };
 
 function Roadmap({
   editor,

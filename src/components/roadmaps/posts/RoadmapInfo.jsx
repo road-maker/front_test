@@ -1,3 +1,7 @@
+/* eslint-disable no-console */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
 import {
   ActionIcon,
   Avatar,
@@ -7,14 +11,18 @@ import {
   createStyles,
   Drawer,
   Group,
+  Input,
   Modal,
   rem,
   Text,
   Title,
+  Tooltip,
 } from '@mantine/core';
 import {
   IconBook2,
   IconCalendarStats,
+  IconCertificate,
+  IconCircleArrowRightFilled,
   IconHeart,
   IconHeartFilled,
   IconUser,
@@ -31,7 +39,7 @@ import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
 import { useInput } from 'components/common/hooks/useInput';
 import { useUser } from 'components/user/hooks/useUser';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   ReactFlow,
@@ -85,6 +93,9 @@ const useStyles = createStyles((theme) => ({
     },
   },
 }));
+const nodeTypes = {
+  custom: DoneStatusNode,
+};
 export default function RoadMapInfo() {
   const { classes, theme } = useStyles();
   const navigate = useNavigate();
@@ -101,16 +112,13 @@ export default function RoadMapInfo() {
   const [currentRoadmap, setCurrentRoadmap] = useState(roadmapById?.data || []);
   const [label, onChangeLabel, setLabel] = useInput('');
   const [blogKeyword, onChangeBlogKeyword, setBlogKeyword] = useInput('');
+  const [blogUrl, onChangeBlogUrl, setBlogUrl] = useInput('');
   const [id, onChangeId, setId] = useInput('');
   const [toggle, onChangeToggle, setToggle] = useInput('');
   const [search] = useSearchParams();
   const { user } = useUser();
   const [state, setState] = useState([]);
-  const nodeTypes = {
-    custom: DoneStatusNode,
-    // ResizableNodeSelected,
-    // custom: CustomNode,
-  };
+
   useEffect(() => {
     axios
       .get(`${baseUrl}/roadmaps/${currentPage}`, {
@@ -215,6 +223,32 @@ export default function RoadMapInfo() {
       })
       .catch((err) => console.log(err));
   };
+  const submitBlogUrl = useCallback(() => {
+    axios
+      .post(
+        `${baseUrl}/likes/like-roadmap/${currentRoadmap.id}`,
+        {
+          memberId: user?.nickname,
+          roadmapNodeId: id,
+          // "inProgressNodeId" : 0,
+          submitUrl: blogUrl,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${user?.accessToken}`,
+          },
+        },
+      )
+      .then((v) => {
+        console.log(v);
+        // setCurrentRoadmap({
+        //   ...currentRoadmap,
+        //   isLiked: v?.data.isLiked,
+        //   likeCount: v?.data.likeCount,
+        // });
+      })
+      .catch((err) => console.log(err));
+  }, [blogUrl]);
 
   const [nodeState, setNodes, onNodesChange] = useNodesState([]);
   const [edgeState, setEdges, onEdgesChange] = useEdgesState([]);
@@ -403,6 +437,37 @@ export default function RoadMapInfo() {
                 position="right"
                 size="35%"
               >
+                <Input.Wrapper label="블로그 인증">
+                  <Input
+                    icon={<IconCertificate />}
+                    value={blogUrl}
+                    onChange={onChangeBlogKeyword}
+                    mt={10}
+                    mb={10}
+                    // disabled={keywordSubmitState}
+                    rightSection={
+                      <Tooltip
+                        label="진행도를 체크할 블로그 링크를 등록해주세요."
+                        position="top-end"
+                        withArrow
+                      >
+                        <ActionIcon
+                          disabled={blogKeyword.length === 0}
+                          variant="transparent"
+                          onClick={() => {
+                            submitBlogUrl();
+                          }}
+                        >
+                          <IconCircleArrowRightFilled size="1rem" />
+                        </ActionIcon>
+                      </Tooltip>
+                    }
+                    // onChange={(evt) => {
+                    //   setLabel(evt?.target?.value);
+                    // }}
+                    placeholder="블로그 링크를 입력해주세요."
+                  />
+                </Input.Wrapper>
                 <Center pl="sm" pr="sm">
                   <EditorContent editor={editor} readOnly />
                 </Center>
@@ -431,6 +496,10 @@ const Wrap = styled.div`
 
   & .react-flow__node {
     cursor: pointer;
+  }
+
+  & .react-flow__pane {
+    cursor: auto;
   }
 
   & .updatenode__controls {
