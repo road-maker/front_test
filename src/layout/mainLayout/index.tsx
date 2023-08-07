@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom';
 
 import { Footer } from './footer/Footer';
-import { HeaderMegaMenu } from './header/Header';
+import { HeaderMegaMenu } from './header/HeaderItem';
 
 function MainLayout({ children }) {
   const { pathname } = useLocation();
