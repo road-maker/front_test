@@ -2,18 +2,13 @@
 import {
   Avatar,
   Card,
-  Container,
   createStyles,
   getStylesRef,
   Group,
   Image,
-  Overlay,
   rem,
-  SimpleGrid,
   Text,
 } from '@mantine/core';
-import { useHover } from '@mantine/hooks';
-import { IconHeart } from '@tabler/icons-react';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
 import { useCallback, useEffect, useState } from 'react';

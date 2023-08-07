@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-console */
 import {
   Button,
   Center,
@@ -12,7 +10,6 @@ import {
   SimpleGrid,
   Text,
   Textarea,
-  TextInput,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import axios from 'axios';
@@ -33,15 +30,13 @@ const useStyles = createStyles((theme) => ({
 
 function CommentPage() {
   const [opened, { open, close }] = useDisclosure(false);
-  const { classes, theme } = useStyles();
+  const { classes } = useStyles();
   // const [count, handlers] = useCounter(0, { min: 0, max: 1000 });
   const [commentPage, setCommentPage] = useState(1);
   const { pathname } = useLocation();
-  const [title, setTitle] = useState('');
   const [content, setContent] = useState([]);
   const [commentInput, setCommentInput] = useState('');
   const { user } = useUser();
-  const [counts, setCounts] = useState([]);
 
   const fetchComments = useCallback(() => {
     axios
@@ -60,7 +55,7 @@ function CommentPage() {
         // setCounts(new Array(commentContents.length).fill(0));
         // setNickname(v?.data?.commentNickname);
       })
-      .catch((e) => console.log(e));
+      .catch();
   }, [commentPage, pathname]);
 
   const {
@@ -103,10 +98,6 @@ function CommentPage() {
   if (isLoading) return <div className="loading">Loading...</div>;
   if (isError) return <div>Error! {error.toString()}</div>;
 
-  const handleCommentTitleChange = (event) => {
-    setTitle(event.target.value);
-  };
-
   const handleCommentContentChange = (event) => {
     setCommentInput(event.target.value);
   };
@@ -131,7 +122,7 @@ function CommentPage() {
         fetchComments();
         refetch();
       })
-      .catch((e) => console.log('err', e));
+      .catch();
   }
   return (
     <>
@@ -140,25 +131,6 @@ function CommentPage() {
         <Center>
           <h2>코멘트 작성</h2>
         </Center>
-        {/* <Select
-          label="코멘트 위치"
-          placeholder="선택하세요"
-          data={[
-            { value: 'svelte', label: '자바스크립트' },
-            { value: 'vue', label: '함수 개념과 활용법' },
-            { value: 'react', label: '그래프위치' },
-            { value: 'ng', label: '조건문과 반복문' },
-          ]}
-          name="topic" 
-          value={topic}
-          onChange={handleInputChange}
-        /> */}
-        <TextInput
-          mt={80}
-          placeholder="제목을 입력하세요"
-          name="title"
-          onChange={handleCommentTitleChange}
-        />
         <Textarea
           autosize
           minRows={5}
@@ -181,7 +153,6 @@ function CommentPage() {
         </Center>
       </Modal>
       <Group position="right">
-        {/* <InputWithButton /> */}
         <Select
           mt={20}
           defaultValue="최신순"

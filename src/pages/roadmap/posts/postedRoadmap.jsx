@@ -516,7 +516,6 @@ function PostedRoadmap() {
                 <Drawer
                   opened={isOpen}
                   onClose={() => setIsOpen(!isOpen)}
-                  overlayProps={{ opacity: 0.5, blur: 4 }}
                   position="right"
                   size="35%"
                 >
