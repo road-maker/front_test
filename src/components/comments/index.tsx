@@ -180,11 +180,10 @@ function CommentSection() {
                 <Paper withBorder radius="xs" p="xl" key={index}>
                   <Group>
                     <Avatar color="cyan" radius="xl">
-                      {comments?.nickname}
-                      {/* {user.nickname.substring(0, 1)} */}
+                      {comments?.nickname.substring(0, 1)}
                     </Avatar>
                     <div>
-                      {/* <Text size="sm">{nickname}</Text> */}
+                      <Text size="sm">{comments?.nickname}</Text>
                       <Text size="xs" color="dimmed">
                         {comments?.createdAt}
                       </Text>

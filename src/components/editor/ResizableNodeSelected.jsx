@@ -38,15 +38,15 @@ export function ResizableNodeSelected({ data, selected }) {
         minHeight={30}
         keepAspectRatio
       />
-      <Handle type="target" position={Position.Left} />
-      <Handle type="target" position={Position.Top} />
+      <Handle type="target" position={Position.Left} id="a" />
+      <Handle type="target" position={Position.Top} id="b" />
       {data.length > 2 ? (
         <div style={{ padding: 10 }}>{data.label}</div>
       ) : (
         <Typer style={{ padding: 10 }} data={data.label} />
       )}
-      <Handle type="source" position={Position.Right} />
-      <Handle type="source" position={Position.Bottom} />
+      <Handle type="source" position={Position.Right} id="a" />
+      <Handle type="source" position={Position.Bottom} id="b" />
     </>
   );
 }
