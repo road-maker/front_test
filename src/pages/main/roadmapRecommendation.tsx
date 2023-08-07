@@ -4,12 +4,15 @@ import {
   Card,
   Container,
   createStyles,
+  getStylesRef,
   Group,
   Image,
+  Overlay,
   rem,
   SimpleGrid,
   Text,
 } from '@mantine/core';
+import { useHover } from '@mantine/hooks';
 import { IconHeart } from '@tabler/icons-react';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
@@ -24,6 +27,9 @@ const useStyles = createStyles((theme) => ({
       theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
     columnWidth: '350px',
     columnGap: '15px',
+    [`&:hover .${getStylesRef('image')}`]: {
+      transform: 'scale(1.03)',
+    },
   },
 
   title: {
@@ -62,21 +68,20 @@ const useStyles = createStyles((theme) => ({
     gap: '10px',
   },
 
-  item: {
+  itemWrapper: {
     width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
   },
 
-  //   list: {
-  //     display: flex, // 1
-  //     flex-direction: column, // 2
-  //     flex-wrap: wrap, // 3
-  //     align-content: start, // 4
-  //     height: 1000px, // 5
-  // },
+  item: {
+    maxWidth: '100%',
+  },
 
-  // item: {
-  //     width: 25%; // 6
-  // }
+  hovered: {
+    transform: 'scale(1.03)',
+    transition: 'transform 500ms ease',
+  },
 }));
 
 export default function RoadmapRecommendation() {
@@ -85,23 +90,7 @@ export default function RoadmapRecommendation() {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState('');
   const [roadmapPage, setRoadmapPage] = useState(1);
-
-  // const date = new Date(Date.UTC(2012, 11, 20, 3, 0, 0));
-  // options = {
-  //   year: 'numeric',
-  //   month: 'numeric',
-  //   day: 'numeric',
-  //   hour: 'numeric',
-  //   minute: 'numeric',
-  //   second: 'numeric',
-  //   hour12: false,
-  //   timeZone: '',
-  // };
-  // console.log(new Intl.DateTimeFormat(undefined, options).format(date));
-  // const themes = useMantineTheme();
-  // const mobile = useMediaQuery(`(max-width: ${themes.breakpoints.sm})`);
-  // const { getRoadmapById, getAllRoadmap, getRoadmapByIdAuth } = useRoadmap();
-  // const { roadmaps } = useRoadmapData();
+  const [hoveredIndexes, setHoveredIndexes] = useState([]);
 
   const fetchRoadmaps = useCallback(() => {
     axios
@@ -164,83 +153,92 @@ export default function RoadmapRecommendation() {
         <InfiniteScroll loadMore={fetchNextPage} hasMore={hasNextPage}>
           <Card radius="md" component="a" p="md" className={classes.card}>
             {data.pages &&
-              data.pages.map((pageData) => {
-                return pageData.result.map((article, index) => (
-                  <>
-                    <Card.Section className={classes.list} key={index}>
-                      {article.thumbnailUrl ? (
-                        <Image
-                          className={classes.item}
-                          src={article.thumbnailUrl}
-                          alt={`${article.title}.img`}
-                          style={{ cursor: 'pointer', zIndex: '5' }}
-                          onMouseOver={() => {
-                            setCurrentPage(article.id);
-                          }}
-                          onClick={() => {
-                            currentPage &&
-                              navigate(`/roadmap/post/${currentPage}`);
-                          }}
-                        />
-                      ) : (
-                        <Image
-                          src="https://t1.daumcdn.net/cfile/tistory/21221F4258E793521D"
-                          alt={`${article.title}.img`}
-                          className={classes.item}
-                          style={{ cursor: 'pointer', zIndex: '5' }}
-                          onMouseOver={() => {
-                            setCurrentPage(article.id);
-                          }}
-                          onClick={() => {
-                            currentPage &&
-                              navigate(`/roadmap/post/${currentPage}`);
-                          }}
-                        />
-                      )}
-                    </Card.Section>
-                    {/* 
-                    <Text
-                      color="dimmed"
-                      size="xs"
-                      transform="uppercase"
-                      weight={700}
-                      mt="md"
-                    >
-                      {article?.ownerNickname}
-                    </Text>
-                    <Group spacing={5}>
-                      <ActionIcon>
-                        <IconHeart
-                          size="1.2rem"
-                          color={theme.colors.red[6]}
-                          stroke={1.5}
-                        />
-                      </ActionIcon>
-                    </Group> */
-                    /* <Text
-                        fz="xl"
+              data.pages.map((pageData, pageIndex) => (
+                <Card.Section className={classes.list} key={pageIndex}>
+                  {pageData.result.map((article, index) => {
+                    const cardIndex = pageIndex * 10 + index;
+                    const isHovered = hoveredIndexes.includes(cardIndex);
+                    const cardClassName = isHovered
+                      ? `${classes.item} ${classes.hovered}`
+                      : classes.item;
+
+                    return (
+                      <div
+                        className={classes.itemWrapper}
                         onMouseOver={() => {
                           setCurrentPage(article.id);
+                          setHoveredIndexes((prevIndexes) => [
+                            ...prevIndexes,
+                            cardIndex,
+                          ]);
                         }}
-                        onClick={() => {
-                          currentPage &&
-                            navigate(`/roadmap/post/${currentPage}`);
+                        onMouseLeave={() => {
+                          setHoveredIndexes((prevIndexes) =>
+                            prevIndexes.filter((i) => i !== cardIndex),
+                          );
                         }}
-                        style={{
-                          cursor: 'pointer',
-                          margin: '50px',
-                          zIndex: '10',
+                        onFocus={() => {
+                          setCurrentPage(article.id);
+                          setHoveredIndexes((prevIndexes) => [
+                            ...prevIndexes,
+                            cardIndex,
+                          ]);
                         }}
+                        onBlur={() => {
+                          setHoveredIndexes((prevIndexes) =>
+                            prevIndexes.filter((i) => i !== cardIndex),
+                          );
+                        }}
+                        key={cardIndex}
                       >
-                        {/* {new Intl.DateTimeFormat('ko', {
-                    dateStyle: 'full',
-                  }).format(article?.createdAt)} 
-                        {article?.title}
-                        {article?.createdAt}
-                      </Text> */}
-                  </>
-                ));
-              })}
+                        <div className={cardClassName}>
+                          <Image
+                            src={article.thumbnailUrl}
+                            alt={`${article.title}.img`}
+                            style={{
+                              cursor: 'pointer',
+                              zIndex: '5',
+                              maxWidth: '100%',
+                            }}
+                            onClick={() => {
+                              currentPage &&
+                                navigate(`/roadmap/post/${currentPage}`);
+                            }}
+                          />
+                          {isHovered && (
+                            <div
+                              style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                flexDirection: 'column',
+                                zIndex: 10,
+                              }}
+                            >
+                              <div
+                                style={{
+                                  color: 'white',
+                                  padding: '8px',
+                                  fontSize: '12px',
+                                  textAlign: 'center',
+                                }}
+                              >
+                                {article.title} 쀼쀼
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </Card.Section>
+              ))}
           </Card>
         </InfiniteScroll>
       )}
