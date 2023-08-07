@@ -80,8 +80,6 @@ const getLayoutedElements = (nodes, edges, direction = 'TB') => {
     node.targetPosition = isHorizontal ? 'left' : 'top';
     // eslint-disable-next-line no-param-reassign
     node.sourcePosition = isHorizontal ? 'right' : 'bottom';
-    // We are shifting the dagre node position (anchor=center center) to the top left
-    // so it matches the React Flow node anchor point (top left).
     // eslint-disable-next-line no-param-reassign
     node.position = {
       x: nodeWithPosition.x - nodeWidth / 2,
@@ -173,7 +171,6 @@ function Roadmap({
   const [keywordSubmitState, setKeywordSubmitState] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [nodeBg, setNodeBg] = useState('#eee');
-  const [nodeHidden, setNodeHidden] = useState(false);
   const [rfInstance, setRfInstance] = useState(null);
   const { setViewport, getViewport } = useReactFlow();
   const [useGpt, setUseGpt] = useState([]);
@@ -185,10 +182,6 @@ function Roadmap({
   const [gptDisabled, setGptDisabled] = useState(false);
   const [currentView, setCurrentView] = useState({ x: 0, y: 0, zoom: 1 });
   const yPos = useRef(currentView.y);
-  const [selectedData, setSelectedData] = useState([
-    { value: 'react', label: 'React' },
-    { value: 'ng', label: 'Angular' },
-  ]);
   const { user } = useUser();
   const [files, setFiles] = useState<FileWithPath[]>([]); // 썸네일
   const navigate = useNavigate();
@@ -210,30 +203,6 @@ function Roadmap({
     if (!user) {
       return navigate('/users/signin');
     }
-    // if (!localStorage.getItem('recent_gpt_search')) {
-    //   setGptRes(false);
-    // }
-    // if (localStorage.getItem('recent_gpt_search')) {
-    // const localData: NewPrompt = JSON.parse(
-    //   localStorage.getItem('recent_gpt_search'),
-    // );
-    //   setKeyword(localData?.keyword);
-    //   axios
-    //     .post(`${baseUrl}/gpt/roadmap?prompt=${localData.keyword}`, {
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //         Authorization: `Bearer ${user?.accessToken}`,
-    //       },
-    //     })
-    //     .then((res) => {
-    //       res?.data.length > 0 ? setGptRes(false) : setGptRes(true);
-    //       setUseGpt(res?.data);
-    //     })
-    //     .then(() => {
-    //       setGptRes(false);
-    //       // onLayout('TB');
-    //     });
-    // }
     if (!localStorage.getItem('recent_gpt_search')) {
       setGptRes(false);
     }
@@ -253,28 +222,16 @@ function Roadmap({
         .then((res) => {
           res?.data.length > 0 ? setGptRes(false) : setGptRes(true);
           setUseGpt(res?.data);
-          // onLayout('TB');
         })
-        // .then(() => {
-        //   onLayout('TB');
-        // })
         .then(() => {
           setGptRes(false);
         });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     onLayout('LR');
   }, [useGpt.length]);
-  // const onSave = useCallback(() => { // 내부적으로 처리
-  //   if (rfInstance) {
-  //     const flow = rfInstance.toObject();
-  //     localStorage.setItem(flowKey, JSON.stringify(flow));
-  //     console.log(flow);
-  //   }
-  // }, [rfInstance]);
 
   useMemo(() => {
     const tmpNode = [];
@@ -282,13 +239,12 @@ function Roadmap({
     // console.log(useGpt);
     // eslint-disable-next-line array-callback-return
     useGpt.map((v) => {
-      if (!nodeSet.has(v?.id)) {
+      if (!nodeSet.has(v?.id) && v?.id.split('.')[0] !== '0') {
         tmpNode.push({
           id: v?.id,
           data: {
             label: v?.content,
           },
-          // type: 'default',
           type: 'custom',
           position,
           style: {
@@ -302,19 +258,42 @@ function Roadmap({
       }
 
       // source랑 target 구해서 간선id 만들고 이어주기
-      // parseInt는 오로지 숫자인 부분만 parse해줬음
 
-      if (v.id !== `${parseInt(v?.id, 10)}`) {
-        if (!edgeSet.has(`e${parseInt(v?.id, 10)}${v?.id}`)) {
+      // if (v.id !== `${parseInt(v?.id, 10)}`) {
+      //   if (!edgeSet.has(`e${parseInt(v?.id, 10)}${v?.id}`)) {
+      // tmpEdge.push({
+      //   id: `e${parseInt(v?.id, 10)}${v?.id}`,
+      //   source: `${parseInt(v?.id, 10)}`,
+      //   target: v.id,
+      //   type: edgeType,
+      //   animated: true,
+      // });
+      //   }
+      //   edgeSet.add(`e${parseInt(v?.id, 10)}${v?.id}`);
+      // }
+      if (v?.id.split('.').length > 1 && v?.id.split('.')[0] !== '0') {
+        // head인 경우
+        // // console.log(
+        // //   'split',
+        // //   v?.id.split('.').reduce((prev, next) => `${prev}.${next}`),
+        // // );
+        // const nodeIds = v.id.split('.').slice(1);
+        // console.log(nodeIds);
+        // const reduced = nodeIds.reduce(
+        //   (prev, next) => `${prev}.${next}`,
+        //   nodeIds[0],
+        // );
+        // console.log(`${reduced}, ${v.content}`);
+        if (!edgeSet.has(`e${v.id.slice(0, v.id.lastIndexOf('.'))}e${v.id}`)) {
           tmpEdge.push({
-            id: `e${parseInt(v?.id, 10)}${v?.id}`,
-            source: `${parseInt(v?.id, 10)}`,
+            id: `e${v.id.slice(0, v.id.lastIndexOf('.'))}e${v.id}`,
+            source: v.id.slice(0, v.id.lastIndexOf('.')),
             target: v.id,
             type: edgeType,
             animated: true,
           });
         }
-        edgeSet.add(`e${parseInt(v?.id, 10)}${v?.id}`);
+        edgeSet.add(`e${v.id.slice(0, v.id.lastIndexOf('.'))}e${v.id}`);
       }
     });
     setNodes(tmpNode);
@@ -914,10 +893,11 @@ function Roadmap({
               value={label}
               mt={10}
               mb={10}
-              // onChange={onChangeLabel}
-              onChange={(evt) => {
-                setLabel(evt?.target?.value);
-              }}
+              onChange={onChangeLabel}
+              // onChange={(evt) => {
+              //   setLabel(evt?.target?.value);
+              // }}
+              onBlur={(evt) => setLabel(label)}
               placeholder="내용을 입력해주세요."
             />
             <ColorInput

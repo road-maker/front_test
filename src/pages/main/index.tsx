@@ -1,6 +1,6 @@
 import MainLayout from 'layout/mainLayout';
 
-import RoadmapRecommendation from './roadmapRecommendation';
+import RoadmapRecommendation from '../../components/roadmaps/posts/main/RoadMapMainItems';
 
 function MainPage() {
   return (
