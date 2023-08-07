@@ -55,8 +55,10 @@ import { RoadmapEdge, RoadmapNode, RoadmapNodes } from './types';
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-const nodeWidth = 172;
-const nodeHeight = 36;
+// const nodeWidth = 172;
+// const nodeHeight = 36;
+const nodeWidth = 200;
+const nodeHeight = 50;
 
 const flowKey = 'example-flow';
 

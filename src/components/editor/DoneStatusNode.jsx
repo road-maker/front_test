@@ -6,7 +6,6 @@ import { Handle, Position } from 'reactflow';
 export function DoneStatusNode({ data, done }) {
   return (
     <div>
-      {/* {nodes.id===id && nodes.sourcePosition==="right" ? } */}
       <Handle type="target" position={Position.Left} />
       <Handle type="target" position={Position.Top} />
       {done ? (
