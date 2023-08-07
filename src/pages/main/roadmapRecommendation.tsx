@@ -1,16 +1,5 @@
 /* eslint-disable no-console */
-import {
-  ActionIcon,
-  Card,
-  Container,
-  createStyles,
-  Group,
-  Image,
-  rem,
-  SimpleGrid,
-  Text,
-} from '@mantine/core';
-import { IconHeart } from '@tabler/icons-react';
+import { Card, createStyles, Group, Image, rem, Text } from '@mantine/core';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
 import { useCallback, useEffect, useState } from 'react';
