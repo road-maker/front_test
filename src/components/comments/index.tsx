@@ -1,6 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
+  Avatar,
   Button,
   Center,
   createStyles,
@@ -16,12 +17,11 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
+import { useUser } from 'components/user/hooks/useUser';
 import { useCallback, useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useInfiniteQuery } from 'react-query';
 import { useLocation } from 'react-router-dom';
-
-import { useUser } from '../../components/user/hooks/useUser';
 
 const useStyles = createStyles((theme) => ({
   body: {
@@ -30,7 +30,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-function CommentPage() {
+function CommentSection() {
   const [opened, { open, close }] = useDisclosure(false);
   const { classes, theme } = useStyles();
   // const [count, handlers] = useCounter(0, { min: 0, max: 1000 });
@@ -75,12 +75,12 @@ function CommentPage() {
     ({ pageParam = initialUrl }) => fetchUrl(pageParam),
     {
       getNextPageParam: (lastPage) => {
+        console.log(lastPage.result);
         if (lastPage.result.length !== 0) {
           return lastPage.next;
         }
         return undefined;
       },
-      enabled: commentPage === 1,
     },
   );
 
@@ -134,24 +134,10 @@ function CommentPage() {
   }
   return (
     <>
-      {' '}
       <Modal opened={opened} onClose={close}>
         <Center>
           <h2>코멘트 작성</h2>
         </Center>
-        {/* <Select
-          label="코멘트 위치"
-          placeholder="선택하세요"
-          data={[
-            { value: 'svelte', label: '자바스크립트' },
-            { value: 'vue', label: '함수 개념과 활용법' },
-            { value: 'react', label: '그래프위치' },
-            { value: 'ng', label: '조건문과 반복문' },
-          ]}
-          name="topic" 
-          value={topic}
-          onChange={handleInputChange}
-        /> */}
         <TextInput
           mt={80}
           placeholder="제목을 입력하세요"
@@ -185,7 +171,7 @@ function CommentPage() {
           mt={20}
           defaultValue="최신순"
           data={[
-            { value: 're', label: '최신순' },
+            { value: 'svelte', label: '최신순' },
             { value: 'vue', label: '공감순' },
           ]}
         /> */}
@@ -210,28 +196,18 @@ function CommentPage() {
               return pageData.result.map((comments, index) => (
                 <Paper withBorder radius="xs" p="xl" key={index}>
                   <Group>
-                    {/* <Avatar color="cyan" radius="xl">
-            {user.nickname.substring(0, 1)}
-          </Avatar> */}
+                    <Avatar color="cyan" radius="xl">
+                      {/* {user.nickname.substring(0, 1)} */}
+                    </Avatar>
                     <div>
                       {/* <Text size="sm">{nickname}</Text> */}
-                      {/* <Text size="xs" color="dimmed">
-                {title}
-              </Text> */}
+                      <Text size="xs" color="dimmed">
+                        {comments.createdAt}
+                      </Text>
                     </div>
                   </Group>
                   <Text className={classes.body} size="sm">
                     {comments.content}
-                    {/* <Group>
-                <ActionIcon onClick={handlers.increment}>
-                  <IconHeart
-                    size="1.5rem"
-                    color={theme.colors.red[6]}
-                    stroke={1.5}
-                  />
-                </ActionIcon>
-                {count}
-              </Group> */}
                   </Text>
                 </Paper>
               ));
@@ -243,4 +219,4 @@ function CommentPage() {
   );
 }
 
-export default CommentPage;
+export default CommentSection;

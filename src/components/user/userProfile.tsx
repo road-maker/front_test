@@ -2,11 +2,11 @@
 import { ActionIcon, Avatar, Group, Paper, Text, Title } from '@mantine/core';
 import { IconSettings } from '@tabler/icons-react';
 import axios from 'axios';
+import MainLayout from 'layout/mainLayout';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { baseUrl } from '../../axiosInstance/constants';
-import { HeaderMegaMenu } from '../../layout/mainLayout/header/header';
 import { useUser } from './hooks/useUser';
 import UserRoadmap from './userRoadmap';
 
@@ -61,12 +61,14 @@ export function UserProfile() {
 
   return (
     <>
-      <HeaderMegaMenu />
-      <Title order={1} ta="center">
-        마이페이지
-      </Title>
-      {myinfo}
-      <UserRoadmap />
+      {/* <HeaderMegaMenu /> */}
+      <MainLayout>
+        <Title order={1} ta="center">
+          마이페이지
+        </Title>
+        {myinfo}
+        <UserRoadmap />
+      </MainLayout>
     </>
   );
 }

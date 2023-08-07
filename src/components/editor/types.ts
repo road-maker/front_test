@@ -50,6 +50,7 @@ export interface RoadmapNode {
   position: XYPosition;
   data: { label: string };
   style?: nodeStyle;
+  done?: boolean;
   content?: string;
   targetPosition?: string;
   sourcePosition?: string;
