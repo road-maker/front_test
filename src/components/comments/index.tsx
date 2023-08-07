@@ -12,7 +12,6 @@ import {
   SimpleGrid,
   Text,
   Textarea,
-  TextInput,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import axios from 'axios';
@@ -88,7 +87,7 @@ function CommentSection() {
     setCommentPage(1); // pathname이 변경될 때 commentPage 초기화
     refetch(); // refetch 함수를 호출하여 데이터를 다시 로드
     fetchComments();
-  }, [commentPage, fetchComments, pathname, refetch, user.accessToken]);
+  }, [commentPage, fetchComments, pathname, refetch, user?.accessToken]);
 
   const initialUrl = `${baseUrl}/roadmaps/load-roadmap/${pathname.slice(
     pathname.lastIndexOf('/') + 1,
@@ -138,18 +137,13 @@ function CommentSection() {
         <Center>
           <h2>코멘트 작성</h2>
         </Center>
-        <TextInput
-          mt={80}
-          placeholder="제목을 입력하세요"
-          name="title"
-          onChange={handleCommentTitleChange}
-        />
         <Textarea
           autosize
+          label="내용을 입력하세요"
           minRows={5}
           maxRows={10}
           mt={30}
-          placeholder="내용을 입력하세요"
+          placeholder="로드맵 공유 감사합니다!"
           name="content"
           onChange={handleCommentContentChange}
         />
@@ -165,17 +159,6 @@ function CommentSection() {
           </Button>
         </Center>
       </Modal>
-      <Group position="right">
-        {/* <InputWithButton /> */}
-        {/* <Select
-          mt={20}
-          defaultValue="최신순"
-          data={[
-            { value: 'svelte', label: '최신순' },
-            { value: 'vue', label: '공감순' },
-          ]}
-        /> */}
-      </Group>
       <Center mt={20}>
         <Button onClick={open}>코멘트 작성하기</Button>
       </Center>
@@ -186,7 +169,7 @@ function CommentSection() {
       ) : (
         <InfiniteScroll loadMore={fetchNextPage} hasMore={hasNextPage}>
           <SimpleGrid
-            key={user.id}
+            key={user?.id}
             cols={1}
             spacing="xl"
             mt={70}
@@ -197,17 +180,18 @@ function CommentSection() {
                 <Paper withBorder radius="xs" p="xl" key={index}>
                   <Group>
                     <Avatar color="cyan" radius="xl">
+                      {comments?.nickname}
                       {/* {user.nickname.substring(0, 1)} */}
                     </Avatar>
                     <div>
                       {/* <Text size="sm">{nickname}</Text> */}
                       <Text size="xs" color="dimmed">
-                        {comments.createdAt}
+                        {comments?.createdAt}
                       </Text>
                     </div>
                   </Group>
                   <Text className={classes.body} size="sm">
-                    {comments.content}
+                    {comments?.content}
                   </Text>
                 </Paper>
               ));

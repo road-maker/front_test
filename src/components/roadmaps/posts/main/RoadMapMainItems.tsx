@@ -68,29 +68,12 @@ const useStyles = createStyles((theme) => ({
   // }
 }));
 
-export default function RoadmapRecommendation() {
+export default function RoadmapMainItems() {
   const [allRoadmapData, setAllRoadmapData] = useState([]);
   const { classes } = useStyles();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState('');
   const [roadmapPage, setRoadmapPage] = useState(1);
-
-  // const date = new Date(Date.UTC(2012, 11, 20, 3, 0, 0));
-  // options = {
-  //   year: 'numeric',
-  //   month: 'numeric',
-  //   day: 'numeric',
-  //   hour: 'numeric',
-  //   minute: 'numeric',
-  //   second: 'numeric',
-  //   hour12: false,
-  //   timeZone: '',
-  // };
-  // console.log(new Intl.DateTimeFormat(undefined, options).format(date));
-  // const themes = useMantineTheme();
-  // const mobile = useMediaQuery(`(max-width: ${themes.breakpoints.sm})`);
-  // const { getRoadmapById, getAllRoadmap, getRoadmapByIdAuth } = useRoadmap();
-  // const { roadmaps } = useRoadmapData();
 
   const fetchRoadmaps = useCallback(() => {
     axios
@@ -187,7 +170,7 @@ export default function RoadmapRecommendation() {
                         />
                       )}
                     </Card.Section>
-                    {/* 
+                    {/*
                     <Text
                       color="dimmed"
                       size="xs"
@@ -223,7 +206,7 @@ export default function RoadmapRecommendation() {
                       >
                         {/* {new Intl.DateTimeFormat('ko', {
                     dateStyle: 'full',
-                  }).format(article?.createdAt)} 
+                  }).format(article?.createdAt)}
                         {article?.title}
                         {article?.createdAt}
                       </Text> */}
