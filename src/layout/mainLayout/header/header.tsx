@@ -224,6 +224,15 @@ export function HeaderMegaMenu() {
                         : navigate('/users/mypage');
                     }}
                   >
+                    {/* <Avatar color="cyan" radius="xl"  className="hoverItem"
+                    onClick={() => {
+                      setLeaveEditorAction('mypage');
+                      pathname === '/roadmap/editor'
+                        ? setIsEditorPage(true)
+                        : navigate('/users/mypage');
+                    }}>
+                    {user.nickname.slice(0, 2)}님
+                  </Avatar> */}
                     {user.nickname.slice(0, 2)}님
                   </Text>
                   <Button
