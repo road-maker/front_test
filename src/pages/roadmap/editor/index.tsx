@@ -22,6 +22,7 @@ import RoadMapCanvas from '../../../components/editor/RoadMapEditor';
 
 export default function RoadMapEditor(): ReactElement {
   const [label, onChangeLabel, setLabel] = useInput(''); // 노드 상세 내용
+  const [blogKeyword, onChangeBlogKeyword, setBlogKeyword] = useInput(''); // 노드 상세 내용
   const [color, onChangeColor, setColor] = useInput('#fff'); // 노드 색
   // const [gptDetails, onChangeGptDetails, setGptDetails] = useInput(''); // 노드 색
   const [id, onChangeId, setId] = useInput('');
@@ -196,6 +197,9 @@ export default function RoadMapEditor(): ReactElement {
               state={state}
               editor={editor}
               id={id}
+              blogKeyword={blogKeyword}
+              onChangeBlogKeyword={onChangeBlogKeyword}
+              setBlogKeyword={setBlogKeyword}
               toggleEditor={toggleEditor}
               roadMapTitle={roadMapTitle}
               onChangeId={onChangeId}

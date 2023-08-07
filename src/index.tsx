@@ -2,7 +2,6 @@ import './index.css';
 
 import { Button, MantineProvider, Text } from '@mantine/core';
 import { ContextModalProps, ModalsProvider } from '@mantine/modals';
-import { StyledEngineProvider } from '@mui/material/styles';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
@@ -39,16 +38,7 @@ declare module '@mantine/modals' {
 root.render(
   <React.StrictMode>
     <MantineProvider
-      withGlobalStyles
-      withNormalizeCSS
       theme={{
-        breakpoints: {
-          xs: '30em',
-          sm: '48em',
-          md: '64em',
-          lg: '74em',
-          xl: '90em',
-        },
         components: {
           Containers: {
             defaultProps: {
@@ -65,9 +55,7 @@ root.render(
       }}
     >
       <ModalsProvider modals={modals}>
-        <StyledEngineProvider injectFirst>
-          <App />
-        </StyledEngineProvider>
+        <App />
       </ModalsProvider>
     </MantineProvider>
   </React.StrictMode>,

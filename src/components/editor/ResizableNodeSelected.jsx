@@ -1,8 +1,16 @@
-import { useEffect } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import Typer from 'components/common/typingAnimation/Typer';
+import { memo, useEffect, useState } from 'react';
 import { Handle, NodeResizer, Position } from 'reactflow';
 
 export function ResizableNodeSelected({ data, selected }) {
-  // window.ResizeObserver = undefined;
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (data !== '내용을 입력해주세요.') {
+      setIsLoading(false);
+    }
+  }, [isLoading]);
   useEffect(() => {
     window.addEventListener('error', (e) => {
       if (e.message === 'ResizeObserver loop limit exceeded') {
@@ -32,14 +40,18 @@ export function ResizableNodeSelected({ data, selected }) {
       />
       <Handle type="target" position={Position.Left} />
       <Handle type="target" position={Position.Top} />
-      <div style={{ padding: 10 }}>{data.label}</div>
+      {data.length > 2 ? (
+        <div style={{ padding: 10 }}>{data.label}</div>
+      ) : (
+        <Typer style={{ padding: 10 }} data={data.label} />
+      )}
       <Handle type="source" position={Position.Right} />
       <Handle type="source" position={Position.Bottom} />
     </>
   );
 }
 
-// export default memo(ResizableNodeSelected);
+export default memo(ResizableNodeSelected);
 // // export default ResizableNodeSelected;
 
 // function ResizableNodeSelected({ data, selected }) {

@@ -41,6 +41,7 @@
     "src/components/user/userProfile.jsx",
     "src/components/editor/RoadMapEditor.jsx",
     "src/pages/main/commentPage.tsx",
-    "src/pages/main/searchByKeyword/Roadmap.jsx"
+    "src/pages/main/searchByKeyword/Roadmap.jsx",
+    "src/components/roadmaps/posts/RoadmapInfo.jsx"
   ]
 }
