@@ -713,26 +713,26 @@ function Roadmap({
 
   return (
     <Wrap>
-      <Modal.Root opened={gptRes} onClose={close} centered>
-        <Modal.Overlay color="#000" opacity={0.85} />
-        <Modal.Content>
-          <Modal.Header>
-            <Modal.Title>
-              <Typer data="AI로 자동 생성 중" />
-            </Modal.Title>
-            <Modal.CloseButton />
-          </Modal.Header>
-          <Modal.Body>
-            <Loading />
-            <Typer
-              data={`"${JSON.parse(
-                localStorage.getItem('recent_gpt_search'),
-              )}"에 관한 로드맵을 ai로 생성 중...`}
-            />
-          </Modal.Body>
-        </Modal.Content>
-      </Modal.Root>
-
+      {keyword in JSON.parse(localStorage.getItem('recent_gpt_search')) && (
+        <Modal.Root opened={gptRes} onClose={close} centered>
+          <Modal.Overlay color="#000" opacity={0.85} />
+          <Modal.Content>
+            <Modal.Header>
+              <Modal.Title>
+                <Typer data="AI로 자동 생성 중" />
+              </Modal.Title>
+              <Modal.CloseButton />
+            </Modal.Header>
+            <Modal.Body>
+              <Loading />
+              <Typer
+                data={`"${JSON.parse(localStorage.getItem('recent_gpt_search'))
+                  ?.keyword}"에 관한 로드맵을 생성 중...`}
+              />
+            </Modal.Body>
+          </Modal.Content>
+        </Modal.Root>
+      )}
       <Modal
         opened={submitModal}
         centered
