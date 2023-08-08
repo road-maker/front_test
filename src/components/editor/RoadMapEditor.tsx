@@ -86,7 +86,7 @@ const getLayoutedElements = (nodes, edges, direction = 'TB') => {
     node.sourcePosition = isHorizontal ? 'right' : 'bottom';
     // eslint-disable-next-line no-param-reassign
     node.position = {
-      x: nodeWithPosition.x - nodeWidth / 2,
+      x: nodeWithPosition.x - nodeWidth / 3,
       y: nodeWithPosition.y - nodeHeight / 2,
     };
     return node;
@@ -263,8 +263,7 @@ function Roadmap({
           style: {
             background: `${
               parseInt(v.id.slice(0, 1), 10) % 5 === 0
-                ? // ? colorPalette.reds[indx % 5]
-                  colorPalette.reds[cnt % 5]
+                ? colorPalette.reds[cnt % 5]
                 : parseInt(v.id.slice(0, 1), 10) % 5 === 1
                 ? colorPalette.oranges[cnt % 5]
                 : parseInt(v.id.slice(0, 1), 10) % 5 === 2

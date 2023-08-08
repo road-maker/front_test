@@ -440,6 +440,7 @@ export default function RoadMapInfo() {
             <Wrap>
               <ReactFlow
                 nodes={nodeState}
+                preventScrolling={false}
                 viewport={currentRoadmap?.viewport}
                 // nodeTypes="default"
                 nodeTypes={nodeTypes}
