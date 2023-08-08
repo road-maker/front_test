@@ -179,7 +179,7 @@ function CommentSection() {
               return pageData.result.map((comments, index) => (
                 <Paper withBorder radius="xs" p="xl" key={index}>
                   <Group>
-                    <Avatar color="cyan" radius="xl">
+                    <Avatar radius="sm" color="cyan">
                       {comments?.nickname.substring(0, 1)}
                     </Avatar>
                     <div>

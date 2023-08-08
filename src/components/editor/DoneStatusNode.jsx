@@ -1,14 +1,13 @@
-import { ActionIcon } from '@mantine/core';
-import { IconCircleCheckFilled } from '@tabler/icons-react';
 import { memo } from 'react';
 import { Handle, Position } from 'reactflow';
 
-export function DoneStatusNode({ data, done }) {
+// export function DoneStatusNode({ data, done }) {
+export function DoneStatusNode({ data }) {
   return (
     <div>
       <Handle type="target" position={Position.Left} />
       <Handle type="target" position={Position.Top} />
-      {done ? (
+      {/* {done ? (
         <ActionIcon
           style={{
             color: 'green',
@@ -27,7 +26,7 @@ export function DoneStatusNode({ data, done }) {
         >
           <IconCircleCheckFilled />
         </ActionIcon>
-      )}
+      )} */}
       <div style={{ padding: 10 }}>{data.label}</div>
       <Handle type="source" position={Position.Right} />
       <Handle type="source" position={Position.Bottom} />

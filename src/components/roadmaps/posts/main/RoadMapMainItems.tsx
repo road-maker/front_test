@@ -17,6 +17,8 @@ import { useInfiniteQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
 
+import { ReactComponent as Spinner } from '../../../../assets/Spinner.svg';
+
 const useStyles = createStyles((theme) => ({
   card: {
     backgroundColor:
@@ -77,6 +79,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function RoadmapRecommendation() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [allRoadmapData, setAllRoadmapData] = useState([]);
   const { classes } = useStyles();
   const navigate = useNavigate();
@@ -128,12 +131,16 @@ export default function RoadmapRecommendation() {
     fetchRoadmaps();
   }, [fetchRoadmaps, refetch]);
 
-  if (isLoading) return <div className="loading">Loading...</div>;
+  if (isLoading)
+    return (
+      <div className="loading" style={{ height: '100vh' }}>
+        <Spinner />
+        <h1 style={{ textAlign: 'center' }}>로드맵 가져오는 중</h1>
+      </div>
+    );
   if (isError) return <div>Error! {error.toString()}</div>;
 
-  return !allRoadmapData ? (
-    <Text>만들어진 로드맵이 없습니다.</Text>
-  ) : (
+  return (
     <InfiniteScroll loadMore={fetchNextPage} hasMore={hasNextPage}>
       <SimpleGrid
         cols={4}
