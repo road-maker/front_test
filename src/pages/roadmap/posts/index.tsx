@@ -8,7 +8,6 @@ export default function RoadMapPostPage() {
     <MainLayout>
       <Container size="94vw" px={0}>
         <RoadMapInfo />
-        {/* <RoadMap /> */}
         <CommentSection />
       </Container>
     </MainLayout>
