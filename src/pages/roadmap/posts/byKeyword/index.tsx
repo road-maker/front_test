@@ -1,11 +1,10 @@
-import { HeaderMegaMenu } from 'layout/mainLayout/header/header';
+import MainLayout from 'layout/mainLayout';
 import { InfiniteRoadmapByKeyword } from 'pages/main/searchByKeyword/InfiniteRoadmaps';
 
 export default function KeywordSearchRoadmaps() {
   return (
-    <>
-      <HeaderMegaMenu />
+    <MainLayout>
       <InfiniteRoadmapByKeyword />
-    </>
+    </MainLayout>
   );
 }

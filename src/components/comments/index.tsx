@@ -1,4 +1,7 @@
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
+  Avatar,
   Button,
   Center,
   createStyles,
@@ -6,7 +9,6 @@ import {
   Modal,
   Paper,
   rem,
-  Select,
   SimpleGrid,
   Text,
   Textarea,
@@ -14,12 +16,11 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
+import { useUser } from 'components/user/hooks/useUser';
 import { useCallback, useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useInfiniteQuery } from 'react-query';
 import { useLocation } from 'react-router-dom';
-
-import { useUser } from '../../components/user/hooks/useUser';
 
 const useStyles = createStyles((theme) => ({
   body: {
@@ -28,15 +29,17 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-function CommentPage() {
+function CommentSection() {
   const [opened, { open, close }] = useDisclosure(false);
-  const { classes } = useStyles();
+  const { classes, theme } = useStyles();
   // const [count, handlers] = useCounter(0, { min: 0, max: 1000 });
   const [commentPage, setCommentPage] = useState(1);
   const { pathname } = useLocation();
+  const [title, setTitle] = useState('');
   const [content, setContent] = useState([]);
   const [commentInput, setCommentInput] = useState('');
   const { user } = useUser();
+  const [counts, setCounts] = useState([]);
 
   const fetchComments = useCallback(() => {
     axios
@@ -55,7 +58,7 @@ function CommentPage() {
         // setCounts(new Array(commentContents.length).fill(0));
         // setNickname(v?.data?.commentNickname);
       })
-      .catch();
+      .catch((e) => console.log(e));
   }, [commentPage, pathname]);
 
   const {
@@ -71,12 +74,12 @@ function CommentPage() {
     ({ pageParam = initialUrl }) => fetchUrl(pageParam),
     {
       getNextPageParam: (lastPage) => {
+        console.log(lastPage.result);
         if (lastPage.result.length !== 0) {
           return lastPage.next;
         }
         return undefined;
       },
-      enabled: commentPage === 1,
     },
   );
 
@@ -84,7 +87,7 @@ function CommentPage() {
     setCommentPage(1); // pathname이 변경될 때 commentPage 초기화
     refetch(); // refetch 함수를 호출하여 데이터를 다시 로드
     fetchComments();
-  }, [commentPage, fetchComments, pathname, refetch, user.accessToken]);
+  }, [commentPage, fetchComments, pathname, refetch, user?.accessToken]);
 
   const initialUrl = `${baseUrl}/roadmaps/load-roadmap/${pathname.slice(
     pathname.lastIndexOf('/') + 1,
@@ -97,6 +100,10 @@ function CommentPage() {
 
   if (isLoading) return <div className="loading">Loading...</div>;
   if (isError) return <div>Error! {error.toString()}</div>;
+
+  const handleCommentTitleChange = (event) => {
+    setTitle(event.target.value);
+  };
 
   const handleCommentContentChange = (event) => {
     setCommentInput(event.target.value);
@@ -122,21 +129,21 @@ function CommentPage() {
         fetchComments();
         refetch();
       })
-      .catch();
+      .catch((e) => console.log('err', e));
   }
   return (
     <>
-      {' '}
       <Modal opened={opened} onClose={close}>
         <Center>
           <h2>코멘트 작성</h2>
         </Center>
         <Textarea
           autosize
+          label="내용을 입력하세요"
           minRows={5}
           maxRows={10}
           mt={30}
-          placeholder="내용을 입력하세요"
+          placeholder="로드맵 공유 감사합니다!"
           name="content"
           onChange={handleCommentContentChange}
         />
@@ -152,16 +159,6 @@ function CommentPage() {
           </Button>
         </Center>
       </Modal>
-      <Group position="right">
-        <Select
-          mt={20}
-          defaultValue="최신순"
-          data={[
-            { value: 'svelte', label: '최신순' },
-            { value: 'vue', label: '공감순' },
-          ]}
-        />
-      </Group>
       <Center mt={20}>
         <Button onClick={open}>코멘트 작성하기</Button>
       </Center>
@@ -172,7 +169,7 @@ function CommentPage() {
       ) : (
         <InfiniteScroll loadMore={fetchNextPage} hasMore={hasNextPage}>
           <SimpleGrid
-            key={user.id}
+            key={user?.id}
             cols={1}
             spacing="xl"
             mt={70}
@@ -182,28 +179,18 @@ function CommentPage() {
               return pageData.result.map((comments, index) => (
                 <Paper withBorder radius="xs" p="xl" key={index}>
                   <Group>
-                    {/* <Avatar color="cyan" radius="xl">
-            {user.nickname.substring(0, 1)}
-          </Avatar> */}
+                    <Avatar radius="sm" color="cyan">
+                      {comments?.nickname.substring(0, 1)}
+                    </Avatar>
                     <div>
-                      {/* <Text size="sm">{nickname}</Text> */}
-                      {/* <Text size="xs" color="dimmed">
-                {title}
-              </Text> */}
+                      <Text size="sm">{comments?.nickname}</Text>
+                      <Text size="xs" color="dimmed">
+                        {comments?.createdAt}
+                      </Text>
                     </div>
                   </Group>
                   <Text className={classes.body} size="sm">
-                    {comments.content}
-                    {/* <Group>
-                <ActionIcon onClick={handlers.increment}>
-                  <IconHeart
-                    size="1.5rem"
-                    color={theme.colors.red[6]}
-                    stroke={1.5}
-                  />
-                </ActionIcon>
-                {count}
-              </Group> */}
+                    {comments?.content}
                   </Text>
                 </Paper>
               ));
@@ -215,4 +202,4 @@ function CommentPage() {
   );
 }
 
-export default CommentPage;
+export default CommentSection;

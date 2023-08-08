@@ -25,7 +25,7 @@ import { baseUrl } from 'axiosInstance/constants';
 import { useInput } from 'components/common/hooks/useInput';
 // import { usePrompt } from 'components/prompts/hooks/usePrompt';
 import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { clearStoredGpt } from 'storage/gpt-storage';
 import { clearStoredRoadmap } from 'storage/roadmap-storage';
@@ -131,17 +131,34 @@ export function HeaderMegaMenu() {
     <HeaderWrap>
       <Box>
         <Header height={100} px="md">
-          <Group position="apart" sx={{ height: '100%' }}>
+          <Group
+            position="apart"
+            sx={{ height: '100%' }}
+            style={{ flexWrap: 'nowrap' }}
+          >
             <Group
+              style={{ flexWrap: 'nowrap' }}
               sx={{ height: '100%' }}
               spacing={0}
               className={classes.hiddenMobile}
             >
+              {/* <Logo
+                className="hoverItem"
+                style={{ width: '3em' }}
+                onClick={() => {
+                  setLeaveEditorAction('home');
+                  pathname === '/roadmap/editor'
+                    ? setIsEditorPage(true)
+                    : navigate('/');
+                }}
+              /> */}
               <Image
                 src="/img/logo.png"
-                width={300}
-                height={80}
-                ml={30}
+                width={100}
+                height="2rem"
+                // width={300}
+                // height={80}
+                ml={10}
                 onClick={() => {
                   setLeaveEditorAction('home');
                   pathname === '/roadmap/editor'
@@ -156,7 +173,7 @@ export function HeaderMegaMenu() {
                   value={search}
                   size="lg"
                   w={1000}
-                  ml={120}
+                  ml={20}
                   onChange={onChangeSearch}
                   placeholder="검색어를 입력해주세요."
                   rightSection={
@@ -181,8 +198,68 @@ export function HeaderMegaMenu() {
                   }
                 />
               )}
+              <Group position="center">
+                {pathname !== '/roadmap/editor' && (
+                  <Button
+                    size="lg"
+                    onClick={open}
+                    variant="light"
+                    color="indigo"
+                  >
+                    로드맵 생성
+                  </Button>
+                )}
+              </Group>
+              {user && 'accessToken' in user ? (
+                <>
+                  <Text
+                    c="blue"
+                    size="lg"
+                    mx={20}
+                    className="hoverItem"
+                    onClick={() => {
+                      setLeaveEditorAction('mypage');
+                      pathname === '/roadmap/editor'
+                        ? setIsEditorPage(true)
+                        : navigate('/users/mypage');
+                    }}
+                  >
+                    {/* <Avatar color="cyan" radius="xl"  className="hoverItem"
+                    onClick={() => {
+                      setLeaveEditorAction('mypage');
+                      pathname === '/roadmap/editor'
+                        ? setIsEditorPage(true)
+                        : navigate('/users/mypage');
+                    }}>
+                    {user.nickname.slice(0, 2)}님
+                  </Avatar> */}
+                    {user.nickname.slice(0, 2)}님
+                  </Text>
+                  <Button
+                    size="lg"
+                    onClick={() => {
+                      setLeaveEditorAction('signout');
+                      pathname === '/roadmap/editor'
+                        ? setIsEditorPage(true)
+                        : signout();
+                    }}
+                  >
+                    Sign out
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  size="lg"
+                  onClick={() => {
+                    pathname === '/roadmap/editor'
+                      ? setIsEditorPage(true)
+                      : navigate('/users/signin');
+                  }}
+                >
+                  Sign in
+                </Button>
+              )}
             </Group>
-
             <Group className={classes.hiddenMobile}>
               <Modal
                 opened={isEditorPage}
@@ -255,58 +332,6 @@ export function HeaderMegaMenu() {
                   </Button>
                 </Center>
               </Modal>
-              <Group position="center">
-                {pathname !== '/roadmap/editor' && (
-                  <Button
-                    size="lg"
-                    onClick={open}
-                    variant="light"
-                    color="indigo"
-                  >
-                    로드맵 생성하기
-                  </Button>
-                )}
-              </Group>
-              {user && 'accessToken' in user ? (
-                <>
-                  <Text
-                    c="blue"
-                    size="lg"
-                    mx={20}
-                    className="hoverItem"
-                    onClick={() => {
-                      setLeaveEditorAction('mypage');
-                      pathname === '/roadmap/editor'
-                        ? setIsEditorPage(true)
-                        : navigate('/users/mypage');
-                    }}
-                  >
-                    {user.nickname}님
-                  </Text>
-                  <Button
-                    size="lg"
-                    onClick={() => {
-                      setLeaveEditorAction('signout');
-                      pathname === '/roadmap/editor'
-                        ? setIsEditorPage(true)
-                        : signout();
-                    }}
-                  >
-                    Sign out
-                  </Button>
-                </>
-              ) : (
-                <Button
-                  size="lg"
-                  onClick={() => {
-                    pathname === '/roadmap/editor'
-                      ? setIsEditorPage(true)
-                      : navigate('/users/signin');
-                  }}
-                >
-                  Sign in
-                </Button>
-              )}
             </Group>
           </Group>
         </Header>
@@ -391,7 +416,8 @@ export function InputWithButton(props: TextInputProps) {
 
   // const onRequestPrompt = useMemo(() => {}, []);
 
-  useMemo(() => {
+  // useMemo(() => {
+  useEffect(() => {
     // @Pyotato : 페이지 안넘어가던 문제 해결~
     if (promptResponse) {
       navigate(`/roadmap/editor`);
