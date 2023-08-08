@@ -1,35 +1,29 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
-  Anchor,
+  Avatar,
   Box,
   Burger,
   Button,
   Center,
-  Collapse,
   createStyles,
-  Divider,
-  Drawer,
   Group,
   Header,
-  HoverCard,
+  Image,
+  Modal,
   rem,
-  ScrollArea,
-  SimpleGrid,
   Text,
-  ThemeIcon,
-  UnstyledButton,
 } from '@mantine/core';
-// import { MantineLogo } from '@mantine/ds';
 import { useDisclosure } from '@mantine/hooks';
-import {
-  IconBook,
-  IconChartPie3,
-  IconChevronDown,
-  IconCode,
-  IconCoin,
-  IconFingerprint,
-  IconNotification,
-} from '@tabler/icons-react';
-import { Link } from 'react-router-dom';
+import { IconAlertTriangle } from '@tabler/icons-react';
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { clearStoredGpt } from 'storage/gpt-storage';
+import { clearStoredRoadmap } from 'storage/roadmap-storage';
+import { styled } from 'styled-components';
+
+import { useAuth } from '../../../auth/useAuth';
+import { useUser } from '../../../components/user/hooks/useUser';
+import { InputWithButton } from './GptModal';
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -100,195 +94,198 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const mockdata = [
-  {
-    icon: IconCode,
-    title: 'Open source',
-    description: 'This Pokémon’s cry is very loud and distracting',
-  },
-  {
-    icon: IconCoin,
-    title: 'Free for everyone',
-    description: 'The fluid of Smeargle’s tail secretions changes',
-  },
-  {
-    icon: IconBook,
-    title: 'Documentation',
-    description: 'Yanma is capable of seeing 360 degrees without',
-  },
-  {
-    icon: IconFingerprint,
-    title: 'Security',
-    description: 'The shell’s rounded shape and the grooves on its.',
-  },
-  {
-    icon: IconChartPie3,
-    title: 'Analytics',
-    description: 'This Pokémon uses its flying ability to quickly chase',
-  },
-  {
-    icon: IconNotification,
-    title: 'Notifications',
-    description: 'Combusken battles with the intensely hot flames it spews',
-  },
-];
-
 export function HeaderItem() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
   const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
   const { classes, theme } = useStyles();
-
-  const links = mockdata.map((item) => (
-    <UnstyledButton className={classes.subLink} key={item.title}>
-      <Group noWrap align="flex-start">
-        <ThemeIcon size={34} variant="default" radius="md">
-          <item.icon size={rem(22)} color={theme.fn.primaryColor()} />
-        </ThemeIcon>
-        <div>
-          <Text size="sm" fw={500}>
-            {item.title}
-          </Text>
-          <Text size="xs" color="dimmed">
-            {item.description}
-          </Text>
-        </div>
-      </Group>
-    </UnstyledButton>
-  ));
+  const navigate = useNavigate();
+  const { user } = useUser();
+  const { signout } = useAuth();
+  const { pathname } = useLocation();
+  const [opened, { open, close }] = useDisclosure(false);
+  const [isEditorPage, setIsEditorPage] = useState(false);
+  const [leaveEditorAction, setLeaveEditorAction] = useState('');
 
   return (
-    <Box pb={120}>
-      <Header height={60} px="md">
-        <Group position="apart" sx={{ height: '100%' }}>
-          {/* <MantineLogo size={30} /> */}
-          logo
-          <Group
-            sx={{ height: '100%' }}
-            spacing={0}
-            className={classes.hiddenMobile}
-          >
-            <Link to="/" className={classes.link}>
-              Home
-            </Link>
-            <HoverCard
-              width={600}
-              position="bottom"
-              radius="md"
-              shadow="md"
-              withinPortal
+    <HeaderWrap>
+      <Box>
+        <Header height={60} px="md">
+          <Group position="apart" sx={{ height: '100%' }}>
+            <Image
+              src="/img/logo.png"
+              width={100}
+              height="2rem"
+              ml={10}
+              onClick={() => {
+                setLeaveEditorAction('home');
+                pathname === '/roadmap/editor'
+                  ? setIsEditorPage(true)
+                  : navigate('/');
+              }}
+              className="hoverItem"
+            />
+            <Group className={classes.hiddenMobile}>
+              {pathname !== '/roadmap/editor' && (
+                <Button size="md" onClick={open} variant="light" color="indigo">
+                  로드맵 생성
+                </Button>
+              )}
+              {user && 'accessToken' in user ? (
+                <>
+                  <Text
+                    c="blue"
+                    size="md"
+                    mx={20}
+                    className="hoverItem"
+                    onClick={() => {
+                      setLeaveEditorAction('mypage');
+                      pathname === '/roadmap/editor'
+                        ? setIsEditorPage(true)
+                        : navigate('/users/mypage');
+                    }}
+                  >
+                    <Avatar
+                      color="cyan"
+                      radius="xl"
+                      className="hoverItem"
+                      onClick={() => {
+                        setLeaveEditorAction('mypage');
+                        pathname === '/roadmap/editor'
+                          ? setIsEditorPage(true)
+                          : navigate('/users/mypage');
+                      }}
+                    >
+                      {user.nickname.slice(0, 1)}
+                    </Avatar>
+                  </Text>
+                  <Button
+                    size="md"
+                    onClick={() => {
+                      setLeaveEditorAction('signout');
+                      pathname === '/roadmap/editor'
+                        ? setIsEditorPage(true)
+                        : signout();
+                    }}
+                  >
+                    Sign out
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  size="lg"
+                  onClick={() => {
+                    pathname === '/roadmap/editor'
+                      ? setIsEditorPage(true)
+                      : navigate('/users/signin');
+                  }}
+                >
+                  Sign in
+                </Button>
+              )}
+            </Group>
+            <Burger
+              opened={drawerOpened}
+              onClick={toggleDrawer}
+              className={classes.hiddenDesktop}
+            />
+          </Group>
+        </Header>
+      </Box>
+      <Group className={classes.hiddenMobile}>
+        <Modal.Root
+          opened={isEditorPage}
+          onClose={() => setIsEditorPage(false)}
+          centered
+        >
+          <Modal.Overlay color="#000" opacity={0.85} />
+          <Modal.Content>
+            <Modal.Header>
+              <Modal.Title>
+                <h1>로드맵 작성을 중단하시겠습니까?</h1>
+              </Modal.Title>
+              <Modal.CloseButton />
+            </Modal.Header>
+            <Modal.Body style={{ textAlign: 'center' }}>
+              <IconAlertTriangle
+                size="100"
+                style={{
+                  display: 'block',
+                  opacity: 0.5,
+                  marginBottom: '1rem',
+                  width: '18em',
+                  color: '#ff2825',
+                  margin: '0 auto',
+                }}
+              />{' '}
+              <h3>변경사항이 저장되지 않을 수 있습니다. </h3>
+              <Button
+                mt="1rem"
+                mb="1rem"
+                style={{ float: 'right' }}
+                onClick={() => {
+                  if (leaveEditorAction === 'mypage') {
+                    navigate('/users/mypage');
+                  }
+                  if (leaveEditorAction === 'home') {
+                    navigate('/');
+                  }
+                  if (leaveEditorAction === 'signout') {
+                    signout();
+                  }
+                }}
+              >
+                나가기
+              </Button>
+            </Modal.Body>
+          </Modal.Content>
+        </Modal.Root>
+
+        <Modal opened={opened} onClose={close} size="70%">
+          <Center>
+            <h1>새로운 로드맵 생성하기</h1>
+          </Center>
+          <Center>
+            <Image
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDEv4qC_L_0WLYmLRBtBd2sYGkjMzWvGqrOw&usqp=CAU"
+              width={300}
+              height={280}
+            />
+          </Center>
+          <Center>
+            <InputWithButton />
+          </Center>
+          <Center mt={50}>
+            <h5>오늘은 그냥 템플릿 없이 빈 로드맵 만들게요.</h5>
+            <Button
+              size="xs"
+              variant="light"
+              color="blue"
+              onClick={() => {
+                clearStoredRoadmap();
+                clearStoredGpt();
+                if (!user || !('accessToken' in user)) {
+                  // eslint-disable-next-line no-alert
+                  alert('로그인 후 이용가능합니다.');
+                  navigate('/users/signin');
+                }
+                // if(localStorage.getItem(''))
+                navigate('/roadmap/editor');
+              }}
             >
-              <HoverCard.Target>
-                <Link to="/" className={classes.link}>
-                  <Center inline>
-                    <Box component="span" mr={5}>
-                      Features
-                    </Box>
-                    <IconChevronDown
-                      size={16}
-                      color={theme.fn.primaryColor()}
-                    />
-                  </Center>
-                </Link>
-              </HoverCard.Target>
-
-              <HoverCard.Dropdown sx={{ overflow: 'hidden' }}>
-                <Group position="apart" px="md">
-                  <Text fw={500}>Features</Text>
-                  <Anchor href="#" fz="xs">
-                    View all
-                  </Anchor>
-                </Group>
-
-                <Divider
-                  my="sm"
-                  mx="-md"
-                  color={theme.colorScheme === 'dark' ? 'dark.5' : 'gray.1'}
-                />
-
-                <SimpleGrid cols={2} spacing={0}>
-                  {links}
-                </SimpleGrid>
-
-                <div className={classes.dropdownFooter}>
-                  <Group position="apart">
-                    <div>
-                      <Text fw={500} fz="sm">
-                        Get started
-                      </Text>
-                      <Text size="xs" color="dimmed">
-                        Their food sources have decreased, and their numbers
-                      </Text>
-                    </div>
-                    <Button variant="default">Get started</Button>
-                  </Group>
-                </div>
-              </HoverCard.Dropdown>
-            </HoverCard>
-            <Link to="/" className={classes.link}>
-              Learn
-            </Link>
-            <Link to="/" className={classes.link}>
-              Academy
-            </Link>
-          </Group>
-          <Group className={classes.hiddenMobile}>
-            <Button variant="default">Log in</Button>
-            <Button>Sign up</Button>
-          </Group>
-          <Burger
-            opened={drawerOpened}
-            onClick={toggleDrawer}
-            className={classes.hiddenDesktop}
-          />
-        </Group>
-      </Header>
-
-      <Drawer
-        opened={drawerOpened}
-        onClose={closeDrawer}
-        size="100%"
-        padding="md"
-        title="Navigation"
-        className={classes.hiddenDesktop}
-        zIndex={1000000}
-      >
-        <ScrollArea h={`calc(100vh - ${rem(60)})`} mx="-md">
-          <Divider
-            my="sm"
-            color={theme.colorScheme === 'dark' ? 'dark.5' : 'gray.1'}
-          />
-
-          <Link to="/" className={classes.link}>
-            Home
-          </Link>
-          <UnstyledButton className={classes.link} onClick={toggleLinks}>
-            <Center inline>
-              <Box component="span" mr={5}>
-                Features
-              </Box>
-              <IconChevronDown size={16} color={theme.fn.primaryColor()} />
-            </Center>
-          </UnstyledButton>
-          <Collapse in={linksOpened}>{links}</Collapse>
-          <Link to="/" className={classes.link}>
-            Learn
-          </Link>
-          <Link to="/" className={classes.link}>
-            Academy
-          </Link>
-
-          <Divider
-            my="sm"
-            color={theme.colorScheme === 'dark' ? 'dark.5' : 'gray.1'}
-          />
-
-          <Group position="center" grow pb="xl" px="md">
-            <Button variant="default">Log in</Button>
-            <Button>Sign up</Button>
-          </Group>
-        </ScrollArea>
-      </Drawer>
-    </Box>
+              빈 로드맵 만들기
+            </Button>
+          </Center>
+        </Modal>
+      </Group>
+    </HeaderWrap>
   );
 }
+const HeaderWrap = styled.nav`
+  & .hoverItem:hover {
+    cursor: pointer;
+  }
+  & .confirm_btn_wrap {
+    display: inline-flex;
+  }
+`;

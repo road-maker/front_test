@@ -11,18 +11,15 @@ import {
   createStyles,
   Drawer,
   Group,
-  Input,
   Modal,
   rem,
+  ScrollArea,
   Text,
   Title,
-  Tooltip,
 } from '@mantine/core';
 import {
   IconBook2,
   IconCalendarStats,
-  IconCertificate,
-  IconCircleArrowRightFilled,
   IconHeart,
   IconHeartFilled,
   IconUser,
@@ -111,7 +108,7 @@ export default function RoadMapInfo() {
   // @ts-ignore
   const [currentRoadmap, setCurrentRoadmap] = useState(roadmapById?.data || []);
   const [label, onChangeLabel, setLabel] = useInput('');
-  const [blogKeyword, onChangeBlogKeyword, setBlogKeyword] = useInput('');
+  // const [blogKeyword, onChangeBlogKeyword, setBlogKeyword] = useInput('');
   const [blogUrl, onChangeBlogUrl, setBlogUrl] = useInput('');
   const [id, onChangeId, setId] = useInput('');
   const [toggle, onChangeToggle, setToggle] = useInput('');
@@ -256,7 +253,7 @@ export default function RoadMapInfo() {
   const [isDraggable] = useState(false);
   const [isConnectable] = useState(false);
   const [zoomOnScroll] = useState(false); // zoom in zoom out
-  const [panOnScroll] = useState(false); // 위아래 스크롤
+  const [panOnScroll] = useState(true); // 위아래 스크롤
   const [zoomOnDoubleClick] = useState(false);
   const [panOnDrag] = useState(false); // 마우스로 이동
   const [isOpen, setIsOpen] = useState(false);
@@ -287,7 +284,7 @@ export default function RoadMapInfo() {
   };
   return (
     <>
-      <Card mt="2rem">
+      <Card mt="3rem">
         <div
           style={{
             display: 'inline-flex',
@@ -298,7 +295,7 @@ export default function RoadMapInfo() {
         >
           <Group mt="1rem">
             <Title className={classes.title}>{currentRoadmap?.title}</Title>
-            <Avatar color="purple" radius="xl" size="md">
+            <Avatar color="purple" size="md">
               {currentRoadmap?.ownerAvatarUrl || ''}
             </Avatar>
             {currentRoadmap?.ownerNickname}
@@ -430,17 +427,11 @@ export default function RoadMapInfo() {
                 }}
                 fitView
               />
-              <Drawer
-                opened={isOpen}
-                onClose={() => setIsOpen(!isOpen)}
-                overlayProps={{ opacity: 0.5, blur: 4 }}
-                position="right"
-                size="35%"
-              >
-                <Input.Wrapper label="블로그 인증">
+              {/* <Input.Wrapper label="블로그 인증">
                   <Input
                     icon={<IconCertificate />}
                     value={blogUrl}
+                    placeholder="https://myblogUrl.io"
                     onChange={onChangeBlogKeyword}
                     mt={10}
                     mb={10}
@@ -465,22 +456,29 @@ export default function RoadMapInfo() {
                     // onChange={(evt) => {
                     //   setLabel(evt?.target?.value);
                     // }}
-                    placeholder="블로그 링크를 입력해주세요."
                   />
-                </Input.Wrapper>
-                <Center pl="sm" pr="sm">
-                  <EditorContent editor={editor} readOnly />
-                </Center>
-                <Center>
-                  {/* <Button
-                    mt={30}
-                    onClick={() => setIsOpen(!isOpen)}
-                    variant="light"
-                  >
-                    닫기
-                  </Button> */}
-                </Center>
-              </Drawer>
+                </Input.Wrapper> */}
+
+              <Drawer.Root
+                opened={isOpen}
+                scrollAreaComponent={ScrollArea.Autosize}
+                onClose={() => setIsOpen(!isOpen)}
+                position="right"
+                size="38%"
+              >
+                <Drawer.Content>
+                  <Drawer.CloseButton mr="1rem" mt="1rem" />
+                  <Drawer.Body p="1rem">
+                    <Center pl="sm" pr="sm">
+                      <EditorContent
+                        editor={editor}
+                        readOnly
+                        style={{ lineHeight: '2rem' }}
+                      />
+                    </Center>
+                  </Drawer.Body>
+                </Drawer.Content>
+              </Drawer.Root>
             </Wrap>
           </ReactFlowProvider>
         </div>

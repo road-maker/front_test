@@ -12,7 +12,6 @@ import {
   ColorInput,
   Image,
   Input,
-  LoadingOverlay,
   Modal,
   Popover,
   SimpleGrid,
@@ -23,14 +22,11 @@ import {
 } from '@mantine/core';
 import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { useDisclosure } from '@mantine/hooks';
-import {
-  IconAlertCircle,
-  IconCertificate,
-  IconCircleArrowRightFilled,
-  IconWand,
-} from '@tabler/icons-react';
+import { IconAlertCircle, IconWand } from '@tabler/icons-react';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
+import Loading from 'components/common/loadingSpinner/Loading';
+import Typer from 'components/common/typingAnimation/Typer';
 import { useRoadmap } from 'components/roadmaps/posts/hooks/useRoadmap';
 import { useUser } from 'components/user/hooks/useUser';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -717,9 +713,29 @@ function Roadmap({
 
   return (
     <Wrap>
-      <LoadingOverlay visible={gptRes} />
+      <Modal.Root opened={gptRes} onClose={close} centered>
+        <Modal.Overlay color="#000" opacity={0.85} />
+        <Modal.Content>
+          <Modal.Header>
+            <Modal.Title>
+              <Typer data="AI로 자동 생성 중" />
+            </Modal.Title>
+            <Modal.CloseButton />
+          </Modal.Header>
+          <Modal.Body>
+            <Loading />
+            <Typer
+              data={`"${JSON.parse(
+                localStorage.getItem('recent_gpt_search'),
+              )}"에 관한 로드맵을 ai로 생성 중...`}
+            />
+          </Modal.Body>
+        </Modal.Content>
+      </Modal.Root>
+
       <Modal
         opened={submitModal}
+        centered
         onClose={() => setSubmitModal(false)}
         size="40rem"
       >
@@ -814,38 +830,49 @@ function Roadmap({
           </Button>
         </Center>
       </Modal>
-      <Modal
+
+      <Modal.Root
         opened={confirmDelete}
         size="70%"
+        style={{ flexDirection: 'column' }}
         onClose={() => setConfirmDelete(false)}
+        centered
       >
-        <Center>
-          <Center>
-            <h1>정말로 모든 노드를 지우겠습니까?</h1>
+        <Modal.Overlay opacity={0.85} />
+        <Modal.Content>
+          <Modal.Header>
+            <Modal.Title>
+              <h1>정말로 모든 노드를 지우겠습니까?</h1>
+            </Modal.Title>
+            <Modal.CloseButton />
+          </Modal.Header>
+          <Modal.Body>
             <h3>모두 지우기를 누를 시 작업 내용을 복구할 수 없습니다.</h3>
-          </Center>
-          <div className="confirm_btn_wrap">
-            <Button
-              mt={30}
-              onClick={() => {
-                // setNodes([]);
-                setNodes(initialNodes);
-                setEdges([]);
-                setConfirmDelete(false);
-              }}
-            >
-              모두 지우기
-            </Button>
-            <Button
-              mt={30}
-              variant="outline"
-              onClick={() => setConfirmDelete(false)}
-            >
-              취소
-            </Button>
-          </div>
-        </Center>
-      </Modal>
+            <div className="confirm_btn_wrap">
+              <Button
+                mt={30}
+                mr="1rem"
+                onClick={() => {
+                  // setNodes([]);
+                  setNodes(initialNodes);
+                  setEdges([]);
+                  setConfirmDelete(false);
+                }}
+              >
+                모두 지우기
+              </Button>
+              <Button
+                mt={30}
+                variant="outline"
+                onClick={() => setConfirmDelete(false)}
+              >
+                취소
+              </Button>
+            </div>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal.Root>
+
       <Panel position="top-center">
         <Modal opened={nodeModal} onClose={() => setNodeModal(false)} size="xl">
           <Wrap>
@@ -912,7 +939,7 @@ function Roadmap({
               placeholder="Pick color"
               label="노드의 배경색을 골라주세요."
             />
-            <Input.Wrapper label="블로그 인증 키워드 등록">
+            {/* <Input.Wrapper label="블로그 인증 키워드 등록">
               <Input
                 icon={<IconCertificate />}
                 value={blogKeyword}
@@ -938,12 +965,12 @@ function Roadmap({
                     </ActionIcon>
                   </Tooltip>
                 }
-                // onChange={(evt) => {
-                //   setLabel(evt?.target?.value);
-                // }}
+                onChange={(evt) => {
+                  setLabel(evt?.target?.value);
+                }}
                 placeholder="블로그 키워드를 입력해주세요."
               />
-            </Input.Wrapper>
+            </Input.Wrapper> */}
             {/* <input
               // value={selectedNode[0]?.style.background}
               onChange={(evt) => {
@@ -967,19 +994,6 @@ function Roadmap({
             <CustomLabel>로드맵 상세 내용</CustomLabel>
             {toggleEditor}
           </Wrap>
-
-          {/* {selectedNode[0]?.id === id && toggleEditor} */}
-
-          {/* <div className="confirm_btn_wrap">
-            <Button
-              mt={10}
-              onClick={() => {
-                setNodeModal(false);
-              }}
-            >
-              닫기
-            </Button>
-          </div> */}
         </Modal>
       </Panel>
       <ReactFlow
@@ -996,8 +1010,6 @@ function Roadmap({
           setLabel(`${n?.data?.label}`);
           setId(n?.id);
           setColor(n?.style?.background);
-
-          // setSelectedNode(n);
           console.log('n', n);
           console.log('e', e);
           setNodeModal(true);
@@ -1079,14 +1091,9 @@ function Roadmap({
               노드 전체 삭제
             </Button>
           )}
-          {/* <Button type="button" onClick={onRestore} mr={10}>
-            restore
-          </Button> */}
           <Button
             type="button"
             onClick={() => {
-              // onSave();
-              // open();
               setSubmitModal(true);
             }}
             mr={10}
@@ -1112,7 +1119,7 @@ const CustomLabel = styled.div`
 `;
 const Wrap = styled.div`
   width: 100%;
-  height: 93.2vh;
+  height: 91vh;
   & .updatenode__controls {
     position: absolute;
     right: 10px;
