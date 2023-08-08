@@ -5,7 +5,7 @@
 // import { modals } from '@mantine/modals';
 import { Button, Center, Modal } from '@mantine/core';
 import { EditorContent } from '@tiptap/react';
-import { ResizableNodeSelected } from 'components/editor/ResizableNodeSelected';
+import ResizableNodeSelected from 'components/editor/ResizableNodeSelected';
 import { useEffect, useState } from 'react';
 import ReactFlow, {
   Background,
