@@ -1,138 +1,209 @@
-// import axios from 'axios';
-// import { baseUrl } from 'axiosInstance/constants';
-// import { useState } from 'react';
-// import InfiniteScroll from 'react-infinite-scroller';
-// import { useInfiniteQuery } from 'react-query';
-
-// import { Roadmap } from './Roadmap';
-
-// export function InfiniteSearchRoadmap() {
-//   const [pages, setPages] = useState(0);
-//   const fetchUrl = async (param) => {
-//     axios
-//       // .get(`${baseUrl}/roadmaps/search/${search}?page=${url}&size=5`)
-//       .get(`${baseUrl}/roadmaps/search/자바?page=${param}&size=5`)
-//       // .get(url)
-//       .then((v) => {
-//         console.log(v);
-//         // setPages(pages + 1);
-//       })
-//       .catch((e) => console.log(e));
-//   };
-
-//   const {
-//     data,
-//     fetchNextPage,
-//     hasNextPage,
-//     isLoading,
-//     isFetching,
-//     isError,
-//     error,
-//   } = useInfiniteQuery(
-//     'search-roadmaps', // query key
-//     ({ pageParam = pages }) => fetchUrl(pageParam), // default value will be the initial Url
-//     // { getNextPageParam: (lastPage) => lastPage.next || undefined }, // undefined ===> hasNextPage false
-//     { getNextPageParam: () => pages || undefined }, // undefined ===> hasNextPage false
-//   ); // destructure
-//   if (isLoading) {
-//     return <div className="">loading...</div>;
-//   }
-//   if (isError) {
-//     return <div className="">Error!{error.toString()}</div>;
-//   }
-//   return (
-//     <>
-//       {isFetching && <div className="loading">loading...</div>}
-//       <InfiniteScroll loadMore={fetchNextPage} hasMore={hasNextPage}>
-//         {data.pages.map((allRoadmapData) => {
-//           console.log(data);
-//           console.log(allRoadmapData);
-//           return allRoadmapData?.map((r) => {
-//             // actual data
-//             return (
-//               <Roadmap
-//                 id={r.id}
-//                 thumbnailUrl={r.thumbnailUrl}
-//                 title={r.title}
-//                 ownerNickname={r.ownerNickname}
-//               />
-//             );
-//           });
-//         })}
-//       </InfiniteScroll>
-//     </>
-//   );
-// }
 /* eslint-disable no-console */
+import {
+  Avatar,
+  Card,
+  createStyles,
+  Group,
+  Image,
+  rem,
+  SimpleGrid,
+  Text,
+} from '@mantine/core';
+import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
+import { useCallback, useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useInfiniteQuery } from 'react-query';
+import { useNavigate } from 'react-router-dom';
 
-import { Roadmap } from './Roadmap';
+import { ReactComponent as Spinner } from '../../../assets/Spinner.svg';
 
-// const initialUrl = 'https://swapi.dev/api/people/';
-const keyword = localStorage.getItem('roadmap_search_keyword');
-// const initialUrl = `${baseUrl}/roadmaps/search/타입스크립트?&size=5`;
-const initialUrl = `${baseUrl}/roadmaps/search/${keyword}/`;
-const fetchUrl = async (url) => {
-  const response = await fetch(url);
-  console.log('response', response.status);
-  //   return response.json();
-  //   const response = await axios.get(url, {}).then((v) => {
-  //     return v;
-  //   });
-  return response;
-};
+const useStyles = createStyles((theme) => ({
+  card: {
+    backgroundColor:
+      theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+    transition: 'transform 150ms ease, box-shadow 150ms ease',
+
+    '&:hover': {
+      transform: 'scale(1.01)',
+      boxShadow: theme.shadows.md,
+    },
+    borderRadius: theme.radius.md,
+    boxShadow: theme.shadows.lg,
+    width: '96%',
+    margin: '3rem auto 1rem',
+  },
+
+  title: {
+    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    marginTop: '1.5rem',
+    borderTop: '1px',
+    fontSize: '1.3rem',
+  },
+
+  desc: {
+    display: '-webkit-box',
+    overflow: 'hidden',
+    WebkitLineClamp: 3,
+    WebkitBoxOrient: 'vertical',
+    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+    maxHeight: '4.5em',
+    lineHeight: '1.3em',
+    marginTop: '0.725rem',
+  },
+
+  like: {
+    color: theme.colors.red[6],
+  },
+
+  item: {
+    width: '100%',
+  },
+
+  section: {
+    height: '24rem',
+    cursor: 'pointer',
+  },
+
+  footer: {
+    padding: `${theme.spacing.xs} ${theme.spacing.lg}`,
+    marginTop: theme.spacing.md,
+    borderTop: `${rem(1)} solid ${
+      theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]
+    }`,
+  },
+}));
 
 export function InfiniteRoadmapByKeyword() {
+  const [searchPage, setSearchPage] = useState(1);
+  const [allRoadmapData, setAllRoadmapData] = useState([]);
+  const { classes } = useStyles();
+  const [currentPage, setCurrentPage] = useState('');
+  const navigate = useNavigate();
+  const keyword = localStorage.getItem('roadmap_search_keyword');
+
+  const fetchRoadmaps = useCallback(() => {
+    axios
+      .get(`${baseUrl}/roadmaps/search/${keyword}?page=${searchPage}&size=5`)
+      .then((v) => {
+        setAllRoadmapData(v?.data);
+        console.log(v?.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, [keyword, searchPage]);
+
+  const initialUrl = `${baseUrl}/roadmaps/search/${keyword}?page=${searchPage}&size=5`;
+  const fetchUrl = async (url) => {
+    console.log('fetchUrl:', url);
+    const response = await fetch(url);
+    console.log('response', response);
+    return response.json();
+  };
+
   const {
     data,
+    refetch,
     fetchNextPage,
     hasNextPage,
     isLoading,
-    isFetching,
     isError,
     error,
-  } =
-    // const { data, fetchNextPage, hasNextPage, isFetching, isError, error } =
-    useInfiniteQuery(
-      'search-keyword', // query key
-      ({ pageParam = initialUrl }) => fetchUrl(pageParam), // default value will be the initial Url
-      {
-        getNextPageParam: (lastPage) => lastPage?.next || undefined,
-      }, // undefined ===> hasNextPage false
-    ); // destructure
-  if (isLoading) {
-    // if (isFetching) {
-    // yikes! its scrolling to the top !(yes, we are getting new data, but we are scrolling to the top whenever it is refetching)
-    // that's cos we are early returning every time we are fetching new data
-    return <div className="">loading...</div>;
-  }
-  if (isError) {
-    return <div className="">Error!{error.toString()}</div>;
-  }
+  } = useInfiniteQuery(
+    'search-keyword',
+    ({ pageParam = initialUrl }) => fetchUrl(pageParam),
+    {
+      getNextPageParam: (lastPage) => {
+        if (lastPage) {
+          console.log('result', lastPage.next);
+          return lastPage.next;
+        }
+        return undefined;
+      },
+    },
+  );
+
+  useEffect(() => {
+    setSearchPage(1);
+    refetch();
+    fetchRoadmaps();
+  }, [fetchRoadmaps, refetch]);
+  console.log('data', data);
+
+  if (isLoading)
+    return (
+      <div className="loading" style={{ height: '100vh' }}>
+        <Spinner />
+        <h1 style={{ textAlign: 'center' }}>로드맵을 검색하고 있어요</h1>
+      </div>
+    );
+  if (isError) return <div>Error! {error.toString()}</div>;
   return (
-    <>
-      {isFetching && <div className="loading">loading...</div>}
-      <InfiniteScroll loadMore={fetchNextPage} hasMore={hasNextPage}>
+    <InfiniteScroll loadMore={fetchNextPage} hasMore={hasNextPage}>
+      <SimpleGrid
+        cols={4}
+        style={{ width: '100%' }}
+        breakpoints={[
+          { maxWidth: 'sm', cols: 1 },
+          { maxWidth: 'md', cols: 2 },
+          { maxWidth: 'lg', cols: 3 },
+        ]}
+      >
         {data &&
-          data.pages &&
+          data?.pages &&
           data?.pages?.map((pageData) => {
-            //   return pageData?.results.map((person) => {
-            return pageData?.result.map((person) => {
-              // actual data
+            return pageData?.result?.map((article, index) => {
               return (
-                <Roadmap
-                  key={person.id}
-                  thumbnailUrl={person.thumbnailUrl}
-                  title={person.title}
-                  ownerNickname={person.ownerNickname}
-                  createdAt={person.createdAt}
-                />
+                <Card key={index} className={classes.card}>
+                  <Card.Section
+                    className={classes.section}
+                    onMouseOver={() => {
+                      setCurrentPage(article.id);
+                    }}
+                    onClick={() => {
+                      currentPage && navigate(`/roadmap/post/${currentPage}`);
+                    }}
+                  >
+                    <Group>
+                      <div className={classes.item}>
+                        <Image
+                          className={`${isLoading ? 'before' : 'loaded'}`}
+                          src={article.thumbnailUrl}
+                          alt={`${article.title}.img`}
+                          height="15em"
+                        />
+                      </div>
+                    </Group>
+                    <Text fw={700} className={classes.title} mx={20}>
+                      {article.title}
+                    </Text>
+                    <Text fz="lg" className={classes.desc} mx={20}>
+                      {article.description}
+                    </Text>
+                  </Card.Section>
+                  <Text fz="md" c="dimmed" mx={8}>
+                    {article.createdAt}
+                  </Text>
+                  <Card.Section className={classes.footer}>
+                    <Group>
+                      <Avatar radius="sm" color="blue">
+                        {article.member.nickname.substring(0, 1)}
+                      </Avatar>
+
+                      <Text fz="md" fw={600}>
+                        {article.member.nickname}
+                      </Text>
+                    </Group>
+                  </Card.Section>
+                </Card>
               );
             });
           })}
-      </InfiniteScroll>
-    </>
+      </SimpleGrid>
+    </InfiniteScroll>
   );
 }
