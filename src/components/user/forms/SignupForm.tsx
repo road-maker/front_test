@@ -89,7 +89,7 @@ function SignUpForm(props: PaperProps): ReactElement {
   });
 
   return (
-    <Box maw={400} mx="auto" m={200}>
+    <Box maw={500} mx="auto" m={200}>
       {auth.isUserModalOpen && (
         <Modal
           opened={auth.isUserModalOpen}
@@ -154,13 +154,7 @@ function SignUpForm(props: PaperProps): ReactElement {
         </Modal>
       )}
       <Paper radius="md" p="xl" withBorder {...props}>
-        <Title
-          align="center"
-          sx={(theme) => ({
-            fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-            fontWeight: 900,
-          })}
-        >
+        <Title align="center" fw={900}>
           회원가입
         </Title>
         <Text color="dimmed" size="sm" align="center" mt={5}>

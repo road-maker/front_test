@@ -60,15 +60,12 @@ export function UserProfile() {
   );
 
   return (
-    <>
-      {/* <HeaderMegaMenu /> */}
-      <MainLayout>
-        <Title order={1} ta="center">
-          마이페이지
-        </Title>
-        {myinfo}
-        <UserRoadmap />
-      </MainLayout>
-    </>
+    <MainLayout>
+      <Title order={1} ta="center" mt={30}>
+        마이페이지
+      </Title>
+      {myinfo}
+      <UserRoadmap />
+    </MainLayout>
   );
 }
