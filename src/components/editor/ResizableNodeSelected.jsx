@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { IconAlertCircle } from '@tabler/icons-react';
@@ -23,7 +24,9 @@ export function ResizableNodeSelected({
   const [isLoading, setIsLoading] = useState(true);
   const rotateControlRef = useRef(null);
   const updateNodeInternals = useUpdateNodeInternals();
+  // eslint-disable-next-line no-unused-vars
   const [resizable, setResizable] = useState(true);
+  // eslint-disable-next-line no-unused-vars
   const [rotatable, setRotatable] = useState(true);
 
   useEffect(() => {

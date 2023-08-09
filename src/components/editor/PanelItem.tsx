@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import { ActionIcon, Tooltip, useMantineTheme } from '@mantine/core';
+import { ActionIcon, Tooltip } from '@mantine/core';
 import {
   IconBinaryTree,
   IconFileCheck,
@@ -22,9 +22,9 @@ export default function PanelItem({
   currentView,
   currentFlow,
 }) {
-  const theme = useMantineTheme();
-  const getColor = (color: string) =>
-    theme.colors[color][theme.colorScheme === 'dark' ? 5 : 7];
+  //   const theme = useMantineTheme();
+  //   const getColor = (color: string) =>
+  //     theme.colors[color][theme.colorScheme === 'dark' ? 5 : 7];
 
   return (
     <>
@@ -149,7 +149,7 @@ export default function PanelItem({
         <ActionIcon
           variant="default"
           onClick={() => {
-            const { x, y, zoom } = getViewport();
+            const { zoom } = getViewport();
             setCurrentView({
               x: currentView.x,
               y: nodeState.at(-1)?.position?.y,

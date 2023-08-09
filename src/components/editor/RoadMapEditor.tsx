@@ -496,6 +496,7 @@ function Roadmap({
     nodesCopy.map((node) => {
       if (node.data.label === '') {
         setSubmitModal(false);
+        // eslint-disable-next-line no-alert
         return alert('노드 내용을 채워주세요.');
       }
     });
