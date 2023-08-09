@@ -13,12 +13,12 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import axios from 'axios';
-import { baseUrl } from 'axiosInstance/constants';
 import React, { useCallback, useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useInfiniteQuery } from 'react-query';
 import { useLocation } from 'react-router-dom';
 
+import { baseUrl } from '../../axiosInstance/constants';
 import { useUser } from '../../components/user/hooks/useUser';
 
 const useStyles = createStyles((theme) => ({
