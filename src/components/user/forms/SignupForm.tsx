@@ -129,7 +129,7 @@ function SignUpForm(props: PaperProps): ReactElement {
           )}
         </Modal>
       )}
-      <Paper radius="md" p="xl" withBorder {...props}>
+      <Paper radius="md" p="xl" {...props}>
         <Title order={1} align="center" fw={400}>
           회원가입
         </Title>
