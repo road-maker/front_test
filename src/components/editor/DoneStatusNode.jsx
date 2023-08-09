@@ -1,13 +1,14 @@
 import { ActionIcon } from '@mantine/core';
 import { IconCircleCheckFilled } from '@tabler/icons-react';
 import { memo } from 'react';
-import { Handle, Position, useViewport } from 'reactflow';
+import { Handle, Position } from 'reactflow';
 import { styled } from 'styled-components';
 
-export function DoneStatusNode({ data, done, viewport }) {
-  const { x, y, zoom } = useViewport();
-  console.log(`${x},${y},${zoom}`);
-  console.log(`${viewport}`);
+// export function DoneStatusNode({ data, done, viewport }) {
+export function DoneStatusNode({ data, done }) {
+  // const { x, y, zoom } = useViewport();
+  // console.log(`${x},${y},${zoom}`);
+  // console.log(`${viewport}`);
   // eslint-disable-next-line no-param-reassign
   return (
     <Wrap className="node">
