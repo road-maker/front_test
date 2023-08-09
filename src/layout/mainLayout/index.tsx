@@ -2,14 +2,14 @@ import { useLocation } from 'react-router-dom';
 import { styled } from 'styled-components';
 
 import { Footer } from './footer/Footer';
-import { HeaderItem } from './header/Header';
+import { HeaderMegaMenu } from './header/HeaderItem';
 
 function MainLayout({ children }) {
   const { pathname } = useLocation();
   return (
     <>
-      {/* <HeaderMegaMenu /> */}
-      <HeaderItem />
+      <HeaderMegaMenu />
+      {/* <HeaderItem /> */}
 
       {pathname !== '/roadmap/editor' ? <Wrap>{children}</Wrap> : children}
       {pathname !== '/roadmap/editor' && <Footer data={[]} />}
