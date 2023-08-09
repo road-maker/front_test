@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-console */
 import {
   Avatar,
@@ -79,6 +80,7 @@ const useStyles = createStyles((theme) => ({
 
 export function InfiniteRoadmapByKeyword() {
   const [searchPage, setSearchPage] = useState(1);
+  // eslint-disable-next-line no-unused-vars
   const [allRoadmapData, setAllRoadmapData] = useState([]);
   const { classes } = useStyles();
   const [currentPage, setCurrentPage] = useState('');
