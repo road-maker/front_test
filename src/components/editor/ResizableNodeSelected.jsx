@@ -13,7 +13,7 @@ import {
 } from 'reactflow';
 import { styled } from 'styled-components';
 
-export default function ResizableNodeSelected({
+export function ResizableNodeSelected({
   data,
   selected,
   id,

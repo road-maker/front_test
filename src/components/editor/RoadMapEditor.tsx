@@ -51,7 +51,8 @@ import { styled } from 'styled-components';
 
 import { ReactComponent as Spinner } from '../../assets/Spinner.svg';
 import { useInput } from '../common/hooks/useInput';
-import ResizableNodeSelected from './ResizableNodeSelected';
+import PanelItem from './PanelItem';
+import { ResizableNodeSelected } from './ResizableNodeSelected';
 import { RoadmapEdge, RoadmapNode, RoadmapNodes } from './types';
 
 const dagreGraph = new dagre.graphlib.Graph();
@@ -59,13 +60,13 @@ dagreGraph.setDefaultEdgeLabel(() => ({}));
 
 // const nodeWidth = 172;
 // const nodeHeight = 36;
-const nodeWidth = 200;
+const nodeWidth = 240;
 const nodeHeight = 50;
 
 const flowKey = 'example-flow';
 
-const getLayoutedElements = (nodes, edges, direction = 'TB') => {
-  const isHorizontal = direction === 'LR';
+const getLayoutedElements = (nodes, edges, direction = 'LR') => {
+  const isHorizontal = direction === 'TB';
   dagreGraph.setGraph({ rankdir: direction });
 
   nodes.forEach((node) => {
@@ -81,12 +82,12 @@ const getLayoutedElements = (nodes, edges, direction = 'TB') => {
   nodes.forEach((node) => {
     const nodeWithPosition = dagreGraph.node(node?.id);
     // eslint-disable-next-line no-param-reassign
-    node.targetPosition = isHorizontal ? 'left' : 'top';
+    node.targetPosition = isHorizontal ? 'top' : 'left';
     // eslint-disable-next-line no-param-reassign
-    node.sourcePosition = isHorizontal ? 'right' : 'bottom';
+    node.sourcePosition = isHorizontal ? 'bottom' : 'right';
     // eslint-disable-next-line no-param-reassign
     node.position = {
-      x: nodeWithPosition.x - nodeWidth / 3,
+      x: nodeWithPosition.x - nodeWidth / 2,
       y: nodeWithPosition.y - nodeHeight / 2,
     };
     return node;
@@ -128,7 +129,7 @@ const initialNodes = [
 ];
 
 const initialEdges = [
-  { id: 'e11a', source: '1', target: '1a', type: edgeType, animated: true },
+  { id: 'e1e2', source: '1', target: '2', type: edgeType, animated: true },
 ];
 const defaultViewport = { x: 0, y: 0, zoom: 1 };
 
@@ -234,6 +235,46 @@ function Roadmap({
         .then((res) => {
           res?.data.length > 0 ? setGptRes(false) : setGptRes(true);
           setUseGpt(res?.data);
+          axios
+            .post(`${baseUrl}/gpt/roadmap/detail`, res.data.slice(0, 4), {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${user?.accessToken}`,
+              },
+            })
+            .then((e) => {
+              // @ts-ignore
+              console.log(e);
+              // e.data.
+              const resDetail = e?.data;
+              const copyState = [...state];
+              if (resDetail.length > 0) {
+                resDetail.map((n) => {
+                  copyState.map((v) => {
+                    if (n.id === v.id) {
+                      // eslint-disable-next-line no-param-reassign
+                      v.details += n.detailedContent;
+                    }
+                  });
+                });
+                setState(copyState);
+                setGptDisabled(false);
+              }
+              //   const copyState = [...state];
+              //   copyState.map((n) => {
+              //     e.data.
+              //     if (n.id === ) {
+              //       console.log('현재 content', n?.details);
+              //       // eslint-disable-next-line no-param-reassign
+              //       n.details += resDetail;
+              //     }
+              //   });
+              //   setState(copyState);
+              //   setGptDisabled(false);
+              // }
+              // 상세 내용 에디터에 내용 넣어주기
+            })
+            .catch((err) => console.log(err));
         })
         .then(() => {
           setGptRes(false);
@@ -499,7 +540,8 @@ function Roadmap({
       nodes: nodesCopy,
       edges: edgesCopy,
       // viewport: defaultViewport,
-      viewport: currentView,
+      // viewport: currentView,
+      viewport: { x: 0, y: 0, zoom: 1 },
     };
 
     axios
@@ -703,6 +745,7 @@ function Roadmap({
     );
   }, [nodeState, edgeState]);
 
+  // const previews = files.map((file, index) => {
   const previews = files.map((file, index) => {
     const imageUrl = URL.createObjectURL(file);
     return (
@@ -818,7 +861,13 @@ function Roadmap({
             </Tooltip>
           )}
         </Text>
-        <Dropzone accept={IMAGE_MIME_TYPE} onDrop={setFiles}>
+        <Dropzone
+          accept={IMAGE_MIME_TYPE}
+          onDrop={(e) => {
+            console.log(e);
+            setFiles(e);
+          }}
+        >
           <Text align="center">썸네일 등록 </Text>
         </Dropzone>
         <SimpleGrid
@@ -864,8 +913,8 @@ function Roadmap({
                 mt={30}
                 mr="1rem"
                 onClick={() => {
-                  // setNodes([]);
-                  setNodes(initialNodes);
+                  setNodes([]);
+                  // setNodes(initialNodes);
                   setEdges([]);
                   setConfirmDelete(false);
                 }}
@@ -1042,76 +1091,19 @@ function Roadmap({
         }}
       >
         <Panel position="top-right">
-          {currentFlow === 'LR' ? (
-            <Button
-              type="button"
-              onClick={() => {
-                onLayout('TB');
-                setCurrentFlow('TB');
-              }}
-              mr={10}
-            >
-              vertical layout
-            </Button>
-          ) : (
-            <Button
-              type="button"
-              onClick={() => {
-                onLayout('LR');
-                setCurrentFlow('LR');
-              }}
-              mr={10}
-            >
-              horizontal layout
-            </Button>
-          )}
-          <Button
-            type="button"
-            onClick={() => {
-              const { x, y, zoom } = getViewport();
-              setCurrentView({
-                x: currentView.x,
-                y: nodeState.at(-1)?.position?.y,
-                zoom,
-              });
-              console.log(nodeState.at(-1)?.position);
-              onAddNode();
-            }}
-            mr={10}
-          >
-            노드 추가
-          </Button>
-          {nodeState.length === 0 ? (
-            <Button
-              type="button"
-              data-disabled
-              sx={{
-                '&[data-disabled]': { opacity: 0.8, pointerEvents: 'all' },
-              }}
-              onClick={() => setConfirmDelete(true)}
-              mr={10}
-            >
-              노드 전체 삭제
-            </Button>
-          ) : (
-            <Button
-              type="button"
-              onClick={() => setConfirmDelete(true)}
-              mr={10}
-            >
-              노드 전체 삭제
-            </Button>
-          )}
-          <Button
-            type="button"
-            onClick={() => {
-              setSubmitModal(true);
-            }}
-            mr={10}
-            mt={10}
-          >
-            로드맵 발행
-          </Button>
+          <PanelItem
+            setSubmitModal={setSubmitModal}
+            onLayout={onLayout}
+            setCurrentFlow={setCurrentFlow}
+            currentFlow={currentFlow}
+            edgeState={edgeState}
+            nodeState={nodeState}
+            onAddNode={onAddNode}
+            getViewport={getViewport}
+            setCurrentView={setCurrentView}
+            currentView={currentView}
+            setConfirmDelete={setConfirmDelete}
+          />
         </Panel>
         <Background gap={16} />
         <Controls />
@@ -1149,6 +1141,10 @@ const Wrap = styled.div`
 
   & .updatenode__bglabel {
     margin-top: 10px;
+  }
+
+  & .react-flow__panel {
+    display: inline-flex;
   }
 
   & .updatenode__checkboxwrapper {
