@@ -5,7 +5,6 @@
 // import { modals } from '@mantine/modals';
 import { Button, Center, Modal } from '@mantine/core';
 import { EditorContent } from '@tiptap/react';
-import { ResizableNodeSelected } from 'components/editor/ResizableNodeSelected';
 import { useEffect, useState } from 'react';
 import ReactFlow, {
   Background,
@@ -17,6 +16,7 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { styled } from 'styled-components';
+import { ResizableNodeSelected } from '../../../components/editor/ResizableNodeSelected';
 
 const edgeType = 'smoothstep';
 const initialNodes = [
@@ -97,7 +97,7 @@ function Roadmap({
   const proOptions = { hideAttribution: true };
 
   return (
-    <Wrap style={{ height: '70vh' }}>
+    <Wrap>
       <ReactFlow
         nodes={nodeState}
         edges={edgeState}

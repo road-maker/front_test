@@ -24,19 +24,21 @@ import {
   IconHeartFilled,
   IconUser,
 } from '@tabler/icons-react';
+import CodeBlock from '@tiptap/extension-code-block';
 import { Highlight } from '@tiptap/extension-highlight';
 import { Link } from '@tiptap/extension-link';
 import { Subscript } from '@tiptap/extension-subscript';
 import { Superscript } from '@tiptap/extension-superscript';
 import { TextAlign } from '@tiptap/extension-text-align';
 import { Underline } from '@tiptap/extension-underline';
+import Youtube from '@tiptap/extension-youtube';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
 import { useInput } from 'components/common/hooks/useInput';
 import { useUser } from 'components/user/hooks/useUser';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   ReactFlow,
@@ -144,6 +146,7 @@ export default function RoadMapInfo() {
           isLiked: data?.isLiked,
           likeCount: data?.likeCount,
           thumbnailUrl: data?.member?.thumbnailUrl,
+          viewport: data?.viewport?.viewport,
         });
         setLoading(false);
         setParticipation(data?.isJoined);
@@ -168,6 +171,14 @@ export default function RoadMapInfo() {
   const editor = useEditor({
     extensions: [
       StarterKit,
+      CodeBlock.configure({
+        languageClassPrefix: 'language-',
+      }),
+      Youtube.configure({
+        inline: false,
+        ccLanguage: 'ko',
+        interfaceLanguage: 'ko',
+      }),
       Underline,
       Link,
       Superscript,
@@ -199,6 +210,29 @@ export default function RoadMapInfo() {
       editor.commands.setContent(filt[0]?.details || '내용이 없습니다.');
     }
   }, [state, id, setToggle, label, editor]);
+
+  const widthRef = useRef(null);
+  const heightRef = useRef(null);
+
+  useEffect(() => {
+    if (widthRef.current && heightRef.current) {
+      widthRef.current.value = 640;
+      heightRef.current.value = 480;
+    }
+  }, [widthRef.current, heightRef.current]);
+
+  const addYoutubeVideo = () => {
+    // eslint-disable-next-line no-alert
+    const url = prompt('Enter YouTube URL');
+
+    if (url) {
+      editor.commands.setYoutubeVideo({
+        src: url,
+        // width: Math.max(320, parseInt(widthRef.current.value, 10)) || 640,
+        // height: Math.max(180, parseInt(heightRef.current.value, 10)) || 480,
+      });
+    }
+  };
 
   const onClickLikes = () => {
     axios
@@ -253,7 +287,7 @@ export default function RoadMapInfo() {
   const [isDraggable] = useState(false);
   const [isConnectable] = useState(false);
   const [zoomOnScroll] = useState(false); // zoom in zoom out
-  const [panOnScroll] = useState(true); // 위아래 스크롤
+  const [panOnScroll] = useState(false); // 위아래 스크롤
   const [zoomOnDoubleClick] = useState(false);
   const [panOnDrag] = useState(false); // 마우스로 이동
   const [isOpen, setIsOpen] = useState(false);
@@ -406,6 +440,8 @@ export default function RoadMapInfo() {
             <Wrap>
               <ReactFlow
                 nodes={nodeState}
+                preventScrolling={false}
+                viewport={currentRoadmap?.viewport}
                 // nodeTypes="default"
                 nodeTypes={nodeTypes}
                 edges={edgeState}
@@ -419,13 +455,16 @@ export default function RoadMapInfo() {
                 panOnScroll={panOnScroll}
                 zoomOnDoubleClick={zoomOnDoubleClick}
                 panOnDrag={panOnDrag}
+                fitView
                 attributionPosition="top-right"
                 onNodeClick={(e, n) => {
                   setLabel(`${n?.data?.label}`);
                   setId(`${n?.id}`);
                   setIsOpen(!isOpen);
                 }}
-                fitView
+                FitBoundsOptions={{ padding: '10px' }}
+                FitViewOptions={{ padding: '10px' }}
+                // fitViewOptions={p}
               />
               {/* <Input.Wrapper label="블로그 인증">
                   <Input
@@ -493,33 +532,22 @@ const Wrap = styled.div`
   height: 100em;
 
   & .react-flow__node {
+    font-size: 3rem;
     cursor: pointer;
-  }
-
-  & .react-flow__pane {
-    cursor: auto;
-  }
-
-  & .updatenode__controls {
-    position: absolute;
-    right: 10px;
-    top: 10px;
+    min-width: fit-content;
+    /* :hover {
+      transform: scale(30);
+    } */
+    margin-top: 10px;
+    /* display: flex; */
+    display: block;
+    padding: 10px;
     z-index: 4;
     font-size: 12px;
   }
 
-  & .updatenode__controls label {
-    display: block;
-  }
-
-  & .updatenode__bglabel {
-    margin-top: 10px;
-  }
-
-  & .updatenode__checkboxwrapper {
-    margin-top: 10px;
-    display: flex;
-    align-items: center;
+  & .react-flow__pane {
+    cursor: auto;
   }
 `;
 const EditorWrap = styled.div`
