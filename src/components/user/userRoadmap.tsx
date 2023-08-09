@@ -101,79 +101,89 @@ export default function UserRoadmap(props: PaperProps) {
         w={1000}
         h={280}
       >
-        <Carousel height={200} slideSize="33.3333%" slideGap="md" align="start">
-          {!joinedRoadmap
-            ? '아직 진행 중인 로드맵이 없습니다.'
-            : joinedRoadmap.map((article) => (
-                <Carousel.Slide>
-                  <Card
-                    key={article.id}
-                    radius="md"
-                    component="a"
-                    className={classes.card}
+        {joinedRoadmap.length === 0 ? (
+          <Text mx={120} my={100}>
+            진행 중인 로드맵이 없습니다. 로드맵 참여를 눌러 다른 로드맵에
+            참여해주세요!
+          </Text>
+        ) : (
+          joinedRoadmap.map((article) => (
+            <Carousel
+              height={200}
+              slideSize="33.3333%"
+              slideGap="md"
+              align="start"
+            >
+              <Carousel.Slide>
+                <Card
+                  key={article.id}
+                  radius="md"
+                  component="a"
+                  className={classes.card}
+                >
+                  <Card.Section>
+                    {article.thumbnailUrl ? (
+                      <Image
+                        src={article.thumbnailUrl}
+                        alt={`${article.title}.img`}
+                        height={160}
+                        width={260}
+                        style={{ cursor: 'pointer' }}
+                        onMouseOver={() => {
+                          setCurrentPage(article.id);
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          currentPage &&
+                            navigate(`/roadmap/post/${currentPage}`);
+                        }}
+                      />
+                    ) : (
+                      <Image
+                        src="https://t1.daumcdn.net/cfile/tistory/21221F4258E793521D"
+                        alt={`${article.title}.img`}
+                        height={160}
+                        width={260}
+                        style={{ cursor: 'pointer' }}
+                        onMouseOver={() => {
+                          setCurrentPage(article.id);
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          currentPage &&
+                            navigate(`/roadmap/post/${currentPage}`);
+                        }}
+                      />
+                    )}
+                  </Card.Section>
+                  <Text
+                    className={classes.title}
+                    mt={10}
+                    onMouseOver={() => {
+                      setCurrentPage(article.id);
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      currentPage && navigate(`/roadmap/post/${currentPage}`);
+                    }}
+                    style={{ cursor: 'pointer' }}
                   >
-                    <Card.Section>
-                      {article.thumbnailUrl ? (
-                        <Image
-                          src={article.thumbnailUrl}
-                          alt={`${article.title}.img`}
-                          height={160}
-                          width={260}
-                          style={{ cursor: 'pointer' }}
-                          onMouseOver={() => {
-                            setCurrentPage(article.id);
-                          }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            currentPage &&
-                              navigate(`/roadmap/post/${currentPage}`);
-                          }}
-                        />
-                      ) : (
-                        <Image
-                          src="https://t1.daumcdn.net/cfile/tistory/21221F4258E793521D"
-                          alt={`${article.title}.img`}
-                          height={160}
-                          width={260}
-                          style={{ cursor: 'pointer' }}
-                          onMouseOver={() => {
-                            setCurrentPage(article.id);
-                          }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            currentPage &&
-                              navigate(`/roadmap/post/${currentPage}`);
-                          }}
-                        />
-                      )}
-                    </Card.Section>
-                    <Text
-                      className={classes.title}
-                      mt={10}
-                      onMouseOver={() => {
-                        setCurrentPage(article.id);
-                      }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        currentPage && navigate(`/roadmap/post/${currentPage}`);
-                      }}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {article?.title}
-                    </Text>
-                    <Text
-                      color="dimmed"
-                      size="xs"
-                      transform="uppercase"
-                      weight={700}
-                      mt="md"
-                    >
-                      {article?.ownerNickname}
-                    </Text>
-                  </Card>
-                </Carousel.Slide>
-              ))}
-        </Carousel>
+                    {article?.title}
+                  </Text>
+                  <Text
+                    color="dimmed"
+                    size="xs"
+                    transform="uppercase"
+                    weight={700}
+                    mt="md"
+                  >
+                    {article?.ownerNickname}
+                  </Text>
+                </Card>
+              </Carousel.Slide>
+            </Carousel>
+          ))
+        )}
       </Paper>
 
       <Group position="center" mt={30}>
@@ -190,79 +200,88 @@ export default function UserRoadmap(props: PaperProps) {
         w={1000}
         h={280}
       >
-        <Carousel height={200} slideSize="33.3333%" slideGap="md" align="start">
-          {savedRoadmap.length === 0
-            ? '아직 만든 로드맵이 없습니다. 로드맵을 생성해보세요!'
-            : savedRoadmap.map((article) => (
-                <Carousel.Slide>
-                  <Card
-                    key={article.id}
-                    radius="md"
-                    component="a"
-                    className={classes.card}
+        {savedRoadmap.length === 0 ? (
+          <Text mx={230} my={100}>
+            아직 만든 로드맵이 없습니다. 로드맵을 생성해보세요!
+          </Text>
+        ) : (
+          savedRoadmap.map((article) => (
+            <Carousel
+              height={200}
+              slideSize="33.3333%"
+              slideGap="md"
+              align="start"
+            >
+              <Carousel.Slide>
+                <Card
+                  key={article.id}
+                  radius="md"
+                  component="a"
+                  className={classes.card}
+                >
+                  <Card.Section>
+                    {article.thumbnailUrl ? (
+                      <Image
+                        src={article.thumbnailUrl}
+                        alt={`${article.title}.img`}
+                        height={160}
+                        width={260}
+                        style={{ cursor: 'pointer' }}
+                        onMouseOver={() => {
+                          setCurrentPage(article.id);
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          currentPage &&
+                            navigate(`/roadmap/post/${currentPage}`);
+                        }}
+                      />
+                    ) : (
+                      <Image
+                        src="https://t1.daumcdn.net/cfile/tistory/21221F4258E793521D"
+                        alt={`${article.title}.img`}
+                        height={160}
+                        width={260}
+                        style={{ cursor: 'pointer' }}
+                        onMouseOver={() => {
+                          setCurrentPage(article.id);
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          currentPage &&
+                            navigate(`/roadmap/post/${currentPage}`);
+                        }}
+                      />
+                    )}
+                  </Card.Section>
+                  <Text
+                    className={classes.title}
+                    mt={10}
+                    onMouseOver={() => {
+                      setCurrentPage(article.id);
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      currentPage && navigate(`/roadmap/post/${currentPage}`);
+                    }}
+                    style={{ cursor: 'pointer' }}
                   >
-                    <Card.Section>
-                      {article.thumbnailUrl ? (
-                        <Image
-                          src={article.thumbnailUrl}
-                          alt={`${article.title}.img`}
-                          height={160}
-                          width={260}
-                          style={{ cursor: 'pointer' }}
-                          onMouseOver={() => {
-                            setCurrentPage(article.id);
-                          }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            currentPage &&
-                              navigate(`/roadmap/post/${currentPage}`);
-                          }}
-                        />
-                      ) : (
-                        <Image
-                          src="https://t1.daumcdn.net/cfile/tistory/21221F4258E793521D"
-                          alt={`${article.title}.img`}
-                          height={160}
-                          width={260}
-                          style={{ cursor: 'pointer' }}
-                          onMouseOver={() => {
-                            setCurrentPage(article.id);
-                          }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            currentPage &&
-                              navigate(`/roadmap/post/${currentPage}`);
-                          }}
-                        />
-                      )}
-                    </Card.Section>
-                    <Text
-                      className={classes.title}
-                      mt={10}
-                      onMouseOver={() => {
-                        setCurrentPage(article.id);
-                      }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        currentPage && navigate(`/roadmap/post/${currentPage}`);
-                      }}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {article?.title}
-                    </Text>
-                    <Text
-                      color="dimmed"
-                      size="xs"
-                      transform="uppercase"
-                      weight={700}
-                      mt="md"
-                    >
-                      {article?.ownerNickname}
-                    </Text>
-                  </Card>
-                </Carousel.Slide>
-              ))}
-        </Carousel>
+                    {article?.title}
+                  </Text>
+                  <Text
+                    color="dimmed"
+                    size="xs"
+                    transform="uppercase"
+                    weight={700}
+                    mt="md"
+                  >
+                    {article?.ownerNickname}
+                  </Text>
+                </Card>
+              </Carousel.Slide>
+            </Carousel>
+          ))
+        )}
       </Paper>
     </>
   );

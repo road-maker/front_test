@@ -772,13 +772,11 @@ function Roadmap({
       {gptRes && (
         <Modal.Root opened={gptRes} onClose={close} centered size="70%">
           <Modal.Overlay color="#000" opacity={0.85} />
-          <Modal.Content>
-            <Modal.Header>
-              <Modal.Title style={{ textAlign: 'center' }} fs="3em">
+          <Modal.Content style={{ textAlign: 'center' }}>
+            <Modal.Body>
+              <Modal.Title fs="3em" mb="1em">
                 AI로 자동 생성 중
               </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
               <Spinner />
               <Typer
                 data={`"${JSON.parse(localStorage.getItem('recent_gpt_search'))

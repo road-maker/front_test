@@ -73,7 +73,7 @@ function SignUpForm(props: PaperProps): ReactElement {
         >
           {auth.success ? (
             <>
-              <Center pt={80}>
+              <Center pt={40}>
                 <IconCircleCheckFilled
                   size={150}
                   style={{ color: '#38D9A9' }}
@@ -101,7 +101,7 @@ function SignUpForm(props: PaperProps): ReactElement {
             </>
           ) : (
             <>
-              <Center pt={80}>
+              <Center pt={40}>
                 <IconAlertCircleFilled
                   size={150}
                   style={{ color: '#FA5252' }}

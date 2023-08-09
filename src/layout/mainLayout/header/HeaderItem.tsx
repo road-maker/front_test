@@ -250,11 +250,11 @@ export function HeaderMegaMenu() {
                   </div>
                 </Center>
               </Modal>
-              <Modal opened={opened} onClose={close} size="70%">
+              <Modal opened={opened} onClose={close} size="60%">
                 <Center>
                   <h1>새로운 로드맵 생성하기</h1>
                 </Center>
-                <Center>
+                <Center my={10}>
                   <Image
                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDEv4qC_L_0WLYmLRBtBd2sYGkjMzWvGqrOw&usqp=CAU"
                     width={300}
@@ -264,12 +264,13 @@ export function HeaderMegaMenu() {
                 <Center>
                   <InputWithButton />
                 </Center>
-                <Center mt={50}>
+                <Center mt={20}>
                   <h5>오늘은 그냥 템플릿 없이 빈 로드맵 만들게요.</h5>
                   <Button
                     size="xs"
                     variant="light"
                     color="blue"
+                    ml={10}
                     onClick={() => {
                       clearStoredRoadmap();
                       clearStoredGpt();
@@ -277,7 +278,6 @@ export function HeaderMegaMenu() {
                         alert('로그인 후 이용가능합니다.');
                         navigate('/users/signin');
                       }
-                      // if(localStorage.getItem(''))
                       navigate('/roadmap/editor');
                     }}
                   >
