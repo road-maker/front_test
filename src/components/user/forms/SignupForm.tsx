@@ -23,29 +23,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../auth/useAuth';
 import { useInput } from '../../common/hooks/useInput';
 
-// const useStyles = createStyles((theme) => ({
-//   container: {
-//     height: rem(300),
-//     width: '100%',
-//     backgroundColor: '#52EB9A',
-
-//     // // Media query with value from theme
-//     // [`@media (max-width: ${em(getBreakpointValue(theme.breakpoints.xl) - 1)})`]:
-//     //   {
-//     //     backgroundColor: theme.colors.pink[6],
-//     //   },
-
-//     // // Simplify media query writing with theme functions
-//     // [theme.fn.smallerThan('lg')]: {
-//     //   backgroundColor: theme.colors.yellow[6],
-//     // },
-
-//     // // Static media query
-//     // [`@media (max-width: ${em(800)})`]: {
-//     //   backgroundColor: theme.colors.orange[6],
-//     // },
-//   },
-// }));
 function SignUpForm(props: PaperProps): ReactElement {
   const [email, onChangeEmail, setEmail] = useInput('');
   const [nickname, onChangeNickname, setNickname] = useInput('');
@@ -54,7 +31,6 @@ function SignUpForm(props: PaperProps): ReactElement {
     useInput('');
   const auth = useAuth();
   const navigate = useNavigate();
-  // const { classes } = useStyles();
 
   const form = useForm({
     initialValues: {
@@ -89,7 +65,7 @@ function SignUpForm(props: PaperProps): ReactElement {
   });
 
   return (
-    <Box maw={400} mx="auto" m={200}>
+    <Box maw={500} m="auto" mt={140}>
       {auth.isUserModalOpen && (
         <Modal
           opened={auth.isUserModalOpen}
@@ -153,20 +129,14 @@ function SignUpForm(props: PaperProps): ReactElement {
           )}
         </Modal>
       )}
-      <Paper radius="md" p="xl" withBorder {...props}>
-        <Title
-          align="center"
-          sx={(theme) => ({
-            fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-            fontWeight: 900,
-          })}
-        >
+      <Paper radius="md" p="xl" {...props}>
+        <Title order={1} align="center" fw={400}>
           회원가입
         </Title>
-        <Text color="dimmed" size="sm" align="center" mt={5}>
+        <Text color="dimmed" size="md" align="center" mt={5}>
           이미 계정이 있으신가요?
           <Anchor
-            size="sm"
+            size="md"
             component="button"
             ml={5}
             mb={20}
@@ -195,11 +165,13 @@ function SignUpForm(props: PaperProps): ReactElement {
             label="닉네임"
             placeholder="닉네임을 입력해주세요"
             withAsterisk
+            size="lg"
             value={nickname}
             onChange={onChangeNickname}
             {...form.getInputProps('nickname')}
           />
           <TextInput
+            size="lg"
             mt="xl"
             label="이메일"
             placeholder="이메일을 입력해주세요"
@@ -210,6 +182,7 @@ function SignUpForm(props: PaperProps): ReactElement {
           />
           <PasswordInput
             mt="xl"
+            size="lg"
             label="비밀번호"
             placeholder="비밀번호를 입력해주세요"
             withAsterisk
@@ -219,6 +192,7 @@ function SignUpForm(props: PaperProps): ReactElement {
           />
           <PasswordInput
             mt="xl"
+            size="lg"
             label="비밀번호 확인"
             placeholder="비밀번호를 입력해주세요"
             withAsterisk
@@ -230,7 +204,8 @@ function SignUpForm(props: PaperProps): ReactElement {
             <Button
               fullWidth
               type="submit"
-              mt="xl"
+              mt={50}
+              size="xl"
               variant="light"
               onClick={() => {
                 auth.setModalText('');
