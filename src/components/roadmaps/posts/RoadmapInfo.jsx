@@ -97,7 +97,6 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 const nodeTypes = {
-  // custom: DoneStatusNode,
   custom: DoneStatusNode,
 };
 export default function RoadMapInfo() {

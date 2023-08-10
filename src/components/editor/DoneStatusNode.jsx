@@ -2,11 +2,7 @@ import { memo } from 'react';
 import { Handle, Position } from 'reactflow';
 import { styled } from 'styled-components';
 
-export function DoneStatusNode({ data, done, isJoined }) {
-  // eslint-disable-next-line no-console
-  console.log('done', done);
-  // eslint-disable-next-line no-console
-  console.log('isJoined', isJoined);
+export function DoneStatusNode({ data, done }) {
   return (
     <>
       {/* {!done && typeof done === 'boolean' && (
@@ -30,7 +26,7 @@ export function DoneStatusNode({ data, done, isJoined }) {
       <Wrap className="node">
         <Handle style={{ opacity: 0 }} type="target" position={Position.Left} />
         <Handle style={{ opacity: 0 }} type="target" position={Position.Top} />
-        {!done ? (
+        {done ? (
           <div
             style={{
               backgroundColor: '#a8a6a6be',

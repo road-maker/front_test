@@ -3,7 +3,9 @@
 /* eslint-disable no-console */
 import {
   ActionIcon,
+  Avatar,
   Box,
+  Burger,
   Button,
   Center,
   createStyles,
@@ -12,6 +14,7 @@ import {
   Image,
   LoadingOverlay,
   Modal,
+  NavLink,
   rem,
   Text,
   TextInput,
@@ -19,13 +22,22 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconArrowLeft, IconArrowRight, IconSearch } from '@tabler/icons-react';
+import {
+  IconActivity,
+  IconArrowLeft,
+  IconArrowRight,
+  IconChevronRight,
+  IconFingerprint,
+  IconGauge,
+  IconSearch,
+} from '@tabler/icons-react';
 import axios, { AxiosResponse } from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
 import { useInput } from 'components/common/hooks/useInput';
 // import { usePrompt } from 'components/prompts/hooks/usePrompt';
 import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
-import { useCallback, useEffect, useState } from 'react';
+import { oneOfType } from 'prop-types';
+import { useCallback, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { clearStoredGpt } from 'storage/gpt-storage';
 import { clearStoredRoadmap } from 'storage/roadmap-storage';
@@ -33,6 +45,16 @@ import { styled } from 'styled-components';
 
 import { useAuth } from '../../../auth/useAuth';
 import { useUser } from '../../../components/user/hooks/useUser';
+
+const data = [
+  { icon: IconGauge, label: 'Dashboard', description: 'Item with description' },
+  {
+    icon: IconFingerprint,
+    label: 'Security',
+    rightSection: <IconChevronRight size="1rem" stroke={1.5} />,
+  },
+  { icon: IconActivity, label: 'Activity' },
+];
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -84,7 +106,6 @@ const useStyles = createStyles((theme) => ({
     margin: `calc(${theme.spacing.md} * -1)`,
     marginTop: theme.spacing.sm,
     padding: `${theme.spacing.md} calc(${theme.spacing.md} * 2)`,
-    // paddingBottom: theme.spacing.xl,
     borderTop: `${rem(1)} solid ${
       theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1]
     }`,
@@ -114,6 +135,19 @@ export function HeaderMegaMenu() {
   const [leaveEditorAction, setLeaveEditorAction] = useState('');
   const [search, onChangeSearch, setSearch] = useInput('');
   const [isLoading, setIsLoading] = useState(false);
+  const [active, setActive] = useState(0);
+
+  const items = data.map((item, index) => (
+    <NavLink
+      key={item.label}
+      active={index === active}
+      label={item.label}
+      description={item.description}
+      rightSection={item.rightSection}
+      icon={<item.icon size="1rem" stroke={1.5} />}
+      onClick={() => setActive(index)}
+    />
+  ));
 
   const searchByKeyword = useCallback(() => {
     axios
@@ -122,43 +156,24 @@ export function HeaderMegaMenu() {
         localStorage.setItem('roadmap_search_keyword', search);
         navigate(`/roadmap/post/search/${search}`);
       })
-      // eslint-disable-next-line no-console
       .catch((e) => console.log(e));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search]);
+  }, [navigate, search]);
 
   return (
     <HeaderWrap>
       <Box>
-        <Header height={100} px="md">
-          <Group
-            position="apart"
-            sx={{ height: '100%' }}
-            style={{ flexWrap: 'nowrap' }}
-          >
+        <Header height={80} px="md">
+          <Group position="apart" sx={{ height: '100%' }}>
             <Group
-              style={{ flexWrap: 'nowrap' }}
               sx={{ height: '100%' }}
               spacing={0}
               className={classes.hiddenMobile}
             >
-              {/* <Logo
-                className="hoverItem"
-                style={{ width: '3em' }}
-                onClick={() => {
-                  setLeaveEditorAction('home');
-                  pathname === '/roadmap/editor'
-                    ? setIsEditorPage(true)
-                    : navigate('/');
-                }}
-              /> */}
               <Image
                 src="/img/logo.png"
-                width={100}
-                height="2rem"
-                // width={300}
-                // height={80}
-                ml={10}
+                width={150}
+                height={40}
+                ml={30}
                 onClick={() => {
                   setLeaveEditorAction('home');
                   pathname === '/roadmap/editor'
@@ -167,17 +182,15 @@ export function HeaderMegaMenu() {
                 }}
                 className="hoverItem"
               />
-              {/* <InputWithButton ml="5rem" /> */}
               {pathname !== '/roadmap/editor' && (
                 <TextInput
                   value={search}
-                  size="lg"
-                  w={1000}
-                  ml={20}
+                  size="md"
+                  w={700}
+                  ml="9em"
                   onChange={onChangeSearch}
                   placeholder="검색어를 입력해주세요."
                   rightSection={
-                    // isLoading ? <Loader size="xs" /> : <IconSearch size="xs" />
                     <ActionIcon
                       variant="filled"
                       color="blue"
@@ -198,68 +211,8 @@ export function HeaderMegaMenu() {
                   }
                 />
               )}
-              <Group position="center">
-                {pathname !== '/roadmap/editor' && (
-                  <Button
-                    size="lg"
-                    onClick={open}
-                    variant="light"
-                    color="indigo"
-                  >
-                    로드맵 생성
-                  </Button>
-                )}
-              </Group>
-              {user && 'accessToken' in user ? (
-                <>
-                  <Text
-                    c="blue"
-                    size="lg"
-                    mx={20}
-                    className="hoverItem"
-                    onClick={() => {
-                      setLeaveEditorAction('mypage');
-                      pathname === '/roadmap/editor'
-                        ? setIsEditorPage(true)
-                        : navigate('/users/mypage');
-                    }}
-                  >
-                    {/* <Avatar color="cyan" radius="xl"  className="hoverItem"
-                    onClick={() => {
-                      setLeaveEditorAction('mypage');
-                      pathname === '/roadmap/editor'
-                        ? setIsEditorPage(true)
-                        : navigate('/users/mypage');
-                    }}>
-                    {user.nickname.slice(0, 2)}님
-                  </Avatar> */}
-                    {user.nickname.slice(0, 2)}님
-                  </Text>
-                  <Button
-                    size="lg"
-                    onClick={() => {
-                      setLeaveEditorAction('signout');
-                      pathname === '/roadmap/editor'
-                        ? setIsEditorPage(true)
-                        : signout();
-                    }}
-                  >
-                    Sign out
-                  </Button>
-                </>
-              ) : (
-                <Button
-                  size="lg"
-                  onClick={() => {
-                    pathname === '/roadmap/editor'
-                      ? setIsEditorPage(true)
-                      : navigate('/users/signin');
-                  }}
-                >
-                  Sign in
-                </Button>
-              )}
             </Group>
+
             <Group className={classes.hiddenMobile}>
               <Modal
                 opened={isEditorPage}
@@ -332,6 +285,62 @@ export function HeaderMegaMenu() {
                   </Button>
                 </Center>
               </Modal>
+              <Group position="center">
+                {pathname !== '/roadmap/editor' && (
+                  <Button
+                    size="md"
+                    onClick={open}
+                    variant="light"
+                    color="indigo"
+                  >
+                    로드맵 생성
+                  </Button>
+                )}
+              </Group>
+              {user && 'accessToken' in user ? (
+                <>
+                  <Button
+                    size="md"
+                    variant="outline"
+                    color="indigo"
+                    onClick={() => {
+                      setLeaveEditorAction('signout');
+                      pathname === '/roadmap/editor'
+                        ? setIsEditorPage(true)
+                        : signout();
+                    }}
+                  >
+                    Sign out
+                  </Button>
+                  <Avatar
+                    color="blue"
+                    radius="xl"
+                    size={50}
+                    className="hoverItem"
+                    onClick={() => {
+                      setLeaveEditorAction('mypage');
+                      pathname === '/roadmap/editor'
+                        ? setIsEditorPage(true)
+                        : navigate('/users/mypage');
+                    }}
+                  >
+                    {user.nickname.slice(0, 1)}
+                  </Avatar>
+                </>
+              ) : (
+                <Button
+                  size="md"
+                  variant="outline"
+                  color="indigo"
+                  onClick={() => {
+                    pathname === '/roadmap/editor'
+                      ? setIsEditorPage(true)
+                      : navigate('/users/signin');
+                  }}
+                >
+                  Sign in
+                </Button>
+              )}
             </Group>
           </Group>
         </Header>
@@ -352,73 +361,19 @@ const HeaderWrap = styled.nav`
 export function InputWithButton(props: TextInputProps) {
   const theme = useMantineTheme();
   const [prompt, onPromptChange, setPrompt] = useInput('');
-  // const { getprompt } = usePrompt();
   const navigate = useNavigate();
   const { user } = useUser();
-  // const { pathname } = useLocation();
   const [isLoading, setIsLoading] = useState(false);
   const { clearGptAnswer, updateGptAnswer } = usePromptAnswer();
-  // const [promptResponse, setPromptResponse] = useState();
   const [promptResponse, setPromptResponse] =
     useState<AxiosResponse | null | void>(null);
 
-  // const onRequestPrompt = useCallback(() => {
   const onRequestPrompt = () => {
     updateGptAnswer({ keyword: prompt });
     setPromptResponse(prompt);
   };
-  // const onRequestPrompt = () => {
-  //   updateGptAnswer({ keyword: prompt });
-  //   setPromptResponse(prompt);
-  //   // setIsLoading(true);
-  //   // axios
-  //   //   .post(`${baseUrl}/chat?prompt=${prompt}`, {
-  //   //     headers: {
-  //   //       'Content-Type': 'application/json',
-  //   //       Authorization: `Bearer ${user?.accessToken}`,
-  //   //     },
-  //   //   })
-  //   //   .then((result) => {
-  //   //     console.log(result);
-  //   //     setPromptResponse(result);
-  //   //     // navigate(`/roadmap/editor`);
-  //   //   })
-  //   //   .then(() => {
-  //   //     setIsLoading(false);
-  //   //   })
-  //   //   .catch((err) => {
-  //   //     console.log(err);
-  //   //   });
 
-  //   // queryClient.prefetchQuery(['prompts', prompt], () => {
-  //   //   getprompt(prompt);
-  //   //   updateGptAnswer(promptResponse as unknown as Prompt);
-  //   // });
-  // };
-
-  // const onRequestPrompt = () => {
-
-  //   axios
-  //     .post(`${baseUrl}/chat?prompt=${prompt}`, {
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: `Bearer ${user?.accessToken}`,
-  //       },
-  //     })
-  //     .then((result) => {
-  //       console.log(result);
-  //       navigate(`/roadmap/editor`);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // };
-
-  // const onRequestPrompt = useMemo(() => {}, []);
-
-  // useMemo(() => {
-  useEffect(() => {
-    // @Pyotato : 페이지 안넘어가던 문제 해결~
+  useMemo(() => {
     if (promptResponse) {
       navigate(`/roadmap/editor`);
     }
