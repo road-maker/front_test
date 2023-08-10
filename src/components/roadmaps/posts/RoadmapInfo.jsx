@@ -329,7 +329,7 @@ export default function RoadMapInfo() {
         >
           <Group mt="1rem">
             <Title className={classes.title}>{currentRoadmap?.title}</Title>
-            <Avatar color="purple" size="md">
+            <Avatar color="purple" size="md" radius="xl">
               {currentRoadmap?.ownerAvatarUrl || ''}
             </Avatar>
             {currentRoadmap?.ownerNickname}

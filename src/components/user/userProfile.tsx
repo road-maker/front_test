@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
-import { ActionIcon, Avatar, Group, Paper, Text, Title } from '@mantine/core';
-import { IconSettings } from '@tabler/icons-react';
+import { Avatar, Box, Button, Group, Text } from '@mantine/core';
 import axios from 'axios';
 import MainLayout from 'layout/mainLayout';
 import { useEffect, useState } from 'react';
@@ -34,36 +33,37 @@ export function UserProfile() {
   }, [user.id, user.nickname]);
 
   const myinfo = (
-    <Paper withBorder radius="xs" p="xl" mx={500} my={50}>
-      <Group position="center">
-        <Avatar color="blue" radius="xl">
+    <Box ta="center">
+      <Group position="center" mt={50}>
+        <Avatar color="blue" radius="50rem" size="8em">
           {nickname.substring(0, 1)}
         </Avatar>
-        <Group>
-          <Text>{nickname}</Text>
-          <ActionIcon
-            onClick={() => {
-              navigate('edit');
-            }}
-          >
-            <IconSettings />
-          </ActionIcon>
-        </Group>
       </Group>
-      <Text size="sm" ta="center" mt={20}>
+      <Text fz="xl" fw={900} mt={20}>
+        {nickname}
+      </Text>
+      <Text size="sm" mt={10}>
         {bio}
       </Text>
-      <Text fz="sm" color="dimmed" lineClamp={4} mt={5} ta="center">
+      <Text fz="sm" color="dimmed" lineClamp={4}>
         {baekjoonId}
       </Text>
-    </Paper>
+      <Button
+        onClick={() => {
+          navigate('edit');
+        }}
+        mt={20}
+        radius="lg"
+        variant="light"
+        color="indigo"
+      >
+        프로필 수정
+      </Button>
+    </Box>
   );
 
   return (
     <MainLayout>
-      <Title order={1} ta="center" mt={30}>
-        마이페이지
-      </Title>
       {myinfo}
       <UserRoadmap />
     </MainLayout>
