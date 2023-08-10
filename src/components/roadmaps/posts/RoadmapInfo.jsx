@@ -12,19 +12,22 @@ import {
   Drawer,
   Group,
   Modal,
+  Popover,
   rem,
   ScrollArea,
   Text,
   Title,
+  UnstyledButton,
 } from '@mantine/core';
+import { useFocusTrap } from '@mantine/hooks';
 import {
   IconBook2,
   IconCalendarStats,
+  IconCircleCheckFilled,
   IconHeart,
   IconHeartFilled,
   IconUser,
 } from '@tabler/icons-react';
-import CodeBlock from '@tiptap/extension-code-block';
 import { Highlight } from '@tiptap/extension-highlight';
 import { Link } from '@tiptap/extension-link';
 import { Subscript } from '@tiptap/extension-subscript';
@@ -36,9 +39,10 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
+// import CommentSection from 'components/comments';
 import { useInput } from 'components/common/hooks/useInput';
 import { useUser } from 'components/user/hooks/useUser';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   ReactFlow,
@@ -171,9 +175,6 @@ export default function RoadMapInfo() {
   const editor = useEditor({
     extensions: [
       StarterKit,
-      CodeBlock.configure({
-        languageClassPrefix: 'language-',
-      }),
       Youtube.configure({
         inline: false,
         ccLanguage: 'ko',
@@ -254,32 +255,32 @@ export default function RoadMapInfo() {
       })
       .catch((err) => console.log(err));
   };
-  const submitBlogUrl = useCallback(() => {
-    axios
-      .post(
-        `${baseUrl}/likes/like-roadmap/${currentRoadmap.id}`,
-        {
-          memberId: user?.nickname,
-          roadmapNodeId: id,
-          // "inProgressNodeId" : 0,
-          submitUrl: blogUrl,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${user?.accessToken}`,
-          },
-        },
-      )
-      .then((v) => {
-        console.log(v);
-        // setCurrentRoadmap({
-        //   ...currentRoadmap,
-        //   isLiked: v?.data.isLiked,
-        //   likeCount: v?.data.likeCount,
-        // });
-      })
-      .catch((err) => console.log(err));
-  }, [blogUrl]);
+  // const submitBlogUrl = useCallback(() => {
+  //   axios
+  //     .post(
+  //       `${baseUrl}/likes/like-roadmap/${currentRoadmap.id}`,
+  //       {
+  //         memberId: user?.nickname,
+  //         roadmapNodeId: id,
+  //         // "inProgressNodeId" : 0,
+  //         submitUrl: blogUrl,
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${user?.accessToken}`,
+  //         },
+  //       },
+  //     )
+  //     .then((v) => {
+  //       console.log(v);
+  //       // setCurrentRoadmap({
+  //       //   ...currentRoadmap,
+  //       //   isLiked: v?.data.isLiked,
+  //       //   likeCount: v?.data.likeCount,
+  //       // });
+  //     })
+  //     .catch((err) => console.log(err));
+  // }, [blogUrl]);
 
   const [nodeState, setNodes, onNodesChange] = useNodesState([]);
   const [edgeState, setEdges, onEdgesChange] = useEdgesState([]);
@@ -294,6 +295,33 @@ export default function RoadMapInfo() {
   const [modal, setModal] = useState(false);
 
   const proOptions = { hideAttribution: true };
+
+  const focusTrapRef = useFocusTrap();
+
+  const updateRoadmapProgress = () => {
+    axios
+      .patch(
+        `${baseUrl}/roadmaps/in-progress-nodes/${id}/done`,
+        {
+          inProgressNodeId: id,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user?.accessToken}`,
+          },
+        },
+      )
+      .then((v) => {
+        console.log(v);
+        // setParticipation(true);
+        // setCurrentRoadmap({
+        //   ...currentRoadmap,
+        //   joinCount: currentRoadmap.joinCount + 1,
+        // });
+      })
+      .catch((e) => console.log(e));
+  };
 
   const joinRoadmap = () => {
     axios
@@ -408,9 +436,9 @@ export default function RoadMapInfo() {
               >
                 {isLoading && ' 로딩 중'}
                 {!isLoading && participation && user?.accessToken && '참여 중'}
-                {!isLoading && (!participation || !user?.accessToken)
-                  ? '참여하기'
-                  : ''}
+                {!isLoading &&
+                  (!participation || !user?.accessToken) &&
+                  '참여하기'}
               </Button>
             </div>
           </Text>
@@ -441,7 +469,14 @@ export default function RoadMapInfo() {
               <ReactFlow
                 nodes={nodeState}
                 preventScrolling={false}
-                viewport={currentRoadmap?.viewport}
+                // viewport={{
+                //   // x: currentRoadmap?.viewport?.x,
+                //   x: 0,
+                //   // y: currentRoadmap?.viewport?.y,
+                //   y: 0,
+                //   zoom: 0.2,
+                // }}
+                // viewport={}
                 // nodeTypes="default"
                 nodeTypes={nodeTypes}
                 edges={edgeState}
@@ -455,15 +490,16 @@ export default function RoadMapInfo() {
                 panOnScroll={panOnScroll}
                 zoomOnDoubleClick={zoomOnDoubleClick}
                 panOnDrag={panOnDrag}
-                fitView
+                // fitView
                 attributionPosition="top-right"
                 onNodeClick={(e, n) => {
                   setLabel(`${n?.data?.label}`);
                   setId(`${n?.id}`);
                   setIsOpen(!isOpen);
                 }}
-                FitBoundsOptions={{ padding: '10px' }}
-                FitViewOptions={{ padding: '10px' }}
+                style={{ overflow: 'visible' }}
+                // FitBoundsOptions={{ padding: '10px' }}
+                // FitViewOptions={{ padding: '10px' }}
                 // fitViewOptions={p}
               />
               {/* <Input.Wrapper label="블로그 인증">
@@ -503,18 +539,81 @@ export default function RoadMapInfo() {
                 scrollAreaComponent={ScrollArea.Autosize}
                 onClose={() => setIsOpen(!isOpen)}
                 position="right"
-                size="38%"
+                ref={focusTrapRef}
               >
-                <Drawer.Content>
+                <Drawer.Content
+                  trapFocus={false}
+                  onMouseLeave={useFocusTrap(false)}
+                >
                   <Drawer.CloseButton mr="1rem" mt="1rem" />
-                  <Drawer.Body p="1rem">
-                    <Center pl="sm" pr="sm">
+                  <Drawer.Body p="1rem" style={{ height: '100vh' }}>
+                    <Popover
+                      position="bottom"
+                      withArrow
+                      shadow="md"
+                      width="target"
+                    >
+                      <Popover.Target>
+                        <Button variant="outline" mb="lg">
+                          {/* <IconCircleCheckFilled
+                            style={{ color: 'green', marginRight: '10px' }}
+                          /> */}
+                          {currentRoadmap?.isJoined &&
+                            nodeState.map((v) => {
+                              if (v.id === id && participation) {
+                                return (
+                                  <IconCircleCheckFilled
+                                    style={{
+                                      color: 'green',
+                                      marginRight: '10px',
+                                    }}
+                                  />
+                                );
+                              }
+                              if (v.id === id && !participation) {
+                                return (
+                                  <IconCircleCheckFilled
+                                    style={{
+                                      color: 'grey',
+                                      marginRight: '10px',
+                                    }}
+                                  />
+                                );
+                              }
+                              return '';
+                            })}
+                          진행상황 업데이트
+                        </Button>
+                      </Popover.Target>
+                      <Popover.Dropdown>
+                        <UnstyledButton>
+                          <Group onClick={() => updateRoadmapProgress()}>
+                            <IconCircleCheckFilled style={{ color: 'green' }} />
+                            <div>
+                              <Text>진행 완료</Text>
+                            </div>
+                          </Group>
+                        </UnstyledButton>
+                        <UnstyledButton>
+                          <Group>
+                            <IconCircleCheckFilled
+                              style={{ color: 'orange' }}
+                            />
+                            <div>
+                              <Text>진행 중</Text>
+                            </div>
+                          </Group>
+                        </UnstyledButton>
+                      </Popover.Dropdown>
+                    </Popover>
+                    <Center pl="1.25rem">
                       <EditorContent
                         editor={editor}
                         readOnly
                         style={{ lineHeight: '2rem' }}
                       />
                     </Center>
+                    {/* <CommentSection /> */}
                   </Drawer.Body>
                 </Drawer.Content>
               </Drawer.Root>
@@ -527,19 +626,26 @@ export default function RoadMapInfo() {
 }
 const Wrap = styled.div`
   width: 100%;
-  background-color: '#ebf6fc';
-  /* height: 96vh; */
+  overflow: visible;
   height: 100em;
+
+  & .react-flow__pane.react-flow__viewport.react-flow__container {
+    height: 'fit-content';
+    /* width: 'fit-content'; */
+    transform: scale(0.45) !important;
+  }
+
+  & .mantine-ScrollArea-root {
+    height: 100vh;
+  }
+  & .mantine-Drawer-body {
+    height: 100vh;
+  }
 
   & .react-flow__node {
     font-size: 3rem;
     cursor: pointer;
-    min-width: fit-content;
-    /* :hover {
-      transform: scale(30);
-    } */
     margin-top: 10px;
-    /* display: flex; */
     display: block;
     padding: 10px;
     z-index: 4;
@@ -549,6 +655,9 @@ const Wrap = styled.div`
   & .react-flow__pane {
     cursor: auto;
   }
+  & .react-flow {
+    overflow: visible !important;
+  }
 `;
 const EditorWrap = styled.div`
   & .editor {
@@ -557,7 +666,7 @@ const EditorWrap = styled.div`
     }
   }
 
-  & .roadMapWrap {
+  /* & .roadMapWrap {
     overflow-x: hidden;
-  }
+  } */
 `;

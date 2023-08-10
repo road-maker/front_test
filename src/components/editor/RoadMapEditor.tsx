@@ -31,13 +31,15 @@ import {
 } from '@tabler/icons-react';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
-import Typer from 'components/common/typingAnimation/Typer';
+import { Typer } from 'components/common/typingAnimation/Typer';
 import { useRoadmap } from 'components/roadmaps/posts/hooks/useRoadmap';
 import { useUser } from 'components/user/hooks/useUser';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactFlow, {
+  addEdge,
   Background,
+  ConnectionLineType,
   Controls,
   MiniMap,
   Panel,
@@ -61,7 +63,7 @@ dagreGraph.setDefaultEdgeLabel(() => ({}));
 // const nodeWidth = 172;
 // const nodeHeight = 36;
 const nodeWidth = 240;
-const nodeHeight = 50;
+const nodeHeight = 60;
 
 const flowKey = 'example-flow';
 
@@ -105,25 +107,25 @@ const initialNodes = [
   {
     id: '1',
     data: { label: '내용을 입력해주세요.' },
-    position: { x: 100, y: 100, zoom: 1 },
+    position: { x: 100, y: 100, zoom: 0.45 },
     type: 'custom',
     style: {
       background: '#ff7474',
       border: '1px solid black',
       borderRadius: 15,
-      fontSize: 32,
+      fontSize: 24,
     },
   },
   {
     id: '2',
     data: { label: '내용을 입력해주세요.' },
-    position: { x: 100, y: 200, zoom: 1 },
+    position: { x: 100, y: 200, zoom: 0.45 },
     type: 'custom',
     style: {
       background: '#ffe573',
       border: '1px solid black',
       borderRadius: 15,
-      fontSize: 32,
+      fontSize: 24,
     },
   },
 ];
@@ -131,7 +133,7 @@ const initialNodes = [
 const initialEdges = [
   { id: 'e1e2', source: '1', target: '2', type: edgeType, animated: true },
 ];
-const defaultViewport = { x: 0, y: 0, zoom: 1 };
+const defaultViewport = { x: 0, y: 0, zoom: 0.45 };
 
 const colorPalette = {
   blues: ['#7aabff', '#8cb6ff', '#bad3ff', '#ccddff', '#e0ebff', '#d8dde8'],
@@ -193,7 +195,7 @@ function Roadmap({
   const [keyword, setKeyword] = useState('');
   const [currentFlow, setCurrentFlow] = useState('');
   const [gptDisabled, setGptDisabled] = useState(false);
-  const [currentView, setCurrentView] = useState({ x: 0, y: 0, zoom: 1 });
+  const [currentView, setCurrentView] = useState({ x: 0, y: 0, zoom: 0.45 });
   const yPos = useRef(currentView.y);
   const { user } = useUser();
   const [files, setFiles] = useState<FileWithPath[]>([]); // 썸네일
@@ -235,52 +237,62 @@ function Roadmap({
         .then((res) => {
           res?.data.length > 0 ? setGptRes(false) : setGptRes(true);
           setUseGpt(res?.data);
-          axios
-            .post(`${baseUrl}/gpt/roadmap/detail`, res.data.slice(0, 4), {
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${user?.accessToken}`,
-              },
-            })
-            .then((e) => {
-              // @ts-ignore
-              console.log(e);
-              // e.data.
-              const resDetail = e?.data;
-              const copyState = [...state];
-              if (resDetail.length > 0) {
-                resDetail.map((n) => {
-                  copyState.map((v) => {
-                    if (n.id === v.id) {
-                      // eslint-disable-next-line no-param-reassign
-                      v.details += n.detailedContent;
-                    }
-                  });
-                });
-                setState(copyState);
-                setGptDisabled(false);
-              }
-              //   const copyState = [...state];
-              //   copyState.map((n) => {
-              //     e.data.
-              //     if (n.id === ) {
-              //       console.log('현재 content', n?.details);
-              //       // eslint-disable-next-line no-param-reassign
-              //       n.details += resDetail;
-              //     }
-              //   });
-              //   setState(copyState);
-              //   setGptDisabled(false);
-              // }
-              // 상세 내용 에디터에 내용 넣어주기
-            })
-            .catch((err) => console.log(err));
         })
         .then(() => {
           setGptRes(false);
+          setGptDisabled(false);
         });
     }
   }, []);
+
+  useMemo(() => {
+    axios
+      .post(`${baseUrl}/gpt/roadmap/detail`, useGpt.slice(0, 4), {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user?.accessToken}`,
+        },
+      })
+      .then((e) => {
+        state.map((n) => {
+          e.data.map((v) => {
+            console.log(
+              `state id : ${n.id},  data id: ${v.id}, ${v.detailedContent}`,
+            );
+            if (n.id === v.id) {
+              // eslint-disable-next-line no-param-reassign
+              n.details += v.detailedContent;
+            }
+          });
+        });
+      })
+      .catch((err) => console.log(err));
+  }, [useGpt, state.length]);
+  // useMemo(() => {
+  //   if (useGpt.length > 0 && state.length >= useGpt.length) {
+  //     axios
+  //       .post(`${baseUrl}/gpt/roadmap/detail`, useGpt.slice(0, 4), {
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Authorization: `Bearer ${user?.accessToken}`,
+  //         },
+  //       })
+  //       .then((e) => {
+  //         state.map((n) => {
+  //           e.data.map((v) => {
+  //             console.log(
+  //               `state id : ${n.id},  data id: ${v.id}, ${v.detailedContent}`,
+  //             );
+  //             if (n.id === v.id) {
+  //               // eslint-disable-next-line no-param-reassign
+  //               n.details += v.detailedContent;
+  //             }
+  //           });
+  //         });
+  //       })
+  //       .catch((err) => console.log(err));
+  //   }
+  // }, [state, useGpt.length]);
 
   useEffect(() => {
     onLayout('LR');
@@ -315,7 +327,7 @@ function Roadmap({
             }`,
             border: '1px solid black',
             borderRadius: 15,
-            fontSize: 32,
+            fontSize: 24,
           },
         });
         nodeSet.add(`${v?.id}`);
@@ -383,24 +395,34 @@ function Roadmap({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);
 
+  // const onConnect = useCallback(
+  //   // 간선 스타일 통일
+  //   ({ source, target }) => {
+  //     setEdges((els) => {
+  //       return [
+  //         ...els,
+  //         {
+  //           // id: `e${source}e${target}`, // 문제 : e122면 12랑 2인지 1이랑 22인지 구분이 안됨..
+  //           id: `e${source}${target}`,
+  //           source,
+  //           target,
+  //           type: edgeType,
+  //           animated: true,
+  //         },
+  //       ];
+  //     });
+  //   },
+  //   [setEdges],
+  // );
   const onConnect = useCallback(
-    // 간선 스타일 통일
-    ({ source, target }) => {
-      setEdges((els) => {
-        return [
-          ...els,
-          {
-            // id: `e${source}e${target}`, // 문제 : e122면 12랑 2인지 1이랑 22인지 구분이 안됨..
-            id: `e${source}${target}`,
-            source,
-            target,
-            type: edgeType,
-            animated: true,
-          },
-        ];
-      });
-    },
-    [setEdges],
+    (params) =>
+      setEdges((eds) =>
+        addEdge(
+          { ...params, type: ConnectionLineType.SmoothStep, animated: true },
+          eds,
+        ),
+      ),
+    [],
   );
 
   // useMemo(() => {
@@ -427,13 +449,13 @@ function Roadmap({
         const {
           x = 0,
           y = 0,
-          zoom = 1,
+          zoom = 0.45,
           nodes: restoredNodes,
           edges: restoredEdges,
         } = flow;
         setNodes(restoredNodes || []);
         setEdges(restoredEdges || []);
-        setViewport({ x, y, zoom });
+        setViewport({ x, y, zoom: 0.45 });
       }
     };
 
@@ -463,7 +485,7 @@ function Roadmap({
           background: '#fff',
           border: '1px solid black',
           borderRadius: 15,
-          fontSize: 32,
+          fontSize: 24,
         },
       },
     ]);
@@ -542,7 +564,7 @@ function Roadmap({
       edges: edgesCopy,
       // viewport: defaultViewport,
       // viewport: currentView,
-      viewport: { x: 0, y: 0, zoom: 1 },
+      viewport: { x: 0, y: 0, zoom: 0.45 },
     };
 
     axios
@@ -773,11 +795,6 @@ function Roadmap({
         <Modal.Root opened={gptRes} onClose={close} centered size="70%">
           <Modal.Overlay color="#000" opacity={0.85} />
           <Modal.Content>
-            <Modal.Header>
-              <Modal.Title style={{ textAlign: 'center' }} fs="3em">
-                AI로 자동 생성 중
-              </Modal.Title>
-            </Modal.Header>
             <Modal.Body>
               <Spinner />
               <Typer
@@ -1062,7 +1079,7 @@ function Roadmap({
         edges={edgeState}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
-        defaultViewport={defaultViewport}
+        // defaultViewport={defaultViewport}
         minZoom={0.2}
         maxZoom={4}
         // onInit={onInit}
@@ -1081,6 +1098,7 @@ function Roadmap({
         zoomOnDoubleClick
         elevateNodesOnSelect
         snapToGrid
+        connectionLineType={ConnectionLineType.SmoothStep}
         proOptions={proOptions}
         onInit={setRfInstance}
         nodeTypes={nodeTypes}
@@ -1125,9 +1143,9 @@ const Wrap = styled.div`
   width: 100%;
   height: 91vh;
 
-  .react-flow__node {
+  /* .react-flow__node {
     min-width: fit-content;
-  }
+  } */
   & .updatenode__controls {
     position: absolute;
     right: 10px;
@@ -1140,16 +1158,16 @@ const Wrap = styled.div`
     display: block;
   }
 
-  & .updatenode__bglabel {
+  /* & .updatenode__bglabel {
     margin-top: 10px;
-  }
+  } */
 
   & .react-flow__panel {
     display: inline-flex;
   }
 
   & .updatenode__checkboxwrapper {
-    margin-top: 10px;
+    /* margin-top: 10px; */
     display: flex;
     align-items: center;
   }
