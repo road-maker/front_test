@@ -299,8 +299,31 @@ export default function RoadMapInfo() {
   const focusTrapRef = useFocusTrap();
 
   const updateRoadmapProgress = () => {
+    if (!user) {
+      // eslint-disable-next-line no-alert
+      alert('로그인 후 이용 가능합니다!');
+      return navigate('/users/signin');
+    }
+    // if (!currentRoadmap.isJoined) {
+    //   // eslint-disable-next-line no-alert
+    //   return alert('참여하기 버튼 클릭 후 이용 가능합니다.');
+    // }
     // eslint-disable-next-line no-alert
-    alert('진행 완료!');
+    const copyState = [...nodeState];
+    copyState.map((v) => {
+      if (v.id === id && participation) {
+        // eslint-disable-next-line no-param-reassign
+        v.done = true;
+      }
+    });
+    nodeState.forEach((v) => {
+      if (v.id === id && participation) {
+        // eslint-disable-next-line no-param-reassign
+        v.data.done = true;
+      }
+    });
+    setState(copyState);
+    return alert('진행 완료!');
     // axios
     //   .patch(
     //     `${baseUrl}/roadmaps/in-progress-nodes/${id}/done`,
@@ -537,16 +560,13 @@ export default function RoadMapInfo() {
                 </Input.Wrapper> */}
 
               <Drawer.Root
+                trapFocus={false}
                 opened={isOpen}
                 scrollAreaComponent={ScrollArea.Autosize}
                 onClose={() => setIsOpen(!isOpen)}
                 position="right"
-                ref={focusTrapRef}
               >
-                <Drawer.Content
-                  trapFocus={false}
-                  onMouseLeave={useFocusTrap(false)}
-                >
+                <Drawer.Content onMouseLeave={useFocusTrap(false)}>
                   <Drawer.CloseButton mr="1rem" mt="1rem" />
                   <Drawer.Body p="1rem" style={{ height: '100vh' }}>
                     <Popover
@@ -560,9 +580,9 @@ export default function RoadMapInfo() {
                           {/* <IconCircleCheckFilled
                             style={{ color: 'green', marginRight: '10px' }}
                           /> */}
-                          {currentRoadmap?.isJoined &&
+                          {participation &&
                             nodeState.map((v) => {
-                              if (v.id === id && participation) {
+                              if (v.id === id && v.done) {
                                 return (
                                   <IconCircleCheckFilled
                                     style={{
@@ -572,11 +592,11 @@ export default function RoadMapInfo() {
                                   />
                                 );
                               }
-                              if (v.id === id && !participation) {
+                              if (v.id === id && !v.done) {
                                 return (
                                   <IconCircleCheckFilled
                                     style={{
-                                      color: 'grey',
+                                      color: 'orange',
                                       marginRight: '10px',
                                     }}
                                   />
@@ -584,6 +604,14 @@ export default function RoadMapInfo() {
                               }
                               return '';
                             })}
+                          {!participation && (
+                            <IconCircleCheckFilled
+                              style={{
+                                color: 'grey',
+                                marginRight: '10px',
+                              }}
+                            />
+                          )}
                           진행상황 업데이트
                         </Button>
                       </Popover.Target>
@@ -633,7 +661,7 @@ const Wrap = styled.div`
 
   & .react-flow__pane.react-flow__viewport.react-flow__container {
     height: 'fit-content';
-    /* width: 'fit-content'; */
+    width: 'fit-content';
     transform: scale(0.45) !important;
   }
 
@@ -659,6 +687,7 @@ const Wrap = styled.div`
   }
   & .react-flow {
     overflow: visible !important;
+    /* zoom: 60% !important; */
   }
 `;
 const EditorWrap = styled.div`

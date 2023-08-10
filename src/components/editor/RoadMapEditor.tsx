@@ -194,6 +194,8 @@ function Roadmap({
   const [nodeModal, setNodeModal] = useState(false);
   const [keyword, setKeyword] = useState('');
   const [currentFlow, setCurrentFlow] = useState('');
+  const [isDetailReady, setIsDetailReady] = useState(4);
+  const [details, setDetails] = useState([]);
   const [gptDisabled, setGptDisabled] = useState(false);
   const [currentView, setCurrentView] = useState({ x: 0, y: 0, zoom: 0.45 });
   const yPos = useRef(currentView.y);
@@ -246,28 +248,34 @@ function Roadmap({
   }, []);
 
   useMemo(() => {
-    axios
-      .post(`${baseUrl}/gpt/roadmap/detail`, useGpt.slice(0, 4), {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${user?.accessToken}`,
-        },
-      })
-      .then((e) => {
-        state.map((n) => {
-          e.data.map((v) => {
-            console.log(
-              `state id : ${n.id},  data id: ${v.id}, ${v.detailedContent}`,
-            );
-            if (n.id === v.id) {
-              // eslint-disable-next-line no-param-reassign
-              n.details += v.detailedContent;
-            }
-          });
-        });
-      })
-      .catch((err) => console.log(err));
-  }, [useGpt, state.length]);
+    if (isDetailReady >= 4) {
+      axios
+        .post(`${baseUrl}/gpt/roadmap/detail`, useGpt.slice(0, 10), {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user?.accessToken}`,
+          },
+        })
+        .then((e) => {
+          if (e.data.length > 0) {
+            setDetails(e.data);
+          }
+
+          // state.map((n) => {
+          //   e.data.map((v) => {
+          //     console.log(
+          //       `state id : ${n.id},  data id: ${v.id}, ${v.detailedContent}`,
+          //     );
+          //     if (n.id === v.id) {
+          //       // eslint-disable-next-line no-param-reassign
+          //       n.details += v.detailedContent;
+          //     }
+          //   });
+          // });
+        })
+        .catch((err) => console.log(err));
+    }
+  }, [isDetailReady]);
   // useMemo(() => {
   //   if (useGpt.length > 0 && state.length >= useGpt.length) {
   //     axios
@@ -352,6 +360,13 @@ function Roadmap({
     setNodes(tmpNode);
     setEdges(tmpEdge);
   }, [useGpt]);
+
+  useMemo(() => {
+    console.log(nodeState.length);
+    if (nodeState.length > initialNodes.length) {
+      setIsDetailReady(nodeState.length);
+    }
+  }, [nodeState.length]);
 
   // useEffect(() => {
   //   // 자동 생성 후 formatting
@@ -1090,6 +1105,16 @@ function Roadmap({
           setColor(n?.style?.background);
           console.log('n', n);
           console.log('e', e);
+          console.log('details', details);
+          if (details.length > 0) {
+            setState(details);
+            // details.map((v) => {
+            //   if (v.id === id) {
+            //     // setState(v.detailedContent);
+            //     console.log(state);
+            //   }
+            // });
+          }
           setNodeModal(true);
           // console.log('selectedNode', selectedNode);
         }}

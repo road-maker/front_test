@@ -30,8 +30,8 @@ export default function RoadMapEditor(): ReactElement {
   const [search] = useSearchParams();
   const [state, setState] = useState([
     // tiptap 에디터 내용
-    { id: '1', details: '' },
-    { id: '2', details: '' },
+    { id: '1', detailedContent: '' },
+    { id: '2', detailedContent: '' },
   ]);
   const [colorsState, setColorsState] = useState([
     // tiptap 에디터 내용
@@ -61,7 +61,7 @@ export default function RoadMapEditor(): ReactElement {
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
-    content: state.filter((v) => v?.id === id)[0]?.details || '',
+    content: state.filter((v) => v?.id === id)[0]?.detailedContent || '',
     autofocus: false,
 
     onUpdate(e) {
@@ -79,7 +79,7 @@ export default function RoadMapEditor(): ReactElement {
         const copyState = [...state];
         copyState.splice(idx, 1, {
           id: item?.id,
-          details: e.editor?.getHTML(),
+          detailedContent: e.editor?.getHTML(),
         });
         setState(copyState);
       });
@@ -116,8 +116,8 @@ export default function RoadMapEditor(): ReactElement {
     if (editor) {
       // editor.value?.chain().focus().setContent(JSON.parse(content)).run()
       // mount 시 에러
-      // editor.commands.setContent(filt[0]?.details, true, {
-      editor.commands.setContent(filt[0]?.details, false, {
+      // editor.commands.setContent(filt[0]?.detailedContent, true, {
+      editor.commands.setContent(filt[0]?.detailedContent, false, {
         preserveWhitespace: 'full', // 빈칸 인식 X 에러 해결
         // preserveWhitespace: true, // 빈칸 인식 X 에러 해결
       });
@@ -130,7 +130,7 @@ export default function RoadMapEditor(): ReactElement {
         editor.chain().focus().setTextSelection(cursorPosition).run();
     }
     if (label !== '' && filt.length === 0) {
-      setState([...state, { id, details: '' }]);
+      setState([...state, { id, detailedContent: '' }]);
     }
   }, [state, setToggle, editor, label, id]);
 

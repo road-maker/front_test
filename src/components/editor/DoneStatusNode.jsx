@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { Handle, Position } from 'reactflow';
 import { styled } from 'styled-components';
 
-export function DoneStatusNode({ data, done }) {
+export function DoneStatusNode({ data }) {
   return (
     <>
       {/* {!done && typeof done === 'boolean' && (
@@ -26,7 +26,7 @@ export function DoneStatusNode({ data, done }) {
       <Wrap className="node">
         <Handle style={{ opacity: 0 }} type="target" position={Position.Left} />
         <Handle style={{ opacity: 0 }} type="target" position={Position.Top} />
-        {done ? (
+        {data.done ? (
           <div
             style={{
               backgroundColor: '#a8a6a6be',
