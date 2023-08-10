@@ -83,7 +83,6 @@ export default function RoadmapRecommendation() {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState('');
   const [roadmapPage, setRoadmapPage] = useState(1);
-  
   const initialUrl = `${baseUrl}/roadmaps?page=${roadmapPage}&order-type=recent`;
   const fetchUrl = async (url) => {
     const response = await fetch(url);
