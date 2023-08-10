@@ -22,8 +22,6 @@ import {
 } from '@mantine/core';
 import { useFocusTrap } from '@mantine/hooks';
 import {
-  IconBook2,
-  IconCalendarStats,
   IconCircleCheckFilled,
   IconHeart,
   IconHeartFilled,
@@ -40,7 +38,6 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
-// import CommentSection from 'components/comments';
 import { useInput } from 'components/common/hooks/useInput';
 import { useUser } from 'components/user/hooks/useUser';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -523,7 +520,6 @@ export default function RoadMapInfo() {
           // }}
         />
       </Input.Wrapper> */}
-
               <Drawer.Root
                 opened={isOpen}
                 scrollAreaComponent={ScrollArea.Autosize}
@@ -603,7 +599,6 @@ export default function RoadMapInfo() {
                         style={{ lineHeight: '2rem' }}
                       />
                     </Center>
-                    {/* <CommentSection /> */}
                   </Drawer.Body>
                 </Drawer.Content>
               </Drawer.Root>
