@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-alert */
-/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   ActionIcon,
   Avatar,
   Box,
-  Burger,
   Button,
   Center,
   createStyles,
@@ -14,29 +12,17 @@ import {
   Image,
   LoadingOverlay,
   Modal,
-  NavLink,
   rem,
-  Text,
   TextInput,
   TextInputProps,
   useMantineTheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import {
-  IconActivity,
-  IconArrowLeft,
-  IconArrowRight,
-  IconChevronRight,
-  IconFingerprint,
-  IconGauge,
-  IconSearch,
-} from '@tabler/icons-react';
+import { IconArrowLeft, IconArrowRight, IconSearch } from '@tabler/icons-react';
 import axios, { AxiosResponse } from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
 import { useInput } from 'components/common/hooks/useInput';
-// import { usePrompt } from 'components/prompts/hooks/usePrompt';
 import { usePromptAnswer } from 'components/prompts/hooks/usePromptResponse';
-import { oneOfType } from 'prop-types';
 import { useCallback, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { clearStoredGpt } from 'storage/gpt-storage';
@@ -45,16 +31,6 @@ import { styled } from 'styled-components';
 
 import { useAuth } from '../../../auth/useAuth';
 import { useUser } from '../../../components/user/hooks/useUser';
-
-const data = [
-  { icon: IconGauge, label: 'Dashboard', description: 'Item with description' },
-  {
-    icon: IconFingerprint,
-    label: 'Security',
-    rightSection: <IconChevronRight size="1rem" stroke={1.5} />,
-  },
-  { icon: IconActivity, label: 'Activity' },
-];
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -135,19 +111,6 @@ export function HeaderMegaMenu() {
   const [leaveEditorAction, setLeaveEditorAction] = useState('');
   const [search, onChangeSearch, setSearch] = useInput('');
   const [isLoading, setIsLoading] = useState(false);
-  const [active, setActive] = useState(0);
-
-  const items = data.map((item, index) => (
-    <NavLink
-      key={item.label}
-      active={index === active}
-      label={item.label}
-      description={item.description}
-      rightSection={item.rightSection}
-      icon={<item.icon size="1rem" stroke={1.5} />}
-      onClick={() => setActive(index)}
-    />
-  ));
 
   const searchByKeyword = useCallback(() => {
     axios
@@ -156,8 +119,14 @@ export function HeaderMegaMenu() {
         localStorage.setItem('roadmap_search_keyword', search);
         navigate(`/roadmap/post/search/${search}`);
       })
-      .catch((e) => console.log(e));
+      .catch();
   }, [navigate, search]);
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      searchByKeyword();
+    }
+  };
 
   return (
     <HeaderWrap>
@@ -190,6 +159,7 @@ export function HeaderMegaMenu() {
                   ml="9em"
                   onChange={onChangeSearch}
                   placeholder="검색어를 입력해주세요."
+                  onKeyDown={handleKeyDown}
                   rightSection={
                     <ActionIcon
                       variant="filled"
@@ -250,11 +220,11 @@ export function HeaderMegaMenu() {
                   </div>
                 </Center>
               </Modal>
-              <Modal opened={opened} onClose={close} size="70%">
+              <Modal opened={opened} onClose={close} size="60%">
                 <Center>
                   <h1>새로운 로드맵 생성하기</h1>
                 </Center>
-                <Center>
+                <Center my={10}>
                   <Image
                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDEv4qC_L_0WLYmLRBtBd2sYGkjMzWvGqrOw&usqp=CAU"
                     width={300}
@@ -264,12 +234,13 @@ export function HeaderMegaMenu() {
                 <Center>
                   <InputWithButton />
                 </Center>
-                <Center mt={50}>
+                <Center mt={20}>
                   <h5>오늘은 그냥 템플릿 없이 빈 로드맵 만들게요.</h5>
                   <Button
                     size="xs"
                     variant="light"
                     color="blue"
+                    ml={10}
                     onClick={() => {
                       clearStoredRoadmap();
                       clearStoredGpt();
@@ -277,7 +248,6 @@ export function HeaderMegaMenu() {
                         alert('로그인 후 이용가능합니다.');
                         navigate('/users/signin');
                       }
-                      // if(localStorage.getItem(''))
                       navigate('/roadmap/editor');
                     }}
                   >
@@ -378,6 +348,12 @@ export function InputWithButton(props: TextInputProps) {
       navigate(`/roadmap/editor`);
     }
   }, [promptResponse, navigate]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      onRequestPrompt();
+    }
+  };
   return (
     <>
       <LoadingOverlay visible={isLoading} />
@@ -387,6 +363,7 @@ export function InputWithButton(props: TextInputProps) {
         icon={<IconSearch size="1.1rem" stroke={1.5} />}
         radius="md"
         w="600px"
+        onKeyDown={handleKeyDown}
         rightSection={
           <ActionIcon
             size={32}
@@ -395,7 +372,6 @@ export function InputWithButton(props: TextInputProps) {
                 alert('로그인 후 이용가능합니다.');
                 navigate('/users/signin');
               }
-              // onRequestPrompt();
               onRequestPrompt();
             }}
             radius="xl"

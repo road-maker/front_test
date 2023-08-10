@@ -9,9 +9,8 @@ import {
   SimpleGrid,
   Text,
 } from '@mantine/core';
-import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useInfiniteQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
@@ -80,24 +79,11 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function RoadmapRecommendation() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [allRoadmapData, setAllRoadmapData] = useState([]);
   const { classes } = useStyles();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState('');
   const [roadmapPage, setRoadmapPage] = useState(1);
-
-  const fetchRoadmaps = useCallback(() => {
-    axios
-      .get(`${baseUrl}/roadmaps?page=${roadmapPage}&order-type=recent`)
-      .then((v) => {
-        setAllRoadmapData(v?.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  }, [roadmapPage]);
-
+  
   const initialUrl = `${baseUrl}/roadmaps?page=${roadmapPage}&order-type=recent`;
   const fetchUrl = async (url) => {
     const response = await fetch(url);
@@ -117,10 +103,10 @@ export default function RoadmapRecommendation() {
     ({ pageParam = initialUrl }) => fetchUrl(pageParam),
     {
       getNextPageParam: (lastPage) => {
-        if (lastPage.result.length !== 0) {
+        if (lastPage && lastPage.next && lastPage.result.length !== 0) {
           return lastPage.next;
         }
-        return undefined;
+        return null;
       },
       enabled: roadmapPage === 1,
     },
@@ -129,8 +115,7 @@ export default function RoadmapRecommendation() {
   useEffect(() => {
     setRoadmapPage(1);
     refetch();
-    fetchRoadmaps();
-  }, [fetchRoadmaps, refetch]);
+  }, [refetch]);
 
   if (isLoading)
     return (
@@ -209,7 +194,7 @@ export default function RoadmapRecommendation() {
                   </Text>
                   <Card.Section className={classes.footer}>
                     <Group>
-                      <Avatar radius="sm" color="blue">
+                      <Avatar radius="xl" color="blue">
                         {article.member.nickname.substring(0, 1)}
                       </Avatar>
 

@@ -8,6 +8,7 @@ import {
   Button,
   Card,
   Center,
+  Container,
   createStyles,
   Drawer,
   Group,
@@ -58,7 +59,7 @@ import { useRoadmapData } from './hooks/useRoadMapResponse';
 const useStyles = createStyles((theme) => ({
   title: {
     fontSize: rem(34),
-    fontWeight: 900,
+    fontWeight: 600,
 
     [theme.fn.smallerThan('sm')]: {
       fontSize: rem(24),
@@ -337,7 +338,7 @@ export default function RoadMapInfo() {
           },
         },
       )
-      .then((v) => {
+      .then(() => {
         setParticipation(true);
         setCurrentRoadmap({
           ...currentRoadmap,
@@ -347,7 +348,7 @@ export default function RoadMapInfo() {
       .catch((e) => console.log(e));
   };
   return (
-    <>
+    <Container>
       <Card mt="3rem">
         <div
           style={{
@@ -357,13 +358,7 @@ export default function RoadMapInfo() {
             width: '100%',
           }}
         >
-          <Group mt="1rem">
-            <Title className={classes.title}>{currentRoadmap?.title}</Title>
-            <Avatar color="purple" size="md">
-              {currentRoadmap?.ownerAvatarUrl || ''}
-            </Avatar>
-            {currentRoadmap?.ownerNickname}
-          </Group>
+          <Title className={classes.title}>{currentRoadmap?.title}</Title>
           <div
             style={{
               display: 'inline-flex',
@@ -400,51 +395,47 @@ export default function RoadMapInfo() {
           </div>
         </div>
 
-        <div>
-          <Text c="dimmed" mt="md">
-            <IconCalendarStats
-              size={rem(20)}
-              stroke={2}
-              color={theme.fn.primaryColor()}
-            />{' '}
-            만든 날짜 : {currentRoadmap?.createdAt}
-          </Text>
-          <Text c="dimmed" mt="md">
-            <IconBook2
-              size={rem(20)}
-              stroke={2}
-              color={theme.fn.primaryColor()}
-            />{' '}
-            {currentRoadmap?.description || ''}
-          </Text>
-          <Text c="dimmed" mt="sm">
-            <div>
-              <IconUser
-                size={rem(20)}
-                stroke={2}
-                color={theme.fn.primaryColor()}
-              />{' '}
-              참여인원: {currentRoadmap?.joinCount}명
-              <Button
-                style={{ float: 'right' }}
-                loading={isLoading}
-                disabled={isLoading || (participation && user?.accessToken)}
-                onClick={() => {
-                  if (!user?.accessToken) {
-                    setModal(true);
-                  }
-                  joinRoadmap();
-                }}
-              >
-                {isLoading && ' 로딩 중'}
-                {!isLoading && participation && user?.accessToken && '참여 중'}
-                {!isLoading &&
-                  (!participation || !user?.accessToken) &&
-                  '참여하기'}
-              </Button>
-            </div>
-          </Text>
-        </div>
+        <Group position="apart">
+          <Group mt="1.5rem">
+            <Avatar color="blue" size="md" radius="xl">
+              {currentRoadmap?.ownerNickname?.substring(0, 1) || ''}
+            </Avatar>
+            {currentRoadmap?.ownerNickname}
+            <Text c="dimmed" fz="md" ml={rem(20)}>
+              {currentRoadmap?.createdAt}
+            </Text>
+          </Group>
+          <Button
+            style={{ float: 'right' }}
+            loading={isLoading}
+            disabled={isLoading || (participation && user?.accessToken)}
+            variant="outline"
+            color="violet"
+            onClick={() => {
+              if (!user?.accessToken) {
+                setModal(true);
+              }
+              joinRoadmap();
+            }}
+          >
+            {isLoading && ' 로딩 중'}
+            {!isLoading && participation && user?.accessToken && '참여 중'}
+            {!isLoading && (!participation || !user?.accessToken)
+              ? '참여하기'
+              : ''}
+          </Button>
+        </Group>
+
+        <Group mt={rem(20)} />
+        <Text mt="md" fz="lg">
+          {currentRoadmap?.description || ''}
+        </Text>
+
+        <Group mt={rem(50)}>
+          <IconUser size={rem(20)} stroke={2} color={theme.fn.primaryColor()} />{' '}
+          <Text c="dimmed"> 참여인원: {currentRoadmap?.joinCount}명</Text>
+        </Group>
+
       </Card>
       <Modal
         opened={modal}
@@ -462,11 +453,9 @@ export default function RoadMapInfo() {
           </div>
         )}
       </Modal>
-
       <EditorWrap>
         <div className="roadMapWrap">
           <ReactFlowProvider>
-            {/* <Wrap style={{ height: '70vh' }}> */}
             <Wrap>
               <ReactFlow
                 nodes={nodeState}
@@ -505,36 +494,36 @@ export default function RoadMapInfo() {
                 // fitViewOptions={p}
               />
               {/* <Input.Wrapper label="블로그 인증">
-                  <Input
-                    icon={<IconCertificate />}
-                    value={blogUrl}
-                    placeholder="https://myblogUrl.io"
-                    onChange={onChangeBlogKeyword}
-                    mt={10}
-                    mb={10}
-                    // disabled={keywordSubmitState}
-                    rightSection={
-                      <Tooltip
-                        label="진행도를 체크할 블로그 링크를 등록해주세요."
-                        position="top-end"
-                        withArrow
-                      >
-                        <ActionIcon
-                          disabled={blogKeyword.length === 0}
-                          variant="transparent"
-                          onClick={() => {
-                            submitBlogUrl();
-                          }}
-                        >
-                          <IconCircleArrowRightFilled size="1rem" />
-                        </ActionIcon>
-                      </Tooltip>
-                    }
-                    // onChange={(evt) => {
-                    //   setLabel(evt?.target?.value);
-                    // }}
-                  />
-                </Input.Wrapper> */}
+        <Input
+          icon={<IconCertificate />}
+          value={blogUrl}
+          placeholder="https://myblogUrl.io"
+          onChange={onChangeBlogKeyword}
+          mt={10}
+          mb={10}
+          // disabled={keywordSubmitState}
+          rightSection={
+            <Tooltip
+              label="진행도를 체크할 블로그 링크를 등록해주세요."
+              position="top-end"
+              withArrow
+            >
+              <ActionIcon
+                disabled={blogKeyword.length === 0}
+                variant="transparent"
+                onClick={() => {
+                  submitBlogUrl();
+                }}
+              >
+                <IconCircleArrowRightFilled size="1rem" />
+              </ActionIcon>
+            </Tooltip>
+          }
+          // onChange={(evt) => {
+          //   setLabel(evt?.target?.value);
+          // }}
+        />
+      </Input.Wrapper> */}
 
               <Drawer.Root
                 opened={isOpen}
@@ -623,7 +612,7 @@ export default function RoadMapInfo() {
           </ReactFlowProvider>
         </div>
       </EditorWrap>
-    </>
+    </Container>
   );
 }
 const Wrap = styled.div`

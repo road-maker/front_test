@@ -2,11 +2,9 @@ import {
   Button,
   Center,
   createStyles,
-  Group,
   Modal,
   Paper,
   rem,
-  Select,
   SimpleGrid,
   Text,
   Textarea,
@@ -31,7 +29,6 @@ const useStyles = createStyles((theme) => ({
 function CommentPage() {
   const [opened, { open, close }] = useDisclosure(false);
   const { classes } = useStyles();
-  // const [count, handlers] = useCounter(0, { min: 0, max: 1000 });
   const [commentPage, setCommentPage] = useState(1);
   const { pathname } = useLocation();
   const [content, setContent] = useState([]);
@@ -52,8 +49,6 @@ function CommentPage() {
       )
       .then((v) => {
         setContent(v?.data);
-        // setCounts(new Array(commentContents.length).fill(0));
-        // setNickname(v?.data?.commentNickname);
       })
       .catch();
   }, [commentPage, pathname]);
@@ -81,8 +76,8 @@ function CommentPage() {
   );
 
   useEffect(() => {
-    setCommentPage(1); // pathname이 변경될 때 commentPage 초기화
-    refetch(); // refetch 함수를 호출하여 데이터를 다시 로드
+    setCommentPage(1);
+    refetch();
     fetchComments();
   }, [commentPage, fetchComments, pathname, refetch, user.accessToken]);
 
@@ -107,7 +102,6 @@ function CommentPage() {
       .post(
         `${baseUrl}/comments/save-comment`,
         {
-          // commentTitle: title,
           content: commentInput,
           roadmapId: Number(pathname.slice(pathname.lastIndexOf('/') + 1)),
         },
@@ -126,7 +120,6 @@ function CommentPage() {
   }
   return (
     <>
-      {' '}
       <Modal opened={opened} onClose={close}>
         <Center>
           <h2>코멘트 작성</h2>
@@ -152,16 +145,6 @@ function CommentPage() {
           </Button>
         </Center>
       </Modal>
-      <Group position="right">
-        <Select
-          mt={20}
-          defaultValue="최신순"
-          data={[
-            { value: 'svelte', label: '최신순' },
-            { value: 'vue', label: '공감순' },
-          ]}
-        />
-      </Group>
       <Center mt={20}>
         <Button onClick={open}>코멘트 작성하기</Button>
       </Center>
@@ -181,29 +164,8 @@ function CommentPage() {
             {data.pages.map((pageData) => {
               return pageData.result.map((comments, index) => (
                 <Paper withBorder radius="xs" p="xl" key={index}>
-                  <Group>
-                    {/* <Avatar color="cyan" radius="xl">
-            {user.nickname.substring(0, 1)}
-          </Avatar> */}
-                    <div>
-                      {/* <Text size="sm">{nickname}</Text> */}
-                      {/* <Text size="xs" color="dimmed">
-                {title}
-              </Text> */}
-                    </div>
-                  </Group>
                   <Text className={classes.body} size="sm">
                     {comments.content}
-                    {/* <Group>
-                <ActionIcon onClick={handlers.increment}>
-                  <IconHeart
-                    size="1.5rem"
-                    color={theme.colors.red[6]}
-                    stroke={1.5}
-                  />
-                </ActionIcon>
-                {count}
-              </Group> */}
                   </Text>
                 </Paper>
               ));

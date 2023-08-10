@@ -794,6 +794,7 @@ function Roadmap({
       {gptRes && (
         <Modal.Root opened={gptRes} onClose={close} centered size="70%">
           <Modal.Overlay color="#000" opacity={0.85} />
+
           <Modal.Content>
             <Modal.Body>
               <Spinner />
