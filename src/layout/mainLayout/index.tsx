@@ -18,6 +18,6 @@ function MainLayout({ children }) {
 export default MainLayout;
 const Wrap = styled.section`
   width: 80vw;
-  height: fit-content;
+  /* height: fit-content; */
   margin: 0 auto;
 `;

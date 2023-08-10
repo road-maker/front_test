@@ -26,7 +26,7 @@ import { useDisclosure } from '@mantine/hooks';
 import {
   IconAlertCircle,
   IconCertificate,
-  IconCircleArrowRightFilled,
+  IconInfoCircle,
   IconWand,
 } from '@tabler/icons-react';
 import axios from 'axios';
@@ -51,7 +51,6 @@ import ReactFlow, {
 import { setStoredRoadmap } from 'storage/roadmap-storage';
 import { styled } from 'styled-components';
 
-import { ReactComponent as Spinner } from '../../assets/Spinner.svg';
 import { useInput } from '../common/hooks/useInput';
 import PanelItem from './PanelItem';
 import { ResizableNodeSelected } from './ResizableNodeSelected';
@@ -62,8 +61,8 @@ dagreGraph.setDefaultEdgeLabel(() => ({}));
 
 // const nodeWidth = 172;
 // const nodeHeight = 36;
-const nodeWidth = 240;
-const nodeHeight = 60;
+const nodeWidth = 200;
+const nodeHeight = 40;
 
 const flowKey = 'example-flow';
 
@@ -115,6 +114,7 @@ const initialNodes = [
       borderRadius: 15,
       fontSize: 24,
     },
+    blogKeyword: '',
   },
   {
     id: '2',
@@ -127,6 +127,7 @@ const initialNodes = [
       borderRadius: 15,
       fontSize: 24,
     },
+    blogKeyword: '',
   },
 ];
 
@@ -136,11 +137,51 @@ const initialEdges = [
 const defaultViewport = { x: 0, y: 0, zoom: 0.45 };
 
 const colorPalette = {
-  blues: ['#7aabff', '#8cb6ff', '#bad3ff', '#ccddff', '#e0ebff', '#d8dde8'],
-  reds: ['#fe4161', '#ff5975', '#ff8398', '#fa93a5', '#ffb9c4', '#cc99a2'],
-  yellows: ['#fcff35', '#fcff35', '#fcffba', '#fffbcc', '#fcffe0', '#f7f069'],
-  greens: ['#83ff7a', '#b0ff8c', '#c5ffba', '#deffcc', '#e0ffec', '#9effc5'],
-  oranges: ['#ba7aff', '#db8cff', '#ebbaff', '#ffccfd', '#bf5af6', '#e0d8e8'],
+  blues: [
+    '#7296a495',
+    '#9ebecb3a',
+    '#cddee54f',
+    '#e6f0f291F2',
+    '#F3FDFE',
+    '#EFEFEF',
+  ],
+  reds: [
+    '#b2737680',
+    '#d37c7caf7c',
+    '#ecb0b09ab0',
+    '#f4d5d5b9',
+    '#f7d4ccb8',
+    '#f5dad4bcd4',
+  ],
+  yellows: [
+    '#f3e7b7bb',
+    '#f6eac2b3c2',
+    '#f9f2d6',
+    '#fbf6e3',
+    '#fdf9ed',
+    '#f8f0d2',
+  ],
+  greens: [
+    '#90a76ac4',
+    '#c4de96cf',
+    '#a7cc79b8c9',
+    '#deffccb6',
+    '#cbe4b3bf',
+    '#deedcebe',
+  ],
+  oranges: [
+    '#f9ab36c9',
+    '#faa84d',
+    '#fbbc74ab',
+    '#fbd4a4a3',
+    '#fbe6b4d1',
+    '#fbe4c4cd',
+  ],
+  // blues: ['#a7c4f5d7', '#8cb6ff', '#bad3ff', '#ccddff', '#e0ebff', '#d8dde8'],
+  // reds: ['#fe8398', '#ff5975d5', '#ff8398b5', '#fa93a4df', '#ffb9c4', '#cc99a2'],
+  // yellows: ['#fcff35', '#fcff35', '#fcffba', '#fffbcc', '#fcffe0', '#f7f069'],
+  // greens: ['#83ff7a', '#b0ff8c', '#c5ffba', '#deffcc', '#e0ffec', '#9effc5'],
+  // oranges: ['#ba7aff', '#db8cff', '#ebbaff', '#ffccfd', '#bf5af6', '#e0d8e8'],
 };
 
 function Roadmap({
@@ -284,6 +325,7 @@ function Roadmap({
           },
           type: 'custom',
           position,
+          blogKeyword: '',
           style: {
             background: `${
               parseInt(v.id.slice(0, 1), 10) % 5 === 0
@@ -471,6 +513,19 @@ function Roadmap({
     ]);
   }, [nodeState, setNodes]);
 
+  useMemo(() => {
+    const copyNodes = [...nodeState];
+    copyNodes.forEach((n) => {
+      if (n.id === id) {
+        console.log('keyword?', n);
+        // eslint-disable-next-line no-param-reassign
+        // n.blogKeyword = blogKeyword;
+        // !blogKeyword ? (n.blogKeyword = blogKeyword) : (n.blogKeyword = '');
+      }
+    });
+    setNodes(copyNodes);
+  }, [id, blogKeyword]);
+
   const { postRoadmap } = useRoadmap();
 
   const onPublishRoadmap = useCallback(() => {
@@ -501,7 +556,11 @@ function Roadmap({
         }
         // eslint-disable-next-line no-param-reassign
         v.positionAbsolute = v.position;
+        // eslint-disable-next-line no-param-reassign
+        v.blogKeyword = item.blogKeyword;
       });
+      // eslint-disable-next-line no-param-reassign
+      v.blogKeyword = 's3'; // ******************************************* 블로그 인증 키워드
       // eslint-disable-next-line no-param-reassign
       v.type = 'custom';
       // v.type = 'default';
@@ -583,24 +642,6 @@ function Roadmap({
       .catch((err) => console.log(err));
     // navigate('/');
   }, [nodeState]);
-
-  const submitBlogKeyword = useCallback(() => {
-    axios
-      .post(
-        `${baseUrl}/roadmaps/blog_keyword`,
-        {
-          roadmapNodeId: id,
-          keyword: blogKeyword,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${user?.accessToken}`,
-          },
-        },
-      )
-      .then((v) => setKeywordSubmitState(v.data));
-  }, [blogKeyword, id]);
 
   // const { deleteElements } = useReactFlow();
   // const useRemoveNode = useCallback(() => {
@@ -699,6 +740,25 @@ function Roadmap({
       }),
     );
     // };
+  }, [nodeState, blogKeyword, id]);
+
+  useEffect(() => {
+    setNodes((nds) =>
+      nds.map((node) => {
+        if (node?.id === id) {
+          // node.style = { ...node.style, backgroundColor: nodeBg };
+          // eslint-disable-next-line no-param-reassign
+          node.style = {
+            ...node.style,
+            // backgroundColor: color,
+            background: color,
+          };
+        }
+
+        return node;
+      }),
+    );
+    // };
   }, [nodeState, color, id]);
 
   useMemo(() => {
@@ -725,6 +785,8 @@ function Roadmap({
         // if (node.id === '1') {
         if (node?.id === label) {
           // when you update a simple type you can just update the value
+          // eslint-disable-next-line no-param-reassign
+          // node.blogKeyword = blogKeyword; // 노드 키워드
           // eslint-disable-next-line no-param-reassign
           node.style.backgroundColor = color; // 노드 색 변경
           // eslint-disable-next-line no-param-reassign
@@ -759,11 +821,18 @@ function Roadmap({
   return (
     <Wrap>
       {gptRes && (
-        <Modal.Root opened={gptRes} onClose={close} centered size="70%">
+        <Modal.Root opened={gptRes} onClose={close} centered size="fit-content">
           <Modal.Overlay color="#000" opacity={0.85} />
           <Modal.Content>
-            <Modal.Body>
-              <Spinner />
+            <Modal.Body style={{ width: 'fit-content', height: 'fit-content' }}>
+              {/* <Spinner /> */}
+              <div>
+                <img
+                  src="/img/loadingImg.gif"
+                  alt="로딩 이미지"
+                  style={{ width: '9rem', margin: '0 auto' }}
+                />
+              </div>
               <Typer
                 data={`"${JSON.parse(localStorage.getItem('recent_gpt_search'))
                   ?.keyword}"에 관한 로드맵을 생성 중...`}
@@ -988,26 +1057,20 @@ function Roadmap({
               <Input
                 icon={<IconCertificate />}
                 value={blogKeyword}
-                onChange={onChangeBlogKeyword}
+                // onChange={onChangeBlogKeyword}
+                onChange={(evt) => {
+                  setBlogKeyword(evt?.target?.value);
+                }}
                 mt={10}
                 mb={10}
                 disabled={keywordSubmitState}
                 rightSection={
                   <Tooltip
-                    label="진행도를 체크할 블로그 키워드를 등록해주세요. 키워드 수정은 불가능합니다."
+                    label="진행도를 체크할 블로그 키워드를 등록해주세요."
                     position="top-end"
                     withArrow
                   >
-                    <ActionIcon
-                      disabled={blogKeyword.length === 0}
-                      variant="transparent"
-                      onClick={() => {
-                        setBlogKeyword(blogKeyword);
-                        submitBlogKeyword();
-                      }}
-                    >
-                      <IconCircleArrowRightFilled size="1rem" />
-                    </ActionIcon>
+                    <IconInfoCircle size="1rem" />
                   </Tooltip>
                 }
                 // onChange={(evt) => {
@@ -1047,7 +1110,7 @@ function Roadmap({
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         // defaultViewport={defaultViewport}
-        minZoom={0.2}
+        minZoom={0.8}
         maxZoom={4}
         // onInit={onInit}
         onConnect={onConnect}
@@ -1057,6 +1120,7 @@ function Roadmap({
           setColor(n?.style?.background);
           console.log('n', n);
           console.log('e', e);
+          setBlogKeyword(blogKeyword);
           console.log('details', details);
           if (details.length > 0) {
             setState(details);
