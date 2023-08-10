@@ -585,6 +585,7 @@ export default function RoadMapInfo() {
                               if (v.id === id && v.done) {
                                 return (
                                   <IconCircleCheckFilled
+                                    key={v.id}
                                     style={{
                                       color: 'green',
                                       marginRight: '10px',
@@ -595,6 +596,7 @@ export default function RoadMapInfo() {
                               if (v.id === id && !v.done) {
                                 return (
                                   <IconCircleCheckFilled
+                                    key={v.id}
                                     style={{
                                       color: 'orange',
                                       marginRight: '10px',

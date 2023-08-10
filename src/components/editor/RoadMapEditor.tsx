@@ -260,47 +260,10 @@ function Roadmap({
           if (e.data.length > 0) {
             setDetails(e.data);
           }
-
-          // state.map((n) => {
-          //   e.data.map((v) => {
-          //     console.log(
-          //       `state id : ${n.id},  data id: ${v.id}, ${v.detailedContent}`,
-          //     );
-          //     if (n.id === v.id) {
-          //       // eslint-disable-next-line no-param-reassign
-          //       n.details += v.detailedContent;
-          //     }
-          //   });
-          // });
         })
         .catch((err) => console.log(err));
     }
   }, [isDetailReady]);
-  // useMemo(() => {
-  //   if (useGpt.length > 0 && state.length >= useGpt.length) {
-  //     axios
-  //       .post(`${baseUrl}/gpt/roadmap/detail`, useGpt.slice(0, 4), {
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           Authorization: `Bearer ${user?.accessToken}`,
-  //         },
-  //       })
-  //       .then((e) => {
-  //         state.map((n) => {
-  //           e.data.map((v) => {
-  //             console.log(
-  //               `state id : ${n.id},  data id: ${v.id}, ${v.detailedContent}`,
-  //             );
-  //             if (n.id === v.id) {
-  //               // eslint-disable-next-line no-param-reassign
-  //               n.details += v.detailedContent;
-  //             }
-  //           });
-  //         });
-  //       })
-  //       .catch((err) => console.log(err));
-  //   }
-  // }, [state, useGpt.length]);
 
   useEffect(() => {
     onLayout('LR');
@@ -368,16 +331,7 @@ function Roadmap({
     }
   }, [nodeState.length]);
 
-  // useEffect(() => {
-  //   // 자동 생성 후 formatting
-  //   if (nodeState && edgeState && useGpt.length > 0) {
-  //     onLayout('TB');
-  //   }
-  // }, []);
-
   const proOptions = { hideAttribution: true };
-
-  // const { x, y, zoom } = useViewport();
 
   useMemo(() => {
     // 노드 내용 수정
@@ -385,8 +339,6 @@ function Roadmap({
       nds.map((node) => {
         // if (node.id === '1') {
         if (node.id === id) {
-          // it's important that you create a new object here
-          // in order to notify react flow about the change
           // eslint-disable-next-line no-param-reassign
           node.data = {
             ...node.data,
@@ -543,7 +495,7 @@ function Roadmap({
       state.map((item) => {
         if (v?.id === item?.id) {
           // eslint-disable-next-line no-param-reassign
-          v.detailedContent = item?.details;
+          v.detailedContent = item?.detailedContent;
           // console.log(item?.details);
           // v.details = item?.details;
         }
@@ -717,9 +669,9 @@ function Roadmap({
           const copyState = [...state];
           copyState.map((v) => {
             if (v.id === id) {
-              console.log('현재 content', v?.details);
+              console.log('현재 content', v?.detailedContent);
               // eslint-disable-next-line no-param-reassign
-              v.details += resDetail;
+              v.detailedContent += resDetail;
             }
           });
           setState(copyState);
