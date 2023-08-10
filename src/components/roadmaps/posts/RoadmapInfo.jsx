@@ -435,7 +435,6 @@ export default function RoadMapInfo() {
           <IconUser size={rem(20)} stroke={2} color={theme.fn.primaryColor()} />{' '}
           <Text c="dimmed"> 참여인원: {currentRoadmap?.joinCount}명</Text>
         </Group>
-
       </Card>
       <Modal
         opened={modal}
