@@ -299,28 +299,30 @@ export default function RoadMapInfo() {
   const focusTrapRef = useFocusTrap();
 
   const updateRoadmapProgress = () => {
-    axios
-      .patch(
-        `${baseUrl}/roadmaps/in-progress-nodes/${id}/done`,
-        {
-          inProgressNodeId: id,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${user?.accessToken}`,
-          },
-        },
-      )
-      .then((v) => {
-        console.log(v);
-        // setParticipation(true);
-        // setCurrentRoadmap({
-        //   ...currentRoadmap,
-        //   joinCount: currentRoadmap.joinCount + 1,
-        // });
-      })
-      .catch((e) => console.log(e));
+    // eslint-disable-next-line no-alert
+    alert('진행 완료!');
+    // axios
+    //   .patch(
+    //     `${baseUrl}/roadmaps/in-progress-nodes/${id}/done`,
+    //     {
+    //       inProgressNodeId: id,
+    //     },
+    //     {
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //         Authorization: `Bearer ${user?.accessToken}`,
+    //       },
+    //     },
+    //   )
+    //   .then((v) => {
+    //     console.log(v);
+    //     // setParticipation(true);
+    //     // setCurrentRoadmap({
+    //     //   ...currentRoadmap,
+    //     //   joinCount: currentRoadmap.joinCount + 1,
+    //     // });
+    //   })
+    //   .catch((e) => console.log(e));
   };
 
   const joinRoadmap = () => {
