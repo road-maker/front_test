@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import {
   Avatar,
   Card,
@@ -31,8 +30,8 @@ const useStyles = createStyles((theme) => ({
     },
     borderRadius: theme.radius.md,
     boxShadow: theme.shadows.lg,
-    width: '96%',
-    margin: '3rem auto 1rem',
+    width: '98%',
+    margin: '2rem auto 1rem',
   },
 
   title: {
@@ -42,7 +41,7 @@ const useStyles = createStyles((theme) => ({
     textOverflow: 'ellipsis',
     marginTop: '1.5rem',
     borderTop: '1px',
-    fontSize: '1.3rem',
+    fontSize: '1rem',
   },
 
   desc: {
@@ -53,7 +52,7 @@ const useStyles = createStyles((theme) => ({
     fontFamily: `Greycliff CF, ${theme.fontFamily}`,
     maxHeight: '4.5em',
     lineHeight: '1.3em',
-    marginTop: '0.725rem',
+    marginTop: '0.5rem',
   },
 
   like: {
@@ -65,7 +64,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   section: {
-    height: '24rem',
+    height: '18rem',
     cursor: 'pointer',
   },
 
@@ -92,9 +91,7 @@ export default function RoadmapRecommendation() {
       .then((v) => {
         setAllRoadmapData(v?.data);
       })
-      .catch((e) => {
-        console.log(e);
-      });
+      .catch();
   }, [roadmapPage]);
 
   const initialUrl = `${baseUrl}/roadmaps?page=${roadmapPage}&order-type=recent`;
@@ -144,7 +141,6 @@ export default function RoadmapRecommendation() {
     <InfiniteScroll loadMore={fetchNextPage} hasMore={hasNextPage}>
       <SimpleGrid
         cols={4}
-        style={{ width: '100%' }}
         breakpoints={[
           { maxWidth: 'sm', cols: 1 },
           { maxWidth: 'md', cols: 2 },
@@ -174,7 +170,7 @@ export default function RoadmapRecommendation() {
                             className={`${isLoading ? 'before' : 'loaded'}`}
                             src={article.thumbnailUrl}
                             alt={`${article.title}.img`}
-                            height="15em"
+                            height="10em"
                           />
                         </BlurredImg>
                       </div>
@@ -182,11 +178,11 @@ export default function RoadmapRecommendation() {
                     <Text fw={700} className={classes.title} mx={20}>
                       {article.title}
                     </Text>
-                    <Text fz="lg" className={classes.desc} mx={20}>
+                    <Text fz="sm" className={classes.desc} mx={20}>
                       {article.description}
                     </Text>
                   </Card.Section>
-                  <Text fz="md" c="dimmed" mx={8}>
+                  <Text fz="xs" c="dimmed" mx={8}>
                     {article.createdAt}
                   </Text>
                   <Card.Section className={classes.footer}>
@@ -195,7 +191,7 @@ export default function RoadmapRecommendation() {
                         {article.member.nickname.substring(0, 1)}
                       </Avatar>
 
-                      <Text fz="md" fw={600}>
+                      <Text fz="sm" fw={600}>
                         {article.member.nickname}
                       </Text>
                     </Group>
@@ -205,7 +201,6 @@ export default function RoadmapRecommendation() {
             });
           })}
       </SimpleGrid>
-      {/* </Container> */}
     </InfiniteScroll>
   );
 }

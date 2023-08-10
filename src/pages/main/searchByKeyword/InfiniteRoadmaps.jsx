@@ -120,8 +120,7 @@ export function InfiniteRoadmapByKeyword() {
     ({ pageParam = initialUrl }) => fetchUrl(pageParam),
     {
       getNextPageParam: (lastPage) => {
-        if (lastPage) {
-          console.log('result', lastPage.next);
+        if (lastPage.result.length !== 0) {
           return lastPage.next;
         }
         return undefined;
@@ -155,9 +154,8 @@ export function InfiniteRoadmapByKeyword() {
           { maxWidth: 'lg', cols: 3 },
         ]}
       >
-        {data &&
-          data?.pages &&
-          data?.pages?.map((pageData) => {
+        {data.pages &&
+          data.pages.map((pageData) => {
             return pageData?.result?.map((article, index) => {
               return (
                 <Card key={index} className={classes.card}>

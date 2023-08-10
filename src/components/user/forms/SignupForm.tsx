@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import {
   Anchor,
   Box,
@@ -65,7 +64,7 @@ function SignUpForm(props: PaperProps): ReactElement {
   });
 
   return (
-    <Box maw={500} m="auto" mt={140}>
+    <Box maw={500} m="auto" mt={50}>
       {auth.isUserModalOpen && (
         <Modal
           opened={auth.isUserModalOpen}
@@ -162,17 +161,19 @@ function SignUpForm(props: PaperProps): ReactElement {
         >
           <TextInput
             mt="xl"
+            size="md"
+            radius="md"
             label="닉네임"
             placeholder="닉네임을 입력해주세요"
             withAsterisk
-            size="lg"
             value={nickname}
             onChange={onChangeNickname}
             {...form.getInputProps('nickname')}
           />
           <TextInput
-            size="lg"
+            size="md"
             mt="xl"
+            radius="md"
             label="이메일"
             placeholder="이메일을 입력해주세요"
             withAsterisk
@@ -182,7 +183,8 @@ function SignUpForm(props: PaperProps): ReactElement {
           />
           <PasswordInput
             mt="xl"
-            size="lg"
+            size="md"
+            radius="md"
             label="비밀번호"
             placeholder="비밀번호를 입력해주세요"
             withAsterisk
@@ -192,7 +194,8 @@ function SignUpForm(props: PaperProps): ReactElement {
           />
           <PasswordInput
             mt="xl"
-            size="lg"
+            size="md"
+            radius="md"
             label="비밀번호 확인"
             placeholder="비밀번호를 입력해주세요"
             withAsterisk
@@ -205,7 +208,7 @@ function SignUpForm(props: PaperProps): ReactElement {
               fullWidth
               type="submit"
               mt={50}
-              size="xl"
+              size="lg"
               variant="light"
               onClick={() => {
                 auth.setModalText('');
@@ -213,14 +216,6 @@ function SignUpForm(props: PaperProps): ReactElement {
             >
               회원가입
             </Button>
-            {/* <Button
-              onClick={() => {
-                auth.setIsUserModalOpen(true);
-                auth.setSuccess(false);
-              }}
-            >
-              Test
-            </Button> */}
           </Center>
         </form>
       </Paper>
