@@ -1,6 +1,6 @@
 import { styled } from 'styled-components';
 
-function Typer({ data }) {
+export function Typer({ data }) {
   return (
     <Wrap>
       {' '}
@@ -9,7 +9,20 @@ function Typer({ data }) {
     </Wrap>
   );
 }
-export default Typer;
+
+export function NodeTyper({ data }) {
+  return (
+    <Wrap style={{ maxWidth: '240px' }}>
+      {data.length > 10 ? (
+        // eslint-disable-next-line prefer-template
+        <p className="typed">{data.slice(0, 8) + '...'}</p>
+      ) : (
+        <p className="typed">{data}</p>
+      )}
+    </Wrap>
+  );
+}
+
 const Wrap = styled.div`
   display: inline-block;
   font-family: 'arial';

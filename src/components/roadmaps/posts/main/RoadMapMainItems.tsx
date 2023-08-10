@@ -17,6 +17,7 @@ import { useInfiniteQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
 
+import { ReactComponent as NoImage } from '../../../../assets/noImage.svg';
 import { ReactComponent as Spinner } from '../../../../assets/Spinner.svg';
 
 const useStyles = createStyles((theme) => ({
@@ -170,12 +171,26 @@ export default function RoadmapRecommendation() {
                         <BlurredImg
                           className={`${isLoading ? 'before' : 'loaded'}`}
                         >
-                          <Image
-                            className={`${isLoading ? 'before' : 'loaded'}`}
-                            src={article.thumbnailUrl}
-                            alt={`${article.title}.img`}
-                            height="15em"
-                          />
+                          {article.thumbnailUrl ? (
+                            <Image
+                              className={`${isLoading ? 'before' : 'loaded'}`}
+                              src={article.thumbnailUrl}
+                              alt={`${article.title}.img`}
+                              height="15em"
+                            />
+                          ) : (
+                            <div
+                              style={{
+                                height: '15em',
+                                display: 'inline-flex',
+                                width: '100%',
+                              }}
+                            >
+                              <NoImage
+                                style={{ height: '15em', margin: '0 auto' }}
+                              />
+                            </div>
+                          )}
                         </BlurredImg>
                       </div>
                     </Group>
@@ -183,7 +198,10 @@ export default function RoadmapRecommendation() {
                       {article.title}
                     </Text>
                     <Text fz="lg" className={classes.desc} mx={20}>
-                      {article.description}
+                      {article.description.length < 30
+                        ? article.description
+                        : // eslint-disable-next-line prefer-template
+                          article.description.slice(0, 29) + '...'}
                     </Text>
                   </Card.Section>
                   <Text fz="md" c="dimmed" mx={8}>

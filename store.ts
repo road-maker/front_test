@@ -8,9 +8,7 @@ import {
   OnEdgesChange,
   OnNodesChange,
 } from 'reactflow';
-import { shallow } from 'zustand/shallow';
-// import { create } from 'zustand';
-import { createWithEqualityFn } from 'zustand/traditional';
+import { create } from 'zustand';
 
 export type RFState = {
   nodes: Node[];
@@ -19,8 +17,8 @@ export type RFState = {
   onEdgesChange: OnEdgesChange;
 };
 
-const useStore = createWithEqualityFn<RFState>(
-  // const useStore = create<RFState>(
+// const useStore = createWithEqualityFn<RFState>(
+const useStore = create<RFState>(
   (set, get) => ({
     // const useStore = create<RFState>((set, get) => ({
     nodes: [
@@ -44,7 +42,7 @@ const useStore = createWithEqualityFn<RFState>(
     },
   }),
   // Object.is,
-  shallow,
+  // shallow,
 );
 
 export default useStore;

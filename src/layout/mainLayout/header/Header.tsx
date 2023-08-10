@@ -6,6 +6,7 @@ import {
   Button,
   Center,
   createStyles,
+  Drawer,
   Group,
   Header,
   Image,
@@ -189,6 +190,13 @@ export function HeaderItem() {
               onClick={toggleDrawer}
               className={classes.hiddenDesktop}
             />
+            <Drawer
+              opened={drawerOpened}
+              onClose={toggleDrawer}
+              title="Authentication"
+            >
+              {/* Drawer content */} eh..
+            </Drawer>
           </Group>
         </Header>
       </Box>
