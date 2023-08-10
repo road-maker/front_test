@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import {
   Avatar,
   Card,
@@ -15,6 +16,7 @@ import { useInfiniteQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
 
+import { ReactComponent as NoImage } from '../../../../assets/noImage.svg';
 import { ReactComponent as Spinner } from '../../../../assets/Spinner.svg';
 
 const useStyles = createStyles((theme) => ({
@@ -29,8 +31,8 @@ const useStyles = createStyles((theme) => ({
     },
     borderRadius: theme.radius.md,
     boxShadow: theme.shadows.lg,
-    width: '98%',
-    margin: '2rem auto 1rem',
+    width: '96%',
+    margin: '3rem auto 1rem',
   },
 
   title: {
@@ -40,7 +42,7 @@ const useStyles = createStyles((theme) => ({
     textOverflow: 'ellipsis',
     marginTop: '1.5rem',
     borderTop: '1px',
-    fontSize: '1rem',
+    fontSize: '1.3rem',
   },
 
   desc: {
@@ -51,7 +53,7 @@ const useStyles = createStyles((theme) => ({
     fontFamily: `Greycliff CF, ${theme.fontFamily}`,
     maxHeight: '4.5em',
     lineHeight: '1.3em',
-    marginTop: '0.5rem',
+    marginTop: '0.725rem',
   },
 
   like: {
@@ -63,7 +65,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   section: {
-    height: '18rem',
+    height: '24rem',
     cursor: 'pointer',
   },
 
@@ -81,7 +83,7 @@ export default function RoadmapRecommendation() {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState('');
   const [roadmapPage, setRoadmapPage] = useState(1);
-
+  
   const initialUrl = `${baseUrl}/roadmaps?page=${roadmapPage}&order-type=recent`;
   const fetchUrl = async (url) => {
     const response = await fetch(url);
@@ -128,6 +130,7 @@ export default function RoadmapRecommendation() {
     <InfiniteScroll loadMore={fetchNextPage} hasMore={hasNextPage}>
       <SimpleGrid
         cols={4}
+        style={{ width: '100%' }}
         breakpoints={[
           { maxWidth: 'sm', cols: 1 },
           { maxWidth: 'md', cols: 2 },
@@ -153,23 +156,40 @@ export default function RoadmapRecommendation() {
                         <BlurredImg
                           className={`${isLoading ? 'before' : 'loaded'}`}
                         >
-                          <Image
-                            className={`${isLoading ? 'before' : 'loaded'}`}
-                            src={article.thumbnailUrl}
-                            alt={`${article.title}.img`}
-                            height="10em"
-                          />
+                          {article.thumbnailUrl ? (
+                            <Image
+                              className={`${isLoading ? 'before' : 'loaded'}`}
+                              src={article.thumbnailUrl}
+                              alt={`${article.title}.img`}
+                              height="15em"
+                            />
+                          ) : (
+                            <div
+                              style={{
+                                height: '15em',
+                                display: 'inline-flex',
+                                width: '100%',
+                              }}
+                            >
+                              <NoImage
+                                style={{ height: '15em', margin: '0 auto' }}
+                              />
+                            </div>
+                          )}
                         </BlurredImg>
                       </div>
                     </Group>
                     <Text fw={700} className={classes.title} mx={20}>
                       {article.title}
                     </Text>
-                    <Text fz="sm" className={classes.desc} mx={20}>
-                      {article.description}
+                    <Text fz="lg" className={classes.desc} mx={20}>
+                      {article.description.length < 30
+                        ? article.description
+                        : // eslint-disable-next-line prefer-template
+                          article.description.slice(0, 29) + '...'}
                     </Text>
                   </Card.Section>
-                  <Text fz="xs" c="dimmed" mx={8}>
+                  <Text fz="md" c="dimmed" mx={8}>
                     {article.createdAt}
                   </Text>
                   <Card.Section className={classes.footer}>
@@ -178,7 +198,7 @@ export default function RoadmapRecommendation() {
                         {article.member.nickname.substring(0, 1)}
                       </Avatar>
 
-                      <Text fz="sm" fw={600}>
+                      <Text fz="md" fw={600}>
                         {article.member.nickname}
                       </Text>
                     </Group>
@@ -188,6 +208,7 @@ export default function RoadmapRecommendation() {
             });
           })}
       </SimpleGrid>
+      {/* </Container> */}
     </InfiniteScroll>
   );
 }

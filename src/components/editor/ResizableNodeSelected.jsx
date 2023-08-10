@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { IconAlertCircle } from '@tabler/icons-react';
-import Typer from 'components/common/typingAnimation/Typer';
+import { NodeTyper } from 'components/common/typingAnimation/Typer';
 import { drag } from 'd3-drag';
 import { select } from 'd3-selection';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -70,7 +70,12 @@ export function ResizableNodeSelected({
 
   return (
     <Wrap className="node">
-      <NodeResizer isVisible={resizable} minWidth={180} minHeight={100} />
+      <NodeResizer
+        isVisible={resizable}
+        minWidth={180}
+        minHeight={100}
+        maxWidth={240}
+      />
       <div
         ref={rotateControlRef}
         style={{
@@ -83,11 +88,13 @@ export function ResizableNodeSelected({
           <IconAlertCircle color="red" style={{ marginLeft: 10 }} />
         )}
         {data.length > 2 ? (
-          <div style={{ padding: 10 }}>
+          <div
+            style={{ padding: 10, display: 'inline-block', maxWidth: '240px' }}
+          >
             {data.label === `` ? '내용을 추가해주세요.' : data.label}
           </div>
         ) : (
-          <Typer
+          <NodeTyper
             style={{ padding: 10 }}
             data={data.label === `` ? '내용을 추가해주세요.' : data.label}
           />
@@ -101,11 +108,12 @@ export function ResizableNodeSelected({
 const Wrap = styled.div`
   .node {
     /* width: 100%; */
-    width: 7rem;
+    max-width: 240px;
+    font-size: 24px;
+    /* width: 7rem; */
     height: 100%;
     border-radius: 15px;
     border: 1px solid #000;
-
     background-color: #fff;
     padding: 20px;
     box-sizing: border-box;
@@ -117,26 +125,10 @@ const Wrap = styled.div`
     border-radius: 100%;
   }
 
-  /* .rotateHandle {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    background: #3367d9;
-    left: 50%;
-    top: -30px;
-    border-radius: 100%;
-    transform: translate(-50%, -50%);
-    cursor: alias;
-  } */
-
-  /* .rotateHandle:after {
-    content: '';
-    display: block;
-    position: absolute;
-    width: 1px;
-    height: 30px;
-    background: #3367d9;
-    left: 4px;
-    top: 5px;
-  } */
+  .react-flow__node .react-flow__node-custom .nopan .selectable {
+    max-width: 240px;
+  }
+  .react-flow__node .react-flow__node-custom .nopan .selectable {
+    max-width: 240px;
+  }
 `;

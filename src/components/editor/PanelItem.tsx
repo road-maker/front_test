@@ -149,11 +149,11 @@ export default function PanelItem({
         <ActionIcon
           variant="default"
           onClick={() => {
-            const { zoom } = getViewport();
+            // const { zoom } = getViewport();
             setCurrentView({
               x: currentView.x,
               y: nodeState.at(-1)?.position?.y,
-              zoom,
+              zoom: 0.4,
             });
             onAddNode();
           }}
@@ -168,9 +168,11 @@ export default function PanelItem({
       </Tooltip>
       <Tooltip
         label={`${
-          nodeState.length !== 0 && edgeState.length !== 0
+          nodeState.length !== 0 &&
+          edgeState.length !== 0 &&
+          nodeState.filter((v) => v.data.label !== '')
             ? '로드맵 발행'
-            : '노드를 추가해주거나 이어주세요'
+            : '빈노드를 채워주시거나 노드를 이어주세요.'
         }`}
       >
         {nodeState.length === 0 || edgeState.length === 0 ? (
