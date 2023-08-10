@@ -349,7 +349,7 @@ export function InputWithButton(props: TextInputProps) {
     }
   }, [promptResponse, navigate]);
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       onRequestPrompt();
     }

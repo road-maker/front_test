@@ -8,6 +8,7 @@ import {
   Button,
   Card,
   Center,
+  Container,
   createStyles,
   Drawer,
   Group,
@@ -317,7 +318,7 @@ export default function RoadMapInfo() {
       .catch((e) => console.log(e));
   };
   return (
-    <>
+    <Container>
       <Card mt="3rem">
         <div
           style={{
@@ -330,7 +331,7 @@ export default function RoadMapInfo() {
           <Group mt="1rem">
             <Title className={classes.title}>{currentRoadmap?.title}</Title>
             <Avatar color="purple" size="md" radius="xl">
-              {currentRoadmap?.ownerAvatarUrl || ''}
+              {currentRoadmap?.ownerNickname.substring(0, 1) || ''}
             </Avatar>
             {currentRoadmap?.ownerNickname}
           </Group>
@@ -522,7 +523,7 @@ export default function RoadMapInfo() {
           </ReactFlowProvider>
         </div>
       </EditorWrap>
-    </>
+    </Container>
   );
 }
 const Wrap = styled.div`

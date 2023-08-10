@@ -4,7 +4,6 @@ import {
   createStyles,
   Group,
   Image,
-  PaperProps,
   rem,
   SimpleGrid,
   Tabs,
@@ -16,7 +15,6 @@ import { baseUrl } from 'axiosInstance/constants';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ReactComponent as Spinner } from '../../assets/Spinner.svg';
 import { useUser } from './hooks/useUser';
 
 const useStyles = createStyles((theme) => ({
@@ -78,7 +76,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export default function UserRoadmap(props: PaperProps) {
+export default function UserRoadmap() {
   const [joinedRoadmap, setJoinedRoadmap] = useState([]);
   const [savedRoadmap, setSavedRoadmap] = useState([]);
   const { user } = useUser();
@@ -97,25 +95,24 @@ export default function UserRoadmap(props: PaperProps) {
 
       .then((v) => {
         setJoinedRoadmap(v?.data);
-        console.log(v.data);
       })
       .catch();
   }, [user?.accessToken, user.nickname]);
 
-  // useEffect(() => {
-  //   axios
-  //     .get(`${baseUrl}/members/${user.nickname}/roadmaps`, {
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: `Bearer ${user?.accessToken}`,
-  //       },
-  //     })
+  useEffect(() => {
+    axios
+      .get(`${baseUrl}/members/${user.nickname}/roadmaps`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user?.accessToken}`,
+        },
+      })
 
-  //     .then((v) => {
-  //       setSavedRoadmap(v?.data);
-  //     })
-  //     .catch();
-  // }, [user?.accessToken, user.nickname]);
+      .then((v) => {
+        setSavedRoadmap(v?.data);
+      })
+      .catch();
+  }, [user?.accessToken, user.nickname]);
 
   return (
     <Tabs color="violet" defaultValue="gallery" mt={40}>
@@ -138,7 +135,7 @@ export default function UserRoadmap(props: PaperProps) {
           ]}
         >
           {joinedRoadmap.length === 0 ? (
-            <Text mx={120} my={100}>
+            <Text my={100} ta="center">
               진행 중인 로드맵이 없습니다. 로드맵 참여를 눌러 다른 로드맵에
               참여해주세요!
             </Text>
@@ -181,11 +178,11 @@ export default function UserRoadmap(props: PaperProps) {
                 <Card.Section className={classes.footer}>
                   <Group>
                     <Avatar radius="xl" color="blue">
-                      {article?.ownerNickname.substring(0, 1)}
+                      {article?.member?.nickname.substring(0, 1)}
                     </Avatar>
 
                     <Text fz="sm" fw={600}>
-                      {article?.ownerNickname}
+                      {article?.member?.nickname}
                     </Text>
                   </Group>
                 </Card.Section>
@@ -196,7 +193,70 @@ export default function UserRoadmap(props: PaperProps) {
       </Tabs.Panel>
 
       <Tabs.Panel value="messages" pt="xs">
-        Messages tab content
+        <SimpleGrid
+          cols={4}
+          breakpoints={[
+            { maxWidth: 'sm', cols: 1 },
+            { maxWidth: 'md', cols: 2 },
+            { maxWidth: 'lg', cols: 3 },
+          ]}
+        >
+          {savedRoadmap.length === 0 ? (
+            <Text ta="center" my={100}>
+              만든 로드맵이 없습니다. 로드맵 생성 버튼을 누르고 로드맵을
+              생성해보세요!
+            </Text>
+          ) : (
+            savedRoadmap.map((article) => (
+              <Card key={article.id} className={classes.card}>
+                <Card.Section
+                  className={classes.section}
+                  onMouseOver={() => {
+                    setCurrentPage(article.id);
+                  }}
+                  onClick={() => {
+                    currentPage && navigate(`/roadmap/post/${currentPage}`);
+                  }}
+                >
+                  <Image
+                    src={article.thumbnailUrl}
+                    alt={`${article.title}.img`}
+                    height={160}
+                    width={260}
+                    style={{ cursor: 'pointer' }}
+                    onMouseOver={() => {
+                      setCurrentPage(article.id);
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      currentPage && navigate(`/roadmap/post/${currentPage}`);
+                    }}
+                  />
+                  <Text fw={700} className={classes.title} mx={20}>
+                    {article?.title}
+                  </Text>
+                  <Text fz="sm" className={classes.desc} mx={20}>
+                    {article.description}
+                  </Text>
+                </Card.Section>
+                <Text fz="xs" c="dimmed" mx={8}>
+                  {article.createdAt}
+                </Text>
+                <Card.Section className={classes.footer}>
+                  <Group>
+                    <Avatar radius="xl" color="blue">
+                      {article?.member?.nickname.substring(0, 1)}
+                    </Avatar>
+
+                    <Text fz="sm" fw={600}>
+                      {article?.member?.nickname}
+                    </Text>
+                  </Group>
+                </Card.Section>
+              </Card>
+            ))
+          )}
+        </SimpleGrid>
       </Tabs.Panel>
     </Tabs>
   );
