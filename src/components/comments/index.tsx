@@ -111,7 +111,6 @@ function CommentSection() {
       .post(
         `${baseUrl}/comments/save-comment`,
         {
-          // commentTitle: title,
           content: commentInput,
           roadmapId: Number(pathname.slice(pathname.lastIndexOf('/') + 1)),
         },
@@ -151,13 +150,17 @@ function CommentSection() {
               handleSubmit();
               close();
             }}
+            variant="outline"
+            color="violet"
           >
             작성하기
           </Button>
         </Center>
       </Modal>
       <Center mt={20}>
-        <Button onClick={open}>코멘트 작성하기</Button>
+        <Button onClick={open} variant="outline" color="violet">
+          코멘트 작성하기
+        </Button>
       </Center>
       {content.length === 0 ? (
         <Paper withBorder shadow="md" radius="xs" p="xl" ta="center" mt={20}>
