@@ -4,21 +4,39 @@ import {
   ActionIcon,
   Avatar,
   Box,
+  Burger,
   Button,
   Center,
+  Container,
   createStyles,
   Group,
   Header,
   Image,
   LoadingOverlay,
+  Menu,
   Modal,
   rem,
+  Tabs,
   TextInput,
   TextInputProps,
+  UnstyledButton,
   useMantineTheme,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { IconArrowLeft, IconArrowRight, IconSearch } from '@tabler/icons-react';
+import { useDisclosure, useMediaQuery } from '@mantine/hooks';
+import {
+  IconArrowLeft,
+  IconArrowRight,
+  IconChevronDown,
+  IconHeart,
+  IconLogout,
+  IconMessage,
+  IconPlayerPause,
+  IconSearch,
+  IconSettings,
+  IconStar,
+  IconSwitchHorizontal,
+  IconTrash,
+} from '@tabler/icons-react';
 import axios, { AxiosResponse } from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
 import { useInput } from 'components/common/hooks/useInput';
@@ -98,10 +116,85 @@ const useStyles = createStyles((theme) => ({
       display: 'none',
     },
   },
+
+  header: {
+    paddingTop: theme.spacing.sm,
+    backgroundColor:
+      theme.colorScheme === 'dark'
+        ? theme.colors.dark[6]
+        : theme.colors.gray[0],
+    borderBottom: `${rem(1)} solid ${
+      theme.colorScheme === 'dark' ? 'transparent' : theme.colors.gray[2]
+    }`,
+    marginBottom: rem(120),
+  },
+
+  mainSection: {
+    paddingBottom: theme.spacing.sm,
+  },
+
+  user: {
+    color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+    padding: `${theme.spacing.xs} ${theme.spacing.sm}`,
+    borderRadius: theme.radius.sm,
+    transition: 'background-color 100ms ease',
+
+    '&:hover': {
+      backgroundColor:
+        theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
+    },
+
+    [theme.fn.smallerThan('xs')]: {
+      display: 'none',
+    },
+  },
+
+  burger: {
+    [theme.fn.largerThan('xs')]: {
+      display: 'none',
+    },
+  },
+
+  userActive: {
+    backgroundColor:
+      theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
+  },
+
+  tabs: {
+    [theme.fn.smallerThan('sm')]: {
+      display: 'none',
+    },
+  },
+
+  tabsList: {
+    borderBottom: '0 !important',
+  },
+
+  tab: {
+    fontWeight: 500,
+    height: rem(38),
+    backgroundColor: 'transparent',
+
+    '&:hover': {
+      backgroundColor:
+        theme.colorScheme === 'dark'
+          ? theme.colors.dark[5]
+          : theme.colors.gray[1],
+    },
+
+    '&[data-active]': {
+      backgroundColor:
+        theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+      borderColor:
+        theme.colorScheme === 'dark'
+          ? theme.colors.dark[7]
+          : theme.colors.gray[2],
+    },
+  },
 }));
 
 export function HeaderMegaMenu() {
-  const { classes } = useStyles();
+  const { classes, theme, cx } = useStyles();
   const navigate = useNavigate();
   const { user } = useUser();
   const { signout } = useAuth();
@@ -111,6 +204,9 @@ export function HeaderMegaMenu() {
   const [leaveEditorAction, setLeaveEditorAction] = useState('');
   const [search, onChangeSearch, setSearch] = useInput('');
   const [isLoading, setIsLoading] = useState(false);
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  const [openBurger, { toggle }] = useDisclosure(false);
+  const [userMenuOpened, setUserMenuOpened] = useState(false);
 
   const searchByKeyword = useCallback(() => {
     axios
@@ -128,165 +224,249 @@ export function HeaderMegaMenu() {
     }
   };
 
+  const headerHeight = isMobile ? 60 : 80;
+
   return (
-    <HeaderWrap>
-      <Box>
-        <Header height={80} px="md">
-          <Group position="apart" sx={{ height: '100%' }}>
-            <Group
-              sx={{ height: '100%' }}
-              spacing={0}
-              className={classes.hiddenMobile}
-            >
-              <Image
-                src="/img/logo.png"
-                width={150}
-                height={40}
-                ml={30}
-                onClick={() => {
-                  setLeaveEditorAction('home');
-                  pathname === '/roadmap/editor'
-                    ? setIsEditorPage(true)
-                    : navigate('/');
-                }}
-                className="hoverItem"
-              />
-              {pathname !== '/roadmap/editor' && (
-                <TextInput
-                  value={search}
-                  size="md"
-                  w={700}
-                  ml="9em"
-                  onChange={onChangeSearch}
-                  placeholder="검색어를 입력해주세요."
-                  onKeyDown={handleKeyDown}
-                  rightSection={
-                    <ActionIcon
-                      variant="filled"
-                      color="blue"
-                      loading={isLoading}
-                      disabled={isLoading}
-                      size="lg"
-                      sx={{
-                        borderRadius: '100%',
-                        '&[data-disabled]': { opacity: 0.4 },
-                        '&[data-loading]': { backgroundColor: 'red' },
-                      }}
-                    >
-                      <IconSearch
-                        size="1.5rem"
-                        onClick={() => searchByKeyword()}
-                      />
-                    </ActionIcon>
-                  }
-                />
-              )}
-            </Group>
+    // <Box>
+    //   <Header height={headerHeight} px="md" className={classes.header}>
+    //     <HeaderWrap>
+    //       <Group position="apart" sx={{ height: '100%' }}>
+    //         <Group
+    //           sx={{ height: '100%' }}
+    //           spacing={0}
+    //           className={classes.hiddenMobile}
+    //         >
+    //           <Image
+    //             src="/img/logo.png"
+    //             width={150}
+    //             height={40}
+    //             ml={30}
+    //             onClick={() => {
+    //               setLeaveEditorAction('home');
+    //               pathname === '/roadmap/editor'
+    //                 ? setIsEditorPage(true)
+    //                 : navigate('/');
+    //             }}
+    //             className="hoverItem"
+    //           />
+    //           {pathname !== '/roadmap/editor' && (
+    //             <TextInput
+    //               value={search}
+    //               size="md"
+    //               w={700}
+    //               ml="9em"
+    //               onChange={onChangeSearch}
+    //               placeholder="검색어를 입력해주세요."
+    //               onKeyDown={handleKeyDown}
+    //               rightSection={
+    //                 <ActionIcon
+    //                   variant="filled"
+    //                   color="blue"
+    //                   loading={isLoading}
+    //                   disabled={isLoading}
+    //                   size="lg"
+    //                   sx={{
+    //                     borderRadius: '100%',
+    //                     '&[data-disabled]': { opacity: 0.4 },
+    //                     '&[data-loading]': { backgroundColor: 'red' },
+    //                   }}
+    //                 >
+    //                   <IconSearch
+    //                     size="1.5rem"
+    //                     onClick={() => searchByKeyword()}
+    //                   />
+    //                 </ActionIcon>
+    //               }
+    //             />
+    //           )}
+    //         </Group>
 
-            <Group className={classes.hiddenMobile}>
-              <Modal
-                opened={isEditorPage}
-                size="70%"
-                onClose={() => setIsEditorPage(false)}
+    //         <Group className={classes.hiddenMobile}>
+    //           <Modal
+    //             opened={isEditorPage}
+    //             size="70%"
+    //             onClose={() => setIsEditorPage(false)}
+    //           >
+    //             <Center>
+    //               <Center>
+    //                 <h1>로드맵을 아직 출간하지 않았습니다. </h1>
+    //                 <h3>변경사항이 저장되지 않을 수 있습니다. </h3>
+    //               </Center>
+    //               <div className="confirm_btn_wrap">
+    //                 <Button
+    //                   onClick={() => {
+    //                     if (leaveEditorAction === 'mypage') {
+    //                       navigate('/users/mypage');
+    //                     }
+    //                     if (leaveEditorAction === 'home') {
+    //                       navigate('/');
+    //                     }
+    //                     if (leaveEditorAction === 'signout') {
+    //                       signout();
+    //                     }
+    //                   }}
+    //                 >
+    //                   나가기
+    //                 </Button>
+
+    //                 <Button
+    //                   variant="outline"
+    //                   onClick={() => setIsEditorPage(false)}
+    //                 >
+    //                   취소
+    //                 </Button>
+    //               </div>
+    //             </Center>
+    //           </Modal>
+    //           <Modal opened={opened} onClose={close} size="60%">
+    //             <Center>
+    //               <h1>새로운 로드맵 생성하기</h1>
+    //             </Center>
+    //             <Center my={10}>
+    //               <Image
+    //                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDEv4qC_L_0WLYmLRBtBd2sYGkjMzWvGqrOw&usqp=CAU"
+    //                 width={300}
+    //                 height={280}
+    //               />
+    //             </Center>
+    //             <Center>
+    //               <InputWithButton />
+    //             </Center>
+    //             <Center mt={20}>
+    //               <h5>오늘은 그냥 템플릿 없이 빈 로드맵 만들게요.</h5>
+    //               <Button
+    //                 size="xs"
+    //                 variant="light"
+    //                 color="blue"
+    //                 ml={10}
+    //                 onClick={() => {
+    //                   clearStoredRoadmap();
+    //                   clearStoredGpt();
+    //                   if (!user || !('accessToken' in user)) {
+    //                     alert('로그인 후 이용가능합니다.');
+    //                     navigate('/users/signin');
+    //                   }
+    //                   navigate('/roadmap/editor');
+    //                 }}
+    //               >
+    //                 빈 로드맵 만들기
+    //               </Button>
+    //             </Center>
+    //           </Modal>
+    //           <Burger
+    //             opened={openBurger}
+    //             onClick={toggle}
+    //             className={classes.burger}
+    //             size="sm"
+    //           />
+    //           <Group position="center" className={classes.hiddenMobile}>
+    //             {pathname !== '/roadmap/editor' && (
+    //               <Button
+    //                 size="md"
+    //                 onClick={open}
+    //                 variant="light"
+    //                 color="indigo"
+    //                 className={classes.button}
+    //               >
+    //                 로드맵 생성
+    //               </Button>
+    //             )}
+    //           </Group>
+    //           {user && 'accessToken' in user ? (
+    //             <>
+    //               <Button
+    //                 size="md"
+    //                 variant="outline"
+    //                 color="indigo"
+    //                 className={classes.button}
+    //                 onClick={() => {
+    //                   setLeaveEditorAction('signout');
+    //                   pathname === '/roadmap/editor'
+    //                     ? setIsEditorPage(true)
+    //                     : signout();
+    //                 }}
+    //               >
+    //                 Sign out
+    //               </Button>
+    //               <Avatar
+    //                 color="blue"
+    //                 radius="xl"
+    //                 size={50}
+    //                 className={classes.button}
+    //                 onClick={() => {
+    //                   setLeaveEditorAction('mypage');
+    //                   pathname === '/roadmap/editor'
+    //                     ? setIsEditorPage(true)
+    //                     : navigate('/users/mypage');
+    //                 }}
+    //               >
+    //                 {user.nickname.slice(0, 1)}
+    //               </Avatar>
+    //             </>
+    //           ) : (
+    //             <Button
+    //               size="md"
+    //               variant="outline"
+    //               color="indigo"
+    //               className={classes.button}
+    //               onClick={() => {
+    //                 pathname === '/roadmap/editor'
+    //                   ? setIsEditorPage(true)
+    //                   : navigate('/users/signin');
+    //               }}
+    //             >
+    //               Sign in
+    //             </Button>
+    //           )}
+    //         </Group>
+    //       </Group>
+    //     </HeaderWrap>
+    //   </Header>
+    // </Box>
+
+    <div className={classes.header}>
+      <Container className={classes.mainSection}>
+        <Group position="apart">
+          <Image
+            src="/img/logo.png"
+            width={150}
+            height={40}
+            ml={30}
+            onClick={() => {
+              setLeaveEditorAction('home');
+              pathname === '/roadmap/editor'
+                ? setIsEditorPage(true)
+                : navigate('/');
+            }}
+            className="hoverItem"
+          />
+
+          <Burger
+            opened={opened}
+            onClick={toggle}
+            className={classes.burger}
+            size="sm"
+          />
+
+          <Menu
+            width={260}
+            position="bottom-end"
+            transitionProps={{ transition: 'pop-top-right' }}
+            onClose={() => setUserMenuOpened(false)}
+            onOpen={() => setUserMenuOpened(true)}
+            withinPortal
+          >
+            <Menu.Target>
+              <UnstyledButton
+                className={cx(classes.user, {
+                  [classes.userActive]: userMenuOpened,
+                })}
               >
-                <Center>
-                  <Center>
-                    <h1>로드맵을 아직 출간하지 않았습니다. </h1>
-                    <h3>변경사항이 저장되지 않을 수 있습니다. </h3>
-                  </Center>
-                  <div className="confirm_btn_wrap">
-                    <Button
-                      onClick={() => {
-                        if (leaveEditorAction === 'mypage') {
-                          navigate('/users/mypage');
-                        }
-                        if (leaveEditorAction === 'home') {
-                          navigate('/');
-                        }
-                        if (leaveEditorAction === 'signout') {
-                          signout();
-                        }
-                      }}
-                    >
-                      나가기
-                    </Button>
-
-                    <Button
-                      variant="outline"
-                      onClick={() => setIsEditorPage(false)}
-                    >
-                      취소
-                    </Button>
-                  </div>
-                </Center>
-              </Modal>
-              <Modal opened={opened} onClose={close} size="60%">
-                <Center>
-                  <h1>새로운 로드맵 생성하기</h1>
-                </Center>
-                <Center my={10}>
-                  <Image
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDEv4qC_L_0WLYmLRBtBd2sYGkjMzWvGqrOw&usqp=CAU"
-                    width={300}
-                    height={280}
-                  />
-                </Center>
-                <Center>
-                  <InputWithButton />
-                </Center>
-                <Center mt={20}>
-                  <h5>오늘은 그냥 템플릿 없이 빈 로드맵 만들게요.</h5>
-                  <Button
-                    size="xs"
-                    variant="light"
-                    color="blue"
-                    ml={10}
-                    onClick={() => {
-                      clearStoredRoadmap();
-                      clearStoredGpt();
-                      if (!user || !('accessToken' in user)) {
-                        alert('로그인 후 이용가능합니다.');
-                        navigate('/users/signin');
-                      }
-                      navigate('/roadmap/editor');
-                    }}
-                  >
-                    빈 로드맵 만들기
-                  </Button>
-                </Center>
-              </Modal>
-              <Group position="center">
-                {pathname !== '/roadmap/editor' && (
-                  <Button
-                    size="md"
-                    onClick={open}
-                    variant="light"
-                    color="indigo"
-                  >
-                    로드맵 생성
-                  </Button>
-                )}
-              </Group>
-              {user && 'accessToken' in user ? (
-                <>
-                  <Button
-                    size="md"
-                    variant="outline"
-                    color="indigo"
-                    onClick={() => {
-                      setLeaveEditorAction('signout');
-                      pathname === '/roadmap/editor'
-                        ? setIsEditorPage(true)
-                        : signout();
-                    }}
-                  >
-                    Sign out
-                  </Button>
+                <Group spacing={7}>
                   <Avatar
                     color="blue"
                     radius="xl"
                     size={50}
-                    className="hoverItem"
                     onClick={() => {
                       setLeaveEditorAction('mypage');
                       pathname === '/roadmap/editor'
@@ -296,26 +476,36 @@ export function HeaderMegaMenu() {
                   >
                     {user.nickname.slice(0, 1)}
                   </Avatar>
-                </>
-              ) : (
-                <Button
-                  size="md"
-                  variant="outline"
-                  color="indigo"
-                  onClick={() => {
-                    pathname === '/roadmap/editor'
-                      ? setIsEditorPage(true)
-                      : navigate('/users/signin');
-                  }}
-                >
-                  Sign in
-                </Button>
-              )}
-            </Group>
-          </Group>
-        </Header>
-      </Box>
-    </HeaderWrap>
+                  {user.nickname}
+                  <IconChevronDown size={rem(12)} stroke={1.5} />
+                </Group>
+              </UnstyledButton>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item
+                icon={
+                  <IconStar
+                    size="0.9rem"
+                    color={theme.colors.yellow[6]}
+                    stroke={1.5}
+                  />
+                }
+              >
+                로드맵 생성하기
+              </Menu.Item>
+
+              <Menu.Label>Settings</Menu.Label>
+              <Menu.Item icon={<IconSettings size="0.9rem" stroke={1.5} />}>
+                마이페이지
+              </Menu.Item>
+              <Menu.Item icon={<IconLogout size="0.9rem" stroke={1.5} />}>
+                로그아웃
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        </Group>
+      </Container>
+    </div>
   );
 }
 

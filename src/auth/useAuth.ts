@@ -76,6 +76,9 @@ export function useAuth(): UseAuth {
       } else if (status === 409) {
         setModalText('이미 가입된 이메일입니다.');
         setIsUserModalOpen(true);
+      } else if (status === 409) {
+        setModalText('이미 가입된 이메일입니다.');
+        setIsUserModalOpen(true);
       } else {
         setIsUserModalOpen(false);
       }
