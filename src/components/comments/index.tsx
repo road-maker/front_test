@@ -17,6 +17,7 @@ import { useDisclosure } from '@mantine/hooks';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
 import { useUser } from 'components/user/hooks/useUser';
+import { Footer } from 'layout/mainLayout/footer/Footer';
 import { useCallback, useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useInfiniteQuery } from 'react-query';
@@ -84,8 +85,8 @@ function CommentSection() {
   );
 
   useEffect(() => {
-    setCommentPage(1); // pathname이 변경될 때 commentPage 초기화
-    refetch(); // refetch 함수를 호출하여 데이터를 다시 로드
+    setCommentPage(1);
+    refetch();
     fetchComments();
   }, [commentPage, fetchComments, pathname, refetch, user?.accessToken]);
 
@@ -101,10 +102,6 @@ function CommentSection() {
   if (isLoading) return <div className="loading">Loading...</div>;
   if (isError) return <div>Error! {error.toString()}</div>;
 
-  const handleCommentTitleChange = (event) => {
-    setTitle(event.target.value);
-  };
-
   const handleCommentContentChange = (event) => {
     setCommentInput(event.target.value);
   };
@@ -114,7 +111,6 @@ function CommentSection() {
       .post(
         `${baseUrl}/comments/save-comment`,
         {
-          // commentTitle: title,
           content: commentInput,
           roadmapId: Number(pathname.slice(pathname.lastIndexOf('/') + 1)),
         },
@@ -155,13 +151,17 @@ function CommentSection() {
               handleSubmit();
               close();
             }}
+            variant="outline"
+            color="violet"
           >
             작성하기
           </Button>
         </Center>
       </Modal>
       <Center mt={20}>
-        <Button onClick={open}>코멘트 작성하기</Button>
+        <Button onClick={open} variant="outline" color="violet">
+          코멘트 작성하기
+        </Button>
       </Center>
       {content.length === 0 ? (
         <Paper withBorder shadow="md" radius="xs" p="xl" ta="center" mt={20}>
@@ -180,7 +180,7 @@ function CommentSection() {
               return pageData.result.map((comments, index) => (
                 <Paper withBorder radius="xs" p="xl" key={index}>
                   <Group>
-                    <Avatar radius="sm" color="cyan">
+                    <Avatar radius="xl" color="cyan">
                       {comments?.nickname.substring(0, 1)}
                     </Avatar>
                     <div>
@@ -199,6 +199,7 @@ function CommentSection() {
           </SimpleGrid>
         </InfiniteScroll>
       )}
+      <Footer data={[]} />
     </>
   );
 }
