@@ -157,14 +157,14 @@ export default function RoadMapInfo() {
         setLoading(false);
         setParticipation(data?.isJoined);
         const detailState = [];
-        data.nodes.map((j) =>
+        data.nodes.forEach((j) =>
           detailState.push({ id: j.id, details: j.detailedContent }),
         );
         setState(detailState);
         const edgeSet = new Set();
         const tempEdges = [];
         // eslint-disable-next-line array-callback-return
-        data?.edges.map((j) => {
+        data?.edges.forEach((j) => {
           if (!edgeSet.has(j?.id)) {
             tempEdges.push(j);
           }
@@ -194,7 +194,7 @@ export default function RoadMapInfo() {
     onUpdate(e) {
       setToggle(e.editor?.getHTML());
       // eslint-disable-next-line array-callback-return
-      state.map((item, idx) => {
+      state.forEach((item, idx) => {
         if (item.id !== id) return;
         const copyState = [...state];
         copyState.splice(idx, 1, {
@@ -342,7 +342,7 @@ export default function RoadMapInfo() {
     const current = nodeState.filter((v) => v.id === id);
     const nodeId = current[0]?.blogKeyword?.id;
     // eslint-disable-next-line array-callback-return
-    copyState.map((v) => {
+    copyState.forEach((v) => {
       if (v.id === id && participation) {
         // eslint-disable-next-line no-param-reassign
         v.done = true;
