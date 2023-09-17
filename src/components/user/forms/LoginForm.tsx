@@ -45,7 +45,7 @@ function LoginForm(props: PaperProps): ReactElement {
   });
 
   return (
-    <Box maw={500} mx="auto" m={50}>
+    <Box maw={500} mx="auto" mt={50}>
       <Paper radius="md" p="xl" {...props}>
         <Title
           align="center"
@@ -80,6 +80,7 @@ function LoginForm(props: PaperProps): ReactElement {
           <Stack>
             <TextInput
               required
+              mt="xl"
               label="이메일 입력"
               placeholder="user@roadmaker.com"
               autoComplete="current-email"

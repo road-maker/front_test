@@ -13,8 +13,8 @@ interface UseAuth {
   signout: () => void;
   isUserModalOpen: boolean;
   setIsUserModalOpen: (isUserModalOpen: boolean) => void;
-  modalText: string; // 추가: 모달에 표시할 텍스트 상태
-  setModalText: (text: string) => void; // 추가: 모달 텍스트를 업데이트하는 함수
+  modalText: string;
+  setModalText: (text: string) => void;
   openModal: boolean;
   setOpenModal: (openModal: boolean) => void;
   success: boolean;
@@ -116,10 +116,8 @@ export function useAuth(): UseAuth {
           ? errorResponse?.response?.status
           : SERVER_ERROR;
       status === 403
-        ? // eslint-disable-next-line no-alert
-          alert('이메일과 비밀번호가 일치하지 않습니다.')
-        : // eslint-disable-next-line no-alert
-          alert(`status code : ${status}!`);
+        ? alert('이메일과 비밀번호가 일치하지 않습니다.')
+        : alert(`status code : ${status}!`);
     }
   }
 

@@ -845,6 +845,7 @@ function Roadmap({
       {gptRes && (
         <Modal.Root opened={gptRes} onClose={close} centered size="fit-content">
           <Modal.Overlay color="#000" opacity={0.85} />
+
           <Modal.Content>
             <Modal.Body style={{ width: 'fit-content', height: 'fit-content' }}>
               <div style={{ display: 'inline-flex', width: '100%    ' }}>
