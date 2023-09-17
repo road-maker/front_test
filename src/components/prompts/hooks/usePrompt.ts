@@ -13,7 +13,7 @@ interface UsePrompt {
 type PromptResponse = { prompt: Array<Prompt> };
 
 export function usePrompt(): UsePrompt {
-  const SERVER_ERROR = 'error contacting server';
+  // const SERVER_ERROR = 'error contacting server';
   const navigate = useNavigate();
   const { user } = useUser();
 
@@ -43,7 +43,7 @@ export function usePrompt(): UsePrompt {
         navigate(`/roadmap/editor`);
       }
     } catch (errorResponse) {
-      console.log(`${SERVER_ERROR}!: ${errorResponse}`);
+      // // console.log(`${SERVER_ERROR}!: ${errorResponse}`);
     }
   }
 

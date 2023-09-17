@@ -76,10 +76,10 @@ function SignUpForm(props: PaperProps): ReactElement {
               <Center pt={80}>
                 <IconCircleCheckFilled
                   size={150}
-                  style={{ color: '#38D9A9' }}
+                  style={{ color: '#ebf6fc' }}
                 />
               </Center>
-              <Text ta="center" c="teal.4" fz={35} mt={20}>
+              <Text ta="center" c="#ebf6fc" fz={35} mt={20}>
                 회원가입 성공
               </Text>
               <Text ta="center" mt={10}>
@@ -90,7 +90,7 @@ function SignUpForm(props: PaperProps): ReactElement {
                 type="submit"
                 mt={50}
                 variant="light"
-                color="teal.4"
+                color="#ebf6fc"
                 h={50}
                 onClick={() => {
                   navigate('/users/signin');
@@ -137,6 +137,7 @@ function SignUpForm(props: PaperProps): ReactElement {
           <Anchor
             size="md"
             component="button"
+            color="#ebf6fc"
             ml={5}
             mb={20}
             onClick={() => {
@@ -208,6 +209,7 @@ function SignUpForm(props: PaperProps): ReactElement {
               fullWidth
               type="submit"
               mt={50}
+              color="#ebf6fc"
               size="lg"
               variant="light"
               onClick={() => {

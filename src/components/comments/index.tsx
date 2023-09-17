@@ -57,8 +57,8 @@ function CommentSection() {
         setContent(v?.data);
         // setCounts(new Array(commentContents.length).fill(0));
         // setNickname(v?.data?.commentNickname);
-      })
-      .catch((e) => console.log(e));
+      });
+    // .catch((e) => // console.log(e));
   }, [commentPage, pathname]);
 
   const {
@@ -74,7 +74,7 @@ function CommentSection() {
     ({ pageParam = initialUrl }) => fetchUrl(pageParam),
     {
       getNextPageParam: (lastPage) => {
-        console.log(lastPage.result);
+        // // console.log(lastPage.result);
         if (lastPage.result.length !== 0) {
           return lastPage.next;
         }
@@ -128,8 +128,8 @@ function CommentSection() {
       .then(() => {
         fetchComments();
         refetch();
-      })
-      .catch((e) => console.log('err', e));
+      });
+    // .catch((e) => // console.log('err', e));
   }
   return (
     <>
@@ -150,6 +150,7 @@ function CommentSection() {
         <Center>
           <Button
             mt={30}
+            color="#ebf6fc"
             onClick={() => {
               handleSubmit();
               close();

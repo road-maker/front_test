@@ -39,8 +39,10 @@ import { useNavigate } from 'react-router-dom';
 import ReactFlow, {
   addEdge,
   Background,
+  Connection,
   ConnectionLineType,
   Controls,
+  Edge,
   MiniMap,
   Panel,
   ReactFlowProvider,
@@ -66,33 +68,42 @@ const nodeHeight = 40;
 
 const flowKey = 'example-flow';
 
-const getLayoutedElements = (nodes, edges, direction = 'LR') => {
+const getLayoutedElements = (nodes: any[], edges: any[], direction = 'LR') => {
   const isHorizontal = direction === 'TB';
   dagreGraph.setGraph({ rankdir: direction });
 
-  nodes.forEach((node) => {
+  nodes.forEach((node: { id: string }) => {
     dagreGraph.setNode(node?.id, { width: nodeWidth, height: nodeHeight });
   });
 
-  edges.forEach((edge) => {
-    dagreGraph.setEdge(edge?.source, edge?.target);
-  });
+  edges.forEach(
+    (edge: { source: dagre.Edge; target: string | { [key: string]: any } }) => {
+      dagreGraph.setEdge(edge?.source, edge?.target);
+    },
+  );
 
   dagre.layout(dagreGraph);
 
-  nodes.forEach((node) => {
-    const nodeWithPosition = dagreGraph.node(node?.id);
-    // eslint-disable-next-line no-param-reassign
-    node.targetPosition = isHorizontal ? 'top' : 'left';
-    // eslint-disable-next-line no-param-reassign
-    node.sourcePosition = isHorizontal ? 'bottom' : 'right';
-    // eslint-disable-next-line no-param-reassign
-    node.position = {
-      x: nodeWithPosition.x - nodeWidth / 2,
-      y: nodeWithPosition.y - nodeHeight / 2,
-    };
-    return node;
-  });
+  nodes.forEach(
+    (node: {
+      id: string | dagre.Label;
+      targetPosition: string;
+      sourcePosition: string;
+      position: { x: number; y: number };
+    }) => {
+      const nodeWithPosition = dagreGraph.node(node?.id);
+      // eslint-disable-next-line no-param-reassign
+      node.targetPosition = isHorizontal ? 'top' : 'left';
+      // eslint-disable-next-line no-param-reassign
+      node.sourcePosition = isHorizontal ? 'bottom' : 'right';
+      // eslint-disable-next-line no-param-reassign
+      node.position = {
+        x: nodeWithPosition.x - nodeWidth / 2,
+        y: nodeWithPosition.y - nodeHeight / 2,
+      };
+      return node;
+    },
+  );
 
   return { nodes, edges };
 };
@@ -109,7 +120,7 @@ const initialNodes = [
     position: { x: 100, y: 100, zoom: 0.45 },
     type: 'custom',
     style: {
-      background: '#ff7474',
+      background: '#f4b4b4',
       border: '1px solid black',
       borderRadius: 15,
       fontSize: 24,
@@ -122,7 +133,7 @@ const initialNodes = [
     position: { x: 100, y: 200, zoom: 0.45 },
     type: 'custom',
     style: {
-      background: '#ffe573',
+      background: '#f4e9bc',
       border: '1px solid black',
       borderRadius: 15,
       fontSize: 24,
@@ -226,6 +237,7 @@ function Roadmap({
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [keywordSubmitState, setKeywordSubmitState] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingDetailGpt, setIsLoadingDetailGpt] = useState(true);
   const [nodeBg, setNodeBg] = useState('#eee');
   const [rfInstance, setRfInstance] = useState(null);
   const { setViewport, getViewport } = useReactFlow();
@@ -245,7 +257,7 @@ function Roadmap({
   const navigate = useNavigate();
 
   const onLayout = useCallback(
-    (direction) => {
+    (direction: string) => {
       const { nodes: layoutedNodes, edges: layoutedEdges } =
         getLayoutedElements(nodeState, edgeState, direction);
 
@@ -301,8 +313,8 @@ function Roadmap({
           if (e.data.length > 0) {
             setDetails(e.data);
           }
-        })
-        .catch((err) => console.log(err));
+        });
+      // .catch((err) => // console.log(err));
     }
   }, [isDetailReady]);
 
@@ -314,7 +326,7 @@ function Roadmap({
     const tmpNode = [];
     const tmpEdge = [];
     let cnt = 0;
-    // console.log(useGpt);
+    // // console.log(useGpt);
     // eslint-disable-next-line array-callback-return
     useGpt.map((v, indx) => {
       if (!nodeSet.has(v?.id) && v?.id.split('.')[0] !== '0') {
@@ -367,9 +379,10 @@ function Roadmap({
   }, [useGpt]);
 
   useMemo(() => {
-    console.log(nodeState.length);
+    // console.log(nodeState.length);
     if (nodeState.length > initialNodes.length) {
       setIsDetailReady(nodeState.length);
+      setIsLoadingDetailGpt(false);
     }
   }, [nodeState.length]);
 
@@ -424,7 +437,7 @@ function Roadmap({
   //   [setEdges],
   // );
   const onConnect = useCallback(
-    (params) =>
+    (params: Edge | Connection) =>
       setEdges((eds) =>
         addEdge(
           { ...params, type: ConnectionLineType.SmoothStep, animated: true },
@@ -441,6 +454,14 @@ function Roadmap({
   //     alert(`${currentView.x}, ${currentView.y}`);
   //   }
   // }, [currentView, nodeState.length]);
+
+  useMemo(() => {
+    if (useGpt.length > 0 && details.length > 0) {
+      setState(details);
+      // // console.log('details', details);
+      // // console.log('state', state);
+    }
+  }, [useGpt, details]);
 
   useMemo(() => {
     if (rfInstance) {
@@ -499,13 +520,13 @@ function Roadmap({
       },
     ]);
     nodeState.forEach((n) => {
-      // console.log(n);
+      // // console.log(n);
       // eslint-disable-next-line no-param-reassign
       n.sourcePosition = nodeState[0].sourcePosition;
       // eslint-disable-next-line no-param-reassign
       n.targetPosition = nodeState[0].targetPosition;
     });
-    // console.log(state); // 노드 추가!
+    // // console.log(state); // 노드 추가!
     setState([...state, { id: (nodeCount + 1).toString(), details: '' }]);
     setColorsState([
       ...state,
@@ -513,18 +534,18 @@ function Roadmap({
     ]);
   }, [nodeState, setNodes]);
 
-  useMemo(() => {
-    const copyNodes = [...nodeState];
-    copyNodes.forEach((n) => {
-      if (n.id === id) {
-        console.log('keyword?', n);
-        // eslint-disable-next-line no-param-reassign
-        // n.blogKeyword = blogKeyword;
-        // !blogKeyword ? (n.blogKeyword = blogKeyword) : (n.blogKeyword = '');
-      }
-    });
-    setNodes(copyNodes);
-  }, [id, blogKeyword]);
+  // useMemo(() => {
+  //   const copyNodes = [...nodeState];
+  //   copyNodes.forEach((n) => {
+  //     if (n.id === id) {
+  //       // console.log('keyword?', n);
+  //       // eslint-disable-next-line no-param-reassign
+  //       // n.blogKeyword = blogKeyword;
+  //       // !blogKeyword ? (n.blogKeyword = blogKeyword) : (n.blogKeyword = '');
+  //     }
+  //   });
+  //   setNodes(copyNodes);
+  // }, [id, blogKeyword]);
 
   const { postRoadmap } = useRoadmap();
 
@@ -547,20 +568,20 @@ function Roadmap({
 
     // eslint-disable-next-line array-callback-return
     nodesCopy.map((v) => {
-      state.map((item) => {
+      state.map((item: { id: string; detailedContent: string }) => {
         if (v?.id === item?.id) {
           // eslint-disable-next-line no-param-reassign
           v.detailedContent = item?.detailedContent;
-          // console.log(item?.details);
+          // // console.log(item?.details);
           // v.details = item?.details;
         }
         // eslint-disable-next-line no-param-reassign
         v.positionAbsolute = v.position;
         // eslint-disable-next-line no-param-reassign
-        v.blogKeyword = item.blogKeyword;
+        // v.blogKeyword = item.blogKeyword;
       });
       // eslint-disable-next-line no-param-reassign
-      v.blogKeyword = 's3'; // ******************************************* 블로그 인증 키워드
+      v.blogKeyword = ''; // ******************************************* 블로그 인증 키워드
       // eslint-disable-next-line no-param-reassign
       v.type = 'custom';
       // v.type = 'default';
@@ -601,7 +622,7 @@ function Roadmap({
         },
       })
       .then((e) => {
-        // console.log('e', e.data);
+        // // console.log('e', e.data);
         // const blob = new Blob([JSON.stringify(data)], {
         //   type: 'multipart/form-data',
         // });
@@ -609,6 +630,11 @@ function Roadmap({
         const formData = new FormData();
 
         formData.append('file', files[0]);
+
+        // eslint-disable-next-line no-debugger
+        debugger;
+        console.log(files[0]);
+
         axios
           .post(`${baseUrl}/roadmaps/${e.data}/thumbnails`, formData, {
             headers: {
@@ -617,7 +643,7 @@ function Roadmap({
             },
           })
           .then((v) => {
-            // console.log(v);
+            // // console.log(v);
             // eslint-disable-next-line no-alert
             alert('포스팅 성공!');
 
@@ -634,13 +660,14 @@ function Roadmap({
               )
               .then(() => {
                 navigate(`/roadmap/post/${e.data}`);
-              })
-              .catch((err) => console.log(err));
-          })
-          .catch((err) => console.log(err));
-      })
-      .catch((err) => console.log(err));
+              });
+            // .catch((err) => // console.log(err));
+          });
+        // .catch((err) => // console.log(err));
+      });
+    // .catch((err) => // console.log(err));
     // navigate('/');
+    // }, [nodeState, files[0]]);
   }, [nodeState]);
 
   // const { deleteElements } = useReactFlow();
@@ -662,7 +689,7 @@ function Roadmap({
   //       },
   //     )
   //     .then((e) => {
-  //       // console.log(e);
+  //       // // console.log(e);
   //       // @ts-ignore
   //       const resDetail: string = e?.content;
   //       if (resDetail) {
@@ -671,7 +698,7 @@ function Roadmap({
   //         const temp = [];
   //         copyState.map((v) => {
   //           if (v.id === id) {
-  //             console.log('현재 content', v?.details);
+  //             // console.log('현재 content', v?.details);
   //             resArr.map((k) => {
   //               temp.push(`<p>${k}</p>`);
   //             });
@@ -679,7 +706,7 @@ function Roadmap({
   //             v.details += temp;
   //           }
   //         });
-  //         console.log('현재 copyState', copyState);
+  //         // console.log('현재 copyState', copyState);
   //         // setState(copyState);
   //         // setGptDisabled(false);
   //       }
@@ -688,7 +715,7 @@ function Roadmap({
   //       // setState(e?.content);
   //       // 상세 내용 에디터에 내용 넣어주기
   //     })
-  //     .catch((err) => console.log(err));
+  //     .catch((err) => // console.log(err));
   // };
   const getGptExampleDetail = useCallback(() => {
     setGptDisabled(true);
@@ -710,17 +737,18 @@ function Roadmap({
           const copyState = [...state];
           copyState.map((v) => {
             if (v.id === id) {
-              console.log('현재 content', v?.detailedContent);
+              // // console.log('현재 content', v?.detailedContent);
               // eslint-disable-next-line no-param-reassign
               v.detailedContent += resDetail;
             }
           });
+          // // console.log('copyState', copyState);
           setState(copyState);
           setGptDisabled(false);
         }
         // 상세 내용 에디터에 내용 넣어주기
-      })
-      .catch((err) => console.log(err));
+      });
+    // .catch((err) => // console.log(err));
   }, [id, state]);
 
   useEffect(() => {
@@ -770,16 +798,6 @@ function Roadmap({
   }, [edgeState, nodeState]);
 
   useEffect(() => {
-    // setNodes((nds) =>
-    //   nds.map((node) => {
-    //     if (node?.id === id) {
-    //       // when you update a simple type you can just update the value
-    //       // eslint-disable-next-line no-param-reassign
-    //       node.hidden = nodeHidden;
-    //     }
-    //     return node;
-    //   }),
-    // );
     setNodes((nds) =>
       nds.map((node) => {
         // if (node.id === '1') {
@@ -809,14 +827,18 @@ function Roadmap({
     );
   });
 
-  // const [selectedNode, setSelectedNode] = useState([]);
-  // useOnSelectionChange({
-  //   onChange: ({ nodes, edges }) => {
-  //     // setSelectedNode(nodes);
-  //     console.log('selectedNode', selectedNode);
-  //     // setNodeModal(true);
-  //   },
-  // });
+  // // @ts-ignore
+  // const imgFileDropHandler = (e) => {
+  //   setFiles(e);
+  // };
+  const imgFileDropHandler = useMemo(
+    // @ts-ignore
+    (e) => {
+      return setFiles(e);
+    },
+    // @ts-ignore
+    [e],
+  );
 
   return (
     <Wrap>
@@ -825,12 +847,11 @@ function Roadmap({
           <Modal.Overlay color="#000" opacity={0.85} />
           <Modal.Content>
             <Modal.Body style={{ width: 'fit-content', height: 'fit-content' }}>
-              {/* <Spinner /> */}
-              <div>
+              <div style={{ display: 'inline-flex', width: '100%    ' }}>
                 <img
                   src="/img/loadingImg.gif"
                   alt="로딩 이미지"
-                  style={{ width: '9rem', margin: '0 auto' }}
+                  style={{ width: '24rem', margin: '0 auto' }}
                 />
               </div>
               <Typer
@@ -917,10 +938,21 @@ function Roadmap({
         </Text>
         <Dropzone
           accept={IMAGE_MIME_TYPE}
-          onDrop={(e) => {
-            console.log(e);
-            setFiles(e);
+          onDrop={(e: FileWithPath[]) => {
+            // imgFileDropHandler(e);
+            // console.log('e', e);
+            // console.log('files', files);
+            // if (files[0].length === 0) {
+            // setFiles(e);
+            // }
           }}
+          // onDrop={(e) => {
+          // // console.log(e);
+          // // eslint-disable-next-line no-debugger
+          // debugger;
+          // console.log(e);
+          // imgFileDropHandler(e);
+          // }}
         >
           <Text align="center">썸네일 등록 </Text>
         </Dropzone>
@@ -1011,7 +1043,7 @@ function Roadmap({
                     variant="outline"
                     onClick={() => {
                       setLabel(label);
-                      // console.log(label);
+                      // // console.log(label);
                       getGptExampleDetail();
                     }}
                     loading={gptDisabled}
@@ -1025,7 +1057,7 @@ function Roadmap({
                   pointerEvents: 'none',
                   backgroundColor: '#ebf6fc',
                 }}
-                style={{ zIndex: '700' }}
+                className="gptModal"
               >
                 <Text size="sm">ChatGpt로 자동 생성하기</Text>
               </Popover.Dropdown>
@@ -1036,10 +1068,10 @@ function Roadmap({
               value={label}
               mt={10}
               mb={10}
-              onChange={onChangeLabel}
-              // onChange={(evt) => {
-              //   setLabel(evt?.target?.value);
-              // }}
+              // onChange={onChangeLabel}
+              onChange={(evt) => {
+                setLabel(evt?.target?.value);
+              }}
               onBlur={(evt) => setLabel(label)}
               placeholder="내용을 입력해주세요."
             />
@@ -1111,28 +1143,21 @@ function Roadmap({
         onEdgesChange={onEdgesChange}
         // defaultViewport={defaultViewport}
         minZoom={0.8}
-        maxZoom={4}
+        maxZoom={5}
         // onInit={onInit}
         onConnect={onConnect}
         onNodeClick={(e, n) => {
           setLabel(`${n?.data?.label}`);
           setId(n?.id);
           setColor(n?.style?.background);
-          console.log('n', n);
-          console.log('e', e);
-          setBlogKeyword(blogKeyword);
-          console.log('details', details);
-          if (details.length > 0) {
-            setState(details);
-            // details.map((v) => {
-            //   if (v.id === id) {
-            //     // setState(v.detailedContent);
-            //     console.log(state);
-            //   }
-            // });
-          }
+          // // console.log('n', n);
+          // // console.log('e', e);
+          // setBlogKeyword(blogKeyword);
+          // if (details.length > 0 && !isLoadingDetailGpt) {
+          //   setState(details);
+          // }
           setNodeModal(true);
-          // console.log('selectedNode', selectedNode);
+          // // console.log('selectedNode', selectedNode);
         }}
         attributionPosition="bottom-left"
         fitView
@@ -1187,6 +1212,10 @@ const Wrap = styled.div`
   /* .react-flow__node {
     min-width: fit-content;
   } */
+
+  & .gptModal {
+    z-index: 1000 !important;
+  }
   & .updatenode__controls {
     position: absolute;
     right: 10px;

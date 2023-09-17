@@ -43,7 +43,6 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
-// import CommentSection from 'components/comments';
 import { useInput } from 'components/common/hooks/useInput';
 import { useUser } from 'components/user/hooks/useUser';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -132,10 +131,10 @@ export default function RoadMapInfo() {
           Authorization: `Bearer ${user?.accessToken}`,
         },
       })
-      .catch((e) => {
-        // eslint-disable-next-line no-console
-        console.log(e);
-      })
+      // .catch((e) => {
+      // eslint-disable-next-line no-console
+      // // console.log(e);
+      // })
       // .then((value: AxiosResponse<ResponseType>) => {
       .then((value) => {
         const { data } = value;
@@ -255,47 +254,48 @@ export default function RoadMapInfo() {
           isLiked: v?.data.isLiked,
           likeCount: v?.data.likeCount,
         });
-      })
-      .catch((err) => console.log(err));
+      });
+    // .catch((err) => // console.log(err));
   };
   const submitBlogUrl = useCallback(() => {
-    // console.log(`id : ${id}, ${currentRoadmap}`);
-    console.log('currentRoadmap', currentRoadmap);
-    console.log('nodeState', nodeState);
-    console.log('id', id);
+    // // console.log(`id : ${id}, ${currentRoadmap}`);
+    // // console.log('currentRoadmap', currentRoadmap);
+    // // console.log('nodeState', nodeState);
+    // // console.log('id', id);
     const current = nodeState.filter((v) => v.id === id);
-    // console.log('current', current[0].blogKeyword);
+    // // console.log('current', current[0].blogKeyword);
     const blogKeywordId = current[0]?.blogKeyword?.id;
-    console.log(blogKeywordId);
+    // // console.log(blogKeywordId);
     // const blogKeyword = current[0]?.blogKeyword?.keyword;
-    axios
-      .post(
-        `${baseUrl}/certified-blogs/submitUrl`,
-        {
-          // memberId: user?.nickname,
-          // roadmapNodeId: id,
-          inProgressNodeId: blogKeywordId,
-          // submitUrl: blogUrl,
-          submitUrl: 'https://techpedia.tistory.com/2',
-          // submitUrl: 'https://dbwp031.tistory.com/41',
-          // submitUrl:
-          // 'https://velog.io/@jiynn_12/%EA%B0%9C%EB%B0%9C%EC%9E%90%EB%A1%9C-%ED%98%91%EC%97%85%ED%95%98%EA%B8%B0-husky',
+    axios.post(
+      `${baseUrl}/certified-blogs/submitUrl`,
+      {
+        // memberId: user?.nickname,
+        // roadmapNodeId: id,
+        // inProgressNodeId: blogKeywordId,
+        blogKeywordId,
+        // inProgressNodeId: 6168,
+        submitUrl: blogUrl,
+        // submitUrl: 'https://techpedia.tistory.com/18',
+        // submitUrl: 'https://dbwp031.tistory.com/41',
+        // submitUrl:
+        // 'https://velog.io/@jiynn_12/%EA%B0%9C%EB%B0%9C%EC%9E%90%EB%A1%9C-%ED%98%91%EC%97%85%ED%95%98%EA%B8%B0-husky',
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${user?.accessToken}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${user?.accessToken}`,
-          },
-        },
-      )
-      .then((v) => {
-        console.log(v);
-        // setCurrentRoadmap({
-        //   ...currentRoadmap,
-        //   isLiked: v?.data.isLiked,
-        //   likeCount: v?.data.likeCount,
-        // });
-      })
-      .catch((err) => console.log(err));
+      },
+    );
+    // .then((v) => {
+    // // console.log(v);
+    // setCurrentRoadmap({
+    //   ...currentRoadmap,
+    //   isLiked: v?.data.isLiked,
+    //   likeCount: v?.data.likeCount,
+    // });
+    // })
+    // .catch((err) => // console.log(err));
   }, [blogUrl, id]);
 
   const [nodeState, setNodes, onNodesChange] = useNodesState([]);
@@ -324,13 +324,15 @@ export default function RoadMapInfo() {
   // };
   // const resizeObserver = new ResizeObserver(observerCallback);
 
+  // eslint-disable-next-line consistent-return
   const updateRoadmapProgress = () => {
     if (!user) {
       // eslint-disable-next-line no-alert
       alert('로그인 후 이용 가능합니다!');
       return navigate('/users/signin');
     }
-    if (!currentRoadmap.isJoined) {
+    // if (!currentRoadmap.isJoined) {
+    if (!participation) {
       // eslint-disable-next-line no-alert
       alert('참여하기 버튼 클릭 후 이용 가능합니다.');
       return setIsOpen(false);
@@ -339,68 +341,84 @@ export default function RoadMapInfo() {
     const copyState = [...nodeState];
     const current = nodeState.filter((v) => v.id === id);
     const nodeId = current[0]?.blogKeyword?.id;
-    // copyState.map((v) => {
-    //   if (v.id === id && participation) {
-    //     // eslint-disable-next-line no-param-reassign
-    //     v.done = true;
-    //   }
-    // });
-    // nodeState.forEach((v) => {
-    //   if (v.id === id && participation) {
-    //     // eslint-disable-next-line no-param-reassign
-    //     v.data.done = true;
-    //   }
-    // });
-
-    // return alert('진행 완료!');
-    axios
-      .patch(
-        `${baseUrl}/roadmaps/in-progress-nodes/${nodeId}/done`,
-        {
-          inProgressNodeId: nodeId,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${user?.accessToken}`,
-          },
-        },
-      )
-      .then((v) => {
-        console.log(v);
-        if (v.status === 200) {
-          console.log(currentRoadmap);
-          console.log('copyState', copyState);
-          copyState.forEach((m) => {
-            if (m.id === id && participation) {
-              // eslint-disable-next-line no-param-reassign
-              m.done = v.done;
-            }
-          });
-          nodeState.forEach((m) => {
-            if (m.id === id && participation) {
-              // eslint-disable-next-line no-param-reassign
-              m.data.done = true;
-              // eslint-disable-next-line no-param-reassign
-              m.done = true;
-              // eslint-disable-next-line no-param-reassign
-              m.style.background = '#a8a6a6be';
-            }
-          });
-          setState(copyState);
-          setNodes(nodeState);
-        }
-        console.log('is state updated?', nodeState);
-        // eslint-disable-next-line no-alert
-        // setParticipation(true);
-        // setCurrentRoadmap({
-        //   ...currentRoadmap,
-        //   joinCount: currentRoadmap.joinCount + 1,
-        // });
-      })
-      .catch((e) => console.log(e));
+    // eslint-disable-next-line array-callback-return
+    copyState.map((v) => {
+      if (v.id === id && participation) {
+        // eslint-disable-next-line no-param-reassign
+        v.done = true;
+      }
+    });
+    nodeState.forEach((v) => {
+      if (v.id === id && participation) {
+        // eslint-disable-next-line no-param-reassign
+        v.done = true;
+        // eslint-disable-next-line no-param-reassign
+        v.data.done = true;
+        // eslint-disable-next-line no-param-reassign
+        v.style.background = '#a8a6a6be';
+      }
+    });
+    setState(copyState);
+    setIsOpen(false);
     // eslint-disable-next-line no-alert
     return alert('진행 완료!');
+    // axios
+    //   .patch(
+    //     `${baseUrl}/roadmaps/in-progress-nodes/${nodeId}/done`,
+    //     {
+    //       inProgressNodeId: nodeId,
+    //     },
+    //     {
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //         Authorization: `Bearer ${user?.accessToken}`,
+    //       },
+    //     },
+    //   )
+    //   // eslint-disable-next-line consistent-return
+    //   .then((v) => {
+    //     // console.log(v);
+    //     if (v.status === 200) {
+    //       // console.log(currentRoadmap);
+    //       // console.log('copyState', copyState);
+    //       copyState.forEach((m) => {
+    //         if (m.id === id && (participation || currentRoadmap.isJoined)) {
+    //           // eslint-disable-next-line no-param-reassign
+    //           m.done = true;
+    //           // m.done = v.done;
+    //         }
+    //       });
+    //       nodeState.forEach((m) => {
+    //         if (m.id === id && participation) {
+    //           // eslint-disable-next-line no-param-reassign
+    //           m.data.done = true;
+    //           // eslint-disable-next-line no-param-reassign
+    //           m.done = true;
+    //           // eslint-disable-next-line no-param-reassign
+    //           m.style.background = '#a8a6a6be';
+    //         }
+    //       });
+    //       setState(copyState);
+    //       setNodes(nodeState);
+    //       setIsOpen(false);
+    //       // eslint-disable-next-line no-alert
+    //       return alert('진행 완료!');
+    //     }
+    //     // console.log('is state updated?', nodeState);
+    //     // eslint-disable-next-line no-alert
+    //     // setParticipation(true);
+    //     // setCurrentRoadmap({
+    //     //   ...currentRoadmap,
+    //     //   joinCount: currentRoadmap.joinCount + 1,
+    //     // });
+    //   })
+    //   .catch((e) => {
+    //     if (e.status === 403) {
+    //       // eslint-disable-next-line no-alert
+    //       return alert('이미 진행을 완료했습니다.');
+    //     }
+    //     return // console.log(e);
+    //   });
   };
 
   const joinRoadmap = () => {
@@ -421,8 +439,8 @@ export default function RoadMapInfo() {
           ...currentRoadmap,
           joinCount: currentRoadmap.joinCount + 1,
         });
-      })
-      .catch((e) => console.log(e));
+      });
+    // .catch((e) => // console.log(e));
   };
   return (
     <>
@@ -575,7 +593,7 @@ export default function RoadMapInfo() {
                 onNodeClick={(e, n) => {
                   setLabel(`${n?.data?.label}`);
                   setId(`${n?.id}`);
-                  console.log(id);
+                  // // console.log(id);
                   // setIsOpen(!isOpen);
                   setIsOpen(true);
                 }}
@@ -585,12 +603,14 @@ export default function RoadMapInfo() {
                 // fitViewOptions={p}
               />
 
+              {/* <CommentSection /> */}
               <Drawer.Root
                 opened={isOpen}
                 scrollAreaComponent={ScrollArea.Autosize}
                 onClose={() => setIsOpen(false)}
                 position="right"
                 keepMounted
+                closeOnEscape
                 lockScroll={false}
               >
                 <Drawer.Content onMouseLeave={useFocusTrap(false)}>
@@ -611,6 +631,7 @@ export default function RoadMapInfo() {
                             // nodeState.map((v) => {
                             nodeState.map((v) => {
                               if (v.id === id && v.done) {
+                                // if (v.id === id && v.isdone) {
                                 return (
                                   <IconCircleCheckFilled
                                     key={v.id}
@@ -672,7 +693,10 @@ export default function RoadMapInfo() {
                         icon={<IconCertificate />}
                         value={blogUrl}
                         placeholder="https://myblogUrl.io"
-                        onChange={onChangeBlogKeyword}
+                        // onChange={onChangeBlogUrl}
+                        onChange={(e) => {
+                          setBlogUrl(e.target.value);
+                        }}
                         mt={10}
                         mb={10}
                         // disabled={keywordSubmitState}
@@ -683,7 +707,7 @@ export default function RoadMapInfo() {
                             withArrow
                           >
                             <ActionIcon
-                              disabled={blogKeyword.length === 0}
+                              disabled={blogUrl.length === 0}
                               variant="transparent"
                               onClick={() => {
                                 submitBlogUrl();
@@ -752,8 +776,22 @@ const Wrap = styled.div`
     cursor: auto;
   }
   & .react-flow {
-    overflow: visible !important;
+    zoom: 100% !important;
+    /* overflow: visible !important; */
+    overflow: scroll !important;
+    overflow-x: hidden !important;
     /* zoom: 60% !important; */
+    scrollbar-width: thin !important;
+    scrollbar-color: #6969dd #e0e0e0 !important;
+    & ::-webkit-scrollbar {
+      width: 10px;
+    }
+    & ::-webkit-scrollbar-track {
+      background-color: darkgrey !important;
+    }
+    & ::-webkit-scrollbar-thumb {
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    }
   }
 `;
 const EditorWrap = styled.div`

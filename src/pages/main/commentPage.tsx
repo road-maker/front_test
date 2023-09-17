@@ -13,7 +13,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import axios from 'axios';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useInfiniteQuery } from 'react-query';
 import { useLocation } from 'react-router-dom';
@@ -142,6 +142,7 @@ function CommentPage() {
         />
         <Center>
           <Button
+            color="#ebf6fc"
             mt={30}
             onClick={() => {
               handleSubmit();
@@ -163,7 +164,9 @@ function CommentPage() {
         />
       </Group>
       <Center mt={20}>
-        <Button onClick={open}>코멘트 작성하기</Button>
+        <Button color="#ebf6fc" onClick={open}>
+          코멘트 작성하기
+        </Button>
       </Center>
       {content.length === 0 ? (
         <Paper withBorder shadow="md" radius="xs" p="xl" ta="center" mt={20}>
@@ -180,7 +183,7 @@ function CommentPage() {
           >
             {data.pages.map((pageData) => {
               return pageData.result.map((comments, index) => (
-                <Paper withBorder radius="xs" p="xl" key={index}>
+                <Paper withBorder radius="xl" p="xl" key={index}>
                   <Group>
                     {/* <Avatar color="cyan" radius="xl">
             {user.nickname.substring(0, 1)}

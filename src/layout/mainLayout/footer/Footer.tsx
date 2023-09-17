@@ -157,18 +157,6 @@ export function Footer({ data }: FooterLinksProps) {
     <footer className={classes.footer}>
       <Container className={classes.inner}>
         <div className={classes.logo}>
-          {/* <Image
-            src="/img/logo.png"
-            width={200}
-            height={50}
-            onClick={() => {
-              setLeaveEditorAction('home');
-              pathname === '/roadmap/editor'
-                ? setIsEditorPage(true)
-                : navigate('/');
-            }}
-            className="hoverItem"
-          /> */}
           <Text size="xs" color="dimmed" className={classes.description}>
             {/* Build fully functional accessible web applications faster than ever */}
             Create, set and share tangible steps to achieve your ultimate goals,

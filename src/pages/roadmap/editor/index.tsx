@@ -69,10 +69,10 @@ export default function RoadMapEditor(): ReactElement {
       //   // @ts-ignore
       //   e?.transaction?.curSelection?.$anchor?.pos,
       // );
-      // console.log(e.editor?.getHTML());
+      // // console.log(e.editor?.getHTML());
       setToggle(e.editor?.getHTML());
-      // console.log('e.editor', e.editor);
-      // console.log('e.editor isFocused', e.editor.getHTML());
+      // // console.log('e.editor', e.editor);
+      // // console.log('e.editor isFocused', e.editor.getHTML());
       // eslint-disable-next-line array-callback-return
       state.map((item, idx) => {
         if (item?.id !== id) return;
@@ -95,7 +95,7 @@ export default function RoadMapEditor(): ReactElement {
       // );
       // @ts-ignore
       setCursorPosition(e?.transaction?.curSelection?.$anchor?.pos);
-      // console.log(
+      // // console.log(
       //   'ontransaction',
       //   // @ts-ignore
       //   e?.transaction?.curSelection?.$anchor?.pos,
@@ -104,14 +104,14 @@ export default function RoadMapEditor(): ReactElement {
     },
     // onTransaction: ({ transaction }) => {
     //   // @ts-ignore
-    //   console.log('ontransaction', transaction?.curSelection?.$anchor?.pos);
+    //   // console.log('ontransaction', transaction?.curSelection?.$anchor?.pos);
     //   e.editor?.chain().focus().setTextSelection(10).run();
     // },
   });
 
   useMemo(() => {
     const filt = state.filter((v) => v?.id === id);
-    // console.log('filt', filt);
+    // // console.log('filt', filt);
     setToggle(filt);
     if (editor) {
       // editor.value?.chain().focus().setContent(JSON.parse(content)).run()
@@ -121,7 +121,7 @@ export default function RoadMapEditor(): ReactElement {
         preserveWhitespace: 'full', // 빈칸 인식 X 에러 해결
         // preserveWhitespace: true, // 빈칸 인식 X 에러 해결
       });
-      console.log('editor', editor);
+      // console.log('editor', editor);
       // editor.commands.focus(
       //   // @ts-ignore
       //   editor?.transaction?.curSelection?.$anchor?.pos,

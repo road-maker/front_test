@@ -209,7 +209,7 @@ export default function RoadmapRecommendation() {
                   </Text>
                   <Card.Section className={classes.footer}>
                     <Group>
-                      <Avatar radius="sm" color="blue">
+                      <Avatar radius="lg" color="blue">
                         {article.member.nickname.substring(0, 1)}
                       </Avatar>
 

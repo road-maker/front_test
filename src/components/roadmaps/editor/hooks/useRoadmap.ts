@@ -39,10 +39,10 @@ export function useRoadmap(): UseRoadmap {
         !id
           ? localStorage.setItem('roadmaps', JSON.stringify({ data })) // 모든 로드맵 가져오기
           : localStorage.setItem('roadmapById', JSON.stringify({ data })); // 특정 id의 로드맵 가져오기
-        // console.log('useRoadmap', data);
+        // // console.log('useRoadmap', data);
       }
     } catch (errorResponse) {
-      console.log(`${SERVER_ERROR}!: ${errorResponse}`);
+      // // console.log(`${SERVER_ERROR}!: ${errorResponse}`);
     }
   }
   async function roadmapPostSeverCall(
@@ -61,12 +61,12 @@ export function useRoadmap(): UseRoadmap {
           },
         });
       if (status === 200) {
-        console.log('roadmapPostSeverCall', data);
+        // // console.log('roadmapPostSeverCall', data);
         // eslint-disable-next-line no-alert
-        alert(data);
+        // alert(data);
       }
     } catch (errorResponse) {
-      console.log(`${SERVER_ERROR}!: ${errorResponse}`);
+      // // console.log(`${SERVER_ERROR}!: ${errorResponse}`);
     }
   }
   async function getRoadmapById(id: number): Promise<void> {

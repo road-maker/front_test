@@ -91,7 +91,7 @@ function Roadmap({
       setNodes(currentRoadmap.currentRoadmap.nodes);
       setEdges(currentRoadmap.currentRoadmap.edges);
     }
-    // console.log('currentRoadmap', currentRoadmap.currentRoadmap);
+    // // console.log('currentRoadmap', currentRoadmap.currentRoadmap);
   }, []);
 
   const proOptions = { hideAttribution: true };
@@ -134,7 +134,12 @@ function Roadmap({
           <EditorContent editor={editor} readOnly />
         </Center>
         <Center>
-          <Button mt={30} onClick={() => setIsOpen(!isOpen)} variant="light">
+          <Button
+            color="#ebf6fc"
+            mt={30}
+            onClick={() => setIsOpen(!isOpen)}
+            variant="light"
+          >
             닫기
           </Button>
         </Center>

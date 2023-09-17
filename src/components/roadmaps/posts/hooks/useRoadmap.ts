@@ -53,7 +53,7 @@ export function useRoadmap(): UseRoadmap {
             );
       }
     } catch (errorResponse) {
-      console.log(`${SERVER_ERROR}!: ${errorResponse}`);
+      // // console.log(`${SERVER_ERROR}!: ${errorResponse}`);
     }
   }
   async function roadmapAuthServerCall(
@@ -83,7 +83,7 @@ export function useRoadmap(): UseRoadmap {
             );
       }
     } catch (errorResponse) {
-      console.log(`${SERVER_ERROR}!: ${errorResponse}`);
+      // // console.log(`${SERVER_ERROR}!: ${errorResponse}`);
     }
   }
   async function roadmapPostSeverCall(
@@ -102,10 +102,10 @@ export function useRoadmap(): UseRoadmap {
           },
         });
       if (status === 200) {
-        console.log(data);
+        // // console.log(data);
       }
     } catch (errorResponse) {
-      console.log(`${SERVER_ERROR}!: ${errorResponse}`);
+      // // console.log(`${SERVER_ERROR}!: ${errorResponse}`);
     }
   }
   async function roadmapJoinSeverCall(
@@ -125,7 +125,7 @@ export function useRoadmap(): UseRoadmap {
         });
       if (status === 201) {
         alert('참여 성공');
-        console.log('data', data);
+        // // console.log('data', data);
       }
       if (status === 404) {
         alert('로드맵을 찾지 못했습니다.');
@@ -134,9 +134,9 @@ export function useRoadmap(): UseRoadmap {
       if (errorResponse === 409) {
         alert('이미 참여중인 로드맵입니다.');
       }
-      console.log(`${SERVER_ERROR}!: ${errorResponse}`);
-      // console.log(`${SERVER_ERROR}!: ${errorResponse}`);
-      // console.log('user', user);
+      // // console.log(`${SERVER_ERROR}!: ${errorResponse}`);
+      // // console.log(`${SERVER_ERROR}!: ${errorResponse}`);
+      // // console.log('user', user);
     }
   }
   async function roadmapProgressSeverCall(
@@ -153,13 +153,13 @@ export function useRoadmap(): UseRoadmap {
         },
       });
       if (status === 200) {
-        console.log('성공적으로 업뎃');
+        // // console.log('성공적으로 업뎃');
       }
       if (status === 403) {
-        console.log('권한이 없습니다.');
+        // // console.log('권한이 없습니다.');
       }
     } catch (errorResponse) {
-      console.log(`${SERVER_ERROR}!: ${errorResponse}`);
+      // // console.log(`${SERVER_ERROR}!: ${errorResponse}`);
     }
   }
   async function getRoadmapById(id: number): Promise<void> {
