@@ -165,7 +165,7 @@ export function HeaderMegaMenu() {
                       variant="filled"
                       color="blue"
                       loading={isLoading}
-                      disabled={isLoading}
+                      disabled={isLoading || search.length === 0}
                       size="lg"
                       sx={{
                         borderRadius: '100%',
@@ -183,19 +183,28 @@ export function HeaderMegaMenu() {
               )}
             </Group>
 
-            <Group className={classes.hiddenMobile}>
+            <Group
+              className={classes.hiddenMobile}
+              style={{ flexDirection: 'column' }}
+            >
               <Modal
                 opened={isEditorPage}
                 size="70%"
                 onClose={() => setIsEditorPage(false)}
               >
                 <Center>
-                  <Center>
+                  <Center style={{ display: 'inline-block', width: '100%' }}>
                     <h1>로드맵을 아직 출간하지 않았습니다. </h1>
                     <h3>변경사항이 저장되지 않을 수 있습니다. </h3>
                   </Center>
+                  <img
+                    src="/img/warning.gif"
+                    alt="!"
+                    style={{ width: '18rem' }}
+                  />
                   <div className="confirm_btn_wrap">
                     <Button
+                      style={{ color: '#ebf6fc' }}
                       onClick={() => {
                         if (leaveEditorAction === 'mypage') {
                           navigate('/users/mypage');
@@ -212,6 +221,8 @@ export function HeaderMegaMenu() {
                     </Button>
 
                     <Button
+                      color="#ebf6fc"
+                      ml="lg"
                       variant="outline"
                       onClick={() => setIsEditorPage(false)}
                     >
@@ -239,7 +250,7 @@ export function HeaderMegaMenu() {
                   <Button
                     size="xs"
                     variant="light"
-                    color="blue"
+                    color="#ebf6fc"
                     ml={10}
                     onClick={() => {
                       clearStoredRoadmap();
@@ -261,7 +272,7 @@ export function HeaderMegaMenu() {
                     size="md"
                     onClick={open}
                     variant="light"
-                    color="indigo"
+                    color="#ebf6fc"
                   >
                     로드맵 생성
                   </Button>
@@ -272,7 +283,7 @@ export function HeaderMegaMenu() {
                   <Button
                     size="md"
                     variant="outline"
-                    color="indigo"
+                    color="#ebf6fc"
                     onClick={() => {
                       setLeaveEditorAction('signout');
                       pathname === '/roadmap/editor'
@@ -283,7 +294,7 @@ export function HeaderMegaMenu() {
                     Sign out
                   </Button>
                   <Avatar
-                    color="blue"
+                    color="#ebf6fc"
                     radius="xl"
                     size={50}
                     className="hoverItem"
@@ -301,7 +312,7 @@ export function HeaderMegaMenu() {
                 <Button
                   size="md"
                   variant="outline"
-                  color="indigo"
+                  color="#ebf6fc"
                   onClick={() => {
                     pathname === '/roadmap/editor'
                       ? setIsEditorPage(true)

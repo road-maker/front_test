@@ -22,14 +22,12 @@ export function UserProfile() {
       return;
     }
 
-    axios
-      .get(`${baseUrl}/members/${user.id}`)
-      .then((response) => {
-        setNickname(response.data.nickname);
-        setBio(response.data.bio);
-        setBaekjoonId(response.data.baekjoonId);
-      })
-      .catch((e) => console.log(e));
+    axios.get(`${baseUrl}/members/${user.id}`).then((response) => {
+      setNickname(response.data.nickname);
+      setBio(response.data.bio);
+      setBaekjoonId(response.data.baekjoonId);
+    });
+    // .catch((e) => // console.log(e));
   }, [user.id, user.nickname]);
 
   const myinfo = (
@@ -55,7 +53,7 @@ export function UserProfile() {
         mt={20}
         radius="lg"
         variant="light"
-        color="indigo"
+        color="#ebf6fc"
       >
         프로필 수정
       </Button>

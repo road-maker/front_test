@@ -1,11 +1,33 @@
+import { CSSProperties } from 'react';
 import { styled } from 'styled-components';
 
+interface FontBlue extends CSSProperties {
+  color: string;
+}
+
+const blues: Array<FontBlue> = [
+  { color: '#216b89' },
+  { color: '#527e90' },
+  { color: '#000000' },
+  { color: '#4191dd' },
+  { color: '#3e67df' },
+  { color: '#939de6' },
+];
+
 export function Typer({ data }) {
+  const text = [...data];
+  const keyword = text.slice(1, text.lastIndexOf('"'));
   return (
     <Wrap>
-      {' '}
-      {/* <p className="typed">AI로 로드맵 생성 중</p> */}
-      <p className="typed">{data}</p>
+      <p className="typed">
+        &quot;
+        {keyword.map((v, idx) => (
+          <span key={idx} style={blues[idx % 6]}>
+            {v}
+          </span>
+        ))}
+        &quot;에 관한 로드맵을 생성 중...
+      </p>
     </Wrap>
   );
 }
@@ -14,8 +36,7 @@ export function NodeTyper({ data }) {
   return (
     <Wrap style={{ maxWidth: '240px' }}>
       {data.length > 10 ? (
-        // eslint-disable-next-line prefer-template
-        <p className="typed">{data.slice(0, 8) + '...'}</p>
+        <p className="typed">{`${data.slice(0, 8)}...`}</p>
       ) : (
         <p className="typed">{data}</p>
       )}
@@ -34,9 +55,14 @@ const Wrap = styled.div`
     white-space: nowrap;
     border-right: 2px solid;
     width: 0;
+
     animation:
       typing 1.5s steps(30, end) forwards,
       blinking 1s infinite;
+  }
+
+  & .letters {
+    display: inline;
   }
 
   @keyframes typing {

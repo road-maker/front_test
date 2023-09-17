@@ -49,14 +49,15 @@ function EditUserProfile() {
         { headers },
       )
       .then((response) => {
-        console.log(response);
+        // // console.log(response);
       })
       .catch((error) => {
-        console.log(error);
+        // // console.log(error);
       });
   };
 
   return (
+    // <MainLayout>
     <Box maw={400} mx="auto" m={200}>
       <Paper radius="md" p="xl" withBorder>
         <h2>프로필 수정</h2>
@@ -90,7 +91,7 @@ function EditUserProfile() {
             <Button
               type="button"
               variant="outline"
-              color="indigo"
+              color="#6ab6df"
               onClick={handleSubmit}
             >
               수정하기
@@ -98,7 +99,7 @@ function EditUserProfile() {
             <Button
               type="button"
               variant="outline"
-              color="indigo"
+              color="#ebf6fc"
               onClick={() => {
                 navigate('..');
               }}
@@ -109,6 +110,7 @@ function EditUserProfile() {
         </form>
       </Paper>
     </Box>
+    // </MainLayout>
   );
 }
 

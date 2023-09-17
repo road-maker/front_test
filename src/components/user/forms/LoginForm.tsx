@@ -107,6 +107,7 @@ function LoginForm(props: PaperProps): ReactElement {
               type="submit"
               size="lg"
               fullWidth
+              color="#ebf6fc"
               variant="light"
               onClick={() => auth.signin(email, password)}
             >

@@ -74,7 +74,8 @@ export function ResizableNodeSelected({
         isVisible={resizable}
         minWidth={180}
         minHeight={100}
-        maxWidth={240}
+        // maxWidth={240}
+        maxWidth="9rem"
       />
       <div
         ref={rotateControlRef}
@@ -89,7 +90,8 @@ export function ResizableNodeSelected({
         )}
         {data.length > 2 ? (
           <div
-            style={{ padding: 10, display: 'inline-block', maxWidth: '240px' }}
+            // style={{ padding: 10, display: 'inline-block', maxWidth: '240px' }}
+            style={{ padding: 10, display: 'inline-block', maxWidth: '9rem' }}
           >
             {data.label === `` ? '내용을 추가해주세요.' : data.label}
           </div>

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
+  ActionIcon,
   Avatar,
   Box,
   Burger,
@@ -11,12 +12,23 @@ import {
   Header,
   Image,
   Modal,
+  NavLink,
   rem,
   Text,
+  TextInput,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconAlertTriangle } from '@tabler/icons-react';
-import { useState } from 'react';
+import {
+  IconHome2,
+  IconLogin,
+  IconLogout,
+  IconSearch,
+  IconUserCircle,
+} from '@tabler/icons-react';
+import axios from 'axios';
+import { baseUrl } from 'axiosInstance/constants';
+import { useInput } from 'components/common/hooks/useInput';
+import { useCallback, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { clearStoredGpt } from 'storage/gpt-storage';
 import { clearStoredRoadmap } from 'storage/roadmap-storage';
@@ -29,6 +41,7 @@ import { InputWithButton } from './GptModal';
 const useStyles = createStyles((theme) => ({
   link: {
     display: 'flex',
+    flexWrap: 'nowrap',
     alignItems: 'center',
     height: '100%',
     paddingLeft: theme.spacing.md,
@@ -107,12 +120,29 @@ export function HeaderItem() {
   const [opened, { open, close }] = useDisclosure(false);
   const [isEditorPage, setIsEditorPage] = useState(false);
   const [leaveEditorAction, setLeaveEditorAction] = useState('');
+  const [search, onChangeSearch, setSearch] = useInput('');
+  const [isLoading, setIsLoading] = useState(false);
 
+  const searchByKeyword = useCallback(() => {
+    axios
+      .get(`${baseUrl}/roadmaps/search/${search}?page=${1}&size=5`)
+      .then((v) => {
+        localStorage.setItem('roadmap_search_keyword', search);
+        navigate(`/roadmap/post/search/${search}`);
+      })
+      .catch();
+  }, [navigate, search]);
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      searchByKeyword();
+    }
+  };
   return (
     <HeaderWrap>
       <Box>
         <Header height={60} px="md">
-          <Group position="apart" sx={{ height: '100%' }}>
+          <Group position="apart" sx={{ height: '100%', flexWrap: 'nowrap' }}>
             <Image
               src="/img/logo.png"
               width={100}
@@ -126,9 +156,48 @@ export function HeaderItem() {
               }}
               className="hoverItem"
             />
-            <Group className={classes.hiddenMobile}>
+            {pathname !== '/roadmap/editor' && (
+              <TextInput
+                value={search}
+                style={{ width: '50%' }}
+                // size="md"
+                // w={700}
+                // ml="9em"
+                onChange={onChangeSearch}
+                placeholder="검색어를 입력해주세요."
+                onKeyDown={handleKeyDown}
+                rightSection={
+                  <ActionIcon
+                    variant="filled"
+                    color="blue"
+                    loading={isLoading}
+                    disabled={isLoading || search.length === 0}
+                    size="lg"
+                    sx={{
+                      borderRadius: '100%',
+                      '&[data-disabled]': { opacity: 0.4 },
+                      '&[data-loading]': { backgroundColor: 'red' },
+                    }}
+                  >
+                    <IconSearch
+                      size="1.5rem"
+                      onClick={() => searchByKeyword()}
+                    />
+                  </ActionIcon>
+                }
+              />
+            )}
+            <Group
+              className={classes.hiddenMobile}
+              style={{ flexWrap: 'nowrap' }}
+            >
               {pathname !== '/roadmap/editor' && (
-                <Button size="md" onClick={open} variant="light" color="indigo">
+                <Button
+                  size="md"
+                  onClick={open}
+                  variant="light"
+                  color="#ebf6fc"
+                >
                   로드맵 생성
                 </Button>
               )}
@@ -162,6 +231,7 @@ export function HeaderItem() {
                   </Text>
                   <Button
                     size="md"
+                    color="#ebf6fc"
                     onClick={() => {
                       setLeaveEditorAction('signout');
                       pathname === '/roadmap/editor'
@@ -175,6 +245,7 @@ export function HeaderItem() {
               ) : (
                 <Button
                   size="lg"
+                  color="#ebf6fc"
                   onClick={() => {
                     pathname === '/roadmap/editor'
                       ? setIsEditorPage(true)
@@ -191,11 +262,48 @@ export function HeaderItem() {
               className={classes.hiddenDesktop}
             />
             <Drawer
+              position="right"
+              style={{ width: '20%' }}
               opened={drawerOpened}
               onClose={toggleDrawer}
-              title="Authentication"
             >
-              {/* Drawer content */} eh..
+              <NavLink
+                label="Home"
+                onClick={() => {
+                  navigate('/');
+                  toggleDrawer();
+                }}
+                icon={<IconHome2 size="1rem" stroke={1.5} />}
+              />
+              {user && 'accessToken' in user ? (
+                <div>
+                  <NavLink
+                    label="My page"
+                    onClick={() => {
+                      navigate('/users/mypage');
+                      toggleDrawer();
+                    }}
+                    icon={<IconUserCircle size="1rem" stroke={1.5} />}
+                  />
+                  <NavLink
+                    label="Sign out"
+                    onClick={() => {
+                      signout();
+                      toggleDrawer();
+                    }}
+                    icon={<IconLogout size="1rem" stroke={1.5} />}
+                  />
+                </div>
+              ) : (
+                <NavLink
+                  label="Sign in"
+                  onClick={() => {
+                    navigate('/users/signin');
+                    toggleDrawer();
+                  }}
+                  icon={<IconLogin size="1rem" stroke={1.5} />}
+                />
+              )}
             </Drawer>
           </Group>
         </Header>
@@ -209,27 +317,16 @@ export function HeaderItem() {
           <Modal.Overlay color="#000" opacity={0.85} />
           <Modal.Content>
             <Modal.Header>
-              <Modal.Title>
-                <h1>로드맵 작성을 중단하시겠습니까?</h1>
-              </Modal.Title>
               <Modal.CloseButton />
             </Modal.Header>
             <Modal.Body style={{ textAlign: 'center' }}>
-              <IconAlertTriangle
-                size="100"
-                style={{
-                  display: 'block',
-                  opacity: 0.5,
-                  marginBottom: '1rem',
-                  width: '18em',
-                  color: '#ff2825',
-                  margin: '0 auto',
-                }}
-              />{' '}
+              <h1>로드맵 작성을 중단하시겠습니까?</h1>
+              <img src="/img/warning.gif" alt="!" style={{ width: '18rem' }} />
               <h3>변경사항이 저장되지 않을 수 있습니다. </h3>
               <Button
                 mt="1rem"
                 mb="1rem"
+                color="#ebf6fc"
                 style={{ float: 'right' }}
                 onClick={() => {
                   if (leaveEditorAction === 'mypage') {
@@ -268,7 +365,7 @@ export function HeaderItem() {
             <Button
               size="xs"
               variant="light"
-              color="blue"
+              color="#ebf6fc"
               onClick={() => {
                 clearStoredRoadmap();
                 clearStoredGpt();

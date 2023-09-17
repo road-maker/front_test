@@ -33,6 +33,11 @@ export function InputWithButton(props: TextInputProps) {
     setPromptResponse(prompt);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      onRequestPrompt();
+    }
+  };
   useEffect(() => {
     // @Pyotato : 페이지 안넘어가던 문제 해결~
     if (promptResponse) {
@@ -45,6 +50,7 @@ export function InputWithButton(props: TextInputProps) {
       <TextInput
         value={prompt}
         onChange={onPromptChange}
+        onKeyDown={handleKeyDown}
         icon={<IconSearch size="1.1rem" stroke={1.5} />}
         radius="md"
         w="600px"

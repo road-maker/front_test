@@ -30,8 +30,8 @@ export default function RoadMapEditor(): ReactElement {
   const [search] = useSearchParams();
   const [state, setState] = useState([
     // tiptap 에디터 내용
-    { id: '1', details: '' },
-    { id: '2', details: '' },
+    { id: '1', detailedContent: '' },
+    { id: '2', detailedContent: '' },
   ]);
   const [colorsState, setColorsState] = useState([
     // tiptap 에디터 내용
@@ -61,7 +61,7 @@ export default function RoadMapEditor(): ReactElement {
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
-    content: state.filter((v) => v?.id === id)[0]?.details || '',
+    content: state.filter((v) => v?.id === id)[0]?.detailedContent || '',
     autofocus: false,
 
     onUpdate(e) {
@@ -69,17 +69,17 @@ export default function RoadMapEditor(): ReactElement {
       //   // @ts-ignore
       //   e?.transaction?.curSelection?.$anchor?.pos,
       // );
-      // console.log(e.editor?.getHTML());
+      // // console.log(e.editor?.getHTML());
       setToggle(e.editor?.getHTML());
-      // console.log('e.editor', e.editor);
-      // console.log('e.editor isFocused', e.editor.getHTML());
+      // // console.log('e.editor', e.editor);
+      // // console.log('e.editor isFocused', e.editor.getHTML());
       // eslint-disable-next-line array-callback-return
       state.map((item, idx) => {
         if (item?.id !== id) return;
         const copyState = [...state];
         copyState.splice(idx, 1, {
           id: item?.id,
-          details: e.editor?.getHTML(),
+          detailedContent: e.editor?.getHTML(),
         });
         setState(copyState);
       });
@@ -95,7 +95,7 @@ export default function RoadMapEditor(): ReactElement {
       // );
       // @ts-ignore
       setCursorPosition(e?.transaction?.curSelection?.$anchor?.pos);
-      // console.log(
+      // // console.log(
       //   'ontransaction',
       //   // @ts-ignore
       //   e?.transaction?.curSelection?.$anchor?.pos,
@@ -104,24 +104,24 @@ export default function RoadMapEditor(): ReactElement {
     },
     // onTransaction: ({ transaction }) => {
     //   // @ts-ignore
-    //   console.log('ontransaction', transaction?.curSelection?.$anchor?.pos);
+    //   // console.log('ontransaction', transaction?.curSelection?.$anchor?.pos);
     //   e.editor?.chain().focus().setTextSelection(10).run();
     // },
   });
 
   useMemo(() => {
     const filt = state.filter((v) => v?.id === id);
-    // console.log('filt', filt);
+    // // console.log('filt', filt);
     setToggle(filt);
     if (editor) {
       // editor.value?.chain().focus().setContent(JSON.parse(content)).run()
       // mount 시 에러
-      // editor.commands.setContent(filt[0]?.details, true, {
-      editor.commands.setContent(filt[0]?.details, false, {
+      // editor.commands.setContent(filt[0]?.detailedContent, true, {
+      editor.commands.setContent(filt[0]?.detailedContent, false, {
         preserveWhitespace: 'full', // 빈칸 인식 X 에러 해결
         // preserveWhitespace: true, // 빈칸 인식 X 에러 해결
       });
-      console.log('editor', editor);
+      // console.log('editor', editor);
       // editor.commands.focus(
       //   // @ts-ignore
       //   editor?.transaction?.curSelection?.$anchor?.pos,
@@ -130,7 +130,7 @@ export default function RoadMapEditor(): ReactElement {
         editor.chain().focus().setTextSelection(cursorPosition).run();
     }
     if (label !== '' && filt.length === 0) {
-      setState([...state, { id, details: '' }]);
+      setState([...state, { id, detailedContent: '' }]);
     }
   }, [state, setToggle, editor, label, id]);
 

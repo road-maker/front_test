@@ -8,20 +8,25 @@ import {
   Button,
   Card,
   Center,
-  Container,
   createStyles,
   Drawer,
   Group,
+  Input,
   Modal,
   Popover,
   rem,
   ScrollArea,
   Text,
   Title,
+  Tooltip,
   UnstyledButton,
 } from '@mantine/core';
 import { useFocusTrap } from '@mantine/hooks';
 import {
+  IconBook2,
+  IconCalendarStats,
+  IconCertificate,
+  IconCircleArrowRightFilled,
   IconCircleCheckFilled,
   IconHeart,
   IconHeartFilled,
@@ -40,8 +45,8 @@ import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
 import { useInput } from 'components/common/hooks/useInput';
 import { useUser } from 'components/user/hooks/useUser';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -56,7 +61,7 @@ import { useRoadmapData } from './hooks/useRoadMapResponse';
 const useStyles = createStyles((theme) => ({
   title: {
     fontSize: rem(34),
-    fontWeight: 600,
+    fontWeight: 900,
 
     [theme.fn.smallerThan('sm')]: {
       fontSize: rem(24),
@@ -112,11 +117,10 @@ export default function RoadMapInfo() {
   // @ts-ignore
   const [currentRoadmap, setCurrentRoadmap] = useState(roadmapById?.data || []);
   const [label, onChangeLabel, setLabel] = useInput('');
-  // const [blogKeyword, onChangeBlogKeyword, setBlogKeyword] = useInput('');
+  const [blogKeyword, onChangeBlogKeyword, setBlogKeyword] = useInput('');
   const [blogUrl, onChangeBlogUrl, setBlogUrl] = useInput('');
   const [id, onChangeId, setId] = useInput('');
   const [toggle, onChangeToggle, setToggle] = useInput('');
-  const [search] = useSearchParams();
   const { user } = useUser();
   const [state, setState] = useState([]);
 
@@ -127,10 +131,10 @@ export default function RoadMapInfo() {
           Authorization: `Bearer ${user?.accessToken}`,
         },
       })
-      .catch((e) => {
-        // eslint-disable-next-line no-console
-        console.log(e);
-      })
+      // .catch((e) => {
+      // eslint-disable-next-line no-console
+      // // console.log(e);
+      // })
       // .then((value: AxiosResponse<ResponseType>) => {
       .then((value) => {
         const { data } = value;
@@ -250,35 +254,49 @@ export default function RoadMapInfo() {
           isLiked: v?.data.isLiked,
           likeCount: v?.data.likeCount,
         });
-      })
-      .catch((err) => console.log(err));
+      });
+    // .catch((err) => // console.log(err));
   };
-  // const submitBlogUrl = useCallback(() => {
-  //   axios
-  //     .post(
-  //       `${baseUrl}/likes/like-roadmap/${currentRoadmap.id}`,
-  //       {
-  //         memberId: user?.nickname,
-  //         roadmapNodeId: id,
-  //         // "inProgressNodeId" : 0,
-  //         submitUrl: blogUrl,
-  //       },
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${user?.accessToken}`,
-  //         },
-  //       },
-  //     )
-  //     .then((v) => {
-  //       console.log(v);
-  //       // setCurrentRoadmap({
-  //       //   ...currentRoadmap,
-  //       //   isLiked: v?.data.isLiked,
-  //       //   likeCount: v?.data.likeCount,
-  //       // });
-  //     })
-  //     .catch((err) => console.log(err));
-  // }, [blogUrl]);
+  const submitBlogUrl = useCallback(() => {
+    // // console.log(`id : ${id}, ${currentRoadmap}`);
+    // // console.log('currentRoadmap', currentRoadmap);
+    // // console.log('nodeState', nodeState);
+    // // console.log('id', id);
+    const current = nodeState.filter((v) => v.id === id);
+    // // console.log('current', current[0].blogKeyword);
+    const blogKeywordId = current[0]?.blogKeyword?.id;
+    // // console.log(blogKeywordId);
+    // const blogKeyword = current[0]?.blogKeyword?.keyword;
+    axios.post(
+      `${baseUrl}/certified-blogs/submitUrl`,
+      {
+        // memberId: user?.nickname,
+        // roadmapNodeId: id,
+        // inProgressNodeId: blogKeywordId,
+        blogKeywordId,
+        // inProgressNodeId: 6168,
+        submitUrl: blogUrl,
+        // submitUrl: 'https://techpedia.tistory.com/18',
+        // submitUrl: 'https://dbwp031.tistory.com/41',
+        // submitUrl:
+        // 'https://velog.io/@jiynn_12/%EA%B0%9C%EB%B0%9C%EC%9E%90%EB%A1%9C-%ED%98%91%EC%97%85%ED%95%98%EA%B8%B0-husky',
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${user?.accessToken}`,
+        },
+      },
+    );
+    // .then((v) => {
+    // // console.log(v);
+    // setCurrentRoadmap({
+    //   ...currentRoadmap,
+    //   isLiked: v?.data.isLiked,
+    //   likeCount: v?.data.likeCount,
+    // });
+    // })
+    // .catch((err) => // console.log(err));
+  }, [blogUrl, id]);
 
   const [nodeState, setNodes, onNodesChange] = useNodesState([]);
   const [edgeState, setEdges, onEdgesChange] = useEdgesState([]);
@@ -296,14 +314,59 @@ export default function RoadMapInfo() {
 
   const focusTrapRef = useFocusTrap();
 
+  // const observerCallback: ResizeObserverCallback = (entries: ResizeObserverEntry[]) => {
+  //   window.requestAnimationFrame((): void | undefined => {
+  //     if (!Array.isArray(entries) || !entries.length) {
+  //       return;
+  //     }
+  //     // yourResizeHandler();
+  //   });
+  // };
+  // const resizeObserver = new ResizeObserver(observerCallback);
+
+  // eslint-disable-next-line consistent-return
   const updateRoadmapProgress = () => {
+    if (!user) {
+      // eslint-disable-next-line no-alert
+      alert('로그인 후 이용 가능합니다!');
+      return navigate('/users/signin');
+    }
+    // if (!currentRoadmap.isJoined) {
+    if (!participation) {
+      // eslint-disable-next-line no-alert
+      alert('참여하기 버튼 클릭 후 이용 가능합니다.');
+      return setIsOpen(false);
+    }
     // eslint-disable-next-line no-alert
-    alert('진행 완료!');
+    const copyState = [...nodeState];
+    const current = nodeState.filter((v) => v.id === id);
+    const nodeId = current[0]?.blogKeyword?.id;
+    // eslint-disable-next-line array-callback-return
+    copyState.map((v) => {
+      if (v.id === id && participation) {
+        // eslint-disable-next-line no-param-reassign
+        v.done = true;
+      }
+    });
+    nodeState.forEach((v) => {
+      if (v.id === id && participation) {
+        // eslint-disable-next-line no-param-reassign
+        v.done = true;
+        // eslint-disable-next-line no-param-reassign
+        v.data.done = true;
+        // eslint-disable-next-line no-param-reassign
+        v.style.background = '#a8a6a6be';
+      }
+    });
+    setState(copyState);
+    setIsOpen(false);
+    // eslint-disable-next-line no-alert
+    return alert('진행 완료!');
     // axios
     //   .patch(
-    //     `${baseUrl}/roadmaps/in-progress-nodes/${id}/done`,
+    //     `${baseUrl}/roadmaps/in-progress-nodes/${nodeId}/done`,
     //     {
-    //       inProgressNodeId: id,
+    //       inProgressNodeId: nodeId,
     //     },
     //     {
     //       headers: {
@@ -312,15 +375,50 @@ export default function RoadMapInfo() {
     //       },
     //     },
     //   )
+    //   // eslint-disable-next-line consistent-return
     //   .then((v) => {
-    //     console.log(v);
+    //     // console.log(v);
+    //     if (v.status === 200) {
+    //       // console.log(currentRoadmap);
+    //       // console.log('copyState', copyState);
+    //       copyState.forEach((m) => {
+    //         if (m.id === id && (participation || currentRoadmap.isJoined)) {
+    //           // eslint-disable-next-line no-param-reassign
+    //           m.done = true;
+    //           // m.done = v.done;
+    //         }
+    //       });
+    //       nodeState.forEach((m) => {
+    //         if (m.id === id && participation) {
+    //           // eslint-disable-next-line no-param-reassign
+    //           m.data.done = true;
+    //           // eslint-disable-next-line no-param-reassign
+    //           m.done = true;
+    //           // eslint-disable-next-line no-param-reassign
+    //           m.style.background = '#a8a6a6be';
+    //         }
+    //       });
+    //       setState(copyState);
+    //       setNodes(nodeState);
+    //       setIsOpen(false);
+    //       // eslint-disable-next-line no-alert
+    //       return alert('진행 완료!');
+    //     }
+    //     // console.log('is state updated?', nodeState);
+    //     // eslint-disable-next-line no-alert
     //     // setParticipation(true);
     //     // setCurrentRoadmap({
     //     //   ...currentRoadmap,
     //     //   joinCount: currentRoadmap.joinCount + 1,
     //     // });
     //   })
-    //   .catch((e) => console.log(e));
+    //   .catch((e) => {
+    //     if (e.status === 403) {
+    //       // eslint-disable-next-line no-alert
+    //       return alert('이미 진행을 완료했습니다.');
+    //     }
+    //     return // console.log(e);
+    //   });
   };
 
   const joinRoadmap = () => {
@@ -335,17 +433,17 @@ export default function RoadMapInfo() {
           },
         },
       )
-      .then(() => {
+      .then((v) => {
         setParticipation(true);
         setCurrentRoadmap({
           ...currentRoadmap,
           joinCount: currentRoadmap.joinCount + 1,
         });
-      })
-      .catch((e) => console.log(e));
+      });
+    // .catch((e) => // console.log(e));
   };
   return (
-    <Container>
+    <>
       <Card mt="3rem">
         <div
           style={{
@@ -355,7 +453,13 @@ export default function RoadMapInfo() {
             width: '100%',
           }}
         >
-          <Title className={classes.title}>{currentRoadmap?.title}</Title>
+          <Group mt="1rem">
+            <Title className={classes.title}>{currentRoadmap?.title}</Title>
+            <Avatar color="purple" size="md">
+              {currentRoadmap?.ownerAvatarUrl || ''}
+            </Avatar>
+            {currentRoadmap?.ownerNickname}
+          </Group>
           <div
             style={{
               display: 'inline-flex',
@@ -392,46 +496,51 @@ export default function RoadMapInfo() {
           </div>
         </div>
 
-        <Group position="apart">
-          <Group mt="1.5rem">
-            <Avatar color="blue" size="md" radius="xl">
-              {currentRoadmap?.ownerNickname?.substring(0, 1) || ''}
-            </Avatar>
-            {currentRoadmap?.ownerNickname}
-            <Text c="dimmed" fz="md" ml={rem(20)}>
-              {currentRoadmap?.createdAt}
-            </Text>
-          </Group>
-          <Button
-            style={{ float: 'right' }}
-            loading={isLoading}
-            disabled={isLoading || (participation && user?.accessToken)}
-            variant="outline"
-            color="violet"
-            onClick={() => {
-              if (!user?.accessToken) {
-                setModal(true);
-              }
-              joinRoadmap();
-            }}
-          >
-            {isLoading && ' 로딩 중'}
-            {!isLoading && participation && user?.accessToken && '참여 중'}
-            {!isLoading && (!participation || !user?.accessToken)
-              ? '참여하기'
-              : ''}
-          </Button>
-        </Group>
-
-        <Group mt={rem(20)} />
-        <Text mt="md" fz="lg">
-          {currentRoadmap?.description || ''}
-        </Text>
-
-        <Group mt={rem(50)}>
-          <IconUser size={rem(20)} stroke={2} color={theme.fn.primaryColor()} />{' '}
-          <Text c="dimmed"> 참여인원: {currentRoadmap?.joinCount}명</Text>
-        </Group>
+        <div>
+          <Text c="dimmed" mt="md">
+            <IconCalendarStats
+              size={rem(20)}
+              stroke={2}
+              color={theme.fn.primaryColor()}
+            />{' '}
+            만든 날짜 : {currentRoadmap?.createdAt}
+          </Text>
+          <Text c="dimmed" mt="md">
+            <IconBook2
+              size={rem(20)}
+              stroke={2}
+              color={theme.fn.primaryColor()}
+            />{' '}
+            {currentRoadmap?.description || ''}
+          </Text>
+          <Text c="dimmed" mt="sm">
+            <div>
+              <IconUser
+                size={rem(20)}
+                stroke={2}
+                color={theme.fn.primaryColor()}
+              />{' '}
+              참여인원: {currentRoadmap?.joinCount}명
+              <Button
+                style={{ float: 'right' }}
+                loading={isLoading}
+                disabled={isLoading || (participation && user?.accessToken)}
+                onClick={() => {
+                  if (!user?.accessToken) {
+                    setModal(true);
+                  }
+                  joinRoadmap();
+                }}
+              >
+                {isLoading && ' 로딩 중'}
+                {!isLoading && participation && user?.accessToken && '참여 중'}
+                {!isLoading &&
+                  (!participation || !user?.accessToken) &&
+                  '참여하기'}
+              </Button>
+            </div>
+          </Text>
+        </div>
       </Card>
       <Modal
         opened={modal}
@@ -449,9 +558,11 @@ export default function RoadMapInfo() {
           </div>
         )}
       </Modal>
+
       <EditorWrap>
         <div className="roadMapWrap">
           <ReactFlowProvider>
+            {/* <Wrap style={{ height: '70vh' }}> */}
             <Wrap>
               <ReactFlow
                 nodes={nodeState}
@@ -482,55 +593,27 @@ export default function RoadMapInfo() {
                 onNodeClick={(e, n) => {
                   setLabel(`${n?.data?.label}`);
                   setId(`${n?.id}`);
-                  setIsOpen(!isOpen);
+                  // // console.log(id);
+                  // setIsOpen(!isOpen);
+                  setIsOpen(true);
                 }}
                 style={{ overflow: 'visible' }}
                 // FitBoundsOptions={{ padding: '10px' }}
                 // FitViewOptions={{ padding: '10px' }}
                 // fitViewOptions={p}
               />
-              {/* <Input.Wrapper label="블로그 인증">
-        <Input
-          icon={<IconCertificate />}
-          value={blogUrl}
-          placeholder="https://myblogUrl.io"
-          onChange={onChangeBlogKeyword}
-          mt={10}
-          mb={10}
-          // disabled={keywordSubmitState}
-          rightSection={
-            <Tooltip
-              label="진행도를 체크할 블로그 링크를 등록해주세요."
-              position="top-end"
-              withArrow
-            >
-              <ActionIcon
-                disabled={blogKeyword.length === 0}
-                variant="transparent"
-                onClick={() => {
-                  submitBlogUrl();
-                }}
-              >
-                <IconCircleArrowRightFilled size="1rem" />
-              </ActionIcon>
-            </Tooltip>
-          }
-          // onChange={(evt) => {
-          //   setLabel(evt?.target?.value);
-          // }}
-        />
-      </Input.Wrapper> */}
+
+              {/* <CommentSection /> */}
               <Drawer.Root
                 opened={isOpen}
                 scrollAreaComponent={ScrollArea.Autosize}
-                onClose={() => setIsOpen(!isOpen)}
+                onClose={() => setIsOpen(false)}
                 position="right"
-                ref={focusTrapRef}
+                keepMounted
+                closeOnEscape
+                lockScroll={false}
               >
-                <Drawer.Content
-                  trapFocus={false}
-                  onMouseLeave={useFocusTrap(false)}
-                >
+                <Drawer.Content onMouseLeave={useFocusTrap(false)}>
                   <Drawer.CloseButton mr="1rem" mt="1rem" />
                   <Drawer.Body p="1rem" style={{ height: '100vh' }}>
                     <Popover
@@ -544,11 +627,14 @@ export default function RoadMapInfo() {
                           {/* <IconCircleCheckFilled
                             style={{ color: 'green', marginRight: '10px' }}
                           /> */}
-                          {currentRoadmap?.isJoined &&
+                          {participation &&
+                            // nodeState.map((v) => {
                             nodeState.map((v) => {
-                              if (v.id === id && participation) {
+                              if (v.id === id && v.done) {
+                                // if (v.id === id && v.isdone) {
                                 return (
                                   <IconCircleCheckFilled
+                                    key={v.id}
                                     style={{
                                       color: 'green',
                                       marginRight: '10px',
@@ -556,11 +642,12 @@ export default function RoadMapInfo() {
                                   />
                                 );
                               }
-                              if (v.id === id && !participation) {
+                              if (v.id === id && !v.done) {
                                 return (
                                   <IconCircleCheckFilled
+                                    key={v.id}
                                     style={{
-                                      color: 'grey',
+                                      color: 'orange',
                                       marginRight: '10px',
                                     }}
                                   />
@@ -568,6 +655,14 @@ export default function RoadMapInfo() {
                               }
                               return '';
                             })}
+                          {!participation && (
+                            <IconCircleCheckFilled
+                              style={{
+                                color: 'grey',
+                                marginRight: '10px',
+                              }}
+                            />
+                          )}
                           진행상황 업데이트
                         </Button>
                       </Popover.Target>
@@ -592,6 +687,42 @@ export default function RoadMapInfo() {
                         </UnstyledButton>
                       </Popover.Dropdown>
                     </Popover>
+
+                    <Input.Wrapper label="블로그 인증">
+                      <Input
+                        icon={<IconCertificate />}
+                        value={blogUrl}
+                        placeholder="https://myblogUrl.io"
+                        // onChange={onChangeBlogUrl}
+                        onChange={(e) => {
+                          setBlogUrl(e.target.value);
+                        }}
+                        mt={10}
+                        mb={10}
+                        // disabled={keywordSubmitState}
+                        rightSection={
+                          <Tooltip
+                            label="진행도를 체크할 블로그 링크를 등록해주세요."
+                            position="top-end"
+                            withArrow
+                          >
+                            <ActionIcon
+                              disabled={blogUrl.length === 0}
+                              variant="transparent"
+                              onClick={() => {
+                                submitBlogUrl();
+                              }}
+                            >
+                              <IconCircleArrowRightFilled size="1rem" />
+                            </ActionIcon>
+                          </Tooltip>
+                        }
+                        // onChange={(evt) => {
+                        //   setLabel(evt?.target?.value);
+                        // }}
+                      />
+                    </Input.Wrapper>
+
                     <Center pl="1.25rem">
                       <EditorContent
                         editor={editor}
@@ -599,6 +730,7 @@ export default function RoadMapInfo() {
                         style={{ lineHeight: '2rem' }}
                       />
                     </Center>
+                    {/* <CommentSection /> */}
                   </Drawer.Body>
                 </Drawer.Content>
               </Drawer.Root>
@@ -606,7 +738,7 @@ export default function RoadMapInfo() {
           </ReactFlowProvider>
         </div>
       </EditorWrap>
-    </Container>
+    </>
   );
 }
 const Wrap = styled.div`
@@ -616,7 +748,7 @@ const Wrap = styled.div`
 
   & .react-flow__pane.react-flow__viewport.react-flow__container {
     height: 'fit-content';
-    /* width: 'fit-content'; */
+    width: 'fit-content';
     transform: scale(0.45) !important;
   }
 
@@ -628,20 +760,38 @@ const Wrap = styled.div`
   }
 
   & .react-flow__node {
-    font-size: 3rem;
     cursor: pointer;
-    margin-top: 10px;
+    /* margin-top: 10px; */
     display: block;
     padding: 10px;
     z-index: 4;
-    font-size: 12px;
+    font-size: 1rem;
+  }
+  & .react-flow__node.react-flow__node-custom.selectable:hover {
+    opacity: 30%;
+    transform: scale(120%);
   }
 
   & .react-flow__pane {
     cursor: auto;
   }
   & .react-flow {
-    overflow: visible !important;
+    zoom: 100% !important;
+    /* overflow: visible !important; */
+    overflow: scroll !important;
+    overflow-x: hidden !important;
+    /* zoom: 60% !important; */
+    scrollbar-width: thin !important;
+    scrollbar-color: #6969dd #e0e0e0 !important;
+    & ::-webkit-scrollbar {
+      width: 10px;
+    }
+    & ::-webkit-scrollbar-track {
+      background-color: darkgrey !important;
+    }
+    & ::-webkit-scrollbar-thumb {
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    }
   }
 `;
 const EditorWrap = styled.div`

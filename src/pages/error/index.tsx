@@ -72,6 +72,7 @@ export default function ErrorPage() {
               variant="outline"
               size="md"
               mt="xl"
+              color="#ebf6fc"
               className={classes.control}
               onClick={() => navigate('/')}
             >
