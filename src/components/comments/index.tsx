@@ -146,7 +146,7 @@ function CommentSection() {
         <Center>
           <Button
             mt={30}
-            color="#ebf6fc"
+            // color="#ebf6fc"
             onClick={() => {
               handleSubmit();
               close();
