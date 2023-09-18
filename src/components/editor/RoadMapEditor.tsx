@@ -1,8 +1,6 @@
-/* eslint-disable no-nested-ternary */
-/* eslint-disable no-console */
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable array-callback-return */
+/* eslint-disable react-hooks/exhaustive-deps */
+// @ts-nocheck
 import 'reactflow/dist/style.css';
 
 import dagre from '@dagrejs/dagre';
@@ -67,8 +65,8 @@ const nodeWidth = 200;
 const nodeHeight = 40;
 
 const flowKey = 'example-flow';
-
-const getLayoutedElements = (nodes: any[], edges: any[], direction = 'LR') => {
+// const getLayoutedElements = (nodes: any[], edges: any[], direction = 'LR') => {
+const getLayoutedElements = (nodes, edges, direction = 'LR') => {
   const isHorizontal = direction === 'TB';
   dagreGraph.setGraph({ rankdir: direction });
 
@@ -77,7 +75,8 @@ const getLayoutedElements = (nodes: any[], edges: any[], direction = 'LR') => {
   });
 
   edges.forEach(
-    (edge: { source: dagre.Edge; target: string | { [key: string]: any } }) => {
+    // (edge: { source: dagre.Edge; target: string | { [key: string]: any } }) => {
+    (edge: { source: dagre.Edge; target: string | { [key: string] } }) => {
       dagreGraph.setEdge(edge?.source, edge?.target);
     },
   );
@@ -86,7 +85,7 @@ const getLayoutedElements = (nodes: any[], edges: any[], direction = 'LR') => {
 
   nodes.forEach(
     (node: {
-      id: string | dagre.Label;
+      id?: string | dagre.Label;
       targetPosition: string;
       sourcePosition: string;
       position: { x: number; y: number };
@@ -188,11 +187,21 @@ const colorPalette = {
     '#fbe6b4d1',
     '#fbe4c4cd',
   ],
-  // blues: ['#a7c4f5d7', '#8cb6ff', '#bad3ff', '#ccddff', '#e0ebff', '#d8dde8'],
-  // reds: ['#fe8398', '#ff5975d5', '#ff8398b5', '#fa93a4df', '#ffb9c4', '#cc99a2'],
-  // yellows: ['#fcff35', '#fcff35', '#fcffba', '#fffbcc', '#fcffe0', '#f7f069'],
-  // greens: ['#83ff7a', '#b0ff8c', '#c5ffba', '#deffcc', '#e0ffec', '#9effc5'],
-  // oranges: ['#ba7aff', '#db8cff', '#ebbaff', '#ffccfd', '#bf5af6', '#e0d8e8'],
+};
+
+const selectColor = (clr, cnt) => {
+  switch (parseInt(clr?.id.slice(0, 1), 10 % 5)) {
+    case 0:
+      return colorPalette.reds[cnt % 5];
+    case 1:
+      return colorPalette.reds[cnt % 5];
+    case 2:
+      return colorPalette.oranges[cnt % 5];
+    case 3:
+      return colorPalette.yellows[cnt % 5];
+    default:
+      return colorPalette.blues[cnt % 5];
+  }
 };
 
 function Roadmap({
@@ -339,17 +348,7 @@ function Roadmap({
           position,
           blogKeyword: '',
           style: {
-            background: `${
-              parseInt(v.id.slice(0, 1), 10) % 5 === 0
-                ? colorPalette.reds[cnt % 5]
-                : parseInt(v.id.slice(0, 1), 10) % 5 === 1
-                ? colorPalette.oranges[cnt % 5]
-                : parseInt(v.id.slice(0, 1), 10) % 5 === 2
-                ? colorPalette.yellows[cnt % 5]
-                : parseInt(v.id.slice(0, 1), 10) % 5 === 3
-                ? colorPalette.greens[cnt % 5]
-                : colorPalette.blues[cnt % 5]
-            }`,
+            background: `${selectColor(v, cnt)}`,
             border: '1px solid black',
             borderRadius: 15,
             fontSize: 24,
@@ -550,6 +549,7 @@ function Roadmap({
   const { postRoadmap } = useRoadmap();
 
   const onPublishRoadmap = useCallback(() => {
+    // const onPublishRoadmap = useCallback(() => {
     if (edgeState.length === 0) {
       setSubmitModal(false);
       return;
@@ -558,7 +558,7 @@ function Roadmap({
     const edgesCopy = [...edgeState];
 
     // eslint-disable-next-line consistent-return
-    nodesCopy.map((node) => {
+    nodesCopy.forEach((node) => {
       if (node.data.label === '') {
         setSubmitModal(false);
         // eslint-disable-next-line no-alert
@@ -566,9 +566,11 @@ function Roadmap({
       }
     });
 
+    if (files[0].length) return;
+
     // eslint-disable-next-line array-callback-return
-    nodesCopy.map((v) => {
-      state.map((item: { id: string; detailedContent: string }) => {
+    nodesCopy.forEach((v) => {
+      state.forEach((item: { id: string; detailedContent: string }) => {
         if (v?.id === item?.id) {
           // eslint-disable-next-line no-param-reassign
           v.detailedContent = item?.detailedContent;
@@ -592,7 +594,7 @@ function Roadmap({
       v.targetPosition = currentFlow === 'LR' ? 'top' : 'left';
     });
 
-    edgesCopy.map((v) => {
+    edgesCopy.forEach((v) => {
       // eslint-disable-next-line no-param-reassign
       v.animated = true;
       // eslint-disable-next-line no-param-reassign
@@ -633,7 +635,7 @@ function Roadmap({
 
         // eslint-disable-next-line no-debugger
         debugger;
-        console.log(files[0]);
+        // console.log(files[0]);
 
         axios
           .post(`${baseUrl}/roadmaps/${e.data}/thumbnails`, formData, {
@@ -735,7 +737,7 @@ function Roadmap({
         const resDetail: string = e?.data?.detailedContent;
         if (resDetail) {
           const copyState = [...state];
-          copyState.map((v) => {
+          copyState.forEach((v) => {
             if (v.id === id) {
               // // console.log('현재 content', v?.detailedContent);
               // eslint-disable-next-line no-param-reassign
@@ -828,17 +830,15 @@ function Roadmap({
   });
 
   // // @ts-ignore
-  // const imgFileDropHandler = (e) => {
-  //   setFiles(e);
-  // };
-  const imgFileDropHandler = useMemo(
-    // @ts-ignore
-    (e) => {
-      return setFiles(e);
-    },
-    // @ts-ignore
-    [e],
-  );
+  const imgFileDropHandler = (e) => {
+    setFiles(e);
+  };
+  // const imgFileDropHandler = useMemo(
+  //   (e) => {
+  //     return setFiles(e);
+  //   },
+  //   [e],
+  // );
 
   return (
     <Wrap>
@@ -940,7 +940,8 @@ function Roadmap({
         <Dropzone
           accept={IMAGE_MIME_TYPE}
           onDrop={(e: FileWithPath[]) => {
-            // imgFileDropHandler(e);
+            // e.preventDefault();
+            imgFileDropHandler(e);
             // console.log('e', e);
             // console.log('files', files);
             // if (files[0].length === 0) {
