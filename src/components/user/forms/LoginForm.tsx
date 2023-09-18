@@ -45,13 +45,13 @@ function LoginForm(props: PaperProps): ReactElement {
   });
 
   return (
-    <Box maw={400} mx="auto" m={200}>
-      <Paper radius="md" p="xl" withBorder {...props}>
+    <Box maw={500} mx="auto" mt={50}>
+      <Paper radius="md" p="xl" {...props}>
         <Title
           align="center"
           sx={(theme) => ({
             fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-            fontWeight: 900,
+            fontWeight: 400,
           })}
         >
           로그인
@@ -59,7 +59,7 @@ function LoginForm(props: PaperProps): ReactElement {
         <Text color="dimmed" size="sm" align="center" mt={5}>
           아직 계정이 없으신가요?
           <Anchor
-            size="sm"
+            size="md"
             component="button"
             ml={5}
             mb={20}
@@ -80,12 +80,14 @@ function LoginForm(props: PaperProps): ReactElement {
           <Stack>
             <TextInput
               required
+              mt="xl"
               label="이메일 입력"
               placeholder="user@roadmaker.com"
               autoComplete="current-email"
               value={email}
               onChange={onChangeEmail}
               radius="md"
+              size="md"
             />
 
             <PasswordInput
@@ -96,13 +98,16 @@ function LoginForm(props: PaperProps): ReactElement {
               value={password}
               onChange={onChangePassword}
               radius="md"
+              size="md"
             />
           </Stack>
 
           <Group position="apart" mt="xl">
             <Button
               type="submit"
+              size="lg"
               fullWidth
+              color="#ebf6fc"
               variant="light"
               onClick={() => auth.signin(email, password)}
             >

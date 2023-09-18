@@ -39,9 +39,9 @@
 //           },
 //         });
 //       if (status === 201 || status === 200) {
-//         // console.log('useAuth ServiceCall', data);
+//         // // console.log('useAuth ServiceCall', data);
 //         // getStoredUser();
-//         console.log('conmment', data);
+//         // console.log('conmment', data);
 //       }
 //       // navigate('/');
 //     } catch (errorResponse) {
@@ -60,7 +60,7 @@
 //     comment: string,
 //     nickname: string,
 //   ): Promise<void> {
-//     // console.log('members', member);
+//     // // console.log('members', member);
 //     writeCall(`/comments/save-comment`, title, comment, nickname);
 //   }
 //   return {

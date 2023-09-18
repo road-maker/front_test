@@ -38,12 +38,12 @@
 //           'roadmaps',
 //           JSON.stringify({ data }), // 검색어에 대한 data 저장하도록
 //         );
-//         console.log(data);
-//         // console.log('roadmaps', data);
+//         // console.log(data);
+//         // // console.log('roadmaps', data);
 //         // navigate(`/roadmaps`);
 //       }
 //     } catch (errorResponse) {
-//       console.log(`${SERVER_ERROR}!: ${errorResponse}`);
+//       // console.log(`${SERVER_ERROR}!: ${errorResponse}`);
 //     }
 //   }
 //   async function roadmapPostSeverCall(
@@ -63,10 +63,10 @@
 //           },
 //         });
 //       if (status === 200) {
-//         console.log(data);
+//         // console.log(data);
 //       }
 //     } catch (errorResponse) {
-//       console.log(`${SERVER_ERROR}!: ${errorResponse}`);
+//       // console.log(`${SERVER_ERROR}!: ${errorResponse}`);
 //     }
 //   }
 //   async function getRoadmap(id: number): Promise<void> {

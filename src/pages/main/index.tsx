@@ -1,13 +1,12 @@
-import { HeaderMegaMenu } from 'layout/mainLayout/header/header';
+import MainLayout from 'layout/mainLayout';
 
-import RoadmapRecommendation from './roadmapRecommendation';
+import RoadmapRecommendation from '../../components/roadmaps/posts/main/RoadMapMainItems';
 
 function MainPage() {
   return (
-    <>
-      <HeaderMegaMenu />
+    <MainLayout>
       <RoadmapRecommendation />
-    </>
+    </MainLayout>
   );
 }
 export default MainPage;

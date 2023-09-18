@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable no-alert */
 import axios, { AxiosResponse } from 'axios';
-import { getStoredUser } from 'storage/user-storage';
 
 import { axiosInstance } from '../../../axiosInstance';
 import type { MemberInfo, NewUser } from '../../../types/types';
@@ -34,7 +33,7 @@ export function UseUserInfo(): useUserInfo {
           },
         });
       if (status === 201 || status === 200) {
-        // console.log('useAuth ServiceCall', data);
+        // // console.log('useAuth ServiceCall', data);
         // getStoredUser();
         if ('member' in data) {
           const updateMember: NewUser = data.member;
@@ -76,7 +75,7 @@ export function UseUserInfo(): useUserInfo {
           },
         });
       if (status === 201) {
-        console.log('updateUser', data);
+        // console.log('updateUser', data);
         if ('member' in data) {
           const updateMember: NewUser = data.member;
           updateUser({
@@ -102,11 +101,11 @@ export function UseUserInfo(): useUserInfo {
     }
   }
   async function myInfo(member: NewUser): Promise<void> {
-    // console.log('members', member);
+    // // console.log('members', member);
     infoCall(`/members/${member?.nickname}`, member);
   }
   async function updateInfo(member: NewUser): Promise<void> {
-    console.log('updatemembers', member);
+    // console.log('updatemembers', member);
     await infoEditCall(`/members/save-profile`, member);
   }
   return {

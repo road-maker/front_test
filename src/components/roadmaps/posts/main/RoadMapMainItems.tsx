@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-console */
 import {
   Avatar,
@@ -16,9 +15,10 @@ import { useCallback, useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useInfiniteQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
+import { styled } from 'styled-components';
 
-import { ReactComponent as NoImage } from '../../../assets/noImage.svg';
-import { ReactComponent as Spinner } from '../../../assets/Spinner.svg';
+import { ReactComponent as NoImage } from '../../../../assets/noImage.svg';
+import { ReactComponent as Spinner } from '../../../../assets/Spinner.svg';
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -79,45 +79,41 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function InfiniteRoadmapByKeyword() {
-  const [searchPage, setSearchPage] = useState(1);
-  // eslint-disable-next-line no-unused-vars
+export default function RoadmapRecommendation() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [allRoadmapData, setAllRoadmapData] = useState([]);
   const { classes } = useStyles();
-  const [currentPage, setCurrentPage] = useState('');
   const navigate = useNavigate();
-  const keyword = localStorage.getItem('roadmap_search_keyword');
+  const [currentPage, setCurrentPage] = useState('');
+  const [roadmapPage, setRoadmapPage] = useState(1);
 
   const fetchRoadmaps = useCallback(() => {
     axios
-      .get(`${baseUrl}/roadmaps/search/${keyword}?page=${searchPage}&size=5`)
+      .get(`${baseUrl}/roadmaps?page=${roadmapPage}&order-type=recent`)
       .then((v) => {
         setAllRoadmapData(v?.data);
-        // console.log(v?.data);
       })
       .catch((e) => {
-        // console.log(e);
+        console.log(e);
       });
-  }, [keyword, searchPage]);
+  }, [roadmapPage]);
 
-  const initialUrl = `${baseUrl}/roadmaps/search/${keyword}?page=${searchPage}&size=5`;
+  const initialUrl = `${baseUrl}/roadmaps?page=${roadmapPage}&order-type=recent`;
   const fetchUrl = async (url) => {
-    // console.log('fetchUrl:', url);
     const response = await fetch(url);
-    // console.log('response', response);
     return response.json();
   };
 
   const {
-    data,
     refetch,
+    data,
     fetchNextPage,
     hasNextPage,
     isLoading,
     isError,
     error,
   } = useInfiniteQuery(
-    'search-keyword',
+    'roadmaps',
     ({ pageParam = initialUrl }) => fetchUrl(pageParam),
     {
       getNextPageParam: (lastPage) => {
@@ -126,24 +122,25 @@ export function InfiniteRoadmapByKeyword() {
         }
         return undefined;
       },
+      enabled: roadmapPage === 1,
     },
   );
 
   useEffect(() => {
-    setSearchPage(1);
+    setRoadmapPage(1);
     refetch();
     fetchRoadmaps();
   }, [fetchRoadmaps, refetch]);
-  // console.log('data', data);
 
   if (isLoading)
     return (
       <div className="loading" style={{ height: '100vh' }}>
         <Spinner />
-        <h1 style={{ textAlign: 'center' }}>로드맵을 검색하고 있어요</h1>
+        <h1 style={{ textAlign: 'center' }}>로드맵 가져오는 중</h1>
       </div>
     );
   if (isError) return <div>Error! {error.toString()}</div>;
+
   return (
     <InfiniteScroll loadMore={fetchNextPage} hasMore={hasNextPage}>
       <SimpleGrid
@@ -155,16 +152,15 @@ export function InfiniteRoadmapByKeyword() {
           { maxWidth: 'lg', cols: 3 },
         ]}
       >
-        {!data.pages && <div>아직 로드맵이 없습니다.</div>}
-        {data?.pages &&
-          data?.pages.map((pageData) => {
-            return pageData?.result?.map((article, index) => {
+        {data.pages &&
+          data.pages.map((pageData) => {
+            return pageData.result.map((article, index) => {
               return (
                 <Card key={index} className={classes.card}>
                   <Card.Section
                     className={classes.section}
                     onMouseOver={() => {
-                      setCurrentPage(article?.id);
+                      setCurrentPage(article.id);
                     }}
                     onClick={() => {
                       currentPage && navigate(`/roadmap/post/${currentPage}`);
@@ -172,25 +168,40 @@ export function InfiniteRoadmapByKeyword() {
                   >
                     <Group>
                       <div className={classes.item}>
-                        {article?.thumbnailUrl ? (
-                          <Image
-                            className={`${isLoading ? 'before' : 'loaded'}`}
-                            src={article?.thumbnailUrl}
-                            alt={`${article?.title}.img`}
-                            height="15em"
-                          />
-                        ) : (
-                          <NoImage
-                            style={{ height: '15em', margin: '0 auto' }}
-                          />
-                        )}
+                        <BlurredImg
+                          className={`${isLoading ? 'before' : 'loaded'}`}
+                        >
+                          {article.thumbnailUrl ? (
+                            <Image
+                              className={`${isLoading ? 'before' : 'loaded'}`}
+                              src={article.thumbnailUrl}
+                              alt={`${article.title}.img`}
+                              height="15em"
+                            />
+                          ) : (
+                            <div
+                              style={{
+                                height: '15em',
+                                display: 'inline-flex',
+                                width: '100%',
+                              }}
+                            >
+                              <NoImage
+                                style={{ height: '15em', margin: '0 auto' }}
+                              />
+                            </div>
+                          )}
+                        </BlurredImg>
                       </div>
                     </Group>
                     <Text fw={700} className={classes.title} mx={20}>
                       {article.title}
                     </Text>
                     <Text fz="lg" className={classes.desc} mx={20}>
-                      {article.description}
+                      {article.description.length < 30
+                        ? article.description
+                        : // eslint-disable-next-line prefer-template
+                          article.description.slice(0, 29) + '...'}
                     </Text>
                   </Card.Section>
                   <Text fz="md" c="dimmed" mx={8}>
@@ -198,7 +209,7 @@ export function InfiniteRoadmapByKeyword() {
                   </Text>
                   <Card.Section className={classes.footer}>
                     <Group>
-                      <Avatar radius="sm" color="blue">
+                      <Avatar radius="lg" color="blue">
                         {article.member.nickname.substring(0, 1)}
                       </Avatar>
 
@@ -212,6 +223,46 @@ export function InfiniteRoadmapByKeyword() {
             });
           })}
       </SimpleGrid>
+      {/* </Container> */}
     </InfiniteScroll>
   );
 }
+const BlurredImg = styled.div`
+  background-repeat: no-repeat;
+  background-size: cover;
+  .before {
+    filter: blur(10px);
+  }
+  .before ::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    animation: pulse 2.5s infinite;
+    background-color: var(--text-color);
+  }
+
+  @keyframes pulse {
+    0% {
+      opacit: 0;
+    }
+    50% {
+      opacity: 0.1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  .loaded::before {
+    animation: none;
+    content: none;
+  }
+  & > img {
+    opacity: 0;
+    transition: opacity 250ms ease-in-out;
+  }
+
+  & .loaded > img {
+    opacity: 1;
+  }
+`;

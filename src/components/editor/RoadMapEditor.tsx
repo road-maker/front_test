@@ -1,7 +1,6 @@
-/* eslint-disable no-console */
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable array-callback-return */
+/* eslint-disable react-hooks/exhaustive-deps */
+// @ts-nocheck
 import 'reactflow/dist/style.css';
 
 import dagre from '@dagrejs/dagre';
@@ -12,27 +11,36 @@ import {
   ColorInput,
   Image,
   Input,
-  LoadingOverlay,
   Modal,
-  MultiSelect,
   Popover,
   SimpleGrid,
   Text,
   Textarea,
   TextInput,
+  Tooltip,
 } from '@mantine/core';
 import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { useDisclosure } from '@mantine/hooks';
-import { IconWand } from '@tabler/icons-react';
+import {
+  IconAlertCircle,
+  IconCertificate,
+  IconInfoCircle,
+  IconWand,
+} from '@tabler/icons-react';
 import axios from 'axios';
 import { baseUrl } from 'axiosInstance/constants';
+import { Typer } from 'components/common/typingAnimation/Typer';
 import { useRoadmap } from 'components/roadmaps/posts/hooks/useRoadmap';
 import { useUser } from 'components/user/hooks/useUser';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactFlow, {
+  addEdge,
   Background,
+  Connection,
+  ConnectionLineType,
   Controls,
+  Edge,
   MiniMap,
   Panel,
   ReactFlowProvider,
@@ -44,46 +52,57 @@ import { setStoredRoadmap } from 'storage/roadmap-storage';
 import { styled } from 'styled-components';
 
 import { useInput } from '../common/hooks/useInput';
+import PanelItem from './PanelItem';
 import { ResizableNodeSelected } from './ResizableNodeSelected';
 import { RoadmapEdge, RoadmapNode, RoadmapNodes } from './types';
 
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-const nodeWidth = 172;
-const nodeHeight = 36;
+// const nodeWidth = 172;
+// const nodeHeight = 36;
+const nodeWidth = 200;
+const nodeHeight = 40;
 
 const flowKey = 'example-flow';
-
-const getLayoutedElements = (nodes, edges, direction = 'TB') => {
-  const isHorizontal = direction === 'LR';
+// const getLayoutedElements = (nodes: any[], edges: any[], direction = 'LR') => {
+const getLayoutedElements = (nodes, edges, direction = 'LR') => {
+  const isHorizontal = direction === 'TB';
   dagreGraph.setGraph({ rankdir: direction });
 
-  nodes.forEach((node) => {
+  nodes.forEach((node: { id: string }) => {
     dagreGraph.setNode(node?.id, { width: nodeWidth, height: nodeHeight });
   });
 
-  edges.forEach((edge) => {
-    dagreGraph.setEdge(edge?.source, edge?.target);
-  });
+  edges.forEach(
+    // (edge: { source: dagre.Edge; target: string | { [key: string]: any } }) => {
+    (edge: { source: dagre.Edge; target: string | { [key: string] } }) => {
+      dagreGraph.setEdge(edge?.source, edge?.target);
+    },
+  );
 
   dagre.layout(dagreGraph);
 
-  nodes.forEach((node) => {
-    const nodeWithPosition = dagreGraph.node(node?.id);
-    // eslint-disable-next-line no-param-reassign
-    node.targetPosition = isHorizontal ? 'left' : 'top';
-    // eslint-disable-next-line no-param-reassign
-    node.sourcePosition = isHorizontal ? 'right' : 'bottom';
-    // We are shifting the dagre node position (anchor=center center) to the top left
-    // so it matches the React Flow node anchor point (top left).
-    // eslint-disable-next-line no-param-reassign
-    node.position = {
-      x: nodeWithPosition.x - nodeWidth / 2,
-      y: nodeWithPosition.y - nodeHeight / 2,
-    };
-    return node;
-  });
+  nodes.forEach(
+    (node: {
+      id?: string | dagre.Label;
+      targetPosition: string;
+      sourcePosition: string;
+      position: { x: number; y: number };
+    }) => {
+      const nodeWithPosition = dagreGraph.node(node?.id);
+      // eslint-disable-next-line no-param-reassign
+      node.targetPosition = isHorizontal ? 'top' : 'left';
+      // eslint-disable-next-line no-param-reassign
+      node.sourcePosition = isHorizontal ? 'bottom' : 'right';
+      // eslint-disable-next-line no-param-reassign
+      node.position = {
+        x: nodeWithPosition.x - nodeWidth / 2,
+        y: nodeWithPosition.y - nodeHeight / 2,
+      };
+      return node;
+    },
+  );
 
   return { nodes, edges };
 };
@@ -92,48 +111,98 @@ const position = { x: 0, y: 0 };
 const edgeType = 'smoothstep';
 const nodeTypes = {
   custom: ResizableNodeSelected,
-  // ResizableNodeSelected,
-  // custom: CustomNode,
 };
-// const onInit = (reactFlowInstance) => {
-//   reactFlowInstance.fitView();
-// };
 const initialNodes = [
   {
     id: '1',
-    data: { label: 'test' },
-    position: { x: 100, y: 100, zoom: 1 },
+    data: { label: '내용을 입력해주세요.' },
+    position: { x: 100, y: 100, zoom: 0.45 },
     type: 'custom',
-    // type: 'default',
-    // type: nodeTypes.custom,
-    // type: 'ResizableNodeSelected',
     style: {
-      background: '#fff',
+      background: '#f4b4b4',
       border: '1px solid black',
       borderRadius: 15,
-      fontSize: 12,
+      fontSize: 24,
     },
+    blogKeyword: '',
   },
   {
     id: '2',
-    data: { label: 'Node 2' },
-    position: { x: 100, y: 200, zoom: 1 },
-    // type: 'default',
-    // type: nodeTypes.custom,
+    data: { label: '내용을 입력해주세요.' },
+    position: { x: 100, y: 200, zoom: 0.45 },
     type: 'custom',
     style: {
-      background: '#fff',
+      background: '#f4e9bc',
       border: '1px solid black',
       borderRadius: 15,
-      fontSize: 12,
+      fontSize: 24,
     },
+    blogKeyword: '',
   },
 ];
 
 const initialEdges = [
-  { id: 'e11a', source: '1', target: '1a', type: edgeType, animated: true },
+  { id: 'e1e2', source: '1', target: '2', type: edgeType, animated: true },
 ];
-const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
+const defaultViewport = { x: 0, y: 0, zoom: 0.45 };
+
+const colorPalette = {
+  blues: [
+    '#7296a495',
+    '#9ebecb3a',
+    '#cddee54f',
+    '#e6f0f291F2',
+    '#F3FDFE',
+    '#EFEFEF',
+  ],
+  reds: [
+    '#b2737680',
+    '#d37c7caf7c',
+    '#ecb0b09ab0',
+    '#f4d5d5b9',
+    '#f7d4ccb8',
+    '#f5dad4bcd4',
+  ],
+  yellows: [
+    '#f3e7b7bb',
+    '#f6eac2b3c2',
+    '#f9f2d6',
+    '#fbf6e3',
+    '#fdf9ed',
+    '#f8f0d2',
+  ],
+  greens: [
+    '#90a76ac4',
+    '#c4de96cf',
+    '#a7cc79b8c9',
+    '#deffccb6',
+    '#cbe4b3bf',
+    '#deedcebe',
+  ],
+  oranges: [
+    '#f9ab36c9',
+    '#faa84d',
+    '#fbbc74ab',
+    '#fbd4a4a3',
+    '#fbe6b4d1',
+    '#fbe4c4cd',
+  ],
+};
+
+const selectColor = (clr, cnt) => {
+  switch (parseInt(clr?.id.slice(0, 1), 10 % 5)) {
+    case 0:
+      return colorPalette.reds[cnt % 5];
+    case 1:
+      return colorPalette.reds[cnt % 5];
+    case 2:
+      return colorPalette.oranges[cnt % 5];
+    case 3:
+      return colorPalette.yellows[cnt % 5];
+    default:
+      return colorPalette.blues[cnt % 5];
+  }
+};
 
 function Roadmap({
   editor,
@@ -150,6 +219,9 @@ function Roadmap({
   onRoadMapTitleChange,
   setRoadMapTitle,
   setLabel,
+  blogKeyword,
+  onChangeBlogKeyword,
+  setBlogKeyword,
   toggleEditor,
   onChangeLabel,
   id,
@@ -172,9 +244,10 @@ function Roadmap({
   const [desc, onChangeDesc, setDesc] = useInput('');
   const [gptRes, setGptRes] = useState(true);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [keywordSubmitState, setKeywordSubmitState] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingDetailGpt, setIsLoadingDetailGpt] = useState(true);
   const [nodeBg, setNodeBg] = useState('#eee');
-  const [nodeHidden, setNodeHidden] = useState(false);
   const [rfInstance, setRfInstance] = useState(null);
   const { setViewport, getViewport } = useReactFlow();
   const [useGpt, setUseGpt] = useState([]);
@@ -183,19 +256,17 @@ function Roadmap({
   const [nodeModal, setNodeModal] = useState(false);
   const [keyword, setKeyword] = useState('');
   const [currentFlow, setCurrentFlow] = useState('');
+  const [isDetailReady, setIsDetailReady] = useState(4);
+  const [details, setDetails] = useState([]);
   const [gptDisabled, setGptDisabled] = useState(false);
-  const [currentView, setCurrentView] = useState({ x: 0, y: 0, zoom: 1 });
+  const [currentView, setCurrentView] = useState({ x: 0, y: 0, zoom: 0.45 });
   const yPos = useRef(currentView.y);
-  const [selectedData, setSelectedData] = useState([
-    { value: 'react', label: 'React' },
-    { value: 'ng', label: 'Angular' },
-  ]);
   const { user } = useUser();
   const [files, setFiles] = useState<FileWithPath[]>([]); // 썸네일
   const navigate = useNavigate();
 
   const onLayout = useCallback(
-    (direction) => {
+    (direction: string) => {
       const { nodes: layoutedNodes, edges: layoutedEdges } =
         getLayoutedElements(nodeState, edgeState, direction);
 
@@ -211,30 +282,6 @@ function Roadmap({
     if (!user) {
       return navigate('/users/signin');
     }
-    // if (!localStorage.getItem('recent_gpt_search')) {
-    //   setGptRes(false);
-    // }
-    // if (localStorage.getItem('recent_gpt_search')) {
-    // const localData: NewPrompt = JSON.parse(
-    //   localStorage.getItem('recent_gpt_search'),
-    // );
-    //   setKeyword(localData?.keyword);
-    //   axios
-    //     .post(`${baseUrl}/gpt/roadmap?prompt=${localData.keyword}`, {
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //         Authorization: `Bearer ${user?.accessToken}`,
-    //       },
-    //     })
-    //     .then((res) => {
-    //       res?.data.length > 0 ? setGptRes(false) : setGptRes(true);
-    //       setUseGpt(res?.data);
-    //     })
-    //     .then(() => {
-    //       setGptRes(false);
-    //       // onLayout('TB');
-    //     });
-    // }
     if (!localStorage.getItem('recent_gpt_search')) {
       setGptRes(false);
     }
@@ -254,84 +301,91 @@ function Roadmap({
         .then((res) => {
           res?.data.length > 0 ? setGptRes(false) : setGptRes(true);
           setUseGpt(res?.data);
-          // onLayout('TB');
         })
-        // .then(() => {
-        //   onLayout('TB');
-        // })
         .then(() => {
           setGptRes(false);
+          setGptDisabled(false);
         });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useMemo(() => {
+    if (isDetailReady >= 4) {
+      axios
+        .post(`${baseUrl}/gpt/roadmap/detail`, useGpt.slice(0, 10), {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user?.accessToken}`,
+          },
+        })
+        .then((e) => {
+          if (e.data.length > 0) {
+            setDetails(e.data);
+          }
+        });
+      // .catch((err) => // console.log(err));
+    }
+  }, [isDetailReady]);
 
   useEffect(() => {
     onLayout('LR');
   }, [useGpt.length]);
-  // const onSave = useCallback(() => { // 내부적으로 처리
-  //   if (rfInstance) {
-  //     const flow = rfInstance.toObject();
-  //     localStorage.setItem(flowKey, JSON.stringify(flow));
-  //     console.log(flow);
-  //   }
-  // }, [rfInstance]);
 
   useMemo(() => {
     const tmpNode = [];
     const tmpEdge = [];
-    // console.log(useGpt);
+    let cnt = 0;
+    // // console.log(useGpt);
     // eslint-disable-next-line array-callback-return
-    useGpt.map((v) => {
-      if (!nodeSet.has(v?.id)) {
+    useGpt.map((v, indx) => {
+      if (!nodeSet.has(v?.id) && v?.id.split('.')[0] !== '0') {
         tmpNode.push({
           id: v?.id,
           data: {
             label: v?.content,
           },
-          // type: 'default',
           type: 'custom',
           position,
+          blogKeyword: '',
           style: {
-            background: '#fff',
+            background: `${selectColor(v, cnt)}`,
             border: '1px solid black',
             borderRadius: 15,
-            fontSize: 12,
+            fontSize: 24,
           },
         });
         nodeSet.add(`${v?.id}`);
+        cnt += 1;
       }
 
       // source랑 target 구해서 간선id 만들고 이어주기
-      // parseInt는 오로지 숫자인 부분만 parse해줬음
-
-      if (v.id !== `${parseInt(v?.id, 10)}`) {
-        if (!edgeSet.has(`e${parseInt(v?.id, 10)}${v?.id}`)) {
+      if (v?.id.split('.').length > 1 && v?.id.split('.')[0] !== '0') {
+        // head인 경우
+        if (!edgeSet.has(`e${v.id.slice(0, v.id.lastIndexOf('.'))}e${v.id}`)) {
           tmpEdge.push({
-            id: `e${parseInt(v?.id, 10)}${v?.id}`,
-            source: `${parseInt(v?.id, 10)}`,
+            id: `e${v.id.slice(0, v.id.lastIndexOf('.'))}e${v.id}`,
+            source: v.id.slice(0, v.id.lastIndexOf('.')),
             target: v.id,
             type: edgeType,
             animated: true,
           });
         }
-        edgeSet.add(`e${parseInt(v?.id, 10)}${v?.id}`);
+        edgeSet.add(`e${v.id.slice(0, v.id.lastIndexOf('.'))}e${v.id}`);
       }
     });
     setNodes(tmpNode);
     setEdges(tmpEdge);
   }, [useGpt]);
 
-  // useEffect(() => {
-  //   // 자동 생성 후 formatting
-  //   if (nodeState && edgeState && useGpt.length > 0) {
-  //     onLayout('TB');
-  //   }
-  // }, []);
+  useMemo(() => {
+    // console.log(nodeState.length);
+    if (nodeState.length > initialNodes.length) {
+      setIsDetailReady(nodeState.length);
+      setIsLoadingDetailGpt(false);
+    }
+  }, [nodeState.length]);
 
   const proOptions = { hideAttribution: true };
-
-  // const { x, y, zoom } = useViewport();
 
   useMemo(() => {
     // 노드 내용 수정
@@ -339,8 +393,6 @@ function Roadmap({
       nds.map((node) => {
         // if (node.id === '1') {
         if (node.id === id) {
-          // it's important that you create a new object here
-          // in order to notify react flow about the change
           // eslint-disable-next-line no-param-reassign
           node.data = {
             ...node.data,
@@ -364,24 +416,34 @@ function Roadmap({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);
 
+  // const onConnect = useCallback(
+  //   // 간선 스타일 통일
+  //   ({ source, target }) => {
+  //     setEdges((els) => {
+  //       return [
+  //         ...els,
+  //         {
+  //           // id: `e${source}e${target}`, // 문제 : e122면 12랑 2인지 1이랑 22인지 구분이 안됨..
+  //           id: `e${source}${target}`,
+  //           source,
+  //           target,
+  //           type: edgeType,
+  //           animated: true,
+  //         },
+  //       ];
+  //     });
+  //   },
+  //   [setEdges],
+  // );
   const onConnect = useCallback(
-    // 간선 스타일 통일
-    ({ source, target }) => {
-      setEdges((els) => {
-        return [
-          ...els,
-          {
-            // id: `e${source}e${target}`, // 문제 : e122면 12랑 2인지 1이랑 22인지 구분이 안됨..
-            id: `e${source}${target}`,
-            source,
-            target,
-            type: edgeType,
-            animated: true,
-          },
-        ];
-      });
-    },
-    [setEdges],
+    (params: Edge | Connection) =>
+      setEdges((eds) =>
+        addEdge(
+          { ...params, type: ConnectionLineType.SmoothStep, animated: true },
+          eds,
+        ),
+      ),
+    [],
   );
 
   // useMemo(() => {
@@ -391,6 +453,14 @@ function Roadmap({
   //     alert(`${currentView.x}, ${currentView.y}`);
   //   }
   // }, [currentView, nodeState.length]);
+
+  useMemo(() => {
+    if (useGpt.length > 0 && details.length > 0) {
+      setState(details);
+      // // console.log('details', details);
+      // // console.log('state', state);
+    }
+  }, [useGpt, details]);
 
   useMemo(() => {
     if (rfInstance) {
@@ -408,13 +478,13 @@ function Roadmap({
         const {
           x = 0,
           y = 0,
-          zoom = 1,
+          zoom = 0.45,
           nodes: restoredNodes,
           edges: restoredEdges,
         } = flow;
         setNodes(restoredNodes || []);
         setEdges(restoredEdges || []);
-        setViewport({ x, y, zoom });
+        setViewport({ x, y, zoom: 0.45 });
       }
     };
 
@@ -444,18 +514,18 @@ function Roadmap({
           background: '#fff',
           border: '1px solid black',
           borderRadius: 15,
-          fontSize: 12,
+          fontSize: 24,
         },
       },
     ]);
     nodeState.forEach((n) => {
-      // console.log(n);
+      // // console.log(n);
       // eslint-disable-next-line no-param-reassign
       n.sourcePosition = nodeState[0].sourcePosition;
       // eslint-disable-next-line no-param-reassign
       n.targetPosition = nodeState[0].targetPosition;
     });
-    // console.log(state); // 노드 추가!
+    // // console.log(state); // 노드 추가!
     setState([...state, { id: (nodeCount + 1).toString(), details: '' }]);
     setColorsState([
       ...state,
@@ -463,29 +533,68 @@ function Roadmap({
     ]);
   }, [nodeState, setNodes]);
 
+  // useMemo(() => {
+  //   const copyNodes = [...nodeState];
+  //   copyNodes.forEach((n) => {
+  //     if (n.id === id) {
+  //       // console.log('keyword?', n);
+  //       // eslint-disable-next-line no-param-reassign
+  //       // n.blogKeyword = blogKeyword;
+  //       // !blogKeyword ? (n.blogKeyword = blogKeyword) : (n.blogKeyword = '');
+  //     }
+  //   });
+  //   setNodes(copyNodes);
+  // }, [id, blogKeyword]);
+
   const { postRoadmap } = useRoadmap();
 
   const onPublishRoadmap = useCallback(() => {
-    // const { edges, nodes, viewport } = getStoredRoadmap();
-    // console.log('nodes', nodes);
+    // const onPublishRoadmap = useCallback(() => {
+    if (edgeState.length === 0) {
+      setSubmitModal(false);
+      return;
+    }
     const nodesCopy = [...nodeState] as RoadmapNodes;
     const edgesCopy = [...edgeState];
+
+    // eslint-disable-next-line consistent-return
+    nodesCopy.forEach((node) => {
+      if (node.data.label === '') {
+        setSubmitModal(false);
+        // eslint-disable-next-line no-alert
+        return alert('노드 내용을 채워주세요.');
+      }
+    });
+
+    if (files[0].length) return;
+
     // eslint-disable-next-line array-callback-return
-    nodesCopy.map((v) => {
-      state.map((item) => {
+    nodesCopy.forEach((v) => {
+      state.forEach((item: { id: string; detailedContent: string }) => {
         if (v?.id === item?.id) {
           // eslint-disable-next-line no-param-reassign
-          v.detailedContent = item?.details;
-          // console.log(item?.details);
+          v.detailedContent = item?.detailedContent;
+          // // console.log(item?.details);
           // v.details = item?.details;
         }
         // eslint-disable-next-line no-param-reassign
         v.positionAbsolute = v.position;
+        // eslint-disable-next-line no-param-reassign
+        // v.blogKeyword = item.blogKeyword;
       });
       // eslint-disable-next-line no-param-reassign
+      v.blogKeyword = ''; // ******************************************* 블로그 인증 키워드
+      // eslint-disable-next-line no-param-reassign
       v.type = 'custom';
+      // v.type = 'default';
+      // v.sourcePosition = currentFlow === 'LR' ? 'left' : 'top';
+      // eslint-disable-next-line no-param-reassign
+      v.sourcePosition = currentFlow === 'LR' ? 'bottom' : 'right';
+      // eslint-disable-next-line no-param-reassign
+      v.targetPosition = currentFlow === 'LR' ? 'top' : 'left';
     });
-    edgesCopy.map((v) => {
+
+    edgesCopy.forEach((v) => {
       // eslint-disable-next-line no-param-reassign
       v.animated = true;
       // eslint-disable-next-line no-param-reassign
@@ -502,7 +611,9 @@ function Roadmap({
       },
       nodes: nodesCopy,
       edges: edgesCopy,
-      viewport: defaultViewport,
+      // viewport: defaultViewport,
+      // viewport: currentView,
+      viewport: { x: 0, y: 0, zoom: 0.45 },
     };
 
     axios
@@ -513,7 +624,7 @@ function Roadmap({
         },
       })
       .then((e) => {
-        // console.log('e', e.data);
+        // // console.log('e', e.data);
         // const blob = new Blob([JSON.stringify(data)], {
         //   type: 'multipart/form-data',
         // });
@@ -521,6 +632,11 @@ function Roadmap({
         const formData = new FormData();
 
         formData.append('file', files[0]);
+
+        // eslint-disable-next-line no-debugger
+        debugger;
+        // console.log(files[0]);
+
         axios
           .post(`${baseUrl}/roadmaps/${e.data}/thumbnails`, formData, {
             headers: {
@@ -529,16 +645,31 @@ function Roadmap({
             },
           })
           .then((v) => {
-            // console.log(v);
+            // // console.log(v);
             // eslint-disable-next-line no-alert
             alert('포스팅 성공!');
-            navigate(`/roadmap/post/${e.data}`);
-          })
-          .catch((err) => console.log(err));
-      })
-      .catch((err) => console.log(err));
+
+            axios
+              .post(
+                `${baseUrl}/roadmaps/${e.data}/join`,
+                {},
+                {
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${user?.accessToken}`,
+                  },
+                },
+              )
+              .then(() => {
+                navigate(`/roadmap/post/${e.data}`);
+              });
+            // .catch((err) => // console.log(err));
+          });
+        // .catch((err) => // console.log(err));
+      });
+    // .catch((err) => // console.log(err));
     // navigate('/');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [nodeState, files[0]]);
   }, [nodeState]);
 
   // const { deleteElements } = useReactFlow();
@@ -560,7 +691,7 @@ function Roadmap({
   //       },
   //     )
   //     .then((e) => {
-  //       // console.log(e);
+  //       // // console.log(e);
   //       // @ts-ignore
   //       const resDetail: string = e?.content;
   //       if (resDetail) {
@@ -569,7 +700,7 @@ function Roadmap({
   //         const temp = [];
   //         copyState.map((v) => {
   //           if (v.id === id) {
-  //             console.log('현재 content', v?.details);
+  //             // console.log('현재 content', v?.details);
   //             resArr.map((k) => {
   //               temp.push(`<p>${k}</p>`);
   //             });
@@ -577,7 +708,7 @@ function Roadmap({
   //             v.details += temp;
   //           }
   //         });
-  //         console.log('현재 copyState', copyState);
+  //         // console.log('현재 copyState', copyState);
   //         // setState(copyState);
   //         // setGptDisabled(false);
   //       }
@@ -586,7 +717,7 @@ function Roadmap({
   //       // setState(e?.content);
   //       // 상세 내용 에디터에 내용 넣어주기
   //     })
-  //     .catch((err) => console.log(err));
+  //     .catch((err) => // console.log(err));
   // };
   const getGptExampleDetail = useCallback(() => {
     setGptDisabled(true);
@@ -603,25 +734,43 @@ function Roadmap({
       )
       .then((e) => {
         // @ts-ignore
-        const resDetail: string = e?.data?.content;
+        const resDetail: string = e?.data?.detailedContent;
         if (resDetail) {
           const copyState = [...state];
-          console.log('state', state);
-          copyState.map((v) => {
+          copyState.forEach((v) => {
             if (v.id === id) {
-              console.log('현재 content', v?.details);
+              // // console.log('현재 content', v?.detailedContent);
               // eslint-disable-next-line no-param-reassign
-              v.details += resDetail;
+              v.detailedContent += resDetail;
             }
           });
-          console.log('현재 copyState', copyState);
+          // // console.log('copyState', copyState);
           setState(copyState);
           setGptDisabled(false);
         }
         // 상세 내용 에디터에 내용 넣어주기
-      })
-      .catch((err) => console.log(err));
+      });
+    // .catch((err) => // console.log(err));
   }, [id, state]);
+
+  useEffect(() => {
+    setNodes((nds) =>
+      nds.map((node) => {
+        if (node?.id === id) {
+          // node.style = { ...node.style, backgroundColor: nodeBg };
+          // eslint-disable-next-line no-param-reassign
+          node.style = {
+            ...node.style,
+            // backgroundColor: color,
+            background: color,
+          };
+        }
+
+        return node;
+      }),
+    );
+    // };
+  }, [nodeState, blogKeyword, id]);
 
   useEffect(() => {
     setNodes((nds) =>
@@ -651,21 +800,13 @@ function Roadmap({
   }, [edgeState, nodeState]);
 
   useEffect(() => {
-    // setNodes((nds) =>
-    //   nds.map((node) => {
-    //     if (node?.id === id) {
-    //       // when you update a simple type you can just update the value
-    //       // eslint-disable-next-line no-param-reassign
-    //       node.hidden = nodeHidden;
-    //     }
-    //     return node;
-    //   }),
-    // );
     setNodes((nds) =>
       nds.map((node) => {
         // if (node.id === '1') {
         if (node?.id === label) {
           // when you update a simple type you can just update the value
+          // eslint-disable-next-line no-param-reassign
+          // node.blogKeyword = blogKeyword; // 노드 키워드
           // eslint-disable-next-line no-param-reassign
           node.style.backgroundColor = color; // 노드 색 변경
           // eslint-disable-next-line no-param-reassign
@@ -676,6 +817,7 @@ function Roadmap({
     );
   }, [nodeState, edgeState]);
 
+  // const previews = files.map((file, index) => {
   const previews = files.map((file, index) => {
     const imageUrl = URL.createObjectURL(file);
     return (
@@ -687,21 +829,43 @@ function Roadmap({
     );
   });
 
-  // const [selectedNode, setSelectedNode] = useState([]);
-  // useOnSelectionChange({
-  //   onChange: ({ nodes, edges }) => {
-  //     // setSelectedNode(nodes);
-  //     console.log('selectedNode', selectedNode);
-  //     // setNodeModal(true);
+  // // @ts-ignore
+  const imgFileDropHandler = (e) => {
+    setFiles(e);
+  };
+  // const imgFileDropHandler = useMemo(
+  //   (e) => {
+  //     return setFiles(e);
   //   },
-  // });
+  //   [e],
+  // );
 
   return (
     <Wrap>
-      <LoadingOverlay visible={gptRes} />
-      {/* <Modal opened={opened} onClose={close} size="40rem"> */}
+      {gptRes && (
+        <Modal.Root opened={gptRes} onClose={close} centered size="fit-content">
+          <Modal.Overlay color="#000" opacity={0.85} />
+
+          <Modal.Content>
+            <Modal.Body style={{ width: 'fit-content', height: 'fit-content' }}>
+              <div style={{ display: 'inline-flex', width: '100%    ' }}>
+                <img
+                  src="/img/loadingImg.gif"
+                  alt="로딩 이미지"
+                  style={{ width: '24rem', margin: '0 auto' }}
+                />
+              </div>
+              <Typer
+                data={`"${JSON.parse(localStorage.getItem('recent_gpt_search'))
+                  ?.keyword}"에 관한 로드맵을 생성 중...`}
+              />
+            </Modal.Body>
+          </Modal.Content>
+        </Modal.Root>
+      )}
       <Modal
         opened={submitModal}
+        centered
         onClose={() => setSubmitModal(false)}
         size="40rem"
       >
@@ -714,31 +878,19 @@ function Roadmap({
           label="로드맵 이름"
           value={title}
           onChange={onChangeTitle}
+          rightSection={
+            !title && (
+              <Tooltip label="필수 항목입니다." position="top-end" withArrow>
+                <div>
+                  <IconAlertCircle
+                    size="1rem"
+                    style={{ display: 'block', opacity: 0.5, color: 'red' }}
+                  />
+                </div>
+              </Tooltip>
+            )
+          }
         />
-        <MultiSelect
-          label="로드맵 태그 설정"
-          mt={20}
-          data={selectedData}
-          placeholder="태그를 선택해주세요"
-          searchable
-          creatable
-          getCreateLabel={(query) => `+ Create ${query}`}
-          onCreate={(query) => {
-            const item = { value: query, label: query };
-            setSelectedData((current) => [...current, item]);
-            return item;
-          }}
-        />
-        <Dropzone accept={IMAGE_MIME_TYPE} onDrop={setFiles} mt={30}>
-          <Text align="center">Drop images here</Text>
-        </Dropzone>
-        <SimpleGrid
-          cols={4}
-          breakpoints={[{ maxWidth: 'sm', cols: 1 }]}
-          mt={previews.length > 0 ? 'xl' : 0}
-        >
-          {previews}
-        </SimpleGrid>
         <Textarea
           label="로드맵 설명"
           autosize
@@ -748,12 +900,77 @@ function Roadmap({
           value={desc}
           placeholder="내용을 입력하세요"
           onChange={onChangeDesc}
+          rightSection={
+            !desc && (
+              <Tooltip label="필수 항목입니다." position="top-end" withArrow>
+                <div>
+                  <IconAlertCircle
+                    size="1rem"
+                    style={{ display: 'block', opacity: 0.5, color: 'red' }}
+                  />
+                </div>
+              </Tooltip>
+            )
+          }
         />
+        <Text
+          mt={30}
+          style={{
+            display: 'inline-flex',
+            width: '100%',
+            justifyContent: 'space-between',
+          }}
+        >
+          <CustomLabel>로드맵 썸네일</CustomLabel>
+          {!files[0]?.name && (
+            <Tooltip label="필수 항목입니다." position="top-end" withArrow>
+              <div>
+                <IconAlertCircle
+                  size="1rem"
+                  style={{
+                    display: 'inline-block',
+                    opacity: 0.5,
+                    color: 'red',
+                  }}
+                />
+              </div>
+            </Tooltip>
+          )}
+        </Text>
+        <Dropzone
+          accept={IMAGE_MIME_TYPE}
+          onDrop={(e: FileWithPath[]) => {
+            // e.preventDefault();
+            imgFileDropHandler(e);
+            // console.log('e', e);
+            // console.log('files', files);
+            // if (files[0].length === 0) {
+            // setFiles(e);
+            // }
+          }}
+          // onDrop={(e) => {
+          // // console.log(e);
+          // // eslint-disable-next-line no-debugger
+          // debugger;
+          // console.log(e);
+          // imgFileDropHandler(e);
+          // }}
+        >
+          <Text align="center">썸네일 등록 </Text>
+        </Dropzone>
+        <SimpleGrid
+          cols={4}
+          breakpoints={[{ maxWidth: 'sm', cols: 1 }]}
+          mt={previews.length > 0 ? 'xl' : 0}
+        >
+          {previews}
+        </SimpleGrid>
         <Center>
           <Button
             mt={30}
             onClick={() => {
-              // onSave();
+              setEdges(edgeState);
+              setNodes(nodeState);
               onPublishRoadmap();
             }}
           >
@@ -761,38 +978,49 @@ function Roadmap({
           </Button>
         </Center>
       </Modal>
-      <Modal
+
+      <Modal.Root
         opened={confirmDelete}
         size="70%"
+        style={{ flexDirection: 'column' }}
         onClose={() => setConfirmDelete(false)}
+        centered
       >
-        <Center>
-          <Center>
-            <h1>정말로 모든 노드를 지우겠습니까?</h1>
+        <Modal.Overlay opacity={0.85} />
+        <Modal.Content>
+          <Modal.Header>
+            <Modal.Title>
+              <h1>정말로 모든 노드를 지우겠습니까?</h1>
+            </Modal.Title>
+            <Modal.CloseButton />
+          </Modal.Header>
+          <Modal.Body>
             <h3>모두 지우기를 누를 시 작업 내용을 복구할 수 없습니다.</h3>
-          </Center>
-          <div className="confirm_btn_wrap">
-            <Button
-              mt={30}
-              onClick={() => {
-                // setNodes([]);
-                setNodes(initialNodes);
-                setEdges([]);
-                setConfirmDelete(false);
-              }}
-            >
-              모두 지우기
-            </Button>
-            <Button
-              mt={30}
-              variant="outline"
-              onClick={() => setConfirmDelete(false)}
-            >
-              취소
-            </Button>
-          </div>
-        </Center>
-      </Modal>
+            <div className="confirm_btn_wrap">
+              <Button
+                mt={30}
+                mr="1rem"
+                onClick={() => {
+                  setNodes([]);
+                  // setNodes(initialNodes);
+                  setEdges([]);
+                  setConfirmDelete(false);
+                }}
+              >
+                모두 지우기
+              </Button>
+              <Button
+                mt={30}
+                variant="outline"
+                onClick={() => setConfirmDelete(false)}
+              >
+                취소
+              </Button>
+            </div>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal.Root>
+
       <Panel position="top-center">
         <Modal opened={nodeModal} onClose={() => setNodeModal(false)} size="xl">
           <Wrap>
@@ -807,7 +1035,6 @@ function Roadmap({
               shadow="md"
               opened={opened}
             >
-              {/* <div style={{ float: 'right' }}> */}
               <div>
                 <Popover.Target>
                   <ActionIcon
@@ -818,6 +1045,7 @@ function Roadmap({
                     variant="outline"
                     onClick={() => {
                       setLabel(label);
+                      // // console.log(label);
                       getGptExampleDetail();
                     }}
                     loading={gptDisabled}
@@ -826,7 +1054,13 @@ function Roadmap({
                   </ActionIcon>
                 </Popover.Target>
               </div>
-              <Popover.Dropdown sx={{ pointerEvents: 'none' }}>
+              <Popover.Dropdown
+                sx={{
+                  pointerEvents: 'none',
+                  backgroundColor: '#ebf6fc',
+                }}
+                className="gptModal"
+              >
                 <Text size="sm">ChatGpt로 자동 생성하기</Text>
               </Popover.Dropdown>
             </Popover>
@@ -836,12 +1070,13 @@ function Roadmap({
               value={label}
               mt={10}
               mb={10}
+              // onChange={onChangeLabel}
               onChange={(evt) => {
                 setLabel(evt?.target?.value);
               }}
+              onBlur={(evt) => setLabel(label)}
               placeholder="내용을 입력해주세요."
             />
-            {/* <ColorInput value={} placeholder="Pick color" label="Your favorite color" />; */}
             <ColorInput
               value={color}
               mt={10}
@@ -852,16 +1087,30 @@ function Roadmap({
               placeholder="Pick color"
               label="노드의 배경색을 골라주세요."
             />
-            <Input.Wrapper label="블로그 인증 등록">
+            <Input.Wrapper label="블로그 인증 키워드 등록">
               <Input
-                // icon={<IconAt />}
-                // value={label}
+                icon={<IconCertificate />}
+                value={blogKeyword}
+                // onChange={onChangeBlogKeyword}
+                onChange={(evt) => {
+                  setBlogKeyword(evt?.target?.value);
+                }}
                 mt={10}
                 mb={10}
+                disabled={keywordSubmitState}
+                rightSection={
+                  <Tooltip
+                    label="진행도를 체크할 블로그 키워드를 등록해주세요."
+                    position="top-end"
+                    withArrow
+                  >
+                    <IconInfoCircle size="1rem" />
+                  </Tooltip>
+                }
                 // onChange={(evt) => {
                 //   setLabel(evt?.target?.value);
                 // }}
-                placeholder="블로그 키워드를 입력해주세요."
+                placeholder="css"
               />
             </Input.Wrapper>
             {/* <input
@@ -871,7 +1120,7 @@ function Roadmap({
                 // selectedNode[0].style.background = evt.target.value;
               }}
             />
-             */}
+            
             {/* <input
               value={selectedNode[0]?.data.label}
               onChange={(evt) => {
@@ -884,21 +1133,9 @@ function Roadmap({
                 selectedNode[0].data.label = evt.target.value;
               }}
             /> */}
+            <CustomLabel>로드맵 상세 내용</CustomLabel>
             {toggleEditor}
           </Wrap>
-
-          {/* {selectedNode[0]?.id === id && toggleEditor} */}
-
-          <div className="confirm_btn_wrap">
-            <Button
-              mt={10}
-              onClick={() => {
-                setNodeModal(false);
-              }}
-            >
-              닫기
-            </Button>
-          </div>
         </Modal>
       </Panel>
       <ReactFlow
@@ -906,27 +1143,30 @@ function Roadmap({
         edges={edgeState}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
-        defaultViewport={defaultViewport}
-        minZoom={0.2}
-        maxZoom={4}
+        // defaultViewport={defaultViewport}
+        minZoom={0.8}
+        maxZoom={5}
         // onInit={onInit}
         onConnect={onConnect}
         onNodeClick={(e, n) => {
           setLabel(`${n?.data?.label}`);
           setId(n?.id);
           setColor(n?.style?.background);
-
-          // setSelectedNode(n);
-          console.log('n', n);
-          console.log('e', e);
+          // // console.log('n', n);
+          // // console.log('e', e);
+          // setBlogKeyword(blogKeyword);
+          // if (details.length > 0 && !isLoadingDetailGpt) {
+          //   setState(details);
+          // }
           setNodeModal(true);
-          // console.log('selectedNode', selectedNode);
+          // // console.log('selectedNode', selectedNode);
         }}
         attributionPosition="bottom-left"
         fitView
         zoomOnDoubleClick
         elevateNodesOnSelect
         snapToGrid
+        connectionLineType={ConnectionLineType.SmoothStep}
         proOptions={proOptions}
         onInit={setRfInstance}
         nodeTypes={nodeTypes}
@@ -938,81 +1178,19 @@ function Roadmap({
         }}
       >
         <Panel position="top-right">
-          {currentFlow === 'LR' ? (
-            <Button
-              type="button"
-              onClick={() => {
-                onLayout('TB');
-                setCurrentFlow('TB');
-              }}
-              mr={10}
-            >
-              vertical layout
-            </Button>
-          ) : (
-            <Button
-              type="button"
-              onClick={() => {
-                onLayout('LR');
-                setCurrentFlow('LR');
-              }}
-              mr={10}
-            >
-              horizontal layout
-            </Button>
-          )}
-          <Button
-            type="button"
-            onClick={() => {
-              const { x, y, zoom } = getViewport();
-              setCurrentView({
-                x: currentView.x,
-                y: nodeState.at(-1)?.position?.y,
-                zoom,
-              });
-              console.log(nodeState.at(-1)?.position);
-              onAddNode();
-            }}
-            mr={10}
-          >
-            노드 추가
-          </Button>
-          {nodeState.length === 0 ? (
-            <Button
-              type="button"
-              data-disabled
-              sx={{
-                '&[data-disabled]': { opacity: 0.8, pointerEvents: 'all' },
-              }}
-              onClick={() => setConfirmDelete(true)}
-              mr={10}
-            >
-              노드 전체 삭제
-            </Button>
-          ) : (
-            <Button
-              type="button"
-              onClick={() => setConfirmDelete(true)}
-              mr={10}
-            >
-              노드 전체 삭제
-            </Button>
-          )}
-          {/* <Button type="button" onClick={onRestore} mr={10}>
-            restore
-          </Button> */}
-          <Button
-            type="button"
-            onClick={() => {
-              // onSave();
-              // open();
-              setSubmitModal(true);
-            }}
-            mr={10}
-            mt={10}
-          >
-            로드맵 발행
-          </Button>
+          <PanelItem
+            setSubmitModal={setSubmitModal}
+            onLayout={onLayout}
+            setCurrentFlow={setCurrentFlow}
+            currentFlow={currentFlow}
+            edgeState={edgeState}
+            nodeState={nodeState}
+            onAddNode={onAddNode}
+            getViewport={getViewport}
+            setCurrentView={setCurrentView}
+            currentView={currentView}
+            setConfirmDelete={setConfirmDelete}
+          />
         </Panel>
         <Background gap={16} />
         <Controls />
@@ -1021,9 +1199,25 @@ function Roadmap({
     </Wrap>
   );
 }
+const CustomLabel = styled.div`
+  display: inline-block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #212529;
+  word-break: break-word;
+  cursor: default;
+`;
 const Wrap = styled.div`
   width: 100%;
-  height: 93.2vh;
+  height: 91vh;
+
+  /* .react-flow__node {
+    min-width: fit-content;
+  } */
+
+  & .gptModal {
+    z-index: 1000 !important;
+  }
   & .updatenode__controls {
     position: absolute;
     right: 10px;
@@ -1036,12 +1230,16 @@ const Wrap = styled.div`
     display: block;
   }
 
-  & .updatenode__bglabel {
+  /* & .updatenode__bglabel {
     margin-top: 10px;
+  } */
+
+  & .react-flow__panel {
+    display: inline-flex;
   }
 
   & .updatenode__checkboxwrapper {
-    margin-top: 10px;
+    /* margin-top: 10px; */
     display: flex;
     align-items: center;
   }
@@ -1060,6 +1258,9 @@ export default function RoadMapCanvas({
   roadmapDescription,
   roadmapTag,
   setLabel,
+  blogKeyword,
+  onChangeBlogKeyword,
+  setBlogKeyword,
   onRoadMapTitleChange,
   setRoadMapTitle,
   id,
@@ -1097,6 +1298,9 @@ export default function RoadMapCanvas({
         roadmapTag={roadmapTag}
         setRoadMapTitle={setRoadMapTitle}
         setLabel={setLabel}
+        blogKeyword={blogKeyword}
+        onChangeBlogKeyword={onChangeBlogKeyword}
+        setBlogKeyword={setBlogKeyword}
         state={state}
         onChangeId={onChangeId}
         onChangeLabel={onChangeLabel}

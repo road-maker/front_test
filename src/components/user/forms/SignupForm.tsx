@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import {
   Anchor,
   Box,
@@ -23,29 +22,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../auth/useAuth';
 import { useInput } from '../../common/hooks/useInput';
 
-// const useStyles = createStyles((theme) => ({
-//   container: {
-//     height: rem(300),
-//     width: '100%',
-//     backgroundColor: '#52EB9A',
-
-//     // // Media query with value from theme
-//     // [`@media (max-width: ${em(getBreakpointValue(theme.breakpoints.xl) - 1)})`]:
-//     //   {
-//     //     backgroundColor: theme.colors.pink[6],
-//     //   },
-
-//     // // Simplify media query writing with theme functions
-//     // [theme.fn.smallerThan('lg')]: {
-//     //   backgroundColor: theme.colors.yellow[6],
-//     // },
-
-//     // // Static media query
-//     // [`@media (max-width: ${em(800)})`]: {
-//     //   backgroundColor: theme.colors.orange[6],
-//     // },
-//   },
-// }));
 function SignUpForm(props: PaperProps): ReactElement {
   const [email, onChangeEmail, setEmail] = useInput('');
   const [nickname, onChangeNickname, setNickname] = useInput('');
@@ -54,7 +30,6 @@ function SignUpForm(props: PaperProps): ReactElement {
     useInput('');
   const auth = useAuth();
   const navigate = useNavigate();
-  // const { classes } = useStyles();
 
   const form = useForm({
     initialValues: {
@@ -89,7 +64,7 @@ function SignUpForm(props: PaperProps): ReactElement {
   });
 
   return (
-    <Box maw={400} mx="auto" m={200}>
+    <Box maw={500} m="auto" mt={50}>
       {auth.isUserModalOpen && (
         <Modal
           opened={auth.isUserModalOpen}
@@ -98,13 +73,13 @@ function SignUpForm(props: PaperProps): ReactElement {
         >
           {auth.success ? (
             <>
-              <Center pt={80}>
+              <Center pt={40}>
                 <IconCircleCheckFilled
                   size={150}
-                  style={{ color: '#38D9A9' }}
+                  style={{ color: '#ebf6fc' }}
                 />
               </Center>
-              <Text ta="center" c="teal.4" fz={35} mt={20}>
+              <Text ta="center" c="#ebf6fc" fz={35} mt={20}>
                 회원가입 성공
               </Text>
               <Text ta="center" mt={10}>
@@ -115,7 +90,7 @@ function SignUpForm(props: PaperProps): ReactElement {
                 type="submit"
                 mt={50}
                 variant="light"
-                color="teal.4"
+                color="#ebf6fc"
                 h={50}
                 onClick={() => {
                   navigate('/users/signin');
@@ -126,7 +101,7 @@ function SignUpForm(props: PaperProps): ReactElement {
             </>
           ) : (
             <>
-              <Center pt={80}>
+              <Center pt={40}>
                 <IconAlertCircleFilled
                   size={150}
                   style={{ color: '#FA5252' }}
@@ -153,21 +128,16 @@ function SignUpForm(props: PaperProps): ReactElement {
           )}
         </Modal>
       )}
-      <Paper radius="md" p="xl" withBorder {...props}>
-        <Title
-          align="center"
-          sx={(theme) => ({
-            fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-            fontWeight: 900,
-          })}
-        >
+      <Paper radius="md" p="xl" {...props}>
+        <Title order={1} align="center" fw={400}>
           회원가입
         </Title>
-        <Text color="dimmed" size="sm" align="center" mt={5}>
+        <Text color="dimmed" size="md" align="center" mt={5}>
           이미 계정이 있으신가요?
           <Anchor
-            size="sm"
+            size="md"
             component="button"
+            color="#ebf6fc"
             ml={5}
             mb={20}
             onClick={() => {
@@ -192,6 +162,8 @@ function SignUpForm(props: PaperProps): ReactElement {
         >
           <TextInput
             mt="xl"
+            size="md"
+            radius="md"
             label="닉네임"
             placeholder="닉네임을 입력해주세요"
             withAsterisk
@@ -200,7 +172,9 @@ function SignUpForm(props: PaperProps): ReactElement {
             {...form.getInputProps('nickname')}
           />
           <TextInput
+            size="md"
             mt="xl"
+            radius="md"
             label="이메일"
             placeholder="이메일을 입력해주세요"
             withAsterisk
@@ -210,6 +184,8 @@ function SignUpForm(props: PaperProps): ReactElement {
           />
           <PasswordInput
             mt="xl"
+            size="md"
+            radius="md"
             label="비밀번호"
             placeholder="비밀번호를 입력해주세요"
             withAsterisk
@@ -219,6 +195,8 @@ function SignUpForm(props: PaperProps): ReactElement {
           />
           <PasswordInput
             mt="xl"
+            size="md"
+            radius="md"
             label="비밀번호 확인"
             placeholder="비밀번호를 입력해주세요"
             withAsterisk
@@ -230,7 +208,9 @@ function SignUpForm(props: PaperProps): ReactElement {
             <Button
               fullWidth
               type="submit"
-              mt="xl"
+              mt={50}
+              color="#ebf6fc"
+              size="lg"
               variant="light"
               onClick={() => {
                 auth.setModalText('');
@@ -238,14 +218,6 @@ function SignUpForm(props: PaperProps): ReactElement {
             >
               회원가입
             </Button>
-            {/* <Button
-              onClick={() => {
-                auth.setIsUserModalOpen(true);
-                auth.setSuccess(false);
-              }}
-            >
-              Test
-            </Button> */}
           </Center>
         </form>
       </Paper>

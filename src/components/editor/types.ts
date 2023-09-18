@@ -25,6 +25,7 @@ export interface AddedNode {
   sourcePosition?: string;
   // type?: string | any;
   type?: string;
+  blogKeyword?: string;
   toolbarPosition?: string;
   data?: { label: string };
 
@@ -50,7 +51,9 @@ export interface RoadmapNode {
   position: XYPosition;
   data: { label: string };
   style?: nodeStyle;
+  done?: boolean;
   content?: string;
+  blogKeyword?: string;
   targetPosition?: string;
   sourcePosition?: string;
   selected?: boolean;

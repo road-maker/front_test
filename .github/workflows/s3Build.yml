@@ -19,11 +19,11 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-build-
             ${{ runner.OS }}-
-    
-      - name: Install Dependencies    # 의존 파일 설치
+
+      - name: Install Dependencies # 의존 파일 설치
         run: npm install --legacy-peer-deps
-        
-      - name: Build   # React Build
+
+      - name: Build # React Build
         run: npm run build
 
       - name: Deploy # S3에 배포
@@ -34,5 +34,4 @@ jobs:
           aws s3 cp \
             --recursive \
             --region ap-northeast-2 \
-            build s3://roadmakertest
-       
+            build s3://http://roadmaker.site.s3-website.ap-northeast-2.amazonaws.com
