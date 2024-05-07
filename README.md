@@ -4,7 +4,7 @@
 
 ![image](https://github.com/road-maker/road-maker-spring/assets/60874549/9bcc467d-9963-48c1-9e61-afb6722c7bff)
 
-본 문서는 RoadMaker의 백엔드에 초점을 맞춰 작성됐습니다.
+본 문서는 RoadMaker의 프론트엔드에 초점을 맞춰 작성됐습니다. [👉 백엔드 문서](https://github.com/road-maker/road-maker-spring)
 
 ## 목차
 1. [프로젝트 개요](#overview)
